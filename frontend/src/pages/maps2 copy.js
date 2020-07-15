@@ -4,11 +4,8 @@ import {
   GoogleMap,
   DirectionsService,
   DirectionsRenderer,
-  LoadScript,
-  withScriptjs,
-  withGoogleMap,  
-  Marker 
-} from '@react-google-maps/api';
+  LoadScript 
+} from '@react-google-maps/api'
 
 const ExampleDirectionsPropTypes = {
   styles: PropTypes.shape({
@@ -32,7 +29,7 @@ class ExampleDirections extends Component {
   }
 
   directionsCallback = response => {
-   //console.log(response)
+    console.log(response)
 
     if (response !== null) {
       if (response.status === 'OK') {
@@ -45,12 +42,33 @@ class ExampleDirections extends Component {
     }
   }
 
-  /*checkDriving = ({ target: { checked } }) => {
+  checkDriving = ({ target: { checked } }) => {
     checked &&
       this.setState(() => ({
         travelMode: 'DRIVING',
       }))
-  }*/
+  }
+
+  checkBicycling = ({ target: { checked } }) => {
+    checked &&
+      this.setState(() => ({
+        travelMode: 'BICYCLING',
+      }))
+  }
+
+  checkTransit = ({ target: { checked } }) => {
+    checked &&
+      this.setState(() => ({
+        travelMode: 'TRANSIT',
+      }))
+  }
+
+  checkWalking = ({ target: { checked } }) => {
+    checked &&
+      this.setState(() => ({
+        travelMode: 'WALKING',
+      }))
+  }
 
   getOrigin = ref => {
     this.origin = ref
@@ -61,9 +79,6 @@ class ExampleDirections extends Component {
   }
 
   onClick = () => {
-    console.log('origem '+this.origin.value)
-    console.log('destino '+this.destination.value)
-
     if (this.origin.value !== '' && this.destination.value !== '') {
       this.setState(() => ({
         origin: this.origin.value,
@@ -107,7 +122,65 @@ class ExampleDirections extends Component {
               />
             </div>
           </div>
-        </div>       
+        </div>
+
+        <div className='d-flex flex-wrap'>
+          <div className='form-group custom-control custom-radio mr-4'>
+            <input
+              id='DRIVING'
+              className='custom-control-input'
+              name='travelMode'
+              type='radio'
+              checked={this.state.travelMode === 'DRIVING'}
+              onChange={this.checkDriving}
+            />
+            <label className='custom-control-label' htmlFor='DRIVING'>
+              Driving
+            </label>
+          </div>
+
+          <div className='form-group custom-control custom-radio mr-4'>
+            <input
+              id='BICYCLING'
+              className='custom-control-input'
+              name='travelMode'
+              type='radio'
+              checked={this.state.travelMode === 'BICYCLING'}
+              onChange={this.checkBicycling}
+            />
+            <label className='custom-control-label' htmlFor='BICYCLING'>
+              Bicycling
+            </label>
+          </div>
+
+          <div className='form-group custom-control custom-radio mr-4'>
+            <input
+              id='TRANSIT'
+              className='custom-control-input'
+              name='travelMode'
+              type='radio'
+              checked={this.state.travelMode === 'TRANSIT'}
+              onChange={this.checkTransit}
+            />
+            <label className='custom-control-label' htmlFor='TRANSIT'>
+              Transit
+            </label>
+          </div>
+
+          <div className='form-group custom-control custom-radio mr-4'>
+            <input
+              id='WALKING'
+              className='custom-control-input'
+              name='travelMode'
+              type='radio'
+              checked={this.state.travelMode === 'WALKING'}
+              onChange={this.checkWalking}
+            />
+            <label className='custom-control-label' htmlFor='WALKING'>
+              Walking
+            </label>
+          </div>
+        </div>
 
         <button
           className='btn btn-primary'
@@ -118,8 +191,10 @@ class ExampleDirections extends Component {
         </button>
       </div>
 
-      <div className='map-container'>     
-      
+      <div className='map-container'>
+      <LoadScript
+      googleMapsApiKey="AIzaSyBTKs9MVXMJsl4GxSLtWnSnVbSs8hhL2p8"
+    >
         <GoogleMap
           id='direction-example'
          // mapContainerStyle={this.props.styles.container}
@@ -147,8 +222,8 @@ class ExampleDirections extends Component {
               }}
             />
           )}
-        </GoogleMap>      
-
+        </GoogleMap>
+      </LoadScript>  
       </div>
     </div>
   )

@@ -10,6 +10,7 @@ const Modal = ({ handleClose, show, children }) => {
         <a href="javascript:;" className="modal-close" onClick={handleClose}>
           close
         </a>
+        <h2>teste</h2>
       </div>
     </div>
   );

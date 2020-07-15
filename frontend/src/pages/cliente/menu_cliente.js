@@ -60,20 +60,16 @@ class menu_clienteComponent extends React.Component  {
 
   verifica_menu() {
     if ( this.state.perfil == 1) {
-      return ( 
-        <li className="nav-item">
-           <NavItem>       
-              <Link className="nav-link" to='#'><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></Link>      
-           </NavItem>  
-        </li>   
+      return (         
+        <NavItem className="nav-item"> 
+           <NavLink href="#"><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></NavLink>                                     
+        </NavItem>          
        ); 
     } else {
       return ( 
-        <li className="nav-item">
-           <NavItem>  
-              <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>                              
-           </NavItem>  
-        </li>   
+         <NavItem className="nav-item">            
+           <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>                              
+         </NavItem>   
        ); 
     }            
   }
@@ -97,7 +93,7 @@ class menu_clienteComponent extends React.Component  {
   {  
 
  return (
-  <div className="container-fluid">    
+  <div>    
     <Navbar color="#dc3545" light expand="md">
         <NavbarBrand href="#"></NavbarBrand>
         <NavbarToggler onClick={this.toggle} />
@@ -148,7 +144,7 @@ class menu_clienteComponent extends React.Component  {
       <div className="bg-danger text-center">
         <Link to='#'>
             <div className='thumbnail_logo'>
-                <img src="../../logo_oser.png" className="img-thumbnail" width="100" height="100" />                               
+                <img src="../../logo_oser.jpeg" className="img-thumbnail" width="100" height="100" />                               
             </div>
         </Link>          
         <br/>

@@ -32,6 +32,7 @@ class listComponent extends React.Component  {
     this.loadMotorista();  
   }
 
+ 
   loadMotorista(){
    // const url = baseUrl+"/motorista/list"
    api.get('/motorista/list')

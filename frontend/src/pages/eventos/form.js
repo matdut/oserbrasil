@@ -216,18 +216,24 @@ class eventoComponent extends React.Component{
         this.setState({ campdata_evento: date });
       }
 
+      voltarlistaClick = () => {
+  
+        this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`); 
+      
+      }
+
        render(){              
         //const classes = useStyles();
         //const { classes } = this.props;
         return (       
           <div>
               <div>
-              {this.verifica_menu()}
+                 {this.verifica_menu()}
               <br/>
-              <div>
-                <h2><center><stong>Cadastro de Eventos</stong></center></h2>
-              </div>            
-            </div>    
+                <div>
+                  <h2><center><stong>Cadastro de Eventos</stong></center></h2>
+                </div>            
+              </div>    
             <div className="container">                      
                <div className="form-row">          
                 <div className="form-group col-md-4">
@@ -289,7 +295,7 @@ class eventoComponent extends React.Component{
                     />                                                    
                 </div> 
                 <div className="form-group col-md-4">
-                    <TextField                       
+                <TextField                       
                         id="standard-basic"
                         label="Nome *"
                         style={{ margin: 0 }}
@@ -303,7 +309,7 @@ class eventoComponent extends React.Component{
                     />                                                                      
                 </div>
                 <div className="form-group col-md-4">                                                                                              
-                <InputLabel id="demo-simple-select-label">Tipo de Transporte</InputLabel> 
+                <InputLabel id="demo-simple-select-label">Transporte</InputLabel> 
                   <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
@@ -317,10 +323,18 @@ class eventoComponent extends React.Component{
 
                          
             <br/>
-            <Button color="primary" variant="contained" className="btn btn-primary" onClick={()=>this.sendSave()}>
-                  Cadastrar
-            </Button>
-              
+            <div className="form-row"> 
+                <div className="form-group col-md-2">
+                  <Button color="primary" variant="contained" onClick={()=>this.sendSave()}>
+                        Cadastrar
+                  </Button>
+                </div>  
+                <div className="form-group col-md-2">
+                  <Button color="secondary" variant="contained" onClick={this.voltarlistaClick}>
+                      voltar
+                  </Button>      
+                </div>    
+            </div>                
            </div>                
           </div>  
           );
@@ -387,8 +401,8 @@ class eventoComponent extends React.Component{
           //Email_cliente          
           //localStorage.setItem('lognome', response.data.data.nome);
           localStorage.setItem('logidEvento', response.data.data.id);
-         console.log(' antes translado ');
-         this.props.history.push(`/listporevento/${response.data.data.id}`);         
+      
+         this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`);         
         }
         else {
           Swal.fire(

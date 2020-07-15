@@ -14,7 +14,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-
 // google Maps //
 import { Map, GoogleApiWrapper } from 'google-maps-react';
 
@@ -28,6 +27,7 @@ import {
   KeyboardDatePicker,
   DatePicker
 } from '@material-ui/pickers';
+
 
 import { cpfMask } from '../formatacao/cpfmask';
 import { cepMask } from '../formatacao/cepmask';
@@ -69,15 +69,17 @@ class eventoComponent extends React.Component{
            campHora_inicial: "",  
            campLocal_embarque: "", 
            campLocal_desembarque: "", 
-           campMotorista_bilingue: 0, 
-           campMotorista_receptivo: 0, 
-           campMotorista_preferencial: 0,     
+           campMotorista_bilingue: false, 
+           campMotorista_receptivo: false, 
+           campMotorista_preferencial: false,     
            campTelefone_motorista: "", 
            campKm_translado: "", 
            campTempo_translado: "", 
            campValor_estimado: "",
            campSituacao: "", 
            campMotivo_cancelamento: "",
+           evento_logado: "",
+           gilad: true,
            nome: "",
            value1: 0,
            perfil: ""
@@ -97,23 +99,32 @@ class eventoComponent extends React.Component{
 
         this.handleDateChange();
 
-        //let userId = this.props.match.params.id;
-   /*
-        api.get(`/cliente/get/${userId}`)
+        let transladoId = this.props.match.params.id;
+   
+        api.get(`/translado/get/${transladoId}`)
         .then(res=>{
             if (res.data.success) {
               const data = res.data.data[0]
-          
-              this.setState({          
-                dataCliente:data,
-                cliente_logado_Id: data.id, 
-                campNomeCliente: data.nome,              
-                campEmail: data.email,         
-                campTipo_cliente: data.tipo_cliente,
-                campCpf: data.cpf,          
-                campCnpj: data.cnpj
+               
+              this.setState({                         
+                campNome_passageiro: data.nome_passageiro, 
+                campQuantidade_passageiro: data.quantidade_passageiro, 
+                campData_inicial: data.data_inicial,
+                campHora_inicial: data.hora_inicial,  
+                campLocal_embarque: data.local_embarque, 
+                campLocal_desembarque: data.local_desembarque, 
+                campMotorista_bilingue: data.motorista_bilingue, 
+                campMotorista_receptivo: data.motorista_receptivo, 
+                campMotorista_preferencial: data.motorista_preferencial,     
+                campTelefone_motorista: data.telefone_motorista, 
+                campKm_translado: data.km_translado, 
+                campTempo_translado: data.tempo_translado, 
+                campValor_estimado: data.valor_estimado,
+                campSituacao: data.situacao, 
+                campMotivo_cancelamento: data.motivo_cancelamento
               })          
-            
+            //  console.log( JSON.stringify(this.state, null, "    ") ); 
+              
             }
             else {
               alert("Erro de conexão com o banco de dados")
@@ -121,55 +132,53 @@ class eventoComponent extends React.Component{
           })
           .catch(error=>{
             alert("Error server "+error)
-          })
-    */
+          })    
+   
     //this.loadEstados();
     //this.verifica_menu();
     //this.loadTipoTransporte();        
 
     }   
     // Handle fields change  
+/*
+    handleChange = (event) => {      
+      this.setState({ [event.target.name]: event.target.checked });
+      //console.log('state '+ e.target.value)
+      console.log( JSON.stringify(this.state, null, "    ") ); 
+    }; */
 
-    handleChangeBilingue(e) {
-      console.log('e.target.value '+ e.target.value)
-     let bilingue = 0    
-        if (e.target.value == 'on') {
-            bilingue = 1
-        } 
-
-        this.setState({ campMotorista_bilingue: bilingue })
+    handleChangeBilingue = (e) => {     
+      this.setState({ campMotorista_bilingue: e.target.checked })       
+     
     }     
-    handleChangeReceptivo(e) {
-        let receptivo = 0    
-           if (e.target.value == 'on') {
-            receptivo = 1
-        } 
-   
-        this.setState({ campMotorista_receptivo: receptivo })
+    handleChangeReceptivo = (e) => {               
+        this.setState({ campMotorista_receptivo: e.target.checked })
+      //  console.log( JSON.stringify(this.state, null, "    ") ); 
     }     
-    handleChangePreferencial(e) {
-        let preferencial = 0    
-           if (e.target.value == 'on') {
-            preferencial = 1
-    } 
-   
-        this.setState({ campMotorista_preferencial: preferencial })
+    handleChangePreferencial = (e) => {         
+        this.setState({ campMotorista_preferencial: e.target.checked })
     }     
   
-    handleDateChange(date) {
+    handleDateChange = (date) => {  
       //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
-      this.setState({ campData_inicial: date });
+      this.setState({ campData_inicial: date });    
+    }
+
+    voltarlistaClick = () => {
+  
+      this.props.history.push(`/listporevento/${localStorage.getItem('logidEvento')}`); 
+    
     }
     
        render(){
-
+       
         return (       
           <div>
               <div>
               <Menu_evento />  
               <br/>
               <div>
-                <h2><center><stong>Adicionado Translados</stong></center></h2>
+                <h2><center><stong>Atualizar Translados</stong></center></h2>
               </div>
             </div>    
             <div className="container">                      
@@ -204,7 +213,7 @@ class eventoComponent extends React.Component{
                             disableToolbar
                             variant="inline"
                             margin="normal"
-                            defaultValue="12/08/2020"
+                            defaultValue="12/08/2000"
                             id="date-picker-inline"
                             label="Data do Translado *"
                             format="dd/MM/yyyy"
@@ -229,8 +238,9 @@ class eventoComponent extends React.Component{
                 </div>
               </div>  
               <div className="form-row"> 
+                   
                 <div className="form-group col-md-3">
-                  <TextField
+                <TextField
                       id="standard-basic"
                       label="Local de Embarque *"
                       style={{ margin: 0 }}
@@ -239,7 +249,8 @@ class eventoComponent extends React.Component{
                       margin="normal"
                       value={this.state.campLocal_embarque} 
                       onChange={(value)=> this.setState({campLocal_embarque:value.target.value})}
-                  />                 
+                  />     
+                  
                 </div> 
                 <div className="form-group col-md-3">
                   <TextField
@@ -322,19 +333,27 @@ class eventoComponent extends React.Component{
                     />                     
                 </div>                
              </div>
-
                          
             <br/>
-            <Button color="primary" variant="contained" className="btn btn-primary" onClick={()=>this.sendSave()}>
-                  Cadastrar
-            </Button>          
+            <div className="form-row"> 
+                <div className="form-group col-md-2">
+                    <Button color="primary" variant="contained" onClick={()=>this.sendUpdate()}>
+                      Atualizar
+                    </Button> 
+                </div>  
+                <div className="form-group col-md-2">
+                  <Button color="secondary" variant="contained" onClick={this.voltarlistaClick}>
+                      voltar
+                  </Button>      
+                </div>    
+            </div>         
            </div>                
           </div>  
           );
 
         }
 
-  sendSave(){            
+  sendUpdate(){            
 
     if (this.state.campData_inicial=="") {
       //alert("Digite o campo de nome")
@@ -377,6 +396,8 @@ class eventoComponent extends React.Component{
       )      
     } else {
 
+      let userId = this.props.match.params.id;
+
       const datapost = {
         nome_passageiro: this.state.campNome_passageiro, 
         quantidade_passageiro: this.state.campQuantidade_passageiro, 
@@ -392,22 +413,21 @@ class eventoComponent extends React.Component{
         tempo_translado: this.state.campTempo_translado, 
         valor_estimado: this.state.campValor_estimado,
         situacao: this.state.campSituacao, 
-        motivo_cancelamento: this.state.campMotivo_cancelamento,
-        eventoId: this.state.evento_logado
+        motivo_cancelamento: this.state.campMotivo_cancelamento
       }          
 
-      api.post('/translado/create',datapost)
+      api.put(`/translado/update/${userId}`, datapost)      
       .then(response=>{
         if (response.data.success==true) {              
         // alert(response.data.message)   
           Swal.fire(
-            'Incluido',
+            'Alterado',
             'Você incluiu os dados com sucesso.',
             'success'
           )               
          /// console.log('Perfil - '+perfil);
 
-         this.props.history.push(`/listporevento/${this.state.evento_logado}`);               
+         this.props.history.push(`/listporevento/${localStorage.getItem('logidEvento') }`);               
 
         }
         else {

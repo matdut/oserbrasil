@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
 var Tipo_transporte = require('./Tipo_transporte');
+var Translados = require('./Translado_evento');
 var Cliente = require('./Cliente');
 //var eventos = require('./');
 // import Role for FK roleId
@@ -58,7 +59,13 @@ var Eventos = sequelize.define(nametable,{
   }
 })
 
-Eventos.belongsTo(Tipo_transporte);
+Eventos.hasMany(Tipo_transporte, {foreignKey: 'id'})
+Tipo_transporte.belongsTo(Eventos, {foreignKey: 'id'})
+
+//Eventos.hasMany(Translados, {foreignKey: 'eventoId'})
+//Translados.belongsTo(Eventos, {foreignKey: 'eventoId'})
+
+//Eventos.belongsTo(Tipo_transporte);
 Eventos.belongsTo(Cliente);
 //Cliente.belongsTo(Estado);
 

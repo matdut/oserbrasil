@@ -7,6 +7,43 @@ var Translados = require('../model/Translado_evento');
 // para migrar por si no tiene tablas
 sequelize.sync()
 
+controllers.delete = async (req,res) => {
+  
+  // parameter post  
+  const { id } = req.params;  
+ // console.log( JSON.stringify(req.params, null, "    ") ); 
+
+  //console.log('delete id  - '+id);
+  // delete sequelize
+  await Translados.destroy({
+    where: { id: id }
+  }).then( function (data){
+    return res.json({success:true, data: data});
+    //return data;
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+   //res.json({success:true, deleted:del, message:"Deleted successful"});
+
+}
+
+controllers.get = async (req, res) => {
+  const { id } = req.params;
+  
+  await Translados.findAll({    
+    where: { id: id} 
+  })
+  .then( function(data){
+    return res.json({success:true, data:data});
+  })
+  .catch(error => {
+     return res.json({success:false});
+  })
+  
+}
+
 controllers.listporevento = async (req,res) => {
   const { id } = req.params;
   
@@ -64,9 +101,8 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { nome_passageiro, quantidade_passageiro, data_inicial,
     hora_inicial,  local_embarque, local_desembarque, motorista_bilingue, 
-    motorista_receptivo, motorista_preferencial, telefone_motorista,
-    km_translado, tempo_translado, valor_estimado,
-    situacao, motivo_cancelamento } = req.body;
+    motorista_receptivo, motorista_preferencial, telefone_motorista, 
+    km_translado, tempo_translado, valor_estimado, situacao, motivo_cancelamento } = req.body;
 
   //console.log('entrou aqui = '+id);
 

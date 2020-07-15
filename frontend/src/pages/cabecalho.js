@@ -31,7 +31,7 @@ const Cabecalho = props => {
   const toggle = () => setIsOpen(!isOpen);
 
  return (  
-  <div className="container_fluid">                           
+  <div>                           
       <Navbar color="#dc3545" light expand="md">
         <NavbarBrand href="/"></NavbarBrand>
         <NavbarToggler onClick={toggle} />
@@ -61,7 +61,7 @@ const Cabecalho = props => {
        <div className="bg-danger text-center">
         <Link to='#'>
             <div className='thumbnail_logo'>
-                <img src="logo_oser.png" className="img-thumbnail"  width="100" height="100"/>                               
+                <img src="logo_oser.jpeg" className="img-thumbnail"  width="100" height="100"/>                               
             </div>
         </Link>          
         <br/>

@@ -16,11 +16,14 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 
  /* EVENTOS */
  import Eventos_cadastro from './pages/eventos/form';
- import Translado_listar from './pages/eventos/list';
- import Listar_evento_cliente from './pages/eventos/lista_eventos'; 
- import Translados_adicionar from './pages/eventos/adicionar_translados';
- import Translados_editar from './pages/eventos/editar_translados';
+ import Listar_evento_cliente from './pages/eventos/list'; 
  
+
+ /* TRANSLADOS */
+ import Translados_incluir from './pages/translados/form';
+ import Translados_editar from './pages/translados/editar';
+ import Translado_listar from './pages/translados/list';
+
 
 /* MOTORISTAS */ 
  import FormMotorista from './pages/motorista/form';
@@ -32,6 +35,15 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
  
 /*ADMINISTRADOR */
 import Area_administrador from './pages/administrador/area_administrador';
+
+/* MATRIZ */
+import Matriz_tarifaria_criar from './pages/matriz_tarifaria/form';
+import Matriz_tarifaria_listar from './pages/matriz_tarifaria/list';
+
+/* FAIXA TARIFARIA */
+import Faixa_tarifaria_listar from './pages/faixa_tarifarias/list';
+import Faixa_tarifaria_criar from './pages/faixa_tarifarias/form';
+import Faixa_tarifaria_editar from './pages/faixa_tarifarias/edit';
 
 /* MAPS */
 import GoogleMaps from './pages/maps3';
@@ -94,12 +106,18 @@ export default function Routes() {
              <Route path="/alterar_senha_motorista" component={Alterar_senha_Motorista} />                            
 
              <Route path="/criar_eventos/:id" component={Eventos_cadastro} /> 
-             <Route path="/listporevento/:id" component={Translado_listar} />    
-
-             <Route path="/transladoscriar" component={Translados_adicionar} />    
-             <Route path="/transladoseditar/:id" component={Translados_editar} />    
-              
              <Route path="/listaeventocliente/:id" component={Listar_evento_cliente} />           
+
+             <Route path="/listporevento/:id" component={Translado_listar} />    
+             <Route path="/transladoscriar" component={Translados_incluir} />    
+             <Route path="/transladoseditar/:id" component={Translados_editar} />                               
+
+             <Route path="/matriz_criar" component={Matriz_tarifaria_criar} />
+             <Route path="/matriz_listar" component={Matriz_tarifaria_listar} />
+
+             <Route path="/faixa_listar/:id" component={Faixa_tarifaria_listar} />
+             <Route path="/faixa_editar/:id" component={Faixa_tarifaria_editar} />
+             <Route path="/faixa_criar" component={Faixa_tarifaria_criar} />
 
              <Route path="/maps" component={GoogleMaps} />                
                        

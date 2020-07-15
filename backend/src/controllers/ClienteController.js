@@ -165,7 +165,7 @@ controllers.create = async (req,res) => {
   .then( function (data){
         // alert('criando um cliente');
 
-            const nodemailer = require('nodemailer');
+          /*  const nodemailer = require('nodemailer');
 
             const transporter = nodemailer.createTransport({
                 //host: "smtp.gmail.com",
@@ -178,15 +178,7 @@ controllers.create = async (req,res) => {
                 }
                // , tls: { rejectUnauthorized: false }
             });
-
-            /*
-            const info = await transporter.sendMail({
-              from: "matesudutra481@gmail.com",
-              to: "mateusdutra481@gmail.com",
-              subject: "E-mail enviado usando Node!",
-              text: "Bem vindo matesu sadsa das ao Oser, sua senha é 12345. "
-            }); */
-
+        
             const mailOptions = {
               from: "redlinkdesenvolvimento@gmail.com",
               to: "mateusdutra481@gmail.com",
@@ -200,7 +192,7 @@ controllers.create = async (req,res) => {
               } else {
                   console.log('Email enviado: ' + info.response);
               }
-            }); 
+            });  */
            // alert(JSON.stringify(teste, null, "    ")); 
 
     return res.json({success:true, data: data});

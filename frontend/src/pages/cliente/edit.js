@@ -358,7 +358,7 @@ class EditComponent extends React.Component{
       //console.log('this.state.perfil -'+this.state.perfil);  
       if (localStorage.getItem('logperfil') == 1) {
         return (      
-          <button type="button" class="btn btn-danger" onClick={this.voltarlistaClick}>VOLTAR</button>    
+          <button type="button" className="btn btn-danger" onClick={this.voltarlistaClick}>VOLTAR</button>    
         );
       } 
     

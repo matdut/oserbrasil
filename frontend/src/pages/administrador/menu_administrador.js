@@ -1,6 +1,20 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import { withRouter } from "react-router-dom";
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  NavbarText
+} from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -40,35 +54,54 @@ class menu_administradorComponent extends React.Component  {
 
  return (
   <div>  
-  <div className="container-fluid">                          
-        <nav className="navbar navbar-expand-xl bg-danger navbar-dark justify-content-end">
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to='#'><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></Link>     
-            </li>               
-            <li className="nav-item">
-              <Link className="nav-link" to='/list'>LISTAR CLIENTES</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to='/listar'>LISTAR MOTORISTAS</Link>
-            </li>            
-            <li className="nav-item">
-              <Link className="nav-link" to='#'>PENDÊNCIAS</Link>
-            </li>            
-            <li className="nav-item">
+    <Navbar color="#dc3545" light expand="md">
+        <NavbarBrand href="#"></NavbarBrand>
+        <NavbarToggler onClick={this.toggle} />
+        <Collapse isOpen={this.isOpen} navbar>
+          <Nav className="ml-auto" navbar>   
+              <NavItem className="nav-item">         
+                <NavLink href="#"><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></NavLink>                  
+              </NavItem>  
+            <NavItem>                             
+               <NavLink href="/list">LISTAR CLIENTES</NavLink>
+            </NavItem>
+            <NavItem>               
+              <NavLink href="/listar">LISTAR MOTORISTAS</NavLink>          
+            </NavItem>
+            <NavItem>               
+              <NavLink href="#">PENDÊNCIAS</NavLink>          
+            </NavItem>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                   MATRIZ
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem href={"/matriz_criar"}>
+                  CRIAR
+                </DropdownItem>
+                <DropdownItem href={"/matriz_listar"}>
+                  LISTAR
+                </DropdownItem>
+                <DropdownItem divider />                
+              </DropdownMenu>
+            </UncontrolledDropdown>
+            <NavItem>               
+              <NavLink href="#">CONTATO</NavLink>
+            </NavItem>          
+            <NavItem>
                <button type="button" class="btn btn-danger btn-sm" onClick={this.handleClick}>SAIR</button>
-            </li>           
-          </ul>
-      </nav> 
+            </NavItem>            
+          </Nav>         
+        </Collapse>
+      </Navbar>                                
       <div className="bg-danger text-center">
-        <Link to='/'>
+        <Link to='#'>
             <div className='thumbnail_logo'>
-                <img src="../../logo_oser.png" className="img-thumbnail" width="100" height="100" />                               
+                <img src="../../logo_oser.jpeg" className="img-thumbnail" width="100" height="100" />                               
             </div>
         </Link>          
         <br/>
-  </div>                                  
-   </div> 
+  </div>       
 </div>
  );  
  }

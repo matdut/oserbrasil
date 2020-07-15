@@ -3,12 +3,37 @@ const controllers = {}
 // import model and sequelize
 var sequelize = require('../model/database');
 var Eventos = require('../model/Eventos');
+var Translado = require('../model/Translado_evento');
+var Tipo = require('../model/Tipo_transporte');
 
 // para migrar por si no tiene tablas
 sequelize.sync()
 
+controllers.delete = async (req,res) => {
+  
+  // parameter post  
+  const { id } = req.params;  
+ // console.log( JSON.stringify(req.params, null, "    ") ); 
+
+  //console.log('delete id  - '+id);
+  // delete sequelize
+  await Eventos.destroy({
+    where: { id: id }
+  }).then( function (data){
+    return res.json({success:true, data: data});
+    //return data;
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+   //res.json({success:true, deleted:del, message:"Deleted successful"});
+
+}
+
 controllers.list = async (req,res) => {
   await Eventos.findAll({
+    include: [Tipo]
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -86,10 +111,9 @@ controllers.update = async (req, res) => {
 
 controllers.get = async (req, res) => {
   const { id } = req.params;
+
   await Eventos.findAll({
-    where: { id: id}
-    //,
-    //include: [ Role ]
+    where: { id: id }   
   })
   .then( function (data){
     return res.json({success:true, data: data});

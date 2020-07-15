@@ -3,14 +3,37 @@ const controllers = {}
 // import model and sequelize
 var sequelize = require('../model/database');
 var Matriz_tarifaria = require('../model/Matriz_tarifaria');
-var Ocorrencia = require('../model/Ocorrencia');
+var Tipo = require('../model/Tipo_transporte');
 //const generateUniqueId = require('../utils/generateUniqueId'); 
 
 // para migrar por si no tiene tablas
 sequelize.sync()
 
+controllers.delete = async (req,res) => {
+  
+  // parameter post  
+  const { id } = req.params;  
+ // console.log( JSON.stringify(req.params, null, "    ") ); 
+
+  //console.log('delete id  - '+id);
+  // delete sequelize
+  await Matriz_tarifaria.destroy({
+    where: { id: id }
+  }).then( function (data){
+    return res.json({success:true, data: data});
+    //return data;
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+   //res.json({success:true, deleted:del, message:"Deleted successful"});
+
+}
+
 controllers.list = async (req,res) => {
   await Matriz_tarifaria.findAll({
+//    include: [Tipo]
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -23,11 +46,11 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { tipo_veiculo, bandeira, receptivo, bilingue, pedagio } = req.body;
+  const { tipoTransporteId, bandeira, receptivo, bilingue, pedagio } = req.body;
   //console.log("ROle es ==>"+role)
   //create
   await Matriz_tarifaria.create({   
-    tipo_veiculo: tipo_veiculo,    
+    tipoTransporteId: tipoTransporteId,    
     bandeira: bandeira, 
     receptivo: receptivo, 
     bilingue: bilingue, 
@@ -49,11 +72,11 @@ controllers.update = async (req, res) => {
   //console.log('entrou aqui = '+id);
 
   // parameter post
-  const { tipo_veiculo, bandeira, receptivo, bilingue, pedagio } = req.body;
+  const { tipoTransporteId,bandeira, receptivo, bilingue, pedagio } = req.body;
   // update data
   
   await Matriz_tarifaria.update({
-    tipo_veiculo: tipo_veiculo,   
+    tipoTransporteId: tipoTransporteId,   
     bandeira: bandeira, 
     receptivo: receptivo, 
     bilingue: bilingue, 
@@ -71,20 +94,13 @@ controllers.update = async (req, res) => {
 }
 
 controllers.get = async (req, res) => {
-  const { id } = 1; //req.params;  
+  const { id } = req.params;  
 
   // Find all projects with a least one task where task.state === project.task
- await Matriz_tarifaria.findAll({ id: id ,
-    include: [{
-      model: Ocorrencia,
-      where: { matrizId: sequelize.col('Matriz_tarifaria.id') }
-    }]
-  })
-  //await Matriz_tarifaria.findByPk({
-   // where: { id: id}
-    //,
-    //include: [ Role ]
-  //})
+ await Matriz_tarifaria.findAll({ 
+   id: id //,
+  // include: [Tipo]
+  })  
   .then( function (data){
     return res.json({success:true, data: data});
   })

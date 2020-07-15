@@ -14,10 +14,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-
+//import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 // google Maps //
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+//import { Map, GoogleApiWrapper } from 'google-maps-react';
+import Modal from 'react-modal';
+import Icon from '@material-ui/core/Icon';
 
+//import Busca from '../busca_endereco';
+import Busca from '../maps2';
+
+import GoogleMapReact from 'google-map-react';
+//import { withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
 
 //import Switch from 'react-input-switch';
 import Toggle from 'react-toggle';
@@ -28,6 +35,7 @@ import {
   KeyboardDatePicker,
   DatePicker
 } from '@material-ui/pickers';
+
 
 import { cpfMask } from '../formatacao/cpfmask';
 import { cepMask } from '../formatacao/cepmask';
@@ -40,7 +48,11 @@ import Menu_administrador from '../administrador/menu_administrador';
 import api from '../../services/api';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
+//import Modal from '../modal';
+
 import 'sweetalert2/src/sweetalert2.scss';
+
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 const login = localStorage.getItem('logemail');              
 const id = localStorage.getItem('logid');  
@@ -61,39 +73,54 @@ const useStyles = makeStyles((theme) => ({
 class eventoComponent extends React.Component{     
 
     constructor(props){
-        super(props);
-        this.state = {
+        super(props);                
+        this.state = {          
            campNome_passageiro: "", 
            campQuantidade_passageiro: "", 
            campData_inicial: "",
            campHora_inicial: "",  
            campLocal_embarque: "", 
            campLocal_desembarque: "", 
-           campMotorista_bilingue: 0, 
-           campMotorista_receptivo: 0, 
-           campMotorista_preferencial: 0,     
+           campMotorista_bilingue: false, 
+           campMotorista_receptivo: false, 
+           campMotorista_preferencial: false,     
            campTelefone_motorista: "", 
            campKm_translado: "", 
            campTempo_translado: "", 
            campValor_estimado: "",
            campSituacao: "", 
            campMotivo_cancelamento: "",
+           gilad: true,
+           showModalEmbarque: false,
+           showModalDesembarque: false,
            nome: "",
            value1: 0,
-           perfil: ""
+           perfil: "",
+           center: {
+              lat: -22.880260,
+              lng: -42.373930
+          },
+          greatPlaceCoords: {lat: 59.724465, lng: 30.080121},
+          zoom: 11
         }            
         this.handleChangeBilingue = this.handleChangeBilingue.bind(this); 
         this.handleChangeReceptivo = this.handleChangeReceptivo.bind(this); 
         this.handleChangePreferencial = this.handleChangePreferencial.bind(this); 
-        this.handleDateChange = this.handleDateChange.bind(this);      
-     
+        this.handleDateChange = this.handleDateChange.bind(this);  
+        
+        this.handleOpenModalEmbarque = this.handleOpenModalEmbarque.bind(this);
+        this.handleOpenModalDesembarque = this.handleOpenModalDesembarque.bind(this);
+        this.handleCloseModalEmbarque = this.handleCloseModalEmbarque.bind(this);
+        this.handleCloseModalDesembarque = this.handleCloseModalDesembarque.bind(this);     
       }
       componentDidMount(){  
         this.setState({
           perfil: localStorage.getItem('logperfil'),    
           nome: localStorage.getItem('lognome'),
           evento_logado: localStorage.getItem('logidEvento')      
-        });        
+        });   
+        
+        
 
         this.handleDateChange();
 
@@ -129,40 +156,51 @@ class eventoComponent extends React.Component{
 
     }   
     // Handle fields change  
+/*
+    handleChange = (event) => {      
+      this.setState({ [event.target.name]: event.target.checked });
+      //console.log('state '+ e.target.value)
+      console.log( JSON.stringify(this.state, null, "    ") ); 
+    }; */
 
-    handleChangeBilingue(e) {
-      console.log('e.target.value '+ e.target.value)
-     let bilingue = 0    
-        if (e.target.value == 'on') {
-            bilingue = 1
-        } 
+    handleOpenModalEmbarque () {
+      this.setState({ showModalEmbarque: true });
+    }
+    handleOpenModalDesembarque () {
+      this.setState({ showModalDesembarque: true });
+    }
+    
+    handleCloseModalEmbarque () {
+      this.setState({ showModalEmbarque: false });
+    }
+    handleCloseModalDesembarque () {
+      this.setState({ showModalDesembarque: false });
+    }
 
-        this.setState({ campMotorista_bilingue: bilingue })
+    handleChangeBilingue = (e) => {     
+      this.setState({ campMotorista_bilingue: e.target.checked })       
+     
     }     
-    handleChangeReceptivo(e) {
-        let receptivo = 0    
-           if (e.target.value == 'on') {
-            receptivo = 1
-        } 
-   
-        this.setState({ campMotorista_receptivo: receptivo })
+    handleChangeReceptivo = (e) => {               
+        this.setState({ campMotorista_receptivo: e.target.checked })
+      //  console.log( JSON.stringify(this.state, null, "    ") ); 
     }     
-    handleChangePreferencial(e) {
-        let preferencial = 0    
-           if (e.target.value == 'on') {
-            preferencial = 1
-    } 
-   
-        this.setState({ campMotorista_preferencial: preferencial })
+    handleChangePreferencial = (e) => {         
+        this.setState({ campMotorista_preferencial: e.target.checked })
     }     
   
-    handleDateChange(date) {
+    handleDateChange = (date) => {  
       //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
-      this.setState({ campData_inicial: date });
+      this.setState({ campData_inicial: date });    
+    }
+    voltarlistaClick = () => {
+  
+      this.props.history.push(`/listporevento/${localStorage.getItem('logidEvento')}`); 
+    
     }
     
        render(){
-
+       
         return (       
           <div>
               <div>
@@ -204,7 +242,7 @@ class eventoComponent extends React.Component{
                             disableToolbar
                             variant="inline"
                             margin="normal"
-                            defaultValue="12/08/2020"
+                            defaultValue="12/08/2000"
                             id="date-picker-inline"
                             label="Data do Translado *"
                             format="dd/MM/yyyy"
@@ -223,35 +261,95 @@ class eventoComponent extends React.Component{
                     type="time"
                     defaultValue="07:30"                       
                     value={this.state.campHora_inicial} 
-                    onChange={(value)=> this.setState({campHora_inicial:value.target.value})}              
-                              
+                    onChange={(value)=> this.setState({campHora_inicial:value.target.value})} 
                   />                                      
                 </div>
               </div>  
               <div className="form-row"> 
+                   
                 <div className="form-group col-md-3">
-                  <TextField
+
+                 <Button color="primary" variant="contained"                         
+                        onClick={()=>this.handleOpenModalEmbarque()}>
+                 Local Embarque  <Icon className="fa fa-plus-circle" />
+                 </Button>                  
+                  <Modal 
+                    isOpen={this.state.showModalEmbarque}
+                    contentLabel="Minimal Modal Example"
+                  >
+                    <Button color="primary" variant="contained"                         
+                        onClick={()=>this.handleCloseModalEmbarque()}>Close Modal</Button>    
+                    <br/> 
+                    <br/>                    
+                    <TextField
                       id="standard-basic"
-                      label="Local de Embarque *"
+                      label="Local Embarque *"
                       style={{ margin: 0 }}
                       placeholder=""
                       helperText=""           
+                      fullWidth
                       margin="normal"
                       value={this.state.campLocal_embarque} 
                       onChange={(value)=> this.setState({campLocal_embarque:value.target.value})}
-                  />                 
+                  />       
+                  <Busca />
+                  <br/>                         
+                     <div style={{ height: '50vh', width: '50%' }}>                    
+                        <GoogleMapReact
+                          bootstrapURLKeys={{ key: "AIzaSyBTKs9MVXMJsl4GxSLtWnSnVbSs8hhL2p8" }}
+                          defaultCenter={this.state.center}
+                          defaultZoom={this.state.zoom}
+                        >
+                          <AnyReactComponent
+                            lat={-22.880260}
+                            lng={-42.373930}
+                            text="Minha Localização"
+                          />
+                        </GoogleMapReact>                       
+                    </div>         
+                  </Modal>                  
                 </div> 
                 <div className="form-group col-md-3">
-                  <TextField
+                <Button color="primary" variant="contained"                         
+                        onClick={()=>this.handleOpenModalDesembarque()}>
+                 Local Desembarque  <Icon className="fa fa-plus-circle" />
+                 </Button>                  
+                  <Modal 
+                    isOpen={this.state.showModalDesembarque}
+                    contentLabel="Minimal Modal Example"
+                  >
+                    <Button color="primary" variant="contained"                         
+                        onClick={()=>this.handleCloseModalDesembarque()}>Close Modal</Button>    
+                    <br/> 
+                    <br/>                    
+                    <TextField
                       id="standard-basic"
-                      label="Local de Desembarque *"
+                      label="Local Desembarque *"
                       style={{ margin: 0 }}
                       placeholder=""
-                      helperText=""           
+                      helperText=""         
+                      fullWidth
                       margin="normal"
+                      //margin="dense"
                       value={this.state.campLocal_desembarque} 
                       onChange={(value)=> this.setState({campLocal_desembarque:value.target.value})}
-                  />                                 
+                  />     
+                  <Button color="primary" variant="contained"                         
+                        onClick={()=>this.handleCloseModal()}>Procurar</Button>     
+                  <div style={{ height: '50vh', width: '50%' }}>                    
+                        <GoogleMapReact
+                          bootstrapURLKeys={{ key: "AIzaSyBTKs9MVXMJsl4GxSLtWnSnVbSs8hhL2p8" }}
+                          defaultCenter={this.state.center}
+                          defaultZoom={this.state.zoom}
+                        >
+                          <AnyReactComponent
+                            lat={-22.880260}
+                            lng={-42.373930}
+                            text="Minha Localização"
+                          />
+                        </GoogleMapReact>                       
+                    </div>                           
+                  </Modal>                       
                 </div>
                             
              </div>  
@@ -324,10 +422,19 @@ class eventoComponent extends React.Component{
              </div>
 
                          
-            <br/>
-            <Button color="primary" variant="contained" className="btn btn-primary" onClick={()=>this.sendSave()}>
-                  Cadastrar
-            </Button>          
+            <br/>      
+            <div className="form-row"> 
+                <div className="form-group col-md-2">
+                  <Button color="primary" variant="contained" onClick={()=>this.sendSave()}>
+                        Cadastrar
+                  </Button>
+                </div>  
+                <div className="form-group col-md-2">
+                  <Button color="secondary" variant="contained" onClick={this.voltarlistaClick}>
+                      voltar
+                  </Button>      
+                </div>    
+            </div>                                             
            </div>                
           </div>  
           );

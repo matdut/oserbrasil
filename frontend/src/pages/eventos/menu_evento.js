@@ -60,7 +60,7 @@ class menu_eventosComponent extends React.Component  {
       return ( 
         <li className="nav-item">
            <NavItem>       
-            <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>              
+               <NavLink href="#"><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></NavLink>  
            </NavItem>  
         </li>   
        ); 
@@ -95,7 +95,7 @@ class menu_eventosComponent extends React.Component  {
   {  
 
  return (
-  <div className="container-fluid">    
+  <div>    
     <Navbar color="#dc3545" light expand="md">
         <NavbarBrand href="#"></NavbarBrand>
         <NavbarToggler onClick={this.toggle} />
@@ -137,7 +137,7 @@ class menu_eventosComponent extends React.Component  {
               </DropdownMenu>
             </UncontrolledDropdown>
             <NavItem>
-               <button type="button" class="btn btn-danger btn-sm" onClick={this.handleClick}>SAIR</button>
+               <button type="button" className="btn btn-danger btn-sm" onClick={this.handleClick}>SAIR</button>
             </NavItem>            
           </Nav>         
         </Collapse>
@@ -145,7 +145,7 @@ class menu_eventosComponent extends React.Component  {
       <div className="bg-danger text-center">
         <Link to='#'>
             <div className='thumbnail_logo'>
-                <img src="../../logo_oser.png" className="img-thumbnail" width="100" height="100" />                               
+                <img src="../../logo_oser.jpeg" className="img-thumbnail" width="100" height="100" />                               
             </div>
         </Link>          
         <br/>

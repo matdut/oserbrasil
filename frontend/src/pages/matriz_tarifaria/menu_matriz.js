@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Link} from 'react-router-dom';
 import { withRouter } from "react-router-dom";
 import {
@@ -19,8 +19,9 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
+
 //const Cabecalho_cliente = props => {
-class menu_motoristaComponent extends React.Component  {
+class menu_matrizComponent extends React.Component  {
 
   constructor(props){
     super(props);    
@@ -30,7 +31,8 @@ class menu_motoristaComponent extends React.Component  {
         id: "",
         isOpen: false
       }
-  }    
+      
+    }    
 
   componentDidMount(){
     
@@ -39,7 +41,9 @@ class menu_motoristaComponent extends React.Component  {
       nome: localStorage.getItem('lognome'),
       id: localStorage.getItem('logid') 
     });
-    //this.verifica_menu();
+   // this.verifica_menu();
+    
+
   }
   handleClick = () => {
     localStorage.removeItem('logemail');
@@ -50,31 +54,30 @@ class menu_motoristaComponent extends React.Component  {
     this.props.history.push("/");
   }
 
+  verifica_menu() {
+
+    if (this.state.perfil == 1) {
+      return ( 
+        <li className="nav-item">
+           <NavItem>       
+               <NavLink href="#"><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></NavLink>  
+           </NavItem>  
+        </li>   
+       ); 
+    } else if (this.state.nome !== null){
+        return (
+          <li className="nav-item">
+            <NavItem>       
+              <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>              
+            </NavItem>                
+          </li>   
+        );
+  
+    }            
+  }
     //this.props.history.push('/');    
     //return(
-    // <h1> aqiui adas sdasd asas d sa</h1>
-    //);  
-     
-    verifica_menu() {
-      if (this.state.perfil == 1) {
-        return ( 
-          <li className="nav-item">
-             <NavItem>     
-                <NavLink href="#"><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></NavLink>                                 
-             </NavItem>  
-          </li>   
-         ); 
-      } else if (this.state.nome != null) {
-        return ( 
-          <li className="nav-item">
-             <NavItem>  
-                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>                              
-             </NavItem>  
-          </li>   
-         ); 
-      }            
-    }
-  
+    // <h1> aqiui adas sdasd asas d sa</h1>   //);   
   isOpen() {
     return(this.state.isOpen);
   } 
@@ -87,26 +90,35 @@ class menu_motoristaComponent extends React.Component  {
       this.state.isOpen = true;
     }    
   }
-  
-  
+
   render()
-  {     
-    
+  {  
+
  return (
-  <div>  
-  <div>                          
-  <Navbar color="#dc3545" light expand="md">
+  <div>    
+    <Navbar color="#dc3545" light expand="md">
         <NavbarBrand href="#"></NavbarBrand>
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.isOpen} navbar>
           <Nav className="ml-auto" navbar>            
-            {this.verifica_menu()}
+             {this.verifica_menu()}
             <NavItem>               
               <NavLink href="#">AVALIAR</NavLink>
             </NavItem>
-            <NavItem>               
-              <NavLink href="#">EVENTOS</NavLink>
-            </NavItem>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                   EVENTOS
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem href={"/criar_eventos/"+this.state.id}>
+                  CRIAR
+                </DropdownItem>
+                <DropdownItem href={"/listaeventocliente/"+this.state.id}>
+                  LISTAR
+                </DropdownItem>
+                <DropdownItem divider />                
+              </DropdownMenu>
+            </UncontrolledDropdown>
             <NavItem>               
               <NavLink href="#">CONTATO</NavLink>
             </NavItem>
@@ -115,10 +127,10 @@ class menu_motoristaComponent extends React.Component  {
                 ALTERAR
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={"/editar/"+this.state.id}>
+                <DropdownItem href={"/edit/"+this.state.id}>
                   MEUS DADOS
                 </DropdownItem>
-                <DropdownItem href={"/alterar_senha_motorista"}>
+                <DropdownItem href={"/alterar_senha"}>
                    SENHA
                 </DropdownItem>
                 <DropdownItem divider />                
@@ -129,7 +141,7 @@ class menu_motoristaComponent extends React.Component  {
             </NavItem>            
           </Nav>         
         </Collapse>
-      </Navbar>      
+      </Navbar>                                
       <div className="bg-danger text-center">
         <Link to='#'>
             <div className='thumbnail_logo'>
@@ -137,15 +149,14 @@ class menu_motoristaComponent extends React.Component  {
             </div>
         </Link>          
         <br/>
-     </div>                                   
-   </div> 
-</div>
+  </div>       
+                            
+  </div> 
  );  
  }
 }
-
 //export default cabecalhoComponent;
-export default withRouter(menu_motoristaComponent);
+export default withRouter(menu_matrizComponent);
 //export default cabecalho_clienteComponent;
 
 //ReactDOM.unmountComponentAtNode(document.getElementById('cabecalho'));

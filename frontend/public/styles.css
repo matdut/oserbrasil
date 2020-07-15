@@ -185,3 +185,14 @@
   -moz-box-shadow: 0px 0px 5px 5px #0099E0;
   box-shadow: 0px 0px 5px 5px #0099E0;
 }
+.MuiFormControl-marginNormal {
+  margin-top: 1px !important;
+  margin-bottom: 8px !important;
+}
+
+.MuiFormLabel-root {
+  color: rgba(0, 0, 0, 0.54);
+  padding: 0;
+  font-weight: 160 !important;  
+  font-size: 17px !important;
+}  

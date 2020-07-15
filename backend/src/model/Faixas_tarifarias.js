@@ -3,15 +3,24 @@ var sequelize = require('./database');
 // import Role for FK roleId
 //var Role = require('./Role');
 // name table
-var nametable = 'ocorrencia';
+var Matriz = require('./Matriz_tarifaria');
+var nametable = 'faixa_tarifarias';
 
-var Ocorrencia = sequelize.define(nametable,{
+var Faixa_tarifarias = sequelize.define(nametable,{
 
   id:{
     type:Sequelize.INTEGER,
     primaryKey:true,
     autoIncrement:true
   }, 
+  matrizId: {
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Matriz,
+      key: 'id'
+    } 
+  },
   faixa_inicial:  {  
     type: Sequelize.STRING(10) 
   },
@@ -26,6 +35,6 @@ var Ocorrencia = sequelize.define(nametable,{
   }  
 })
 
-//Cliente.belongsTo(Estado);
+//Faixa_tarifarias.belongsTo(Matriz);
 
-module.exports = Ocorrencia
+module.exports = Faixa_tarifarias
