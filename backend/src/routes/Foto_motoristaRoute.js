@@ -5,7 +5,6 @@ const multerConfig = require('../config/multer');
 const path = require("path");
 
 const Foto = require("../model/Foto_motorista");
-const Motorista = require("../model/Motorista");
 
 router.get("/get/:id", async (req, res) => {
  // const id = req.headers.id;  
@@ -26,18 +25,13 @@ router.get("/get/:id", async (req, res) => {
   //return res.json(posts);
 });
 
-
-router.put("/update/:id", multer(multerConfig).single("file"), async (req, res) => {
-  // parameter id get  
+router.put("/update/:id", multer(multerConfig).single('file'), async (req, res) => {
+     
   const { originalname: name, size, filename: key, location: url = ""} = req.file;
 
-  console.log(req.file); 
+  //console.log(req.file); 
   
-  const motoristaid = req.params.id;    
-
-  //const { motoristaid } = req.body;
-
-  console.log('motoristaid - '+motoristaid); 
+  const motoristaid = req.params.id;     
 
   const url2 = req.protocol + '://' + req.get('host')  
   //console.log('entrou aqui = '+id);

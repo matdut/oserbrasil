@@ -37,7 +37,7 @@ controllers.update = async (req, res) => {
 
   // parameter post
   const { nome, email, endereco, telefone1,
-    telefone2, senha, complemento,  celular, cidade, apolice, seguradoraId,
+    telefone2, senha, numero, complemento,  celular, cidade, apolice, seguradoraId,
     bairro, estadoId, cep, cpf, data_nascimento, carro, placa,
     ano, cor, bilingue, foto_blob, indicacao, situacaoId, perfilId} = req.body;
   
@@ -47,6 +47,7 @@ controllers.update = async (req, res) => {
     email: email,
     senha: senha,
     endereco: endereco,
+    numero: numero,  
     complemento: complemento,
     telefone1: telefone1,
     telefone2: telefone2,
@@ -115,7 +116,7 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { nome, email, endereco, telefone1,
+  const { nome, email, endereco, telefone1, numero, 
     telefone2, senha, complemento,  celular, cidade, apolice, seguradoraId,
     bairro, estadoId, cep, cpf, data_nascimento, carro, placa,
     ano, cor, bilingue, indicacao, situacaoId, perfilId, foto_blob } = req.body;    
@@ -128,6 +129,7 @@ controllers.create = async (req,res) => {
             email: email,
             senha: senha,
             endereco: endereco,
+            numero: numero,  
             complemento: complemento,
             telefone1: telefone1,
             telefone2: telefone2,

@@ -37,19 +37,8 @@ controllers.update = async (req, res) => {
   console.log('entrou aqui = '+id);
 
   // parameter post
-  const { nome,              
-    email,
-    senha,
-    endereco,
-    complemento,
-    telefone1,
-    telefone2,
-    celular,
-    cidade,
-    bairro,
-    estadoId,
-    cep,
-    tipo_cliente,
+  const { nome, email, senha, endereco, numero, complemento, telefone1,
+    telefone2, celular, cidade, bairro, estadoId, cep, tipo_cliente,
     cpf, data_nascimento, contato, cnpj, inscricao_estadual, nome_fantasia, situacaoId, perfilId} = req.body;
   // update data
   
@@ -58,6 +47,7 @@ controllers.update = async (req, res) => {
             email: email,
             senha: senha,
             endereco: endereco,
+            numero: numero,
             complemento: complemento,
             telefone1: telefone1,
             telefone2: telefone2,
@@ -124,18 +114,8 @@ controllers.create = async (req,res) => {
 
   // DATA parametros desde post
   const {nome,              
-    email,
-    senha,
-    endereco,
-    complemento,
-    telefone1,
-    telefone2,
-    celular,
-    cidade,
-    bairro,
-    estadoId,
-    cep,
-    tipo_cliente,
+    email, senha, endereco, numero, complemento, telefone1,
+    telefone2, celular, cidade, bairro, estadoId, cep, tipo_cliente,
     cpf,  data_nascimento, contato, cnpj, inscricao_estadual, nome_fantasia, situacaoId, perfilId } = req.body;
   //console.log("ROle es ==>"+role)
   //create
@@ -144,6 +124,7 @@ controllers.create = async (req,res) => {
     email: email,
     senha: senha,
     endereco: endereco,
+    numero: numero,
     complemento: complemento,
     telefone1: telefone1,
     telefone2: telefone2,

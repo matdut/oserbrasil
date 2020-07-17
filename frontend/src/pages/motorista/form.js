@@ -1,7 +1,8 @@
 import React  from 'react';
 //import { useHistory } from 'react-router-dom';
 //import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
-import { Form, Table } from 'reactstrap';
+
+import {Form, Table, Input, FormFeedback } from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -42,6 +43,7 @@ class EditComponent extends React.Component{
     campSenha:"",
     campSenhaTeste:"",
     campEndereco: "",
+    campNumero: "",
     campComplemento:"",
     campCelular:"",
     campCidade:"",
@@ -72,7 +74,11 @@ class EditComponent extends React.Component{
     listEstados:[],
     listSeguradoras:[],
     uploadedFiles: [],
-    fileFormatado: []
+    fileFormatado: [],
+    validate: {
+      emailState: '',
+      emailtesteState: '',
+    },
    }      
    this.estadoChange = this.estadoChange.bind(this); 
    this.seguradoraChange = this.seguradoraChange.bind(this);
@@ -85,7 +91,12 @@ class EditComponent extends React.Component{
    this.verificaEmail = this.verificaEmail.bind(this);
    this.verificaSenha = this.verificaSenha.bind(this);
    this.handleClick = this.handleClick.bind(this);
+   this.emailchange = this.emailchange.bind(this);   
+   this.emailtestechange = this.emailtestechange.bind(this);   
+   this.validaEmailChange = this.validaEmailChange.bind(this);
 
+   this.verificaEmail = this.verificaEmail.bind(this);   
+   this.verificaSenha = this.verificaSenha.bind(this);   
  }
  async componentDidMount(){
     this.setState({
@@ -94,7 +105,7 @@ class EditComponent extends React.Component{
     });
     this.loadEstados()
     this.loadSeguradoras()
-
+/*
     const response = await api.get(`/foto/motorista/get/${this.state.motoristId}`)
     .then(res=>{          
       if (res.data.data.length !== 0) { 
@@ -110,7 +121,7 @@ class EditComponent extends React.Component{
           }))
         });
       }  
-    })
+    }) */
     
  }
 
@@ -137,7 +148,36 @@ class EditComponent extends React.Component{
     this.setState({ campEmail: event.target.value}) 
   } 
 } 
+validateEmail(e) {
+  const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const { validate } = this.state
+    if (emailRex.test(e.target.value)) {
+      validate.emailState = 'has-success'     
+    } else {
+      validate.emailState = 'has-danger'
+    }
+    this.setState({ validate })
+}   
 
+validateEmailteste(e) {
+  const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const { validate } = this.state
+    if (emailRex.test(e.target.value)) {
+      validate.emailtesteState = 'has-success'     
+    } else {
+      validate.emailtesteState = 'has-danger'
+    }
+    this.setState({ validate })
+}   
+
+validaEmailChange = async (event) => {
+const { target } = event;
+const value = target.type === 'checkbox' ? target.checked : target.value;
+const { name } = target;
+await this.setState({
+[ name ]: value,
+});
+}
 verifica_menu() {
 
   if (this.state.perfil == 1) {
@@ -187,9 +227,9 @@ api.get(`/login/get/${this.state.campEmail}/${this.state.campSenha}`)
       .then(res=>{          
         if (res.data.data.length > 0) {                        
           
-          console.log(JSON.stringify(this.state.email, null, "    ")); 
-          console.log(JSON.stringify(this.state.senha, null, "    ")); 
-          console.log(JSON.stringify(res.data, null, "    ")); 
+         // console.log(JSON.stringify(this.state.email, null, "    ")); 
+          //console.log(JSON.stringify(this.state.senha, null, "    ")); 
+         // console.log(JSON.stringify(res.data, null, "    ")); 
     
           Swal.fire(
             'Mensagem',
@@ -205,7 +245,36 @@ api.get(`/login/get/${this.state.campEmail}/${this.state.campSenha}`)
           }        
           );           
     
-        } 
+        } else {
+
+          api.get(`/login/getMotoristaEmail/${this.state.campEmail}`)
+          .then(res=>{          
+            if (res.data.data.length > 0) {                        
+              
+             // console.log(JSON.stringify(this.state.email, null, "    ")); 
+              //console.log(JSON.stringify(this.state.senha, null, "    ")); 
+             // console.log(JSON.stringify(res.data, null, "    ")); 
+        
+              Swal.fire(
+                'Mensagem',
+                'Email já cadastrado.',
+                'error'
+              )        
+        
+              this.setState({
+                campEmail: "",
+                campSenha: "",
+                campEmailTeste: "",
+                campSenhaTeste: "",
+              }        
+              );           
+        
+            } 
+          })        
+          .catch(error=>{
+            alert("Error server "+error)
+          })     
+        }
       })        
       .catch(error=>{
         alert("Error server "+error)
@@ -244,47 +313,53 @@ celularchange(e) {
 }
 handleClick() {
   const base = this.state.campCep;
-  
-  buscadorcep(base.replace('-','')).
-     then(endereco => {           
-     // const url = baseUrl+"/estado/get/"+endereco.uf
-     // alert('baseUrl -'+ url);
-     api.get(`/estado/get/${endereco.uf}`)
-     .then(res=>{        
-        //alert('success - '+res.data.success);  
-        if (res.data.success == true) {      
-          //console.log(JSON.stringify(res.data.data, null, "    "));
-          //alert('estado Id - '+ res.data.data[0].id);                   
-         
-          this.setState({ 
-            campCep: endereco.cep,
-            campEndereco: endereco.logradouro,
-            campCidade: endereco.localidade,
-            campBairro: endereco.bairro,
-            campEstadoId: res.data.data[0].id, // endereco.uf,           
-            estado_selecionado: endereco.uf
+  if (base.length > 0) {
+    buscadorcep(base.replace('-','')).
+      then(endereco => {           
+      // const url = baseUrl+"/estado/get/"+endereco.uf
+      // alert('baseUrl -'+ url);
+      api.get(`/estado/get/${endereco.uf}`)
+      .then(res=>{        
+          //alert('success - '+res.data.success);  
+          if (res.data.data.length !== 0) {   
+            //console.log(JSON.stringify(res.data.data, null, "    "));
+            //alert('estado Id - '+ res.data.data[0].id);                           
+            this.setState({ 
+              campCep: endereco.cep,
+              campEndereco: endereco.logradouro,
+              campCidade: endereco.localidade,
+              campBairro: endereco.bairro,
+              campEstadoId: res.data.data[0].id, // endereco.uf,           
+              estado_selecionado: endereco.uf
 
-          }); 
-        } else {
+            }); 
+          } else {      
 
-          this.setState({ 
-            campCep: endereco.cep,
-            campEndereco: endereco.logradouro,
-            campCidade: endereco.localidade,
-            campBairro: endereco.bairro,
-            campEstadoId: 0, 
-            estado_selecionado: endereco.uf
+            Swal.fire(
+              'Mensagem',
+              'CEP não encontrado.',
+              'error'
+            )    
 
-          }); 
-        } 
-      })        
-      .catch(error=>{
-        alert("Error server "+error)
-      })
-         
-         //console.log(JSON.stringify(this.state, null, "    ")); 
-        // this.estadoChange = this.estadoChange.bind(this); 
-      });
+            this.setState({ 
+              campCep: "",
+              campEndereco: "",
+              campCidade: "",
+              campBairro: "",
+              campEstadoId: 0, 
+              estado_selecionado: ""
+
+            }); 
+          } 
+        })        
+        .catch(error=>{
+          alert("Error server "+error)
+        })
+          
+          //console.log(JSON.stringify(this.state, null, "    ")); 
+          // this.estadoChange = this.estadoChange.bind(this); 
+        });
+      }    
       
     //}
 /* 
@@ -348,6 +423,13 @@ seleciona(){
     return(this.state.campFoto);
   }
 }
+emailchange(e) {
+  this.setState({ campEmail: e.target.value })
+}
+emailtestechange(e) {
+  this.setState({ campEmailTeste: e.target.value })
+}
+
 handleUpload = files => {  
   
   //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));   
@@ -430,13 +512,43 @@ fileChangedHandler = (event) => {
             <div className="form-row">                
                 <div className="form-group col-md-3">
                   <label for="email1">Email *</label>
-                  <input type="text" className="form-control" placeholder=""                   
-                  value={this.state.campEmail} onChange={(value)=> this.setState({campEmail:value.target.value})} />
+                  <Input
+                    type="email"
+                    name="email"
+                    id="exampleEmail"
+                    placeholder=""
+                    value={this.state.campEmail}
+                    valid={ this.state.validate.emailState === 'has-success' }
+                    invalid={ this.state.validate.emailState === 'has-danger' }
+                    onChange={ (e) => {
+                                this.emailchange(e) 
+                                this.validateEmail(e)
+                                this.validaEmailChange(e)
+                              } }
+                  />  
+                  <FormFeedback valid>
+                       e-mail válido
+                  </FormFeedback>    
                 </div>
                 <div className="form-group col-md-3">
                   <label for="emailteste">Email *</label>
-                  <input type="email" className="form-control" placeholder="Repita o seu Email *" onBlur={this.verificaEmail}
-                  value={this.state.campEmailTeste} onChange={(value)=> this.setState({campEmailTeste:value.target.value})}/>
+                  <Input
+                    type="email"
+                    name="email"
+                    id="exampleEmail"
+                    placeholder=""
+                    value={this.state.campEmailTeste}
+                    valid={ this.state.validate.emailtesteState === 'has-success' }
+                    invalid={ this.state.validate.emailtesteState === 'has-danger' }
+                    onChange={ (e) => {
+                                this.emailtestechange(e) 
+                                this.validateEmailteste(e)
+                                this.validaEmailChange(e)
+                              } }
+                  />  
+                  <FormFeedback valid>
+                       e-mail válido
+                  </FormFeedback>        
                 </div>   
                 <div className="form-group col-md-3">
                   <label for="senha">Senha * </label>
@@ -497,13 +609,19 @@ fileChangedHandler = (event) => {
               </div>     
             </div>         
             <div className="form-row">         
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-4">
                 <label for="inputEmail4">Endereço *</label>
                 <input type="text" className="form-control"  placeholder=""  
                 value={this.state.campEndereco} 
                 onChange={(value)=> this.setState({campEndereco:value.target.value})} maxlength="60"/>
               </div>
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-4">
+                <label for="inputEmail4">Número *</label>                
+                <input type="text" className="form-control"  placeholder=""  
+                value={this.state.campNumero} 
+                onChange={(value)=> this.setState({campNumero:value.target.value})} maxlength="20"/>
+              </div>
+              <div className="form-group col-md-4">
                 <label for="inputAddress">Complemento *</label>
                 <input type="text" className="form-control" placeholder="" 
                 value={this.state.campComplemento} 
@@ -546,12 +664,12 @@ fileChangedHandler = (event) => {
                   value={this.state.campTelefone1} onChange={this.telefone1change} />
               </div>
               <div className="form-group col-md-3">
-                <label for="inputAddress">Telefone2 *</label>
+                <label for="inputAddress">Telefone2 </label>
                 <input type="text" className="form-control" placeholder="" 
                 value={this.state.campTelefone2} onChange={this.telefone2change} />
               </div>
               <div className="form-group col-md-3">
-                <label for="inputAddress">Celular *</label>
+                <label for="inputAddress">Celular </label>
                 <input type="text" className="form-control" placeholder="" 
                 value={this.state.campCelular} onChange={this.celularchange} />
               </div>
@@ -676,87 +794,128 @@ fileChangedHandler = (event) => {
 
  sendSave(){   
   
-      /// por si no ha seleccionado nada de role  
-      if (this.state.campTelefone1=="") {
-        //alert("Digite o campo de telefone")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo de telefone',
-          'error'
-        ) 
-      }
-      else if (this.state.campNome=="") {
+  if (this.state.campEmail=="") {
+    //alert("Digite o campo de email")
+    Swal.fire(
+      'Alerta',
+      'Digite o campo email',
+      'error'
+    )
+  } else if (this.state.campSenha=="") {
+    //alert("Digite o campo de telefone")
+    Swal.fire(
+      'Alerta',
+      'Digite o campo de senha',
+      'error'
+    )                   
+  }       
+  else if (this.state.campEmail !== this.state.campEmailTeste) {  
+    Swal.fire(
+      'Alerta',
+      'Emails diferentes',
+      'error'
+    )                           
+  } 
+  else if (this.state.campSenha !== this.state.campSenhaTeste) {  
+    Swal.fire(
+      'Alerta',
+      'Senhas diferentes',
+      'error'
+    )                           
+  } else if (this.state.campCpf=="") {
+      //alert("Digite o campo de nome")
+      Swal.fire(
+        'Alerta',
+        'Digite o campo cpf',
+        'error'
+      )
+  } else if (this.state.campNome=="") {
         //alert("Digite o campo de nome")
         Swal.fire(
           'Alerta',
           'Digite o campo nome',
           'error'
         )
-      }
-      else if (this.state.campCpf=="") {
-        //alert("Digite o campo de nome")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo cpf',
-          'error'
-        )
-      }
-      else if (this.state.campCep=="") {
-        //alert("Digite o campo de endereço")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo Cep',
-          'error'
-        )
-      }
-      else if (this.state.campEstadoId=="") {
-        //alert("Digite o campo de endereço")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo Estado',
-          'error'
-        )
-      }
-      else if (this.state.campEmail=="") {
-        //alert("Digite o campo de email")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo email',
-          'error'
-        )
-      } 
-      else if (this.state.campEndereco=="") {
-        //alert("Digite o campo de endereço")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo de endereço',
-          'error'
-        )
-      }
-      else if (this.state.campCidade=="") {
-        //alert("Digite o campo de nome")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo Cidade',
-          'error'
-        )
-      }
-      else if (this.state.campBairro=="") {
-        //alert("Digite o campo de endereço")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo de bairro',
-          'error'
-        )
-      }
-      else if (this.state.campData_nascimento=="") {
-        //alert("Digite o campo de endereço")
-        Swal.fire(
-          'Alerta',
-          'Digite o campo Data de nascimento',
-          'error'
-        )
-      }
+    
+   } else if (this.state.campCep=="") {
+     //alert("Digite o campo de endereço")
+     Swal.fire(
+       'Alerta',
+       'Digite o campo Cep',
+       'error'
+     )
+   }
+   else if (this.state.campEndereco=="") {
+   //alert("Digite o campo de endereço")
+     Swal.fire(
+       'Alerta',
+       'Digite o campo de endereço',
+       'error'
+     )  
+     } else if (this.state.campNumero=="") {
+       //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo de número',
+         'error'
+       )     
+     } 
+     else if (this.state.campComplemento=="") {
+     //alert("Digite o campo de endereço")
+     Swal.fire(
+       'Alerta',
+       'Digite o campo de complemento',
+       'error'
+     )  
+     }
+     else if (this.state.campBairro=="") {
+       //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo de bairro',
+         'error'
+       )
+     }
+     else if (this.state.campCidade=="") {
+       //alert("Digite o campo de nome")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo Cidade',
+         'error'
+       )
+    } else if (this.state.campEstadoId == 0) {
+     //alert("Digite o campo de endereço")
+     Swal.fire(
+       'Alerta',
+       'Selecione o campo Estado',
+       'error'
+     )     
+   }
+   else if (this.state.campData_nascimento==0) {
+     //alert("Digite o campo de endereço")
+     Swal.fire(
+       'Alerta',
+       'Digite o campo Data de nascimento',
+       'error'
+     )
+   }  
+   else if (this.state.campTelefone1=="") {
+       //alert("Digite o campo de telefone")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo de telefone',
+         'error'
+       )     
+   } 
+   else if (this.state.campTelefone1.length < 14) {
+     //alert("Digite o campo de telefone")
+     Swal.fire(
+       'Alerta',
+       'Campo Telefone está faltando número.',
+       'error'
+     )               
+       
+     }
       else {              
         
        //console.log( JSON.stringify(this.state.uploadedFiles, null, "    ") ); 
@@ -765,6 +924,7 @@ fileChangedHandler = (event) => {
           nome: this.state.campNome, 
           email: this.state.campEmail, 
           endereco: this.state.campEndereco, 
+          numero: this.state.numero, 
           telefone1: this.state.campTelefone1,
           telefone2: this.state.campTelefone2, 
           senha: this.state.campSenha, 
@@ -797,9 +957,12 @@ fileChangedHandler = (event) => {
 
               const formData = new FormData();
 
+            //  console.log(" upload - "+JSON.stringify(this.state.uploadedFiles, null, "    ") ); 
+
               formData.append("file", this.state.uploadedFiles[0].file, this.state.uploadedFiles[0].name)                   
               formData.append('motoristaid', response.data.data.id);
-          
+              
+           //   console.log("formData - "+JSON.stringify(formData, null, "    ") ); 
               //console.log('form data ',formData);
               
               //const cpUpload = upload.fields([{ name: 'file', file: this.state.uploadedFiles[0].file, name: this.state.uploadedFiles[0].name },

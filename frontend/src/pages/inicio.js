@@ -6,30 +6,11 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Cabecalho from './cabecalho';
 
 const Inicio = props => { 
-  //const login = localStorage.getItem('logemail');              
-  //const nome = localStorage.getItem('lognome');
-
-  //class inicioComponent extends React.Component  {
-/*
-  constructor(props){
-    super(props);
-  }
-
-  componentDidMount(){    
-      
-  }
-
-  render()
-  {    */
   
-
     return (             
       <div>
         <Cabecalho />
-        <br/>      
-          <Link to='/maps'>
-                        Mapas
-          </Link>   
+        <br/>                
         <br/>
         <div className="container-fluid">                       
             <div className='row'>

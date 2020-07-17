@@ -3,7 +3,8 @@ import React from 'react';
 import Menu from '../../pages/cabecalho' ;
 import Menu_motorista from '../motorista/menu_motorista' ;
 import Menu_administrador from '../administrador/menu_administrador';
-import { Form, Table, Media } from 'reactstrap';
+import {Form, Table, Input, FormFeedback } from 'reactstrap';
+
 import ImageLoader from 'react-image-file';
 
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -45,6 +46,7 @@ class EditarComponent extends React.Component{
       campTelefone2:"",
       campSenha:"",
       campEndereo: "",
+      campNumero: "",
       campComplemento:"",
       campCelular:"",
       campCidade:"",
@@ -73,6 +75,11 @@ class EditarComponent extends React.Component{
       foto_img_Motorista: "",
       uploadedFiles: [],
       fileFormatado: [],
+      atualizar_foto: false,
+      validate: {
+        emailState: '',
+        emailtesteState: '',
+      }, 
       files: []  
      }
       this.seguradoraChange = this.seguradoraChange.bind(this);
@@ -85,6 +92,12 @@ class EditarComponent extends React.Component{
       this.telefone2change = this.telefone2change.bind(this);
       this.celularchange = this.celularchange.bind(this);
       this.data_nascimentochange = this.data_nascimentochange.bind(this);     
+      this.emailchange = this.emailchange.bind(this);   
+      this.emailtestechange = this.emailtestechange.bind(this);   
+      this.validaEmailChange = this.validaEmailChange.bind(this);
+      
+      this.verificaEmail = this.verificaEmail.bind(this);   
+      this.verificaSenha = this.verificaSenha.bind(this);   
   } 
 
   getFiles(files){
@@ -145,18 +158,28 @@ class EditarComponent extends React.Component{
     api.get(`/foto/get/${userId}`)
     .then(res=>{
       if (res.data.success) {     
-        //console.log( JSON.stringify(imagem, null, "    ") );
-        this.setState({
-          uploadedFiles: res.data.data.map(file => ({
+        //console.log(" res.data.data "+ JSON.stringify(res.data.data, null, "    ") );       
+        
+        const uploadedFiles = res.data.data.map(file => ({         
+            file: ({
+               path: file.name
+            }),  
             id: file._id,
             name: file.name,
             readableSize: filesize(file.size),
+            progress: 0,
             preview: file.url,
-            uploaded: true,
+            uploaded: false,
             url: file.url,
+            error: false,
             motoristaId: file.motoristaId
-          }))
-        });     
+          }));        
+        
+        this.setState({
+          //uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
+          uploadedFiles: uploadedFiles
+        });
+
       }  
     })
     .catch(error=>{
@@ -178,6 +201,7 @@ class EditarComponent extends React.Component{
           campSenha: data.senha,
           campSenhaTeste: data.senha,
           campEndereco: data.endereco,
+          campNumero: data.numero,
           campComplemento: data.complemento,
           campTelefone1: data.telefone1,
           campTelefone2: data.telefone2,
@@ -202,7 +226,7 @@ class EditarComponent extends React.Component{
           foto_url: data.foto_url
         })
 
-        console.log( JSON.stringify(data, null, "    ") );
+        //console.log( JSON.stringify(data, null, "    ") );
         
       }
       else {
@@ -302,6 +326,10 @@ class EditarComponent extends React.Component{
       })
      }
   } 
+  emailtestechange(e) {
+    this.setState({ campEmailTeste: e.target.value })
+  }
+  
   estadoChange(event) {     
     this.setState({
         campEstadoId: event.target.value
@@ -364,7 +392,8 @@ class EditarComponent extends React.Component{
      
     this.setState({
       //uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
-      uploadedFiles: uploadedFiles
+      uploadedFiles: uploadedFiles,
+      atualizar_foto: true
     });
   
    // uploadedFiles.forEach(this.processUpload);
@@ -390,48 +419,61 @@ class EditarComponent extends React.Component{
     this.setState({ campFoto: event.target.files[0] })
   }
 
+  emailchange(e) {
+    this.setState({ campEmail: e.target.value })
+  }
+
   handleClick() {
     //console.log(JSON.stringify(this.state, null, "    "));
     const base = this.state.campCep;
     //const estadoId = "";
+    if (base.length > 0) { 
+      buscadorcep(base.replace('-','')).
+        then(endereco => {           
+          //const url = baseUrl+"/estado/get/"+endereco.uf
+          //alert('baseUrl -'+ baseUrl);
+          
+          api.get(`/estado/get/${endereco.uf}`)
+          .then(res=>{        
+           // alert('success - '+res.data.success);  
+            if (res.data.data.length !== 0) {  
+              //console.log(JSON.stringify(res.data.data[0].id, null, "    "));
+              //alert('estado Id - '+ res.data.data[0].id);                   
+              
+              this.setState({ 
+                campCep: endereco.cep,
+                campEndereco: endereco.logradouro,
+                campCidade: endereco.localidade,
+                campBairro: endereco.bairro,
+                campEstadoId: res.data.data[0].id, // endereco.uf,           
+                estado_selecionado: endereco.uf
     
-    buscadorcep(base.replace('-','')).
-       then(endereco => {           
-        //const url = baseUrl+"/estado/get/"+endereco.uf
-        //alert('baseUrl -'+ baseUrl);
-        api.get(`/estado/get/${endereco.uf}`)
-        .then(res=>{        
-          alert('success - '+res.data.success);  
-          if (res.data.success == true) {      
-            //console.log(JSON.stringify(res.data.data[0].id, null, "    "));
-            //alert('estado Id - '+ res.data.data[0].id);                   
-           
-            this.setState({ 
-              campCep: endereco.cep,
-              campEndereco: endereco.logradouro,
-              campCidade: endereco.localidade,
-              campBairro: endereco.bairro,
-              campEstadoId: 19, //res.data.data[0].id, // endereco.uf,           
-              estado_selecionado: endereco.uf
-  
-            }); 
-          } else {
-  
-            this.setState({ 
-              campCep: endereco.cep,
-              campEndereco: endereco.logradouro,
-              campCidade: endereco.localidade,
-              campBairro: endereco.bairro,
-              campEstadoId: 0, 
-              estado_selecionado: endereco.uf
-  
-            }); 
-          } 
-        })        
-        .catch(error=>{
-          alert("Error server "+error)
-        })           
-        });  
+              }); 
+            } else {
+    
+              Swal.fire(
+                'Mensagem',
+                'CEP não encontrado.',
+                'error'
+              )    
+
+              
+              this.setState({ 
+                campCep: "",
+                campEndereco: "",
+                campCidade: "",
+                campBairro: "",
+                campEstadoId: 0, 
+                estado_selecionado: ""
+    
+              }); 
+            } 
+          })        
+          .catch(error=>{
+            alert("Error server "+error)
+          })           
+          });  
+      }    
   }
 
   fileSelectedHandler = event => {
@@ -468,6 +510,36 @@ class EditarComponent extends React.Component{
      } 
    
    }
+   validateEmail(e) {
+    const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const { validate } = this.state
+      if (emailRex.test(e.target.value)) {
+        validate.emailState = 'has-success'     
+      } else {
+        validate.emailState = 'has-danger'
+      }
+      this.setState({ validate })
+  }   
+  
+  validateEmailteste(e) {
+    const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const { validate } = this.state
+      if (emailRex.test(e.target.value)) {
+        validate.emailtesteState = 'has-success'     
+      } else {
+        validate.emailtesteState = 'has-danger'
+      }
+      this.setState({ validate })
+  }   
+  
+  validaEmailChange = async (event) => {
+  const { target } = event;
+  const value = target.type === 'checkbox' ? target.checked : target.value;
+  const { name } = target;
+  await this.setState({
+  [ name ]: value,
+  });
+  }
 
   render(){
     const { uploadedFiles } = this.state;
@@ -486,13 +558,43 @@ class EditarComponent extends React.Component{
             <div className="form-row">                
                 <div className="form-group col-md-3">
                   <label for="email1">Email *</label>
-                  <input type="text" className="form-control" placeholder=""                   
-                  value={this.state.campEmail} onChange={(value)=> this.setState({campEmail:value.target.value})} />
+                  <Input
+                    type="email"
+                    name="email"
+                    id="exampleEmail"
+                    placeholder=""
+                    value={this.state.campEmail}
+                    valid={ this.state.validate.emailState === 'has-success' }
+                    invalid={ this.state.validate.emailState === 'has-danger' }
+                    onChange={ (e) => {
+                                this.emailchange(e) 
+                                this.validateEmail(e)
+                                this.validaEmailChange(e)
+                              } }
+                  />  
+                  <FormFeedback valid>
+                       e-mail válido
+                  </FormFeedback>    
                 </div>
                 <div className="form-group col-md-3">
                   <label for="emailteste">Email *</label>
-                  <input type="email" className="form-control" placeholder="Repita o seu Email *" onBlur={this.verificaEmail}
-                  value={this.state.campEmailTeste} onChange={(value)=> this.setState({campEmailTeste:value.target.value})}/>
+                  <Input
+                    type="email"
+                    name="email"
+                    id="exampleEmail"
+                    placeholder=""
+                    value={this.state.campEmailTeste}
+                    valid={ this.state.validate.emailtesteState === 'has-success' }
+                    invalid={ this.state.validate.emailtesteState === 'has-danger' }
+                    onChange={ (e) => {
+                                this.emailtestechange(e) 
+                                this.validateEmailteste(e)
+                                this.validaEmailChange(e)
+                              } }
+                  />  
+                  <FormFeedback valid>
+                       e-mail válido
+                  </FormFeedback>    
                 </div>               
             </div>   
             <div className="form-row"> 
@@ -542,11 +644,17 @@ class EditarComponent extends React.Component{
               </div>        
            </div>                       
             <div className="form-row">         
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-4">
                 <label for="inputEmail4">Endereço *</label>
                 <input type="text" className="form-control"  placeholder=""  value={this.state.campEndereco} onChange={(value)=> this.setState({campEndereco:value.target.value})}/>
               </div>
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-4">
+                <label for="inputEmail4">Número *</label>                
+                <input type="text" className="form-control"  placeholder=""  
+                value={this.state.campNumero} 
+                onChange={(value)=> this.setState({campNumero:value.target.value})} maxlength="20"/>
+              </div>
+              <div className="form-group col-md-4">
                 <label for="inputAddress">Complemento *</label>
                 <input type="text" className="form-control" placeholder="" value={this.state.campComplemento} onChange={(value)=> this.setState({campComplemento:value.target.value})}/>
               </div>
@@ -686,23 +794,142 @@ class EditarComponent extends React.Component{
   
    sendUpdate(){
 
+    if (this.state.campEmail=="") {
+      //alert("Digite o campo de email")
+      Swal.fire(
+        'Alerta',
+        'Digite o campo email',
+        'error'
+      )
+    } else if (this.state.campSenha=="") {
+      //alert("Digite o campo de telefone")
+      Swal.fire(
+        'Alerta',
+        'Digite o campo de senha',
+        'error'
+      )                   
+    }       
+    else if (this.state.campEmail !== this.state.campEmailTeste) {  
+      Swal.fire(
+        'Alerta',
+        'Emails diferentes',
+        'error'
+      )                           
+    } 
+    else if (this.state.campSenha !== this.state.campSenhaTeste) {  
+      Swal.fire(
+        'Alerta',
+        'Senhas diferentes',
+        'error'
+      )                           
+    } else if (this.state.campCpf=="") {
+        //alert("Digite o campo de nome")
+        Swal.fire(
+          'Alerta',
+          'Digite o campo cpf',
+          'error'
+        )
+    } else if (this.state.campNome=="") {
+          //alert("Digite o campo de nome")
+          Swal.fire(
+            'Alerta',
+            'Digite o campo nome',
+            'error'
+          )
+      
+     } else if (this.state.campCep=="") {
+       //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo Cep',
+         'error'
+       )
+     }
+     else if (this.state.campEndereco=="") {
+     //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo de endereço',
+         'error'
+       )  
+       } else if (this.state.campNumero=="") {
+         //alert("Digite o campo de endereço")
+         Swal.fire(
+           'Alerta',
+           'Digite o campo de número',
+           'error'
+         )     
+       } 
+       else if (this.state.campComplemento=="") {
+       //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo de complemento',
+         'error'
+       )  
+       }
+       else if (this.state.campBairro=="") {
+         //alert("Digite o campo de endereço")
+         Swal.fire(
+           'Alerta',
+           'Digite o campo de bairro',
+           'error'
+         )
+       }
+       else if (this.state.campCidade=="") {
+         //alert("Digite o campo de nome")
+         Swal.fire(
+           'Alerta',
+           'Digite o campo Cidade',
+           'error'
+         )
+      } else if (this.state.campEstadoId == 0) {
+       //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Selecione o campo Estado',
+         'error'
+       )     
+     }
+     else if (this.state.campData_nascimento==0) {
+       //alert("Digite o campo de endereço")
+       Swal.fire(
+         'Alerta',
+         'Digite o campo Data de nascimento',
+         'error'
+       )
+     }  
+     else if (this.state.campTelefone1=="") {
+         //alert("Digite o campo de telefone")
+         Swal.fire(
+           'Alerta',
+           'Digite o campo de telefone',
+           'error'
+         )     
+     } 
+     else if (this.state.campTelefone1.length < 14) {
+       //alert("Digite o campo de telefone")
+       Swal.fire(
+         'Alerta',
+         'Campo Telefone está faltando número.',
+         'error'
+       )               
+         
+       }
+        else {   
+    //event.preventDefault();
     //console.log('atualizar ');
     // get parameter id
     let userId = this.props.match.params.id;
     // url de backend
-    //console.log('user id - '+userId);
-
-     //const baseUrl = "http://34.210.56.22:3333/motorista/update/"+userId
-     //const url = baseUrl+"/motorista/update/"+userId
-    // parameter data post
-    //console.log('baseURL- '+baseUrl);
-   // console.log( JSON.stringify(this.state, null, "    ") );
+    //console.log('user id - '+userId);  
     
     const datapost = {
       nome: this.state.campNome,              
       email: this.state.campEmail,
       senha: this.state.campSenha,
       endereco: this.state.campEndereco,
+      numero: this.state.campNumero,
       complemento: this.state.campComplemento,
       telefone1: this.state.campTelefone1,
       telefone2: this.state.campTelefone2,
@@ -725,23 +952,24 @@ class EditarComponent extends React.Component{
       apolice: this.state.campApolice,
       seguradoraId: this.state.campSeguradoraId 
     }
-    //console.log('atualizar -'+JSON.stringify(datapost, null, "    ") );
+    //console.log('atualizar11 -'+JSON.stringify(datapost, null, "    ") );
+   
     
     api.put(`/motorista/update/${userId}`, datapost)
     .then(response => {
+      //console.log('motorista -'+JSON.stringify(response.data, null, "    ") );
       if (response.data.success) {
-       //alert(response.data.message)
-          const formData = new FormData();
-
-              formData.append("file", this.state.uploadedFiles[0].file, this.state.uploadedFiles[0].name)                   
-              formData.append('motoristaid', response.data.data.id);
           
-              //console.log('form data ',formData);
+         if (this.state.atualizar_foto) {
+              const formData = new FormData();
+              //formData.append("motoristaid", userId);
+              formData.append('file', this.state.uploadedFiles[0].file, this.state.uploadedFiles[0].name);                                                      
               
-              //const cpUpload = upload.fields([{ name: 'file', file: this.state.uploadedFiles[0].file, name: this.state.uploadedFiles[0].name },
               // { name: 'body', id: response.data.data.id }])
               api.put(`/foto/update/${userId}`, formData)
                 .then(response => {
+               //   console.log('retorno foto -'+JSON.stringify(response.data, null, "    ") );
+                  
                   this.updateFile(this.state.uploadedFiles[0].id, {
                     uploaded: true,
                     id: response.data._id,
@@ -753,30 +981,30 @@ class EditarComponent extends React.Component{
                     error: true
                   });
                 }); 
+          }      
 
-       Swal.fire(
-        'Alterado',
-        'Você alterou os dados com sucesso.',
-        'success'
-      )  
-      
+          Swal.fire(
+            'Alterado',
+            'Você alterou os dados com sucesso.',
+            'success'
+          )       
 
-      if (this.state.perfil == 1) {        
-        this.props.history.push('/listar');
-      } else {
-        this.props.history.push('/area_motorista');
-      }
-       
-       
-      }
-      else {
-        alert("Error")
-      }
-    })
-    .catch ( error => {
-      alert("Error 325 ")
-    })
-
+          if (this.state.perfil == 1) {        
+            this.props.history.push('/listar');
+          } else {
+            this.props.history.push('/area_motorista');
+          }
+          
+          
+          }
+          else {
+            alert("Error")
+          }
+        })
+        .catch ( error => {
+          alert("Error 325 ")
+        })
+      }  
   }
 
 

@@ -41,7 +41,11 @@ var Eventos = sequelize.define(nametable,{
     type: Sequelize.STRING(100),
     allowNull: false,     
   },
-  data_evento: {
+  data_inicio_evento: {
+    type: Sequelize.DATEONLY,
+    allowNull: false,     
+  },
+  data_final_evento: {
     type: Sequelize.DATEONLY,
     allowNull: false,     
   },

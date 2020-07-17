@@ -35,15 +35,7 @@ class sobreComponent extends React.Component  {
     return (
         <div>
         <Cabecalho />
-        <br/>    
-        <div className="container" style={{ width: "600px" }}>
-            <div className="my-3">
-                <h3>bezkoder.com</h3>
-                <h4>React Hooks File Upload</h4>
-            </div>
-
-            <FileUpload />
-        </div>
+        <br/>         
         <div>    
       </div>        
         <br/>

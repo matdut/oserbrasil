@@ -28,7 +28,7 @@ var Cliente = sequelize.define(nametable,{
      }, 
   },
   endereco: {        
-    type: Sequelize.STRING(250), 
+    type: Sequelize.STRING(100), 
     allowNull: false,
   },
   telefone1: {
@@ -39,32 +39,28 @@ var Cliente = sequelize.define(nametable,{
   },
   telefone2: { 
     type: Sequelize.STRING(16),
-    validate: {
-      len: [8, 15],
-    }, 
+    allowNull: true,    
   },
   senha: { 
     type: Sequelize.STRING(20), 
     allowNull: false,
   },
   complemento: {
-    type: Sequelize.STRING(250),
+    type: Sequelize.STRING(60),
   }, 
   numero: {
-    type: Sequelize.STRING(10),
+    type: Sequelize.STRING(15),
   }, 
   celular: {
     type: Sequelize.STRING(16), 
-    validate: {
-      len: [8, 15],
-    }, 
+    allowNull: true,   
   },
   cidade: {
-    type: Sequelize.STRING(25), 
+    type: Sequelize.STRING(50), 
     allowNull: false,
   },
   bairro: { 
-    type: Sequelize.STRING(25), 
+    type: Sequelize.STRING(75), 
     allowNull: false,
   },  
   cep: {
@@ -76,19 +72,21 @@ var Cliente = sequelize.define(nametable,{
     allowNull: false, 
   },
   cpf: { 
-    type: Sequelize.STRING(20), 
+    type: Sequelize.STRING(14), 
     allowNull: true,
   },
   data_nascimento: {
-    type: Sequelize.DATEONLY,
-    allowNull: true,    
+    type: Sequelize.DATEONLY,   
   },
   cnpj: {
-    type: Sequelize.STRING(25),
+    type: Sequelize.STRING(18),
     allowNull: true,
   },
   inscricao_estadual: {
-    type: Sequelize.STRING(25),
+    type: Sequelize.STRING(15),
+  },
+  inscricao_municipal: {
+    type: Sequelize.STRING(15),
   },
   nome_fantasia: {
     type: Sequelize.STRING(150),
@@ -131,10 +129,11 @@ Cliente.belongsTo(Estado);
 Cliente.belongsTo(Perfil);
 Cliente.belongsTo(Situacao);
 
+/*
 Cliente.hasMany(Cartao, { as: "cartao_credito" });
 Cartao.belongsTo(Cliente, {
   foreignKey: "clienteId",
   as: "cliente",
 });
-
+*/
 module.exports = Cliente

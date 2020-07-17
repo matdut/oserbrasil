@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const Matrix_tarifariaController = require('../controllers/Matrix_tarifariaController');
+const Matriz_tarifariaController = require('../controllers/Matriz_tarifariaController');
 
-router.get('/list',Matrix_tarifariaController.list);
-router.post('/create',Matrix_tarifariaController.create);
-router.get('/get/:id', Matrix_tarifariaController.get);
-router.put('/update/:id',Matrix_tarifariaController.update);
-router.delete('/delete/:id',Matrix_tarifariaController.delete);
+router.get('/list',Matriz_tarifariaController.list);
+router.post('/create',Matriz_tarifariaController.create);
+router.get('/get/:id', Matriz_tarifariaController.get);
+router.put('/update/:id',Matriz_tarifariaController.update);
+router.delete('/delete/:id',Matriz_tarifariaController.delete);
 
 //router.get('/find/:id',Matrix_tarifariaController.findMatrizById);
 

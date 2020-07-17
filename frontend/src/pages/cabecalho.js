@@ -48,10 +48,7 @@ const Cabecalho = props => {
             </NavItem>
             <NavItem>               
               <NavLink href="/contato">CONTATO</NavLink>
-            </NavItem>          
-            <NavItem>               
-              <NavLink href="/maps">MAPS</NavLink>
-            </NavItem>                  
+            </NavItem>                                
             <NavItem>
               <NavLink href="/login"><i className="fa fa-sign-in"></i> ENTRAR </NavLink>
             </NavItem>            
@@ -61,7 +58,7 @@ const Cabecalho = props => {
        <div className="bg-danger text-center">
         <Link to='#'>
             <div className='thumbnail_logo'>
-                <img src="logo_oser.jpeg" className="img-thumbnail"  width="100" height="100"/>                               
+                <img src="logo_oser.jpeg"/>                               
             </div>
         </Link>          
         <br/>

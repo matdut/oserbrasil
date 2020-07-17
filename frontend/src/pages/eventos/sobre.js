@@ -3,10 +3,6 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Cabecalho from './cabecalho';
-import FileUpload from "../pages/FileUpload";
-
-
-
 class sobre5Component extends React.Component  {
 //const Sobre = props => {
     constructor(props){

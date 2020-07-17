@@ -19,12 +19,23 @@ class Alterar_senha extends React.Component  {
         campSenha:"",
         campSenhaTeste:"",
         campSenhaAnterior:""
-    }      
+    }  
+    this.verificaSenha = this.verificaSenha.bind(this);   
   }
 
   componentDidMount(){   
   }
-  
+
+  verificaSenha(event){
+    // alert('verificasenha');
+   if (this.state.campSenha !== this.state.campSenhaTeste) {  
+
+     Swal.fire(
+       'Alerta',
+       'Senha diferente, favor acertar',
+       'error'
+     )}
+   } 
   sendUpdate(userId){
   
    // let userId = this.props.match.params.id;
@@ -39,9 +50,10 @@ class Alterar_senha extends React.Component  {
     const datapost = {            
       senha: this.state.campSenha      
     }
-    //console.log( JSON.stringify(datapost, null, "    ") );
+   // console.log( JSON.stringify(datapost, null, "    ") );
+   // console.log( JSON.stringify(userId, null, "    ") );
     
-    api.post(`/cliente/update/${userId}`, datapost)
+    api.put(`/cliente/update/${userId}`, datapost)
     .then(response => {
       if (response.data.success) {
        //alert(response.data.message)
@@ -64,8 +76,9 @@ class Alterar_senha extends React.Component  {
       }
     })
     .catch ( error => {
-      alert("Error 325 ")
+      alert("Altaração com erro  ")
     })  
+  
   }  
 
   verifica_senha_anterior(){ 
@@ -73,33 +86,52 @@ class Alterar_senha extends React.Component  {
     //const url = baseUrl+"/login/get/"+localStorage.getItem('logemail')+"/"+this.state.campSenhaAnterior
     //console.log( JSON.stringify(url, null, "    ") );    
     //console.log( JSON.stringify(this.state.campSenhaAnterior, null, "    ") );        
-    
-    api.get(`/login/get/${localStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
-    .then(res=>{
-      if (res.data.success) {
-        const data = res.data.data[0]        
-        if (data.senha == this.state.campSenhaAnterior) {
-            this.onAlterar(data.id);
-        } else {
-            Swal.fire(
-                'Não Alterado',
-                'Senha informada anterior não bate com a cadastrada',
-                'error'
-            )      
-        }        
-      }
-      else {
-        Swal.fire(
-            'Erro',
-            'Erro não previsto',
-            'error'
-        )      
-      }
-    })
-    .catch(error=>{
-      alert("Error server "+error)
-    })
-  
+   if (this.state.campSenhaAnterior !== "")  {
+    if (this.state.campSenha === this.state.campSenhaTeste) {        
+      api.get(`/login/get/${localStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
+      .then(res=>{
+
+        const data = res.data.data        
+        if (data.length > 0 ) {
+          
+          const data = res.data.data[0]        
+          if (data.senha == this.state.campSenhaAnterior) {
+            if (this.state.campSenha !== null) {
+              this.onAlterar(data.id);
+            } else {
+              Swal.fire(
+                'Mensagem',
+                'Senha nova está em branco',
+                'success'
+               )  
+            }              
+          } else {
+              Swal.fire(
+                  'Não Alterado',
+                  'Senha informada anterior não bate com a cadastrada',
+                  'error'
+              )      
+          }        
+        }
+        else {
+          Swal.fire(
+              'Alerta',
+              'Senha anterior digitada não encontrada',
+              'error'
+          )      
+        }
+      })
+      .catch(error=>{
+        alert("Erro na conexão"+error)
+      })
+     } else {
+      Swal.fire(
+        'Alerta',
+        'Senha diferente, favor acertar',
+        'error'
+      )      
+     }  
+    } 
    }  
 
    onAlterar(id){
@@ -150,7 +182,7 @@ class Alterar_senha extends React.Component  {
                     onChange={(value)=> this.setState({campSenhaTeste:value.target.value})} />
                     </div>                          
                 </div>    
-                <button type="submit" className="btn btn-primary" onClick={()=>this.verifica_senha_anterior()}>Cadastrar</button>     
+                <button type="submit" className="btn btn-primary" onClick={()=>this.verifica_senha_anterior()}>Atualizar</button>     
             </div>
           </div> 
       </div>    

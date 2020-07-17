@@ -60,7 +60,7 @@ controllers.listaevento = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { cliente_cnpj, cliente_nome, ordem_servico, nome_evento, data_evento, 
+  const { cliente_cnpj, cliente_nome, ordem_servico, nome_evento, data_inicio_evento, data_final_evento, 
          tipoTransporteId, valor_total, cliente_logado_Id } = req.body;
   
   console.log(req.body);          
@@ -71,7 +71,8 @@ controllers.create = async (req,res) => {
     cliente_nome: cliente_nome, 
     ordem_servico: ordem_servico, 
     nome_evento: nome_evento, 
-    data_evento: data_evento, 
+    data_inicio_evento: data_inicio_evento, 
+    data_final_evento: data_final_evento, 
     tipoTransporteId: tipoTransporteId, 
     valor_total: valor_total,
     clienteId: cliente_logado_Id

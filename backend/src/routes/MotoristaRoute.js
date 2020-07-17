@@ -7,9 +7,9 @@ const Motorista = require("../model/Motorista");
 const MotoristaController = require('../controllers/MotoristaController');
 
 router.get('/list',MotoristaController.list);
-router.post('/create', multer(multerConfig).single("file"), MotoristaController.create);
+router.post('/create', MotoristaController.create);
 router.get('/get/:id', MotoristaController.get);
-router.put('/update/:id',MotoristaController.update);
+router.put('/update/:id', MotoristaController.update);
 router.delete('/delete/:id',MotoristaController.delete);
 
 /*
@@ -24,7 +24,7 @@ router.post("/create", multer(multerConfig).single("file"), async (req, res) => 
     
     const url2 = req.protocol + '://' + req.get('host')  
 
-    const { nome, email, endereco, telefone1,
+    const { nome, email, endereco, telefone1, numero,
         telefone2, senha, complemento,  celular, cidade, apolice, seguradoraId,
         bairro, estadoId, cep, cpf, data_nascimento, carro, placa,
         ano, cor, bilingue, indicacao, situacaoId, perfilId} = req.body;
@@ -38,6 +38,7 @@ router.post("/create", multer(multerConfig).single("file"), async (req, res) => 
             email: email,
             senha: senha,
             endereco: endereco,
+            numero: numero,
             complemento: complemento,
             telefone1: telefone1,
             telefone2: telefone2,
@@ -74,6 +75,6 @@ router.post("/create", multer(multerConfig).single("file"), async (req, res) => 
 
    
 });
-
-*/      
+*/
+      
 module.exports = router;

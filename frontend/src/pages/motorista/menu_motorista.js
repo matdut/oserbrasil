@@ -133,7 +133,7 @@ class menu_motoristaComponent extends React.Component  {
       <div className="bg-danger text-center">
         <Link to='#'>
             <div className='thumbnail_logo'>
-                <img src="../../logo_oser.jpeg" className="img-thumbnail" width="100" height="100" />                               
+                <img src="../../logo_oser.jpeg"/>                               
             </div>
         </Link>          
         <br/>

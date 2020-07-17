@@ -9,7 +9,7 @@ const path = require("path");
 app.set('port',process.env.PORT||3333);
 
 //Middlewares
-app.use(cors());
+//app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(morgan('dev'));
@@ -21,8 +21,10 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+    app.use(cors());
     next();
 });
+
 
 //importing route
 const clienteRouters = require('./routes/ClienteRoute');
@@ -65,6 +67,7 @@ app.use('/seguradora', SeguradoraRouters);
 app.use('/foto', Foto_motoristaRouters);
 app.use('/tipoTransporte', Tipo_TransporteRouters);
 app.use('/tmp', express.static('tmp'));
+//app.use('https://www.receitaws.com.br/v1/cnpj/', )
 
 app.use('/test', (req, res) => {
   res.send("Test route");

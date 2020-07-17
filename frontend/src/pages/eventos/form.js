@@ -64,7 +64,8 @@ class eventoComponent extends React.Component{
           campcliente_nome: '', 
           campordem_servico: '', 
           campnome_evento: '', 
-          campdata_evento: '', 
+          campdata_inicio_evento: '', 
+          campdata_final_evento: '', 
           camptipoTransporteId: '', 
           campvalor_total: '',
           campTipo_cliente: "",
@@ -74,7 +75,8 @@ class eventoComponent extends React.Component{
           listEstados:[],
           listTipoTransporte:[]                   
         }      
-        this.handleDateChange = this.handleDateChange.bind(this);            
+        this.handleDateinicioChange = this.handleDateinicioChange.bind(this);            
+        this.handleDatefinalChange = this.handleDatefinalChange.bind(this); 
         
       }
 
@@ -86,7 +88,8 @@ class eventoComponent extends React.Component{
           campcliente_nome: '', 
           campordem_servico: '', 
           campnome_evento: '', 
-          campdata_evento: '', 
+          campdata_inicio_evento: '', 
+          campdata_final_evento: '', 
           camptipoTransporteId: '', 
           campvalor_total: '',
           campTipo_cliente: ""
@@ -211,9 +214,13 @@ class eventoComponent extends React.Component{
         })
       }  
 
-      handleDateChange(date) {
+      handleDateinicioChange(date) {
         //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
-        this.setState({ campdata_evento: date });
+        this.setState({ campdata_inicio_evento: date });
+      }
+      handleDatefinalChange(date) {
+        //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
+        this.setState({ campdata_final_evento: date });
       }
 
       voltarlistaClick = () => {
@@ -268,10 +275,28 @@ class eventoComponent extends React.Component{
                             margin="normal"
                             defaultValue="12/08/2020"
                             id="date-picker-inline"
-                            label="Data do Evento"
+                            label="Data inicio Evento"
                             format="dd/MM/yyyy"
-                            value={this.state.campdata_evento} 
-                            onChange={this.handleDateChange}   
+                            value={this.state.campdata_inicio_evento} 
+                            onChange={this.handleDateinicioChange}   
+                           // KeyboardButtonProps={{
+                          //    'aria-label': 'change date',
+                           // }}
+                      />                                      
+                    </MuiPickersUtilsProvider>                                                                    
+                </div>
+                <div className="form-group col-md-4">
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                      <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            margin="normal"
+                            defaultValue="12/08/2020"
+                            id="date-picker-inline"
+                            label="Data final Evento"
+                            format="dd/MM/yyyy"
+                            value={this.state.campdata_final_evento} 
+                            onChange={this.handleDatefinalChange}   
                            // KeyboardButtonProps={{
                           //    'aria-label': 'change date',
                            // }}
@@ -343,11 +368,11 @@ class eventoComponent extends React.Component{
 
   sendSave(){            
 
-    if (this.state.campdata_evento=="") {
+    if (this.state.campdata_inicio_evento=="") {
       //alert("Digite o campo de nome")
       Swal.fire(
         'Alerta',
-        'Digite a Data do Evento',
+        'Digite a Data do inicio do Evento',
         'error'
       )
     } 
@@ -381,7 +406,8 @@ class eventoComponent extends React.Component{
            cliente_nome: this.state.campcliente_nome, 
            ordem_servico: this.state.campordem_servico, 
            nome_evento: this.state.campnome_evento, 
-           data_evento: this.state.campdata_evento, 
+           data_inicio_evento: this.state.campdata_inicio_evento, 
+           data_final_evento: this.state.campdata_final_evento, 
            tipoTransporteId: this.state.camptipoTransporteId, 
            valor_total: this.state.campvalor_total,
            cliente_logado_Id: this.state.cliente_logado_Id       

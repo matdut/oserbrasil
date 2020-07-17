@@ -5,8 +5,8 @@ var sequelize = require('./database');
 // name table
 var Estado = require('./Estado');
 var Perfil = require('./Perfil');
-var Seguradora = require('./Seguradora');
 var Situacao = require('./Situacao');
+var Seguradora = require('./Seguradora');
 
 var nametable = 'motorista';
 var Motorista = sequelize.define(nametable,{
@@ -29,7 +29,7 @@ var Motorista = sequelize.define(nametable,{
     }, 
  },
  endereco: {        
-   type: Sequelize.STRING(250), 
+   type: Sequelize.STRING(100), 
    allowNull: false,
  },
  telefone1: {
@@ -39,33 +39,27 @@ var Motorista = sequelize.define(nametable,{
    }, 
  },
  telefone2: { 
-   type: Sequelize.STRING(16),
-   validate: {
-     len: [8, 15],
-   }, 
+   type: Sequelize.STRING(16),   
  },
  senha: { 
    type: Sequelize.STRING, 
    allowNull: false,
  },
  complemento: {
-   type: Sequelize.STRING(250),
+   type: Sequelize.STRING(60),
  }, 
  numero: {
   type: Sequelize.STRING(10),
  }, 
  celular: {
-   type: Sequelize.STRING(16), 
-   validate: {
-     len: [8, 15],
-   }, 
+   type: Sequelize.STRING(16),    
  },
  cidade: {
    type: Sequelize.STRING(25), 
    allowNull: false,
  },
  bairro: { 
-   type: Sequelize.STRING(25), 
+   type: Sequelize.STRING(75), 
    allowNull: false,
  },  
  cep: {
@@ -77,7 +71,7 @@ var Motorista = sequelize.define(nametable,{
    allowNull: true, 
  },
  cpf: { 
-   type: Sequelize.STRING(20), 
+   type: Sequelize.STRING(14), 
    allowNull: true,
  },
  data_nascimento: {
@@ -88,7 +82,7 @@ var Motorista = sequelize.define(nametable,{
   type: Sequelize.STRING(25), 
  },
  placa: {
-  type: Sequelize.STRING(20),
+  type: Sequelize.STRING(10),
  },
  ano: { 
   type: Sequelize.STRING(5),
@@ -155,6 +149,7 @@ situacaoId:{
     key: 'id'
   } 
 }
+
 })
 
 Motorista.belongsTo(Estado);

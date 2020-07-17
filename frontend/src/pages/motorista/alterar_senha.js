@@ -20,11 +20,23 @@ class Alterar_senha_Motorista extends React.Component  {
         campSenhaTeste:"",
         campSenhaAnterior:""
     }      
+    this.verificaSenha = this.verificaSenha.bind(this);   
   }
 
   componentDidMount(){   
   }
   
+  verificaSenha(event){
+    // alert('verificasenha');
+   if (this.state.campSenha !== this.state.campSenhaTeste) {  
+
+     Swal.fire(
+       'Alerta',
+       'Senha diferente, favor acertar',
+       'error'
+     )}
+   } 
+
   sendUpdate(userId){
   
    // let userId = this.props.match.params.id;
@@ -39,9 +51,9 @@ class Alterar_senha_Motorista extends React.Component  {
     const datapost = {            
       senha: this.state.campSenha      
     }
-    //console.log( JSON.stringify(datapost, null, "    ") );
+    console.log( JSON.stringify(datapost, null, "    ") );
     
-    api.post('/motorista/update', datapost)
+    api.put(`/motorista/update/${userId}`, datapost)
     .then(response => {
       if (response.data.success) {
        //alert(response.data.message)
@@ -71,35 +83,60 @@ class Alterar_senha_Motorista extends React.Component  {
   verifica_senha_anterior(){ 
     
     //const url = baseUrl+"/login/get/"+localStorage.getItem('logemail')+"/"+this.state.campSenhaAnterior
-    //console.log( JSON.stringify(url, null, "    ") );    
-    //console.log( JSON.stringify(this.state.campSenhaAnterior, null, "    ") );        
-    
-    api.get(`/login/get/${localStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
-    .then(res=>{
-      if (res.data.success) {
-        const data = res.data.data[0]        
-        if (data.senha == this.state.campSenhaAnterior) {
-            this.onAlterar(data.id);
-        } else {
+    //console.log( JSON.stringify(localStorage.getItem('logemail'), null, "    ") );    
+    //console.log( JSON.stringify(this.state.campSenhaAnterior, null, "    ") );     
+
+  if (this.state.campSenhaAnterior !== "")  {  
+
+    console.log( JSON.stringify(this.state.campSenha, null, "    ") );     
+    console.log( JSON.stringify(this.state.campSenhaTeste, null, "    ") );     
+
+    if (this.state.campSenha === this.state.campSenhaTeste) {     
+        api.get(`/login/getmotorista/${localStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
+        .then(res=>{
+          const data = res.data.data
+            
+            console.log( JSON.stringify(data.length, null, "    ") );    
+            if (data.length > 0 ) {
+
+              const data = res.data.data[0]        
+              if (data.senha == this.state.campSenhaAnterior) {
+
+                if (this.state.campSenha !== "") {
+                  this.onAlterar(data.id);
+                } else {
+                  Swal.fire(
+                    'Mensagem',
+                    'Senha nova está em branco',
+                    'error'
+                  )  
+                }   
+              } else {
+                  Swal.fire(
+                      'Não Alterado',
+                      'Senha informada anterior não bate com a cadastrada',
+                      'error'
+                  )      
+              }        
+            } else {
             Swal.fire(
-                'Não Alterado',
-                'Senha informada anterior não bate com a cadastrada',
+                'Mensagem',
+                'Senha não encontrada',
                 'error'
             )      
-        }        
-      }
-      else {
+          }
+        })
+        .catch(error=>{
+          alert("Error server "+error)
+        })
+      } else {
         Swal.fire(
-            'Erro',
-            'Erro não previsto',
-            'error'
-        )      
-      }
-    })
-    .catch(error=>{
-      alert("Error server "+error)
-    })
-  
+          'Alerta',
+          'Senha diferente, favor acertar',
+          'error'
+        )         
+      }  
+    } 
    }  
 
    onAlterar(id){
@@ -150,7 +187,7 @@ class Alterar_senha_Motorista extends React.Component  {
                     onChange={(value)=> this.setState({campSenhaTeste:value.target.value})} />
                     </div>                          
                 </div>    
-                <button type="submit" className="btn btn-primary" onClick={()=>this.verifica_senha_anterior()}>Cadastrar</button>     
+                <button type="submit" className="btn btn-primary" onClick={()=>this.verifica_senha_anterior()}>Atualizar</button>     
             </div>
           </div> 
       </div>    
