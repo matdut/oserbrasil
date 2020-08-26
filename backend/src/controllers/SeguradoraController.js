@@ -75,4 +75,20 @@ controllers.get = async (req, res) => {
   
 }
 
+controllers.getNome = async (req, res) => {
+  const { nome } = req.params;
+  console.log('seguradora nome = '+nome);
+  await Seguradora.findAll({
+    where: { nome: nome }
+    
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
 module.exports = controllers;

@@ -7,7 +7,7 @@ export const Container = styled.ul`
   li {
     display: flex;
     justify-content: space-between;
-    align-items: left;
+    align-items: center;
     color: #444;
     & + li {
       margin-top: 2px;
@@ -16,8 +16,8 @@ export const Container = styled.ul`
 `;
 
 export const FileInfo = styled.div`
-  display: flex;
-  align-items: left;
+  display: center;
+  align-items: center;
   div {
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@ export const FileInfo = styled.div`
       color: #999;
       margin-top: 2px;
       button {
-        border: 0;
+        border: 2;
         background: transparent;
         color: #e57878;
         margin-left: 5px;
@@ -37,12 +37,13 @@ export const FileInfo = styled.div`
 `;
 
 export const Preview = styled.div`
-  width: 106px;
-  height: 106px;
+width: 230px;
+height: 206px;
   border-radius: 5px;
   background-image: url(${props => props.src});
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: 20% 20%;
-  margin-right: 2px;
+  background-position: 10% 10%;
+  margin-right: 2px; 
+ 
 `;

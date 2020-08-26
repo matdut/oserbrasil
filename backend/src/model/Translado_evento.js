@@ -4,6 +4,8 @@ var sequelize = require('./database');
 //var Role = require('./Role');
 // name table
 var Eventos = require('./Eventos');
+var Situacao = require('./Situacao');
+
 var nametable = 'translado_evento';
 
 var Translado_evento = sequelize.define(nametable,{
@@ -23,38 +25,47 @@ var Translado_evento = sequelize.define(nametable,{
   },  
   nome_passageiro: {
     type:Sequelize.STRING(250),    
-    allowNull: false,
+    allowNull: true,
   },
   quantidade_passageiro: {
     type:Sequelize.INTEGER,    
-    allowNull: false,
+    allowNull: true,
   },
-  data_inicial:  {  
+  data_servico:  {  
     type: Sequelize.DATEONLY,  
-    allowNull: false,
-  },
-  hora_inicial:  {  
-    type: Sequelize.TIME  
+    allowNull: true,
   },  
+  hora_servico:  {  
+    type: Sequelize.TIME,
+    allowNull: true,
+  },
+  numero_voo: {
+    type: Sequelize.DATEONLY,  
+    allowNull: true,
+  },
+  companhia_aerea: {
+    type: Sequelize.DATEONLY,  
+    allowNull: true,
+  }, 
   local_embarque: {
     type: Sequelize.STRING(200), 
-    allowNull: false,
+    allowNull: true,
   },
   local_desembarque: {
     type: Sequelize.STRING(200), 
-    allowNull: false,
+    allowNull: true,
   },
   motorista_bilingue: {
     type: Sequelize.BOOLEAN, 
-    allowNull: false,
+    allowNull: true,
   },
   motorista_receptivo: {
     type: Sequelize.BOOLEAN, 
-    allowNull: false,
+    allowNull: true,
   },
   motorista_preferencial: {
     type: Sequelize.BOOLEAN, 
-    allowNull: false,
+    allowNull: true,
   }, 
   telefone_motorista: {
     type: Sequelize.STRING(16), 
@@ -62,23 +73,27 @@ var Translado_evento = sequelize.define(nametable,{
   },
   km_translado: {
     type: Sequelize.STRING(16), 
-    allowNull: false,  
+    allowNull: true,
   },
   tempo_translado: {
     type: Sequelize.STRING(16), 
-    allowNull: false,  
+    allowNull: true,
   },
   valor_estimado: {
     type: Sequelize.STRING(16), 
-    allowNull: false,  
+    allowNull: true,
   },
-  situacao: {
-    type: Sequelize.STRING(16), 
-    allowNull: false,  
+  situacaoId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Situacao,
+      key: 'id'
+    } 
   },
   motivo_cancelamento: {
     type: Sequelize.STRING(250), 
-    allowNull: false,  
+    allowNull: true,
   }
 })
 

@@ -10,7 +10,11 @@ import { Link } from "react-router-dom";
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
-import Menu_evento from '../eventos/menu_evento';
+import Menu_cliente_individual from '../cliente/menu_cliente_individual';
+import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
+import Menu from '../../pages/cabecalho' ;
+import Menu_administrador from '../administrador/menu_administrador';
+
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
@@ -68,12 +72,40 @@ class listaeventosComponent extends React.Component  {
       
    
   }
+
+  verifica_menu() {
+
+    if (this.state.perfil == 1) {
+      return ( 
+        <div>
+            <Menu_administrador />                
+         </div>   
+       ); 
+    } else if (this.state.perfil == 2) {
+      return ( 
+        <div>
+            <Menu_cliente_individual />                
+         </div>   
+       ); 
+    } else if (this.state.perfil == 7) {
+      return ( 
+        <div>
+            <Menu_cliente_empresarial />                
+         </div>   
+       ); 
+    } else if (this.state.perfil == null){
+        return (
+          <Menu />
+        );
+  
+    }          
+  }     
   render()
   {
     return (
       <div>    
           <div>
-          <Menu_evento />  
+          {this.verifica_menu()}
           </div>
       <div className="container">       
           <center><h3><strong>Lista de Eventos</strong></h3></center>
@@ -103,10 +135,10 @@ class listaeventosComponent extends React.Component  {
 
   loadFillData(){
 
-    return this.state.listEventos.map((data)=>{
+    return this.state.listEventos.map((data, index)=>{
       return(
         <tr>
-          <th>{data.id}</th>          
+          <th>{index + 1}</th>          
           <td>{data.ordem_servico}</td>
           <td>{data.nome_evento}</td>
           <td>{ dateFormat(data.data_evento, "dd/mm/yyyy")}</td>

@@ -15,7 +15,7 @@ controllers.list = async (req,res) => {
     return res.json({success:true, data: data});
   })
   .catch(error => {
-    return res.json({success:false, message: error});
+    return res.json({success:false, message: error.message});
   })
  
 }
@@ -33,7 +33,7 @@ controllers.create = async (req,res) => {
     return res.json({success:true, data: data, message:"Estado criado com sucesso"});
   })
   .catch(error => {
-    return res.json({success:false, message: error});
+    return res.json({success:false, message: error.message});
   })
 
 }

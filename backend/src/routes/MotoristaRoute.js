@@ -10,8 +10,114 @@ router.get('/list',MotoristaController.list);
 router.post('/create', MotoristaController.create);
 router.get('/get/:id', MotoristaController.get);
 router.put('/update/:id', MotoristaController.update);
+router.get('/getEmail/:email', MotoristaController.getEmail);
 router.delete('/delete/:id',MotoristaController.delete);
+router.get('/getMotoristaCpf/:cpf', MotoristaController.getMotoristaCpf);
 
+//router.put('documentoCNH/update/:id', multer(multerConfig).single('file'), MotoristaController.putdoc);
+
+
+router.put("/foto/update/:id", multer(multerConfig).single('file'), async (req, res) => {
+   
+  console.log('req.file foto/update - '+JSON.stringify(req.file, null, "    "));  
+
+  const { originalname: name, size, filename: key, location: url = ""} = req.file;
+
+  //console.log(req.file); 
+  
+  const id = req.params.id;     
+
+  const url2 = req.protocol + '://' + req.get('host')  
+  //console.log('entrou aqui = '+id);
+  // update data
+  
+  await Motorista.update({
+    foto_name: name,
+    foto_size: size,
+    foto_key: key,
+    foto_url: url2 + '/tmp/uploads/' + req.file.filename          
+
+    },{
+    where: { id: id}
+    })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+});
+
+
+router.put("/documentoCNH/update/:id", multer(multerConfig).single('file'), async (req, res) => {
+   
+  console.log('req.file documentoCNH - '+JSON.stringify(req.file, null, "    "));  
+
+  const { originalname: name, size, filename: key, location: url = ""} = req.file;
+  //const { originalname: name2, size2, filename: key2, location: url3 = ""} = req.file2;
+
+  console.log(req.file); 
+  
+  const id = req.params.id;     
+
+  const url2 = req.protocol + '://' + req.get('host')  
+  //console.log('entrou aqui = '+id);
+  // update data
+  
+  await Motorista.update({
+    foto_CNH_name: name,
+    foto_CNH_size: size,
+    foto_CNH_key: key,
+    foto_CNH_url: url2 + '/tmp/uploads/' + req.file.filename,  
+    },{
+    where: { id: id}
+    })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+});
+
+
+/*
+router.put("/update/:id", multer(multerConfig).single('file'), async (req, res) => {
+  
+  console.log('ENTROU NO METODO');  
+  // parameter id get  
+  const { id } = req.params.id;
+
+  console.log('id -'+JSON.stringify(id, null, "    "));  
+  // parameter post
+  const { originalname: name, size, filename: key, location: url = ""} = req.file;
+  //const { foto_name, foto_size, foto_key, foto_url} = req.file;
+  
+  const url2 = req.protocol + '://' + req.get('host')  
+  
+  console.log('motorista file -'+JSON.stringify(req.file, null, "    "));         
+  console.log('motorista body -'+JSON.stringify(req.body, null, "    "));    
+
+    // update data  
+  await Motorista.update({
+    foto_name: name,
+    foto_size: size, 
+    foto_key: key, 
+    foto_url: '/tmp/uploads/' + req.file.filename  
+  },{
+    where: { id: id}
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+});
+*/
 /*
 router.post("/create", multer(multerConfig).single("file"), async (req, res) => {
      
@@ -27,7 +133,7 @@ router.post("/create", multer(multerConfig).single("file"), async (req, res) => 
     const { nome, email, endereco, telefone1, numero,
         telefone2, senha, complemento,  celular, cidade, apolice, seguradoraId,
         bairro, estadoId, cep, cpf, data_nascimento, carro, placa,
-        ano, cor, bilingue, indicacao, situacaoId, perfilId} = req.body;
+        ano, cor, bilingue, indicacao, situacaoId, perfilId, foto_name, foto_size, foto_key, foto_url} = req.body;
  
     //console.log(JSON.stringify('motorista route -'+req.file, null, "    "));         
     //console.log(JSON.stringify('motorista route -'+req.body, null, "    "));    

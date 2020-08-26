@@ -3,12 +3,15 @@ import React, { useState }  from 'react';
 //import {Form, Input, FormFeedback } from 'reactstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+//import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+
+import { Button, Form, Label, Input, FormText } from 'reactstrap';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Switch from '@material-ui/core/Switch';
@@ -237,32 +240,26 @@ class eventoComponent extends React.Component{
                   />                       
                 </div>
                 <div className="form-group col-md-3">
-                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            margin="normal"
-                            defaultValue="12/08/2000"
-                            id="date-picker-inline"
-                            label="Data do Translado *"
-                            format="dd/MM/yyyy"
-                            value={this.state.campData_inicial} 
-                            onChange={this.handleDateChange}   
-                           // KeyboardButtonProps={{
-                          //    'aria-label': 'change date',
-                           // }}
-                      />                                      
-                    </MuiPickersUtilsProvider>                                                     
+                <Label for="exampleDatetime">Data do Translado *</Label>
+                    <Input
+                      type="date"
+                      name="date"
+                      id="exampleDatetime"
+                      placeholder=""
+                      value={this.state.campData_inicial} 
+                      onChange={this.handleDateChange}   
+                    /> 
                 </div>
                 <div className="form-group col-md-3">
-                <TextField
-                    id="time"
-                    label="Hora *"
-                    type="time"
-                    defaultValue="07:30"                       
-                    value={this.state.campHora_inicial} 
-                    onChange={(value)=> this.setState({campHora_inicial:value.target.value})} 
-                  />                                      
+                <Label for="exampleDatetime">Hora do Translado *</Label>
+                    <Input
+                      type="time"
+                      name="time"
+                      id="exampleDatetime"
+                      placeholder=""
+                      value={this.state.campHora_inicial} 
+                      onChange={(value)=> this.setState({campHora_inicial:value.target.value})} 
+                    />                                    
                 </div>
               </div>  
               <div className="form-row"> 

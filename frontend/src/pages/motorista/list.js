@@ -6,6 +6,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { Link } from "react-router-dom";
 import api from '../../services/api';
 
+import { Input } from 'reactstrap';
+
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
@@ -21,7 +23,8 @@ class listComponent extends React.Component  {
     super(props);
     this.state = {
       perfil: perfil,
-      listMotorista:[]
+      listMotorista:[],
+      listaStatus:[]
     }
   }
 
@@ -30,9 +33,37 @@ class listComponent extends React.Component  {
       perfil: localStorage.getItem('logperfil')    
     });
     this.loadMotorista();  
+    this.carrega_status();  
   }
 
+  loadStatus(){
+  
+    return this.state.listaStatus.map((data)=>{          
+      return(
+        <option key={data.descricao} value={data.id}>{data.descricao} </option>
+      )
+    })     
+  
+   }
  
+   carrega_status(){ 
+   
+    api.get('/status/list')
+    .then(res=>{
+      if (res.data.success) {
+        const data = res.data.data
+        this.setState({listaStatus:data})
+      }
+      else {
+        alert("Erro de conexão")
+      }
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+  
+   }  
+
   loadMotorista(){
    // const url = baseUrl+"/motorista/list"
    api.get('/motorista/list')
@@ -66,17 +97,19 @@ class listComponent extends React.Component  {
        <div>
           <center><h3><strong>Lista de Motorista</strong></h3> </center>         
          <br/>
-         <Link className="btn btn-outline-info" to={"/criar"}> <span class="glyphicon glyphicon-plus"></span> Adicionar Motorista</Link>       
+         <Link className="btn btn-outline-info" to={"/motorista/0"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-user-plus"></i> Adicionar Motorista</Link>       
         <br/>
         </div>  
         <table className="table table-hover table-striped">
           <thead>
-            <tr>
+            <tr>              
               <th scope="col">#</th>            
+              <th scope="col">CPF</th>
               <th scope="col">Nome</th>
               <th scope="col">Email</th>
               <th scope="col">Endereço</th>
-              <th scope="col">Telefone</th>
+              <th scope="col">Celular</th>
+              <th scope="col">Status</th>
               <th>Ação</th>
             </tr>
           </thead>
@@ -84,26 +117,37 @@ class listComponent extends React.Component  {
             {this.loadFillData()}
           </tbody>
         </table>
-         <Link className="btn btn-outline-info" to={"/criar"}> <span class="glyphicon glyphicon-plus"></span> Adicionar Motorista</Link>         
+         <Link className="btn btn-outline-info" to={"/motorista/0"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-user-plus"></i> Adicionar Motorista</Link>         
       </div>   
     );
   }
 
   loadFillData(){
 
-    return this.state.listMotorista.map((data)=>{
+    return this.state.listMotorista.map((data, index)=>{
       return(
         <tr>
-          <th>{data.id}</th>          
+          <th>{index + 1}</th>          
+          <td>{data.cpf}</td>
           <td>{data.nome}</td>
           <td>{data.email}</td>
           <td>{data.endereco}</td>
-          <td>{data.telefone1}</td>
+          <td>{data.celular}</td>      
+          <td><Input                   
+                    type="select" 
+                    name="select" 
+                    className="status_select"
+                    id="select" 
+                    value={data.status.id}                        
+                    onChange={ (e) => {
+                      this.statusChange(e, data)                                             
+                    }}                                                          >
+              {this.loadStatus()}      
+              </Input></td>    
           <td>
-            <div style={{width:"150px"}}>
-              <Link className="btn btn-outline-info" to={"/editar/"+data.id}>Editar</Link>
+            <div style={{width:"150px"}}>              
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
+              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data, data.id)}> Deletar </button>
             </div>            
           </td>          
         </tr>
@@ -111,7 +155,27 @@ class listComponent extends React.Component  {
     })
   }
 
-  onDelete(id){
+  statusChange(e, data){
+    const datapost = {
+      statusId: e.target.value     
+    }    
+    api.put(`/login/update/${data.id}`, datapost)
+    
+    api.put(`/motorista/update/${data.id}`, datapost)
+    .then(response =>{
+
+      if (response.data.success) {
+        this.loadMotorista();
+        this.loadFillData();  
+      }  
+      
+    })
+    .catch ( error => {
+      alert("Erro de Conexão")
+    })
+  }
+
+  onDelete(data, id){
     Swal.fire({
       title: 'Você está certo?',
       text: 'Você não poderá recuperar estes dados!',
@@ -121,7 +185,7 @@ class listComponent extends React.Component  {
       cancelButtonText: 'Não, mantêm'
     }).then((result) => {
       if (result.value) {
-        this.sendDelete(id)
+        this.sendDelete(data, id)
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
           'Cancelado',
@@ -132,12 +196,14 @@ class listComponent extends React.Component  {
     })
   }
 
-  sendDelete(userId){
+  sendDelete(data, userId){
     // url de backend
     //console.log('deletar o id - '+userId);
     //const baseUrl = "http://34.210.56.22:3333/motorista/delete/"+userId    // parameter data post
     //const url = baseUrl+"/motorista/delete/"+userId    // parameter data post
     // network
+    api.delete(`/login/delete/${data.email}`)    
+
     api.delete(`/motorista/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {

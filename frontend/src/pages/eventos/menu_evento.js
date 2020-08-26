@@ -50,6 +50,10 @@ class menu_eventosComponent extends React.Component  {
     localStorage.removeItem('lognome');       
     localStorage.removeItem('logid');  
     localStorage.removeItem('logperfil');  
+    localStorage.removeItem('logprogress');
+    localStorage.removeItem('logcep');       
+    localStorage.removeItem('lograzao_social');  
+    localStorage.removeItem('lograzaosocial');  
 
     this.props.history.push("/");
   }
@@ -137,19 +141,13 @@ class menu_eventosComponent extends React.Component  {
               </DropdownMenu>
             </UncontrolledDropdown>
             <NavItem>
-               <button type="button" className="btn btn-danger btn-sm" onClick={this.handleClick}>SAIR</button>
+               <button type="button" className="btn btn-danger btn-sm" onClick={this.handleClick}>
+               <i class="fas fa-sign-out-alt"></i>SAIR
+               </button>
             </NavItem>            
           </Nav>         
         </Collapse>
-      </Navbar>                                
-      <div className="bg-danger text-center">
-        <Link to='#'>
-            <div className='thumbnail_logo'>
-                <img src="../../logo_oser.jpeg"/>                               
-            </div>
-        </Link>          
-        <br/>
-  </div>       
+      </Navbar>                                        
                             
   </div> 
  );  

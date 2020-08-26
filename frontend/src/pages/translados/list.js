@@ -7,6 +7,7 @@ import api from '../../services/api';
 
 import { Link } from "react-router-dom";
 import DateFnsUtils from '@date-io/date-fns';
+import { Button, Form, Label, Input, FormText } from 'reactstrap';
 
 import {
   MuiPickersUtilsProvider,
@@ -16,7 +17,7 @@ import {
 } from '@material-ui/pickers';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
+//import Button from '@material-ui/core/Button';
 
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -170,45 +171,37 @@ class listTransladosComponent extends React.Component  {
            <br/>
               <div className="form-row">      
                 <div className="form-group col-md-4">
-                <TextField
-                        id="standard-basic"
-                        label="Nome Evento"
-                        style={{ margin: 0 }}
-                        placeholder=""
-                        helperText=""           
-                        margin="normal"
-                        value={this.state.campnome_evento} 
-                        readOnly
-                    />  
+                <Label for="exampleDate">Nome Evento *</Label>
+                <Input
+                  type="text"
+                  name="ordem"
+                  id="nome"
+                  placeholder=""
+                  value={this.state.campnome_evento} 
+                  readOnly = {this.props.readOnly}
+                />                 
                 </div>
-                <div className="form-group col-md-4">               
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker                            
-                            disableToolbar
-                            variant="inline"
-                            margin="normal"
-                            defaultValue="12/08/2020"
-                            id="date-picker-inline"
-                            label="Data do Evento"
-                            format="dd/MM/yyyy"
-                            value={this.state.campdata_evento}                            
-                            readOnly
-                           // KeyboardButtonProps={{
-                          //    'aria-label': 'change date',
-                           // }}
-                      />                                      
-                    </MuiPickersUtilsProvider>  </div>                
+                <div className="form-group col-md-4">   
+                <Label for="exampleDatetime">Data do Evento *</Label>
+                    <Input
+                      type="text"
+                      name="date"
+                      id="exampleDatetime"
+                      placeholder=""
+                      value={dateFormat(this.state.campdata_evento,'dd/mm/yyyy')}   
+                      readOnly = {this.props.readOnly}     
+                    />                                                               
+                </div>                
                 <div className="form-group col-md-4">
-                <TextField
-                        id="standard-basic"
-                        label="Tipo Transporte"
-                        style={{ margin: 0 }}
-                        placeholder=""
-                        helperText=""           
-                        margin="normal"
-                        value={this.state.campnometransporte}                       
-                        readOnly
-                    />  
+                <Label for="exampleDatetime">Tipo Transporte</Label>
+                    <Input
+                      type="text"
+                      name="text"
+                      id="exampleDatetime"
+                      placeholder=""
+                      value={this.state.campnometransporte}     
+                      readOnly = {this.props.readOnly}     
+                    />   
                 </div>              
               </div>   
             <br/>
@@ -251,10 +244,10 @@ class listTransladosComponent extends React.Component  {
 
   loadFillData(){     
 
-    return this.state.listTranslados.map((data)=>{
+    return this.state.listTranslados.map((data, index)=>{
       return(
         <tr>
-          <th>{data.id}</th>          
+          <th>{index + 1}</th>          
           <td>{data.nome_passageiro}</td>
           <td>{data.local_embarque}</td>
           <td>{dateFormat(data.data_inicial, "dd/mm/yyyy")}</td>

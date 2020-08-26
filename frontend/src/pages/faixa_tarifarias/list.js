@@ -264,10 +264,10 @@ class listaFaixaComponent extends React.Component  {
 
   loadFillData(){     
 
-    return this.state.listaFaixas.map((data)=>{
+    return this.state.listaFaixas.map((data, index)=>{
       return(
         <tr>
-          <th>{data.id}</th>          
+          <th>{index + 1}</th>          
           <td>{data.faixa_inicial}</td>
           <td>{data.faixa_final}</td>
           <td>{data.valor_km}</td>

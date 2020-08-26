@@ -1,14 +1,14 @@
 //import React from 'react';
-const nodemailer = require('nodemailer');
+/*const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp.oser.app.br",
     //host: "smtps.uol.com.br",
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
         //user: "mateus.dutra@oserbrasil.com.br",
-        user: "mateusdutra481@gmail.com",
+        user: "mateus.dutra@oser.app.br",
         pass: "uvlb4otd"
     },
     tls: { rejectUnauthorized: false }
@@ -16,19 +16,22 @@ const transporter = nodemailer.createTransport({
   
   const mailOptions = {
    // from: "mateus.dutra@oserbrasil.com.br",
-    from: "mateusdutra481@gmail.com",
-    to: "mateusdutra481@gmail.com",
+    from: "mateus.dutra@oser.app.br",
+    to: "mateusdutra@id.uff.br",
     subject: "E-mail enviado usando Node!",
     text: "Bem vindo matesu sadsa das ao Oser, sua senha é 12345. "
   };
 
-  transporter.sendMail(mailOptions, function(error, info){
+  transporter.sendMail(mailOptions, function(error, info){    
+
     if (error) {
         console.log('erro de envio - '+error);
     } else {
       console.log('Email enviado: ' + info.response);
     }
+
   });
+  */
   /*
 
   from: 'matesudutra481@gmail.com',

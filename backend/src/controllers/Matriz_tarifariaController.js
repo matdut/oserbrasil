@@ -32,8 +32,10 @@ controllers.delete = async (req,res) => {
 }
 
 controllers.list = async (req,res) => {
-  await Matriz_tarifaria.findAll({
-//    include: [Tipo]
+  await Matriz_tarifaria.findAll({      
+    include: [{
+      model: Tipo
+    }]  
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -46,14 +48,19 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { tipoTransporteId, bandeira, receptivo, bilingue, pedagio } = req.body;
+  const { tipoTransporteId , faixa_inicial, faixa_final, valor_km, valor_tempo, bandeira, receptivo,
+    bilingue, pedagio} = req.body;
   //console.log("ROle es ==>"+role)
   //create
   await Matriz_tarifaria.create({   
-    tipoTransporteId: tipoTransporteId,    
-    bandeira: bandeira, 
-    receptivo: receptivo, 
-    bilingue: bilingue, 
+    tipoTransporteId : tipoTransporteId ,
+    faixa_inicial: faixa_inicial,
+    faixa_final: faixa_final,
+    valor_km: valor_km,
+    valor_tempo: valor_tempo,
+    bandeira: bandeira,
+    receptivo: receptivo,
+    bilingue: bilingue,
     pedagio: pedagio
   })
   .then( function (data){
@@ -69,19 +76,22 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  //console.log('entrou aqui = '+id);
-
   // parameter post
-  const { tipoTransporteId,bandeira, receptivo, bilingue, pedagio } = req.body;
+  const { tipoTransporteId , faixa_inicial, faixa_final, valor_km, valor_tempo, bandeira, receptivo,
+    bilingue, pedagio } = req.body;
   // update data
   
   await Matriz_tarifaria.update({
-    tipoTransporteId: tipoTransporteId,   
-    bandeira: bandeira, 
-    receptivo: receptivo, 
-    bilingue: bilingue, 
-    pedagio: pedagio
-  },{
+    tipoTransporteId: tipoTransporteId,
+    faixa_inicial: faixa_inicial,
+    faixa_final: faixa_final,
+    valor_km: valor_km,
+    valor_tempo: valor_tempo,
+    bandeira: bandeira,
+    receptivo: receptivo,
+    bilingue: bilingue,
+    pedagio: pedagio  
+    },{
     where: { id: id}
   })
   .then( function (data){
@@ -99,7 +109,7 @@ controllers.get = async (req, res) => {
   // Find all projects with a least one task where task.state === project.task
  await Matriz_tarifaria.findAll({ 
    id: id //,
-  // include: [Tipo]
+   //include: [Tipo]
   })  
   .then( function (data){
     return res.json({success:true, data: data});

@@ -23,6 +23,10 @@
   color: white;
 }
 
+.botao_sair {
+  color: #0F074E;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -1,0 +1,61 @@
+.inicio_cliente {
+  width: 380px  !important;  
+  height: 129px !important;  
+
+  text-align: left !important;  
+  font-size: 22px !important;  
+  color: #0F074E;
+  left: 200px !important;
+
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;  
+}
+
+a:hover {
+  color: #0F074E !important;
+  /*text-decoration: underline; */
+} 
+
+a {
+  color: #0F074E !important;  
+  text-decoration: none !important;
+}  
+.espacamento_logo {
+  height: 89px !important;  
+}
+
+.logo_inicio {
+  color: #0F074E !important; 
+}
+
+.texto_logo {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;    
+  color: #0F0B2F;
+  font-size: 12px !important;     
+  opacity: 1;
+}
+
+.espacamento_seta {
+  margin-left: 10px;
+}
+
+.espacamento_seta_2  {
+  margin-left: 35px;
+}
+
+/* BOTAO LOGIN  */
+
+
+.botao_entrar {
+width: 280px;  
+height: 50px;
+} 
+
+.texto_senha {
+  width: 490px;  
+  height: 50px;
+} 
+
+.texto_email {
+  width: 490px;    
+  height: 36px;
+}   

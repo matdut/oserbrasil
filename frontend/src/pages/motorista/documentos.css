@@ -1,0 +1,118 @@
+
+.espacamento_caixa_texto { 
+  margin-top: 15px !important;
+  margin-left: 108px !important;
+}  
+.caixa1 {
+border:  1px !important;
+background-color: antiquewhite !important;
+}
+
+.caixa2 {
+  border:  1px !important;
+  background-color: aqua !important;
+}   
+
+.area_esquerda3 {
+  width: 481px !important;    
+  height: 140px !important;
+  top: 0px !important;
+  margin-left: 0px !important;  
+}
+
+.documento_motorista_cnh {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  margin-left: 100px !important;
+  border: 2px;
+}
+
+.documento_motorista_cnh_2 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  margin-left: 60px !important;
+  height: 400px !important;  
+}
+.grid1 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  margin-left: 180px !important;
+}
+
+.grid2 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  
+}
+
+.documento_crvl_doc {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  margin-left: 100px !important;
+}
+
+.grid3 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 400px !important; 
+  margin-left: 180px !important;
+}
+
+.grid4 {
+  padding: 1px !important; 
+  text-align: center !important;   
+  width: 550px !important; 
+  margin-left: 100px !important;
+}
+
+.titulocnh {
+  padding: 1px;
+  text-align: left !important;   
+  text-decoration: #0F074E !important;  
+}
+
+.descricaocnh {
+  padding: 1px;
+  text-align: left !important;   
+}
+
+.titulocrvl {
+  padding: 1px;
+  text-align: left !important;   
+  text-decoration: #0F074E !important;  
+}
+
+.descricaocrvl {
+  padding: 1px;
+  text-align: left !important;   
+}
+
+.botao_cadastro_doc_foto {
+  margin-top: 8px !important; 
+  width: 550px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_cadastro_doc_foto_habilitado {
+  margin-top: 8px !important; 
+  width: 550px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}
+.mensagem_foto1 {
+  background: white 0% 0% no-repeat padding-box !important;
+  color: black !important;  
+}
+.mensagem_foto2 {
+  background: white 0% 0% no-repeat padding-box !important;
+  color: black !important;  
+}

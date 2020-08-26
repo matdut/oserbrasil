@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
+
 var sequelize = require('./database');
 // import Role for FK roleId
 //var Role = require('./Role');
 // name table
-var Tipo_transporte = require('./Tipo_transporte');
-var Faixas_tarifarias = require('./Faixas_tarifarias');
+var Transporte = require('./Tipo_transporte');
 var nametable = 'matriz_tarifaria';
 
 var Matriz = sequelize.define(nametable,{
@@ -18,9 +18,21 @@ var Matriz = sequelize.define(nametable,{
     type: Sequelize.INTEGER,
     // this is a refence to another model
     refences: {
-      model: Tipo_transporte,
+      model: Transporte,
       key: 'id'
     } 
+  },
+  faixa_inicial:  {  
+    type: Sequelize.STRING(10) 
+  },
+  faixa_final:  {  
+    type: Sequelize.STRING(10) 
+  },
+  valor_km:  {  
+    type: Sequelize.DECIMAL(20,2)  
+  },
+  valor_tempo:  {  
+    type: Sequelize.DECIMAL(20,2)  
   },  
   bandeira:  {  
     type: Sequelize.DECIMAL(20,2)
@@ -36,6 +48,9 @@ var Matriz = sequelize.define(nametable,{
   }
 })
 
+Matriz.belongsTo(Transporte);
+//Matriz.hasMany(Faixas_tarifarias, {as: 'faixa', foreignKey: 'matrizId'})
+//Matriz.belongsTo(Transporte);
 /*
 db.comments.belongsTo(db.posts);
 db.posts.hasMany(db.comments);

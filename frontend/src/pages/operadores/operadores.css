@@ -1,0 +1,237 @@
+.area_direita {
+  background-color: #0F074E !important;  
+  width: 521px !important;
+  height: 768px !important;  
+  margin-top: 0px !important;
+  margin-left: 0px !important;    
+}
+.area_esquerda1 {
+  width: 121px !important;    
+  height: 140px !important;
+  top: 0px !important;
+  margin-left: 0px !important;  
+}
+.area_navegacao {
+  margin-top: 80px;
+  width: 108px !important;     
+}
+
+.titulo_logo {
+  margin-top: 213px;
+  margin-left: 166px;
+  width: 190px;
+  line-height: 52px;    
+}
+
+.imagem {
+  margin-top: 0px;
+  width: 24px;
+  line-height: 24px;
+}
+
+.titulo_representante {  
+  text-align: left !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+  margin-top: 64px !important;  
+  line-height: 54px !important;  
+  width: 580px !important;
+  font-size: 44px !important;   
+}  
+
+.espacamento_caixa_texto { 
+  margin-top: 15px;
+  margin-left: 108px;
+}  
+
+.espacamento_caixa_texto_senha { 
+  margin-top: 80px;
+  margin-left: 108px;
+}  
+
+.progressbar { 
+  line-height: 16px;  
+  width: 480px;  
+  margin-left: 108px;
+}
+
+.input_text_senha_operadores { 
+  line-height: 56px !important;  
+  width: 480px !important;  
+}
+
+.input_text_operadores { 
+  line-height: 56px !important;  
+  width: 480px !important;  
+}
+
+.input_numero { 
+  line-height: 56px !important;  
+  width: 160px !important;  
+}
+
+.input_estado { 
+  line-height: 56px !important;  
+  width: 296px !important;  
+}
+
+.input_bairro { 
+  line-height: 56px;  
+  width: 160px;  
+}
+
+.label_complemento{
+  margin-left: 24px;
+}
+
+.input_operadores_date {
+  line-height: 26px !important;  
+  width: 480px !important;  
+  margin-left: 4px !important;
+}
+
+.input_complemento { 
+  line-height: 56px;  
+  width: 296px;  
+  margin-left: 24px;
+}
+
+.input_cidade { 
+  line-height: 56px;  
+  width: 296px;  
+  margin-left: 24px;
+}
+
+.label_cidade{
+  margin-left: 24px;
+}
+
+.espacamento_seta {
+  margin-top: 30px;
+  margin-right: 40px;  
+}
+
+.botao_cadastro_empresa {
+  margin-top: 48px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_cadastro_empresa_habilitado {
+  margin-top: 48px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background:#FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.naoseiocep{
+  margin-left: 10px;  
+}
+.alink {
+  color: blue !important;
+  text-decoration: blue !important;
+}
+
+.botao_cadastro_dados {
+  margin-top: 190px !important; 
+  width: 480px !important;
+  line-height: 80px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}
+
+.botao_cadastro_endereco {
+  margin-top: 48px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_cadastro_endereco_habilitado {
+  margin-top: 48px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}
+
+.botao_cadastro_senha {
+  margin-top: 190px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.botao_cadastro_senha_habilitado {
+  margin-top: 190px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.progress_linear {
+  height: 10px;
+  border-radius: 5px;
+  background-color: #FF840A;
+}
+
+.botao_navegacao {
+  margin-top: 64px;  
+  width: 108px;
+  line-height: 114px;  
+}
+
+.endereco_cep {
+  width: 468px;
+  line-height: 100px;  
+}
+.botao_close {
+  margin-top: 4px;      
+  width: 24px !important;
+  line-height: 50px !important;  
+}
+.fonte-endereco {
+  font: Bold var(--unnamed-font-size-16)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra);   
+  text-align: left;
+  font: Bold 16px/19px Effra;
+  letter-spacing: 0px;
+  color: #0F074E
+}
+.alerta_senha {    
+  text-align: left;
+  font: Bold 12px Effra;
+  letter-spacing: 0px;
+  color: #707070; 
+}
+.alerta_senha_confirmado {    
+  text-align: left;
+  font: Bold 12px Effra;
+  letter-spacing: 0px;
+  color: green;
+}
+.titulo_endereco {
+  font: Regular var(--unnamed-font-size-12)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra);
+  letter-spacing: var(--unnamed-character-spacing-0);
+  color: var(--unnamed-color-707070);
+  text-align: left;
+  font: Regular 12px/19px Effra;
+  letter-spacing: 0px;
+  color: #707070;
+}
+.texto_endereco {
+  text-align: left;
+  letter-spacing: NaNpx;
+  opacity: 1;
+}

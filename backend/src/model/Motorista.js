@@ -6,7 +6,8 @@ var sequelize = require('./database');
 var Estado = require('./Estado');
 var Perfil = require('./Perfil');
 var Situacao = require('./Situacao');
-var Seguradora = require('./Seguradora');
+var Status = require('./Status');
+//var Veiculos = require('./veiculo_motorista');
 
 var nametable = 'motorista';
 var Motorista = sequelize.define(nametable,{
@@ -21,7 +22,7 @@ var Motorista = sequelize.define(nametable,{
     allowNull: false,     
  },
  email: {
-    type: Sequelize.STRING(50),
+    type: Sequelize.STRING(80),
     allowNull: false,     
     isEmail: {
     args: true,
@@ -30,7 +31,7 @@ var Motorista = sequelize.define(nametable,{
  },
  endereco: {        
    type: Sequelize.STRING(100), 
-   allowNull: false,
+   allowNull: true,
  },
  telefone1: {
    type: Sequelize.STRING(16),
@@ -40,35 +41,35 @@ var Motorista = sequelize.define(nametable,{
  },
  telefone2: { 
    type: Sequelize.STRING(16),   
+   allowNull: true,
  },
  senha: { 
    type: Sequelize.STRING, 
-   allowNull: false,
+   allowNull: true,
  },
  complemento: {
    type: Sequelize.STRING(60),
+   allowNull: true,
  }, 
  numero: {
   type: Sequelize.STRING(10),
+  allowNull: true,
  }, 
  celular: {
    type: Sequelize.STRING(16),    
+   allowNull: true,
  },
  cidade: {
    type: Sequelize.STRING(25), 
-   allowNull: false,
+   allowNull: true,
  },
  bairro: { 
    type: Sequelize.STRING(75), 
-   allowNull: false,
+   allowNull: true,
  },  
  cep: {
    type: Sequelize.STRING(10), 
-   allowNull: false,
- },
- tipo_cliente: { 
-   type: Sequelize.STRING(2),
-   allowNull: true, 
+   allowNull: true,
  },
  cpf: { 
    type: Sequelize.STRING(14), 
@@ -77,24 +78,9 @@ var Motorista = sequelize.define(nametable,{
  data_nascimento: {
    type: Sequelize.DATEONLY,
    allowNull: true,
- },
- carro: {
-  type: Sequelize.STRING(25), 
- },
- placa: {
-  type: Sequelize.STRING(10),
- },
- ano: { 
-  type: Sequelize.STRING(5),
- },
- cor: { 
-  type: Sequelize.STRING(20), 
- },
+ }, 
  bilingue: { 
   type: Sequelize.BOOLEAN,
- },
- foto_blob: { 
-  type: Sequelize.BLOB, 
  },
  foto_name: { 
   type: Sequelize.STRING, 
@@ -110,20 +96,39 @@ var Motorista = sequelize.define(nametable,{
  },
  foto_url: { 
   type: Sequelize.STRING, 
+  allowNull: true,
+ },
+ foto_CNH_name: { 
+  type: Sequelize.STRING, 
+ },
+ foto_CNH_size: { 
+  type: Sequelize.STRING, 
+ },
+ foto_CNH_key: { 
+  type: Sequelize.STRING, 
+ },
+ foto_CNH_mimetype: { 
+  type: Sequelize.STRING, 
+ },
+ foto_CNH_url: { 
+  type: Sequelize.STRING, 
+  allowNull: true,
+ },
+ numero_carteira: { 
+  type: Sequelize.STRING, 
+ },
+ data_validade: {
+   type: Sequelize.DATEONLY,   
+   allowNull: true,
+ },
+ idioma1: { 
+  type: Sequelize.STRING(20), 
+ },
+ idioma2: { 
+  type: Sequelize.STRING(20), 
  },
  indicacao: { 
   type: Sequelize.STRING(20), 
- },
- apolice: { 
-  type: Sequelize.STRING(20), 
- },
- seguradoraId: { 
-  type: Sequelize.INTEGER,
-  // this is a refence to another model
-  refences: {
-    model: Seguradora,
-    key: 'id'
-  } 
  },
  estadoId:{
   type: Sequelize.INTEGER,
@@ -148,6 +153,14 @@ situacaoId:{
     model: Situacao,
     key: 'id'
   } 
+},
+statusId:{
+  type: Sequelize.INTEGER,
+  // this is a refence to another model
+  refences: {
+    model: Status,
+    key: 'id'
+  } 
 }
 
 })
@@ -155,7 +168,8 @@ situacaoId:{
 Motorista.belongsTo(Estado);
 Motorista.belongsTo(Perfil);
 Motorista.belongsTo(Situacao);
-Motorista.belongsTo(Seguradora);
-
+Motorista.belongsTo(Status);
+//Motoristas.hasMany(Veiculos, { foreignKey: 'motoristaId'})
+//Veiculos.belongsTo(Motorista);
 
 module.exports = Motorista

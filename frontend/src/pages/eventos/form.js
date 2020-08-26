@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+//import Button from '@material-ui/core/Button';
+import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import Grid from '@material-ui/core/Grid';
-//import MomentUtils from "@date-io/moment";
 import DateFnsUtils from '@date-io/date-fns';
 
+import MenuItem from '@material-ui/core/MenuItem';
+//import MomentUtils from "@date-io/moment";
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
@@ -24,9 +25,13 @@ import { cpfMask } from '../formatacao/cpfmask';
 import { cepMask } from '../formatacao/cepmask';
 import { cnpjMask } from '../formatacao/cnpjmask';
 import { telefoneMask } from '../formatacao/telefonemask';
-import Menu_evento from '../eventos/menu_evento' ;
-import Menu from '../../pages/cabecalho' ;
+
+import Menu_cliente_individual from '../cliente/menu_cliente_individual';
+import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu_administrador from '../administrador/menu_administrador';
+import Menu_operador from '../operadores/menu_operador';
+import Menu from '../../pages/cabecalho' ;
+
 //import axios from 'axios';
 import api from '../../services/api';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -37,6 +42,8 @@ const login = localStorage.getItem('logemail');
 const id = localStorage.getItem('logid');  
 const buscadorcep = require('buscadorcep');
 const Email_cliente = require('../../pages/email');
+var dateFormat = require('dateformat');
+
 const useStyles = makeStyles((theme) => ({
   root: {
     '& > *': {
@@ -88,6 +95,7 @@ class eventoComponent extends React.Component{
           campcliente_nome: '', 
           campordem_servico: '', 
           campnome_evento: '', 
+          campCnpj:'',
           campdata_inicio_evento: '', 
           campdata_final_evento: '', 
           camptipoTransporteId: '', 
@@ -112,9 +120,10 @@ class eventoComponent extends React.Component{
               this.setState({          
                 dataEvento:data,                
                 campcliente_cnpj: data.cnpj || data.cpf, 
-                campcliente_nome: data.nome,    
+                campcliente_nome: data.nome,   
+                campCnpj: data.cnpj,  
                 cliente_logado_Id: userId             
-              })          
+              })                        
             
             }
             else {
@@ -125,7 +134,8 @@ class eventoComponent extends React.Component{
             alert("Error server "+error)
           })   
 
-    this.handleDateChange();       
+    //this.handleDatefinalChange();       
+    //this.handleDateinicioChange();       
     this.loadEstados();
     this.verifica_menu();
     this.loadTipoTransporte();        
@@ -162,16 +172,30 @@ class eventoComponent extends React.Component{
                 <Menu_administrador />                
              </div>   
            ); 
-        } else if (this.state.nome == null){
+        } else if (this.state.perfil == 2) {
+          return ( 
+            <div>
+                <Menu_cliente_individual />                
+             </div>   
+           ); 
+        } else if (this.state.perfil == 7) {
+          return ( 
+            <div>
+                <Menu_cliente_empresarial />                
+             </div>   
+           ); 
+        } else if (this.state.perfil == 8) {
+            return ( 
+              <div>
+                  <Menu_operador />                
+               </div>   
+             ); 
+        } else if (this.state.perfil == null){
             return (
               <Menu />
             );
       
-        } else {
-          return (
-            <Menu_evento />  
-          );
-         }           
+        }          
       }     
 
       loadTipoTransporte() {
@@ -214,13 +238,14 @@ class eventoComponent extends React.Component{
         })
       }  
 
-      handleDateinicioChange(date) {
-        //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
-        this.setState({ campdata_inicio_evento: date });
+      handleDateinicioChange(e) {       
+        
+        this.setState({ campdata_inicio_evento: e.target.value });
+
       }
-      handleDatefinalChange(date) {
+      handleDatefinalChange(e) {
         //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
-        this.setState({ campdata_final_evento: date });
+        this.setState({ campdata_final_evento: e.target.value });
       }
 
       voltarlistaClick = () => {
@@ -243,106 +268,89 @@ class eventoComponent extends React.Component{
               </div>    
             <div className="container">                      
                <div className="form-row">          
-                <div className="form-group col-md-4">
-                <TextField
-                    id="standard-number"
-                    label="Número de ordem *"
-                    type="number"
-                    value={this.state.campordem_servico} 
-                    onChange={(value)=> this.setState({campordem_servico:value.target.value})}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />                  
+                <div className="form-group col-md-3">        
+                <Label for="exampleDate">Número de ordem *</Label>
+                <Input
+                  type="text"
+                  name="ordem"
+                  id="exampleDate"
+                  placeholder=""
+                  value={this.state.campordem_servico} 
+                  onChange={(value)=> this.setState({campordem_servico:value.target.value})}
+                />                          
                 </div>
-                <div className="form-group col-md-4">
-                  <TextField
-                        id="standard-basic"
-                        label="Nome Evento  *"
-                        style={{ margin: 0 }}
-                        placeholder=""
-                        helperText=""           
-                        margin="normal"
-                        value={this.state.campnome_evento} 
-                        onChange={(value)=> this.setState({campnome_evento: value.target.value})}
-                    />                    
+                <div className="form-group col-md-3">
+                <Label for="exampleDate">Nome Evento *</Label>
+                <Input
+                  type="text"
+                  name="ordem"
+                  id="nome"
+                  placeholder=""
+                  value={this.state.campnome_evento} 
+                  onChange={(value)=> this.setState({campnome_evento:value.target.value})}
+                />
                 </div>
-                <div className="form-group col-md-4">
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            margin="normal"
-                            defaultValue="12/08/2020"
-                            id="date-picker-inline"
-                            label="Data inicio Evento"
-                            format="dd/MM/yyyy"
-                            value={this.state.campdata_inicio_evento} 
-                            onChange={this.handleDateinicioChange}   
-                           // KeyboardButtonProps={{
-                          //    'aria-label': 'change date',
-                           // }}
-                      />                                      
-                    </MuiPickersUtilsProvider>                                                                    
+                <div className="form-group col-md-3">   
+                <Label for="exampleDatetime">Data de início *</Label>
+                  <Input                                    
+                    className="input_text_date"                  
+                    type="date"
+                    name="senha2"
+                    id="exampleEmail2"                    
+                    placeholder=""                    
+                    value={this.state.campdata_inicio_evento}
+                    //valid={ this.state.validate.datanascimentoState === 'has-success' }
+                   // invalid={ this.state.validate.datanascimentoState === 'has-danger' }
+                    onChange={this.handleDateinicioChange}
+                    maxlength="10"               
+                  />                                                                                                      
                 </div>
-                <div className="form-group col-md-4">
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            margin="normal"
-                            defaultValue="12/08/2020"
-                            id="date-picker-inline"
-                            label="Data final Evento"
-                            format="dd/MM/yyyy"
-                            value={this.state.campdata_final_evento} 
-                            onChange={this.handleDatefinalChange}   
-                           // KeyboardButtonProps={{
-                          //    'aria-label': 'change date',
-                           // }}
-                      />                                      
-                    </MuiPickersUtilsProvider>                                                                    
+                <div className="form-group col-md-3">
+                <Label for="exampleDatetime">Data Final *</Label>
+                  <Input                                    
+                    className="input_text_date"                  
+                    type="date"
+                    name="senha2"
+                    id="exampleEmail2"                    
+                    placeholder=""                    
+                    value={this.state.campdata_final_evento}
+                    //valid={ this.state.validate.datanascimentoState === 'has-success' }
+                   // invalid={ this.state.validate.datanascimentoState === 'has-danger' }
+                   onChange={this.handleDatefinalChange}
+                    maxlength="10"               
+                  />                                                                                                                    
                 </div>
               </div>  
               <div className="form-row"> 
                 <div className="form-group col-md-4">
-                   <TextField                        
-                        id="standard-basic"
-                        label="CPF/CNPJ  *"
-                        style={{ margin: 0 }}
-                        placeholder=""
-                        helperText=""           
-                        margin="normal"
-                        value={this.state.campcliente_cnpj}                         
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                    />                                                    
+                <Label for="exampleDate">CPF/CNPJ  *</Label>
+                <Input
+                  type="text"
+                  name="cpf"
+                  id="cpf"
+                  placeholder=""
+                  value={this.state.campcliente_cnpj}    
+                  readOnly = {this.props.readOnly}
+                />                 
                 </div> 
                 <div className="form-group col-md-4">
-                <TextField                       
-                        id="standard-basic"
-                        label="Nome *"
-                        style={{ margin: 0 }}
-                        placeholder=""
-                        helperText=""           
-                        margin="normal"
-                        value={this.state.campcliente_nome}                        
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                    />                                                                      
+                <Label for="exampleDate">Nome *</Label>
+                <Input
+                  type="text"
+                  name="cliente"
+                  id="cliente"
+                  placeholder=""
+                  value={this.state.campcliente_nome}       
+                  readOnly = {this.props.readOnly}
+                />                                                                                
                 </div>
-                <div className="form-group col-md-4">                                                                                              
-                <InputLabel id="demo-simple-select-label">Transporte</InputLabel> 
-                  <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={this.state.camptipoTransporteId}
-                      onChange={(value)=> this.setState({camptipoTransporteId:value.target.value})}
-                    >
-                       {this.loadSelTipoTransporte()}             
-                  </Select>
+                <div className="form-group col-md-4">     
+                  <Label for="exampleSelect">Transporte</Label>
+                  <Input type="select" name="select" id="exampleSelect" 
+                  value={this.state.camptipoTransporteId} 
+                  onChange={(value)=> this.setState({camptipoTransporteId:value.target.value})}>
+                        {this.loadSelTipoTransporte()}            
+                  </Input>
                 </div> 
              </div>  
 
@@ -415,7 +423,8 @@ class eventoComponent extends React.Component{
 
       api.post('/eventos/create', datapost)
       .then(response=>{
-        console.log('response - '+response.data);
+        //console.log('response - '+response.data);
+       // console.log( JSON.stringify(response.data, null, "    ") ); 
         if (response.data.success===true) {              
         // alert(response.data.message)   
           Swal.fire(

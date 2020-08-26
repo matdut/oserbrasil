@@ -7,8 +7,26 @@ var Tipo = require('../model/Tipo_transporte');
 // para migrar por si no tiene tablas
 sequelize.sync()
 
+controllers.delete = async (req,res) => {
+
+  const { id } = req.params;  
+
+  await Tipo.destroy({
+    where: { id: id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+
+}
+
 controllers.list = async (req,res) => {
-  await Tipo.findAll({
+  await Tipo.findAll({    
   })
   .then( function (data){
     return res.json({success:true, data: data});

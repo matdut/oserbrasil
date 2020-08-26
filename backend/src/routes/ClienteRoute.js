@@ -6,8 +6,14 @@ const ClienteController = require('../controllers/ClienteController');
 router.get('/list',ClienteController.list);
 router.post('/create',ClienteController.create);
 router.get('/get/:id', ClienteController.get);
+router.get('/getEmail/:email', ClienteController.getEmail);
 router.put('/update/:id',ClienteController.update);
 router.delete('/delete/:id',ClienteController.delete);
+router.get('/getClienteCpf/:cpf', ClienteController.getClienteCpf);
+router.get('/getClienteCnpj/:cnpj', ClienteController.getClienteCnpj);
+router.get('/listarIndividual', ClienteController.listarIndividual);
+router.get('/listarEmpresarial', ClienteController.listarEmpresarial);
+
 // router.get('/test',EmployeeController.test );
 // router.post('/create',(req,res)=>{
 //   res.json({

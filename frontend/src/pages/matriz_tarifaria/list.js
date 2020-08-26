@@ -7,6 +7,7 @@ import api from '../../services/api';
 
 import { Link } from "react-router-dom";
 import DateFnsUtils from '@date-io/date-fns';
+import { visualizarmask } from '../formatacao/visualizarmask';
 
 import {
   MuiPickersUtilsProvider,
@@ -39,6 +40,7 @@ class listaMatrizComponent extends React.Component  {
     super(props);
     this.state = {
       perfil: perfil,
+      descricao: '',
       campnometransporte: "",
       listaMatriz:[]
     }   
@@ -79,17 +81,31 @@ class listaMatrizComponent extends React.Component  {
     //const searchDate = MomentUtils(date).format("yyyy-MM-DD");
     this.setState({ campdata_evento: date });
   }
+
+  busca_veiculo(veiculo){   
+ 
+    api.get(`/tipoTransporte/get/${veiculo}`)
+     .then(res=>{  
+    //  console.log(JSON.stringify(res.data.data[0].descricao, null, "    ")); 
+      let tipo = res.data.data[0].descricao
+         return (
+              tipo 
+         );       
+  
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
+
   loadMatriz(){
-   // const url = baseUrl+"/cliente/list"
-
-   //let id = this.props.match.params.id;
-
+  
    api.get("/matriz/list")
     .then(res=>{  
       if (res.data) {
         const data = res.data.data        
         this.setState({listaMatriz:data})
-        console.log(JSON.stringify(data, null, "    ")); 
+        //console.log(JSON.stringify(data, null, "    ")); 
         //console.log(JSON.stringify(this.state.listTranslados, null, "    ")); 
       }
       else {
@@ -110,9 +126,11 @@ class listaMatrizComponent extends React.Component  {
   
   voltarlistaClick = () => {
   
-    this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`); 
+   // this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`); 
   
   }
+
+  
   verifica_menu() {
     
     if (this.state.perfil == 1) {
@@ -142,11 +160,11 @@ class listaMatrizComponent extends React.Component  {
           <div>
           {this.verifica_menu()}
           </div>         
-           <div className="container">                                         
+           <div className="container-fluid">                                         
             <br/>
-            <center><h3><strong>Lista de Matrizes</strong></h3></center>
+            <center><h3><strong>Lista de Valores Tarifários</strong></h3></center>
             <div>  
-            <Link className="btn btn-outline-info" to={"/matriz_criar"}> <span class="glyphicon glyphicon-plus"></span> Adicionar Matriz</Link>                 
+            <Link className="btn btn-outline-info" to={"/matriz_criar"}> <span class="glyphicon glyphicon-plus"></span> <i class="fas fa-money-bill-wave"></i> Adicionar Valores Tarifários</Link>                 
           <br/>
           </div>  
           <table className="table table-hover danger">
@@ -154,10 +172,13 @@ class listaMatrizComponent extends React.Component  {
               <tr>
                 <th scope="col">#</th>            
                 <th scope="col">Tipo de transporte</th>
-                <th scope="col">Bandeira</th>
-                <th scope="col">Belingue</th>
-                <th scope="col">Receptivo</th>
-                <th scope="col">Pedagio</th>
+                <th scope="col">Faixa Inicial</th>
+                <th scope="col">Faixa Final</th>
+                <th scope="col">Valor KM</th>
+                <th scope="col">Valor Tempo</th>
+                <th scope="col">Valor Bandeira</th>
+                <th scope="col">Valor Bilingue</th>
+                <th scope="col">Valor Receptivo</th>
                 <th>Ação</th>
               </tr>
             </thead>
@@ -168,7 +189,7 @@ class listaMatrizComponent extends React.Component  {
              <div className="form-row"> 
                 <div className="form-group col-md-2">
                    <Link className="btn btn-outline-info" to={"/matriz_criar"}> 
-                          <span class="glyphicon glyphicon-plus"></span> Adicionar Matriz
+                          <span class="glyphicon glyphicon-plus"></span> <i class="fas fa-money-bill-wave"></i> Adicionar Valores Tarifários
                    </Link>
                 </div>                 
             </div>                 
@@ -179,18 +200,20 @@ class listaMatrizComponent extends React.Component  {
 
   loadFillData(){     
 
-    return this.state.listaMatriz.map((data)=>{
+    return this.state.listaMatriz.map((data, index)=>{
       return(
         <tr>
-          <th>{data.id}</th>          
-          <td>{data.tipoTransporteId}</td>
-          <td>{data.bandeira}</td>
-          <td>{data.bilingue}</td>
-          <td>{data.receptivo}</td>          
-          <td>{data.pedagio}</td>          
+          <th>{index + 1}</th>          
+          <td>{data.tipo_transporte.descricao}</td>          
+          <td>{data.faixa_inicial}</td>
+          <td>{data.faixa_final}</td>
+          <td>{visualizarmask(data.valor_km)}</td>          
+          <td>{visualizarmask(data.valor_tempo)}</td>                    
+          <td>{visualizarmask(data.bandeira)}</td>    
+          <td>{visualizarmask(data.receptivo)}</td>    
+          <td>{visualizarmask(data.bilingue)}</td>    
           <td>
-            <div style={{width:"350px"}}>
-              <Link className="btn btn-outline-info" to={`/faixa_listar/${data.id}`}>Cadatrar tarifa KM</Link>
+            <div style={{width:"350px"}}>             
               {'   '}
               <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
             </div>            

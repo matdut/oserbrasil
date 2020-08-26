@@ -1,0 +1,169 @@
+const controllers = {}
+
+// import model and sequelize
+var sequelize = require('../model/database');
+var Veiculo = require('../model/veiculo_motorista');
+var Motorista = require('../model/Motorista');
+var Seguradora = require('../model/Seguradora');
+
+
+// para migrar por si no tiene tablas
+sequelize.sync()
+
+controllers.delete = async (req,res) => {
+  
+  // parameter post  
+  const { id } = req.params;  
+ 
+  await Veiculo.destroy({
+    where: { id: id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+   //res.json({success:true, deleted:del, message:"Deleted successful"});
+
+}
+
+controllers.lista_veiculos = async (req,res) => {
+  const { id } = req.params;  
+
+  await Veiculo.findAll({
+    where: { motoristaId: id}
+   })
+   .then( function (data){
+     return res.json({success:true, data:data});    
+   })
+   .catch(error => {
+     return res.json({success:false, message: error});
+   })
+  
+ }
+
+controllers.list = async (req,res) => {
+  await Veiculo.findAll({
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
+controllers.create = async (req,res) => {  
+
+  // DATA parametros desde post
+  const { marcaId, marca, placa, modeloId, modelo, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
+    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId } = req.body;
+  //console.log("ROle es ==>"+role)
+  //create
+  await Veiculo.create({   
+    marcaId: marcaId, 
+    marca: marca, 
+    placa: placa, 
+    modeloId: modeloId, 
+    modelo: modelo, 
+    ano: ano, 
+    anodut: anodut, 
+    cor: cor, 
+    apolice: apolice, 
+    seguradoraId: seguradoraId,
+    foto_CRVL_name: foto_CRVL_name, 
+    foto_CRVL_size: foto_CRVL_size, 
+    foto_CRVL_key: foto_CRVL_key,
+    foto_CRVL_mimetype: foto_CRVL_mimetype, 
+    foto_CRVL_url: foto_CRVL_url, 
+    motoristaId: motoristaId
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+}
+
+controllers.update = async (req, res) => {
+  // parameter id get  
+  const { id } = req.params;
+
+  //console.log('entrou aqui = '+id);
+
+  // parameter post
+  const { marcaId, marca, placa, modeloId, modelo, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
+    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId } = req.body;
+  // update data
+  
+  await Veiculo.update({
+    marcaId: marcaId, 
+    marca: marca, 
+    placa: placa, 
+    modeloId: modeloId, 
+    modelo: modelo, 
+    ano: ano, 
+    anodut: anodut, 
+    cor: cor, 
+    foto_CRVL_name: foto_CRVL_name, 
+    foto_CRVL_size: foto_CRVL_size, 
+    foto_CRVL_key: foto_CRVL_key,
+    foto_CRVL_mimetype: foto_CRVL_mimetype, 
+    foto_CRVL_url: foto_CRVL_url, 
+    apolice: apolice, 
+    seguradoraId: seguradoraId,
+    motoristaId: motoristaId
+  },{
+    where: { id: id}
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+}
+
+controllers.getVeiculo = async (req, res) => {
+  const { id } = req.params;
+  
+  await Veiculo.findAll({
+    include: [{
+      model: Motorista,      
+     }],
+     where: { id: id }      
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.get = async (req, res) => {
+  const { id } = req.params;
+  await Veiculo.findAll({    
+    where: { id: id}  
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+module.exports = controllers;

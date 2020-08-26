@@ -37,7 +37,7 @@ class menu_motoristaComponent extends React.Component  {
     this.setState({
       perfil: localStorage.getItem('logperfil'),    
       nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      id: localStorage.getItem('logid')       
     });
     //this.verifica_menu();
   }
@@ -46,6 +46,11 @@ class menu_motoristaComponent extends React.Component  {
     localStorage.removeItem('lognome');       
     localStorage.removeItem('logid');  
     localStorage.removeItem('logperfil');  
+    localStorage.removeItem('logprogress');
+    localStorage.removeItem('logcep');       
+    localStorage.removeItem('lograzao_social');  
+    localStorage.removeItem('lograzaosocial');  
+    localStorage.removeItem('logVeiculo')
 
     this.props.history.push("/");
   }
@@ -68,7 +73,7 @@ class menu_motoristaComponent extends React.Component  {
         return ( 
           <li className="nav-item">
              <NavItem>  
-                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>                              
+                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {localStorage.getItem('lognome').toUpperCase()} </strong></NavLink>                              
              </NavItem>  
           </li>   
          ); 
@@ -106,38 +111,72 @@ class menu_motoristaComponent extends React.Component  {
             </NavItem>
             <NavItem>               
               <NavLink href="#">EVENTOS</NavLink>
-            </NavItem>
-            <NavItem>               
-              <NavLink href="#">CONTATO</NavLink>
-            </NavItem>
+            </NavItem>          
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
-                ALTERAR
+              <i class="fas fa-list"></i> ALTERAR
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={"/editar/"+this.state.id}>
-                  MEUS DADOS
+                <DropdownItem href={`/motorista/`+localStorage.getItem('logid')}>
+                <i class="far fa-user"></i> Dados Pessoais
                 </DropdownItem>
-                <DropdownItem href={"/alterar_senha_motorista"}>
-                   SENHA
+                <DropdownItem href={`/endereco_motorista/`+localStorage.getItem('logid')}>
+                <i class="fas fa-home"></i> Endereço
+                </DropdownItem>                
+                <DropdownItem href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')}>
+                <i class="far fa-file-alt"></i> Meus Documentos
+                </DropdownItem>                                               
+                <DropdownItem href={`/foto_motorista/`+localStorage.getItem('logid')}>
+                <i class="fas fa-car"></i> Minha Foto
+                </DropdownItem>                
+                <DropdownItem href={`/senha_motorista/`+localStorage.getItem('logid')}>
+                <i class="fas fa-key"></i> Alterar Senha
+                </DropdownItem>
+                <DropdownItem divider />                
+              </DropdownMenu>
+            </UncontrolledDropdown>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+              <i class="fas fa-list"></i> VEÍCULOS
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem href={`/incluir_veiculos/`+localStorage.getItem('logid')}>
+                <i class="fas fa-money-bill-wave"></i> Incluir
+                </DropdownItem>                           
+                <DropdownItem href={`/lista_veiculos/`+localStorage.getItem('logid')}>
+                <i class="far fa-life-ring"></i> Listar
+                </DropdownItem>                
+                <DropdownItem divider />                
+              </DropdownMenu>
+            </UncontrolledDropdown>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+              <i class="fas fa-list"></i> HISTÓRICO
+              </DropdownToggle>
+              <DropdownMenu right>
+              <DropdownItem href="#">
+                <i class="fas fa-money-bill-wave"></i> Meus Ganhos
+                </DropdownItem>
+                <DropdownItem href="#">
+                <i class="fas fa-road"></i> Minhas Viagens
+                </DropdownItem>                
+                <DropdownItem href="#">
+                <i class="far fa-life-ring"></i> Ajuda
+                </DropdownItem>
+                <DropdownItem href="#">
+                <i class="fas fa-sliders-h"></i> Configurações
                 </DropdownItem>
                 <DropdownItem divider />                
               </DropdownMenu>
             </UncontrolledDropdown>
             <NavItem>
-               <button type="button" className="btn btn-danger btn-sm" onClick={this.handleClick}>SAIR</button>
+               <button type="button" className="btn btn-danger btn-sm" onClick={this.handleClick}>
+                  <i class="fas fa-sign-out-alt"></i> SAIR
+               </button>
             </NavItem>            
           </Nav>         
         </Collapse>
-      </Navbar>      
-      <div className="bg-danger text-center">
-        <Link to='#'>
-            <div className='thumbnail_logo'>
-                <img src="../../logo_oser.jpeg"/>                               
-            </div>
-        </Link>          
-        <br/>
-     </div>                                   
+      </Navbar>                                          
    </div> 
 </div>
  );  

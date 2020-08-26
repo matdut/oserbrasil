@@ -60,22 +60,21 @@ controllers.listaevento = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { cliente_cnpj, cliente_nome, ordem_servico, nome_evento, data_inicio_evento, data_final_evento, 
-         tipoTransporteId, valor_total, cliente_logado_Id } = req.body;
-  
-  console.log(req.body);          
+  const { logid, perfilId, ordem_servico, nome_evento, data_inicio_evento, data_final_evento, 
+    tipoTransporteId, valor_total } = req.body;
+
+  //console.log(req.body);          
   //console.log("ROle es ==>"+role)
   //create
   await Eventos.create({   
-    cliente_cnpj: cliente_cnpj, 
-    cliente_nome: cliente_nome, 
+    logid: logid,
+    perfilId: perfilId,    
     ordem_servico: ordem_servico, 
     nome_evento: nome_evento, 
     data_inicio_evento: data_inicio_evento, 
     data_final_evento: data_final_evento, 
     tipoTransporteId: tipoTransporteId, 
-    valor_total: valor_total,
-    clienteId: cliente_logado_Id
+    valor_total: valor_total
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -88,18 +87,23 @@ controllers.create = async (req,res) => {
 
 controllers.update = async (req, res) => {
   // parameter id get  
-  const { id } = req.params;
-
-  //console.log('entrou aqui = '+id);
+  const { id } = req.params;  
 
   // parameter post
-  const { nome } = req.body;
+  const { perfilId, ordem_servico, nome_evento, data_inicio_evento, data_final_evento, 
+    tipoTransporteId, valor_total } = req.body;
   // update data
   
-  await Eventos.update({
-            nome: nome
+  await Eventos.update({  
+    perfilId: perfilId,    
+    ordem_servico: ordem_servico, 
+    nome_evento: nome_evento, 
+    data_inicio_evento: data_inicio_evento, 
+    data_final_evento: data_final_evento, 
+    tipoTransporteId: tipoTransporteId, 
+    valor_total: valor_total
   },{
-    where: { id: id}
+    where: { logid: id}
   })
   .then( function (data){
     return res.json({success:true, data: data});

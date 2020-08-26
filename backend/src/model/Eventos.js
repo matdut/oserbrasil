@@ -3,6 +3,7 @@ var sequelize = require('./database');
 var Tipo_transporte = require('./Tipo_transporte');
 var Translados = require('./Translado_evento');
 var Cliente = require('./Cliente');
+var Operador = require('./Operador');
 //var eventos = require('./');
 // import Role for FK roleId
 //var Role = require('./Role');
@@ -16,22 +17,18 @@ var Eventos = sequelize.define(nametable,{
     primaryKey:true,
     allowNull: false,
     autoIncrement:true
-  }, 
-  cliente_cnpj: {
-    type: Sequelize.STRING(25),
+  },
+  logid: {
+    type: Sequelize.INTEGER,
     allowNull: false,     
   },
-  clienteId: {
+  perfilId:{
     type: Sequelize.INTEGER,
     // this is a refence to another model
     refences: {
-      model: Cliente,
+      model: Perfil,
       key: 'id'
     } 
-  },
-  cliente_nome: {
-    type: Sequelize.STRING(250),
-    allowNull: false,     
   },
   ordem_servico:  {  
     type: Sequelize.STRING(30),
@@ -41,11 +38,7 @@ var Eventos = sequelize.define(nametable,{
     type: Sequelize.STRING(100),
     allowNull: false,     
   },
-  data_inicio_evento: {
-    type: Sequelize.DATEONLY,
-    allowNull: false,     
-  },
-  data_final_evento: {
+  data_evento: {
     type: Sequelize.DATEONLY,
     allowNull: false,     
   },
@@ -58,7 +51,7 @@ var Eventos = sequelize.define(nametable,{
     } 
   },
   valor_total: {
-    type: Sequelize.STRING(15),
+    type: Sequelize.DECIMAL(20,2),  
     allowNull: false,     
   }
 })
@@ -70,7 +63,8 @@ Tipo_transporte.belongsTo(Eventos, {foreignKey: 'id'})
 //Translados.belongsTo(Eventos, {foreignKey: 'eventoId'})
 
 //Eventos.belongsTo(Tipo_transporte);
-Eventos.belongsTo(Cliente);
+//Eventos.belongsTo(Cliente);
+//Eventos.belongsTo(Operador);
 //Cliente.belongsTo(Estado);
 
 module.exports = Eventos

@@ -6,6 +6,7 @@ const SeguradoraController = require('../controllers/SeguradoraController');
 router.get('/list',SeguradoraController.list);
 router.post('/create',SeguradoraController.create);
 router.get('/get/:id', SeguradoraController.get);
+router.get('/getNome/:nome', SeguradoraController.getNome);
 router.put('/update/:id',SeguradoraController.update);
 
 module.exports = router;

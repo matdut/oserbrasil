@@ -1,0 +1,67 @@
+
+.espacamento_caixa_texto { 
+  margin-top: 15px;
+  margin-left: 108px;
+}  
+.caixa1 {
+border:  1px;
+background-color: antiquewhite;
+}
+
+.caixa2 {
+  border:  1px;
+  background-color: aqua;
+}   
+
+.grid1 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  
+}
+
+.grid2 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  
+}
+
+.titulocnh {
+  padding: 1px;
+  text-align: left !important;   
+  text-decoration: #0F074E !important;  
+}
+
+.descricaocnh {
+  padding: 1px;
+  text-align: left !important;   
+}
+
+.titulocrvl {
+  padding: 1px;
+  text-align: left !important;   
+  text-decoration: #0F074E !important;  
+}
+
+.descricaocrvl {
+  padding: 1px;
+  text-align: left !important;   
+}
+
+.botao_cadastro_foto {
+  margin-top: 48px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_cadastro_foto_habilitado {
+  margin-top: 48px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}

@@ -1,6 +1,19 @@
-var Sequelize = require('sequelize');
 
-const sequelize = new Sequelize(
+var Sequelize = require('sequelize');
+  
+ 
+const sequelize = new Sequelize (
+  
+  'oser', // database
+  'oser', // user / usuario
+  'uvlb4otd', //password
+  {
+    host: 'mysql.oser.app.br',
+    dialect: 'mysql'
+  } 
+);
+/*
+const sequelize = new Sequelize (    
   'bancomdc', // database
   'root', // user / usuario
   '', //password
@@ -8,8 +21,35 @@ const sequelize = new Sequelize(
     host: 'localhost',
     dialect: 'mysql'
   }
+
+);  
+*/
+/*const sequelize = new Sequelize(
+    process.env.DB_DATABASE, // database
+    process.env.DB_USER, // user / usuario
+    '', //password
+    {
+      host: process.env.DB_HOST,
+      dialect: 'mysql'
+    }
+  );
+*/
+  /*
+
+
+  const sequelize = new Sequelize(
+    
+  'oser', // database
+  'oser', // user / usuario
+  'uvlb4otd', //password
+  {
+    host: 'localhost',
+    dialect: 'mysql'
+  }
 );
+*/
 /*
+
 const sequelize = new Sequelize(
   'teste', // database
   'phpadmin', // user / usuario

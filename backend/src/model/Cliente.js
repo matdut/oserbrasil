@@ -4,7 +4,8 @@ var sequelize = require('./database');
 var Estado = require('./Estado');
 var Perfil = require('./Perfil');
 var Situacao = require('./Situacao');
-var Cartao = require('./Cartao_credito');
+var Status = require('./Status');
+
 // name table
 var nametable = 'cliente';
 
@@ -16,11 +17,11 @@ var Cliente = sequelize.define(nametable,{
     autoIncrement:true
   },
   nome:  {  
-     type: Sequelize.STRING(250),
+     type: Sequelize.STRING(120),
      allowNull: false,     
   },
   email: {
-     type: Sequelize.STRING(50),
+     type: Sequelize.STRING(80),
      allowNull: false,     
      isEmail: {
       args: true,
@@ -29,7 +30,7 @@ var Cliente = sequelize.define(nametable,{
   },
   endereco: {        
     type: Sequelize.STRING(100), 
-    allowNull: false,
+    allowNull: true,
   },
   telefone1: {
     type: Sequelize.STRING(16),
@@ -43,13 +44,15 @@ var Cliente = sequelize.define(nametable,{
   },
   senha: { 
     type: Sequelize.STRING(20), 
-    allowNull: false,
+    allowNull: true,
   },
   complemento: {
     type: Sequelize.STRING(60),
+    allowNull: true,
   }, 
   numero: {
     type: Sequelize.STRING(15),
+    allowNull: true,
   }, 
   celular: {
     type: Sequelize.STRING(16), 
@@ -57,19 +60,15 @@ var Cliente = sequelize.define(nametable,{
   },
   cidade: {
     type: Sequelize.STRING(50), 
-    allowNull: false,
+    allowNull: true,
   },
   bairro: { 
     type: Sequelize.STRING(75), 
-    allowNull: false,
+    allowNull: true,
   },  
   cep: {
     type: Sequelize.STRING(10), 
-    allowNull: false,
-  },
-  tipo_cliente: { 
-    type: Sequelize.STRING(2),
-    allowNull: false, 
+    allowNull: true,
   },
   cpf: { 
     type: Sequelize.STRING(14), 
@@ -77,25 +76,7 @@ var Cliente = sequelize.define(nametable,{
   },
   data_nascimento: {
     type: Sequelize.DATEONLY,   
-  },
-  cnpj: {
-    type: Sequelize.STRING(18),
     allowNull: true,
-  },
-  inscricao_estadual: {
-    type: Sequelize.STRING(15),
-  },
-  inscricao_municipal: {
-    type: Sequelize.STRING(15),
-  },
-  nome_fantasia: {
-    type: Sequelize.STRING(150),
-  },
-  contato: {
-    type: Sequelize.STRING(20), 
-  },
-  operadorId: {
-    type: Sequelize.STRING(50), 
   },      
   // LLAVE FORANEA
   estadoId:{
@@ -121,6 +102,14 @@ var Cliente = sequelize.define(nametable,{
       model: Situacao,
       key: 'id'
     } 
+  },
+  statusId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Status,
+      key: 'id'
+    } 
   }
 
 })
@@ -128,12 +117,6 @@ var Cliente = sequelize.define(nametable,{
 Cliente.belongsTo(Estado);
 Cliente.belongsTo(Perfil);
 Cliente.belongsTo(Situacao);
+Cliente.belongsTo(Status);
 
-/*
-Cliente.hasMany(Cartao, { as: "cartao_credito" });
-Cartao.belongsTo(Cliente, {
-  foreignKey: "clienteId",
-  as: "cliente",
-});
-*/
 module.exports = Cliente
