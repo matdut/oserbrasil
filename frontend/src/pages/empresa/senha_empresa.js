@@ -712,7 +712,7 @@ verifica_botao(inicio) {
       if (inicio == 1) {
         return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
                   <div className="d-flex justify-content-center">
                   <label> Próximo </label>
                   </div>     
@@ -727,7 +727,7 @@ verifica_botao(inicio) {
               if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
                   && this.state.campSenha == this.state.campSenhaTeste) {
                 return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
+                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_empresa_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
                   <div className="d-flex justify-content-center">
                   <label> Próximo </label>
                   </div>     
@@ -736,7 +736,7 @@ verifica_botao(inicio) {
               } else {
                 return (
 
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
                           <div className="d-flex justify-content-center">
                           <label> Próximo </label>
                           </div>     
@@ -749,7 +749,7 @@ verifica_botao(inicio) {
         
               return (
 
-                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
                         <div className="d-flex justify-content-center">
                         <label> Próximo </label>
                         </div>     
@@ -764,7 +764,7 @@ verifica_botao(inicio) {
       if (inicio == 1) {
         return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
                   <div className="d-flex justify-content-center">
                   <label> Salvar Alterações </label>
                   </div>     
@@ -779,7 +779,7 @@ verifica_botao(inicio) {
               if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
                   && this.state.campSenha == this.state.campSenhaTeste) {
                 return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
+                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_empresa_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
                   <div className="d-flex justify-content-center">
                   <label> Salvar Alterações </label>
                   </div>     
@@ -788,7 +788,7 @@ verifica_botao(inicio) {
               } else {
                 return (
 
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
                           <div className="d-flex justify-content-center">
                           <label> Salvar Alterações </label>
                           </div>     
@@ -801,7 +801,7 @@ verifica_botao(inicio) {
         
               return (
 
-                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
                         <div className="d-flex justify-content-center">
                         <label> Salvar Alterações </label>
                         </div>     

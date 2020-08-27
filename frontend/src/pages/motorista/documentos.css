@@ -26,6 +26,7 @@ background-color: antiquewhite !important;
   width: 250px !important; 
   margin-left: 100px !important;
   border: 2px;
+  height: 380px !important;
 }
 
 .documento_motorista_cnh_2 {
@@ -33,7 +34,7 @@ background-color: antiquewhite !important;
   text-align: center !important;   
   width: 250px !important; 
   margin-left: 60px !important;
-  height: 400px !important;  
+  height: 380px !important;  
 }
 .grid1 {
   padding: 2px !important; 
@@ -54,6 +55,7 @@ background-color: antiquewhite !important;
   text-align: center !important;   
   width: 250px !important; 
   margin-left: 100px !important;
+  height: 350px !important;
 }
 
 .grid3 {

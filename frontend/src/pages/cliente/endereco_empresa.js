@@ -907,7 +907,7 @@ verifica_botao(inicio) {
                </div>                  
                <div>
                  <div className="titulo_representante">                
-                     <label>{this.verifica_nome_individual(this.state.campNome)}, agora me fale onde você mora. </label>             
+                     <label>{this.verifica_nome_individual(this.state.campNome)}, agora fale onde você mora. </label>             
                  </div>
                </div>   
                
@@ -934,7 +934,7 @@ verifica_botao(inicio) {
                </div>                  
                <div>
                  <div className="titulo_representante">                
-                     <label>{this.verifica_nome_individual(this.state.campNome)}, agora me fale onde você mora. </label>             
+                     <label>{this.verifica_nome_individual(this.state.campNome)}, agora fale onde você mora. </label>             
                  </div>
                </div>   
                

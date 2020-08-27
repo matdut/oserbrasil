@@ -93,7 +93,7 @@ class empresarialComponent extends React.Component{
   componentDidMount(){    
     //console.log('CEP 1 - '+cepremoveMask(localStorage.getItem('logcep')))
     this.setState({      
-      progresso: 50,
+      progresso: 65,
       campCep: localStorage.getItem('logcep') 
     });  
    

@@ -51,19 +51,24 @@
 }  
 
 .progressbar { 
-  line-height: 16px;  
-  width: 480px;  
+  line-height: 16px !important;  
+  width: 480px !important;  
   margin-left: 108px;
 }
 
 .input_text { 
-  line-height: 56px;  
-  width: 480px;  
+  line-height: 56px !important;  
+  width: 480px !important;  
+}
+
+.input_text_endereco { 
+  line-height: 56px !important;  
+  width: 480px !important;  
 }
 
 .input_numero { 
-  line-height: 56px;  
-  width: 160px;  
+  line-height: 56p !important;  
+  width: 160px !important;  
 }
 
 .input_estado { 

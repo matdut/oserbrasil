@@ -61,6 +61,18 @@
   width: 480px !important;  
 }
 
+.input_text_motorista_1 { 
+  line-height: 56px !important;  
+  width: 190px !important;  
+}
+
+.bilingue_texto {
+  margin-top: 10px !important;  
+}
+.idioma_texto{
+  width: 30px !important;  
+  margin-left: 108px !important;
+}
 .input_text { 
   line-height: 56px !important;  
   width: 240px !important;  
@@ -131,7 +143,7 @@
 
 .botao_cadastro_empresa {
   margin-top: 30px !important; 
-  width: 480px !important;
+  width: 510px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
@@ -139,7 +151,24 @@
 }
 .botao_cadastro_empresa_habilitado {
   margin-top: 30px !important; 
-  width: 480px !important;
+  width: 510px !important;
+  line-height: 40px !important;  
+  background:#FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.botao_cadastro_motorista {
+  margin-top: 30px !important; 
+  width: 510px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_cadastro_motorista_habilitado {
+  margin-top: 30px !important; 
+  width: 510px !important;
   line-height: 40px !important;  
   background:#FF840A 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
@@ -181,7 +210,7 @@
 }
 
 .botao_cadastro_senha {
-  margin-top: 150px !important; 
+  margin-top: 140px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
@@ -190,13 +219,32 @@
 }
 
 .botao_cadastro_senha_habilitado {
-  margin-top: 150px !important; 
+  margin-top: 140px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background: #FF840A 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
   margin-left: 108px !important;
 }
+
+.botao_cadastro_senha_motorista {
+  margin-top: 140px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.botao_cadastro_senha_motorista_habilitado {
+  margin-top: 140px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
 
 .progress_linear {
   height: 10px;

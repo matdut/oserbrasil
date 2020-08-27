@@ -13,6 +13,7 @@ router.get('/get/:id', VeiculoController.get);
 router.get('/getVeiculo/:id', VeiculoController.getVeiculo);
 router.put('/update/:id',VeiculoController.update);
 router.delete('/delete/:id',VeiculoController.delete);
+router.delete('/deleteMotorista/:id',VeiculoController.deleteMotorista);
 
 router.put("/documentoCRVL/update/:id", multer(multerConfig).single('file'), async (req, res) => {
     console.log('req.file documentoCRVL/update - '+JSON.stringify(req.file, null, "    "));  

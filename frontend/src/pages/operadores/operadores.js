@@ -750,11 +750,12 @@ sendSave(){
             //const url = response.protocol + '://' + response.get('host')+'/login'            
             const params_email = {
               name: this.state.campNome,   
-              email: this.state.campEmail,                
-              texto: `Bem vindo(a) ${this.state.campNome} sua senha inicial è ${senhaAleatoria} ` 
+              email: this.state.campEmail,               
+              texto: `Bem vindo(a), ${this.state.campNome} \n Sua senha inicial è ${senhaAleatoria} \n ` 
             }
 
-            api.post("/email/send", params_email)         
+            
+          api.post("/email/send", params_email)         
           
           if (localStorage.getItem('logperfil') == 1) {
              localStorage.setItem('logperfil', 1);
@@ -780,18 +781,20 @@ sendSave(){
         email: this.state.campEmail,
         celular: this.state.campTelefone1,    
         data_nascimento: this.state.campData_nascimento,    
-        cpf: this.state.campCpf
+        cpf: this.state.campCpf,
+        perfilId: 8,
        }  
        
        const logindata = {  
         email: this.state.campEmail,  
         senha: senhaAleatoria,     
-        statusId: 1
+        statusId: 1,
+        perfilId: 8,
       }  
 
       api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
 
-      console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
+     // console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
       api.put(`/operador/update/${localStorage.getItem('logid')}`, datapost_alterar)
       .then(response=>{
         if (response.data.success==true) {                        

@@ -108,8 +108,8 @@
 }
 
 .botao_cadastro_empresa {
-  margin-top: 20px !important; 
-  width: 480px !important;
+  margin-top: 160px !important; 
+  width: 510px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
@@ -117,7 +117,7 @@
 }
 .botao_cadastro_empresa_habilitado {
   margin-top: 20px !important; 
-  width: 480px !important;
+  width: 510px !important;
   line-height: 40px !important;  
   background: #FF840A 0% 0% no-repeat padding-box !important; 
   opacity: 1 !important;
@@ -178,6 +178,24 @@
 }
 
 .botao_cadastro_senha_habilitado {
+  margin-top: 100px !important; 
+  width: 480px !important;
+  line-height: 80px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.botao_cadastro_senha_empresa {
+  margin-top: 100px !important; 
+  width: 480px !important;
+  line-height: 80px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.botao_cadastro_senha_empresa_habilitado {
   margin-top: 100px !important; 
   width: 480px !important;
   line-height: 80px !important;  

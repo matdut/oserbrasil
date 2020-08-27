@@ -149,7 +149,8 @@ class listComponent extends React.Component  {
               {this.loadStatus()}      
               </Input></td>
           <td>
-            <div style={{width:"150px"}}>           
+            <div style={{width:"150px"}}>      
+              <button className="btn btn-outline-primary" onClick={()=>this.onSenha(data)}> Email </button>   
               {'   '}
               <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data, data.id)}> Deletar </button>
             </div>            
@@ -179,7 +180,29 @@ class listComponent extends React.Component  {
     })
   }
   
-  
+  onSenha(data) {
+    
+    const senhaAleatoria = Math.random().toString(36).slice(-8);
+
+    const params_email = {
+      name:  data.nome,   
+      email: data.email,                
+      texto: `Bem vindo(a), ${data.nome} \n Sua senha inicial è ${senhaAleatoria} \n ` 
+    }
+    
+    api.post("/email/send", params_email)    
+
+    const logindata = {      
+      senha: senhaAleatoria,
+      email: data.email,        
+      perfilId: 8
+    }  
+
+    api.put(`/login/update/${data.id}`,logindata)
+
+    alert('Mensagem Enviada');
+
+  }
   onDelete(data, id){
     Swal.fire({
       title: 'Você está certo?',

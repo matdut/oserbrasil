@@ -138,7 +138,7 @@ class listComponent extends React.Component  {
           <td>
             <div style={{width:"150px"}}>
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.validar_delete(data, data.id)}> Deletar </button>
+              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data, data.id)}> Deletar </button>
             </div>            
           </td>          
         </tr>
@@ -198,7 +198,7 @@ class listComponent extends React.Component  {
             mensagem: 'Cliente tem Evento(s) associado(s), não pode ser excluído'
           })          
         } else {
-          this.onDelete(data, id);
+          this.sendDelete(data, id);
         }          
 
       }
@@ -219,7 +219,7 @@ class listComponent extends React.Component  {
       cancelButtonText: 'Não, mantêm'
     }).then((result) => {
       if (result.value) {
-        this.sendDelete(data, id)
+        this.validar_delete(data, id)
       } else if (result.dismiss == Swal.DismissReason.cancel) {
         this.setState({ 
           color: 'danger',

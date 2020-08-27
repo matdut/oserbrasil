@@ -3,6 +3,7 @@ var sequelize = require('./database');
 // import Role for FK roleId
 //var Role = require('./Role');
 // name table
+var Status = require('./Status');
 var Eventos = require('./Eventos');
 var Situacao = require('./Situacao');
 
@@ -83,6 +84,22 @@ var Translado_evento = sequelize.define(nametable,{
     type: Sequelize.STRING(16), 
     allowNull: true,
   },
+  tipoTransporteId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Tipo_transporte,
+      key: 'id'
+    } 
+  },
+  statusId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Status,
+      key: 'id'
+    } 
+  },
   situacaoId:{
     type: Sequelize.INTEGER,
     // this is a refence to another model
@@ -97,6 +114,9 @@ var Translado_evento = sequelize.define(nametable,{
   }
 })
 
+Translado_evento.belongsTo(Perfil);
+Translado_evento.belongsTo(Situacao);
+Translado_evento.belongsTo(Status);
 Translado_evento.belongsTo(Eventos);
 
 module.exports = Translado_evento

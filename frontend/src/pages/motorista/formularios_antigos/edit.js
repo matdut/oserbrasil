@@ -1146,7 +1146,7 @@ seleciona_idioma2(e) {
 handleChangeBilingue = (e) => {     
   if (e.target.checked) {
     this.setState({   
-       seleciona_limit: 2
+       seleciona_limit: 2      
     })               
   } else {
     this.setState({   

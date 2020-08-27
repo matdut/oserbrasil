@@ -30,6 +30,26 @@ controllers.delete = async (req,res) => {
 
 }
 
+controllers.deleteMotorista = async (req,res) => {
+  
+  // parameter post  
+  const { id } = req.params;  
+ 
+  await Veiculo.destroy({
+    where: { motoristaId: id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+   //res.json({success:true, deleted:del, message:"Deleted successful"});
+
+}
+
 controllers.lista_veiculos = async (req,res) => {
   const { id } = req.params;  
 

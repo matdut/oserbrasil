@@ -135,11 +135,7 @@ class listComponent extends React.Component  {
   }
 
   sendDelete(userId){
-    // url de backend
-    //console.log('deletar o id - '+userId);
-    //const baseUrl = "http://34.210.56.22:3333/motorista/delete/"+userId    // parameter data post
-    //const url = baseUrl+"/motorista/delete/"+userId    // parameter data post
-    // network
+ 
     api.delete(`/veiculo/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {

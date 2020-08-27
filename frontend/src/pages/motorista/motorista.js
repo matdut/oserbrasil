@@ -6,6 +6,9 @@ import { celularMask } from '../formatacao/celularmask';
 import { cpfMask } from '../formatacao/cpfmask';
 import api from '../../services/api';
 import './motorista.css';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Multiselect } from 'multiselect-react-dropdown';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 const andamento_cadastro = localStorage.getItem('logprogress'); 
@@ -16,6 +19,7 @@ class motoristaComponent extends React.Component{
     this.state = { 
       campId: 0,     
       campNome: "",
+      options: [{name: 'Inglês', id: 1},{name: 'Alemão', id: 2}, {name: 'Italiano', id: 3}, {name: 'Francês', id: 4}],
       perfillog: null,
       campData_nascimento:"",
       campEmail:"",      
@@ -23,9 +27,13 @@ class motoristaComponent extends React.Component{
       campCpf:"", 
       campCNH: "", 
       campData_CNH: "", 
-      campStatusId: '',
+      campStatusId: '',     
       camp_cpf_disabled: false,
       camp_nome_disabled: false,    
+      campMotorista_bilingue: false,
+      seleciona_bilingue: 0,
+      seleciona_limit: 2,
+      selectedValue: [],
       campCnpj:"",
       endereco:"",      
       perfilid:'',       
@@ -56,6 +64,7 @@ class motoristaComponent extends React.Component{
     this.emailchange = this.emailchange.bind(this);
     this.nomeChange = this.nomeChange.bind(this);     
     this.data_nascimentochange = this.data_nascimentochange.bind(this);
+    this.handleChangeBilingue = this.handleChangeBilingue.bind(this); 
 
     this.verificaEmail = this.verificaEmail.bind(this);   
     this.verificaCpf = this.verificaCpf.bind(this);  
@@ -65,6 +74,10 @@ class motoristaComponent extends React.Component{
     this.verificaDataValidade = this.verificaDataValidade.bind(this);  
     this.verificaDataNascimento = this.verificaDataNascimento.bind(this);  
 
+    
+    this.verificaTelefone1onblur = this.verificaTelefone1onblur.bind(this);  
+    this.verificaCnhonblur = this.verificaCnhonblur.bind(this);   
+    
     this.verificaEmailonfocus = this.verificaEmailonfocus.bind(this);   
 
     this.validaEmailChange = this.validaEmailChange.bind(this);    
@@ -79,7 +92,18 @@ class motoristaComponent extends React.Component{
     this.busca_motorista = this.busca_motorista.bind(this);
     this.verificar_menu = this.verificar_menu.bind(this);      
 
+    this.seleciona_idioma = this.seleciona_idioma.bind(this);     
+
     this.verifica_nome_motorista = this.verifica_nome_motorista.bind(this);  
+  }
+
+  handleSwitchChange = nr => () => {
+    let switchNumber = `switch${nr}`;
+    this.setState({
+      [switchNumber]: !this.state[switchNumber]
+    });
+
+    console.log(JSON.stringify(this.state, null, "    ")); 
   }
 
   componentDidMount(){ 
@@ -135,7 +159,7 @@ class motoristaComponent extends React.Component{
     }
     return(    
           nome_titulo          
-       );  
+    );  
   } 
 
   busca_motorista() {
@@ -246,13 +270,78 @@ class motoristaComponent extends React.Component{
     this.setState({ campData_nascimento: e.target.value })
   }
 
-  verificaCnh(e) {
+  handleChangeBilingue = (e) => {     
+    if (e.target.checked) {
+      this.setState({   
+         seleciona_limit: 2,
+         seleciona_bilingue: 1,
+      })               
+    } else {
+      this.setState({   
+        seleciona_limit: 0,
+        seleciona_bilingue: 0,
+     })               
+    }
+    
+    this.setState({ 
+      campMotorista_bilingue: e.target.checked     
+    })       
+ 
+    
+  }  
+/*
+  handleChangeBilingue(e) { 
+    //let bilingue = event.target.checked
+    //console.log('bilingue '+JSON.stringify(event.target.checked, null, "    ")); 
+    //console.log('bilingue value '+JSON.stringify(event.target.value, null, "    ")); 
+
+    this.setState({ 
+      seleciona_bilingue: e.target.checked,
+      campMotorista_bilingue: e.target.checked 
+    });
+    /*
+    if (bilingue == true) {
+      this.setState({ campMotorista_bilingue: bilingue });
+    } else {
+      this.setState({ campMotorista_bilingue: bilingue });
+    } 
+    
+    console.log(JSON.stringify(this.state, null, "    ")); 
+  };
+*/
+
+/*
+  handleChangeBilingue(e) {         
+    console.log(JSON.stringify(e.target.checked, null, "    ")); 
+    this.setState({ campMotorista_bilingue: e.target.checked})  
+    console.log(JSON.stringify(this.state, null, "    ")); 
+
+  }
+*/
+  verificaCnhonblur(e) {
     const { validate } = this.state
        if (this.state.campCNH.length == 0) {
         validate.numero_carteiraState = 'has-danger'
         this.setState({ 
           validate,
           mensagem_numero_carteira: 'O campo Número CNH é obrigatório.'  
+         })      
+       } else {
+        validate.numero_carteiraState = 'has-success' ;        
+
+        this.setState({ 
+          mensagem_numero_carteira: ''
+       });  
+
+       }      
+   }
+   verificaCnh(e) {
+    const { validate } = this.state
+       if (this.state.campCNH.length == 0) {
+       // validate.numero_carteiraState = 'has-danger'
+        this.setState({ 
+          validate,
+          mensagem_numero_carteira: ''  
          })      
        } else {
         validate.numero_carteiraState = 'has-success' ;        
@@ -293,7 +382,7 @@ class motoristaComponent extends React.Component{
        }  
    }
   
-  verificaTelefone1(e) {
+  verificaTelefone1onblur(e) {
    
     const { validate } = this.state
        if (e.target.value.length < 15) {          
@@ -314,6 +403,29 @@ class motoristaComponent extends React.Component{
 
        }        
    }
+
+   verificaTelefone1(e) {
+   
+    const { validate } = this.state
+       if (e.target.value.length < 15) {          
+        validate.telefone1State = ''
+        this.setState({ 
+          validate,
+          inicio: 1,
+          mensagem_telefone1: ''
+         })      
+       } else {       
+
+        if (e.target.value.length == 15) {
+            validate.telefone1State = 'has-success' ;                
+            this.setState({ 
+              mensagem_telefone1: ''
+          });           
+        }
+
+       }        
+   }
+
 
    verificaEmail(e){   
     const { validate } = this.state
@@ -372,7 +484,7 @@ class motoristaComponent extends React.Component{
         validate.data_validadeState = 'has-danger'
         this.setState({ 
           validate,
-          mensagem_datavalidade: 'O campo Data de Nascimento é obrigatório.'  
+          mensagem_datavalidade: 'O campo Data de Validade é obrigatório.'  
          })      
        } else {
 
@@ -477,6 +589,12 @@ validaNomeChange(e){
     this.setState({ validate })  
 }
 
+seleciona_idioma(e) {
+  console.log('seleciona_idioma - '+e.target.value);
+  this.setState({ selectedValue: e.target.value })  
+}
+
+
 validaCnhChange(e){
   const { validate } = this.state
   
@@ -571,7 +689,7 @@ verifica_botao(inicio) {
     if (inicio == 1) {
       return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_empresa" p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_motorista" p={2}>
                 <div className="d-flex justify-content-center">
                   <label> Próximo </label>
                 </div>     
@@ -583,7 +701,7 @@ verifica_botao(inicio) {
         && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
         && validate.telefone1State == 'has-success') {
           return (           
-            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_empresa_habilitado"  p={2} onClick={()=>this.sendSave()}>
+            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_motorista_habilitado"  p={2} onClick={()=>this.sendSave()}>
             <div className="d-flex justify-content-center">
                 <label> Próximo </label>
             </div>     
@@ -592,7 +710,7 @@ verifica_botao(inicio) {
         } else {
           return (
 
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_empresa" p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_motorista" p={2}>
                   <div className="d-flex justify-content-center">
                     <label> Próximo </label>
                   </div>     
@@ -604,7 +722,7 @@ verifica_botao(inicio) {
     if (inicio == 1) {
       return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_empresa" p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_motorista" p={2}>
                 <div className="d-flex justify-content-center">
                    <label> Próximo </label>
                 </div>     
@@ -615,7 +733,7 @@ verifica_botao(inicio) {
          && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
          && validate.telefone1State == 'has-success') {
           return (           
-            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_empresa_habilitado"  p={2} onClick={()=>this.sendSave()}>
+            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_motorista_habilitado"  p={2} onClick={()=>this.sendSave()}>
             <div className="d-flex justify-content-center">
                 <label> Próximo </label>
             </div>     
@@ -624,7 +742,7 @@ verifica_botao(inicio) {
         } else {
           return (
 
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_empresa" p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_motorista" p={2}>
                   <div className="d-flex justify-content-center">
                       <label> Próximo </label>
                   </div>     
@@ -637,7 +755,7 @@ verifica_botao(inicio) {
     if (inicio == 1) {
       return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_empresa" p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_motorista" p={2}>
                 <div className="d-flex justify-content-center">
                 <label> Salvar Alterações </label>
                 </div>     
@@ -648,7 +766,7 @@ verifica_botao(inicio) {
         && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
         && validate.telefone1State == 'has-success') {
           return (           
-            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_empresa_habilitado"  p={2} onClick={()=>this.sendSave()}>
+            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_motorista_habilitado"  p={2} onClick={()=>this.sendSave()}>
             <div className="d-flex justify-content-center">
                 <label> Salvar Alterações </label>
             </div>     
@@ -657,7 +775,7 @@ verifica_botao(inicio) {
         } else {
           return (
 
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_empresa" p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_motorista" p={2}>
                   <div className="d-flex justify-content-center">
                     <label> Salvar Alterações </label>
                   </div>     
@@ -678,10 +796,16 @@ sendSave(){
     cpf: this.state.campCpf,
     data_validade: this.state.campData_CNH, 
     numero_carteira: this.state.campCNH,    
+    bilingue: this.state.campMotorista_bilingue,
+    idioma1: this.state.selectedValue[0],
+    idioma2: this.state.selectedValue[1],
     perfilId: 3,
     statusId: this.state.campStatusId,
     situacaoId: 1
   }          
+   console.log('selectedValue - '+JSON.stringify(this.state.selectedValue, null, "    ")); 
+
+   console.log('this.state - '+JSON.stringify(this.state, null, "    ")); 
 
      if (this.state.incluir) {       
       console.log('incluir - '+JSON.stringify(datapost, null, "    ")); 
@@ -985,7 +1109,7 @@ return (
                           value={this.state.campCNH}
                           valid={ this.state.validate.numero_carteiraState === 'has-success' }
                           invalid={ this.state.validate.numero_carteiraState === 'has-danger' }
-                          onBlur={this.verificaCnh}
+                          onBlur={this.verificaCnhonblur}
                           onKeyUp={this.verificaCnh}
                         // onFocus={this.verificaCpf}
                           onChange={ (e) => {
@@ -1053,9 +1177,11 @@ return (
                       </FormFeedback> 
               </div>
               <div class="p-2">
+                <div class="d-flex justify-content-start">
+                  <div>
                       <label for="inputEmail4">Telefone *</label>                     
                       <Input                        
-                        className="input_text_motorista"
+                        className="input_text_motorista_1"
                         type="text"
                         name="senha2"
                         id="exampleEmail2"
@@ -1065,7 +1191,7 @@ return (
                         value={this.state.campTelefone1}
                         valid={ this.state.validate.telefone1State === 'has-success' }
                         invalid={ this.state.validate.telefone1State === 'has-danger' }
-                        onBlur={this.verificaTelefone1}
+                        onBlur={this.verificaTelefone1onblur}
                         onKeyUp={this.verificaTelefone1}
                         onChange={ (e) => {
                           this.telefone1change(e)                       
@@ -1077,6 +1203,29 @@ return (
                       invalid={this.state.validate.telefone1State}>
                           {this.state.mensagem_telefone1}
                       </FormFeedback>
+                  </div>
+                  
+                  <div>
+                  <FormControlLabel
+                    control={<Switch checked={this.state.campMotorista_bilingue} onChange={this.handleChangeBilingue} name="checkedA" />}
+                    label="Bilingue?"
+                    labelPlacement="top"
+                  />                 
+                  </div>                    
+                                      
+                 <div>  
+                 <label for="inputAddress">selecione o idioma</label>   
+                 <Multiselect                                     
+                      options={this.state.options} // Options to display in the dropdown
+                      selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+                      onSelect={this.onSelect} // Function will trigger on select event
+                      onRemove={this.onRemove} // Function will trigger on remove event
+                      displayValue="name" // Property name to display in the dropdown options
+                      selectionLimit={this.state.seleciona_limit}
+                      onChange={(e) => { this.seleciona_idioma(e)} } 
+                      />             
+                  </div>
+                 </div>     
                </div>
             </div>              
             {this.verifica_botao(this.state.inicio)}             

@@ -1039,7 +1039,7 @@ return (
               <div class="p-2"> 
                 <label for="inputAddress">Endereço *</label>              
                   <Input
-                      className="input_text"      
+                      className="input_text_endereco"      
                       type="text"                      
                       name="endereco"
                       id="examplnome"

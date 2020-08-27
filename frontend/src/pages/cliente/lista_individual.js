@@ -159,7 +159,7 @@ class listComponent extends React.Component  {
           <td>
             <div style={{width:"150px"}}>           
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.validar_delete(data, data.id)}> Deletar </button>
+              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.email, data.id)}> Deletar </button>
             </div>            
           </td>          
         </tr>
@@ -185,7 +185,7 @@ class listComponent extends React.Component  {
       alert("Erro de Conexão")
     })
   }
-  validar_delete(data, id) {
+  validar_delete(email, id) {
      
     api.get(`/eventos/listaeventocliente/${id}`)
     .then(response =>{
@@ -193,17 +193,14 @@ class listComponent extends React.Component  {
       if (response.data.success) {
        // console.log('id - '+response.data);
      //  console.log( JSON.stringify(response.data, null, "    ") );       
-        const registros = response.data.data;
-        if (registros.length > 0) {
           this.setState({ 
             color: 'danger',
             mensagem: 'Cliente tem Evento(s) associado(s), não pode ser excluído'
           })             
-        } else {
-          this.onDelete(data, id);
-        }          
-
-      }
+       
+      } else {
+        this.sendDelete(email, id);
+      } 
     })
     .catch ( error => {
       alert("Erro de Conexão")
@@ -211,7 +208,7 @@ class listComponent extends React.Component  {
   
   }
 
-  onDelete(data, id){
+  onDelete(email, id){
     Swal.fire({
       title: 'Você está certo?',
       text: 'Você não poderá recuperar estes dados!',
@@ -221,15 +218,17 @@ class listComponent extends React.Component  {
       cancelButtonText: 'Não, mantêm'
     }).then((result) => {
       if (result.value) {
-        this.sendDelete(data, id)
+        this.validar_delete(email, id)
       } 
     })
   }
 
-  sendDelete(data, userId){  
+  sendDelete(email, userId){  
 
-    api.delete(`/login/delete/${data.email}`)     
-    
+
+    api.delete(`/login/delete/${email}`)     
+    console.log(`/login/delete/+${email}`)
+
     api.delete(`/cliente/delete/${userId}`)
     .then(response =>{
 

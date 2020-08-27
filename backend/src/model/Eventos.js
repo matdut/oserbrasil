@@ -42,14 +42,6 @@ var Eventos = sequelize.define(nametable,{
     type: Sequelize.DATEONLY,
     allowNull: false,     
   },
-  tipoTransporteId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Tipo_transporte,
-      key: 'id'
-    } 
-  },
   valor_total: {
     type: Sequelize.DECIMAL(20,2),  
     allowNull: false,     

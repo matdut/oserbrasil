@@ -109,7 +109,7 @@ class empresarialComponent extends React.Component{
   }
  
  carrega_doc_veiculo() { 
-  api.get(`/veiculo/getVeiculo/${localStorage.getItem('logVeiculo')}`)
+  api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
   .then(res=>{        
     
     if (res.data.success == true) {
