@@ -78,4 +78,20 @@ controllers.get = async (req, res) => {
   
 }
 
+controllers.getNome = async (req, res) => {
+  const { id } = req.params;
+  await Estado.findAll({
+    where: { id: id}
+    //,
+    //include: [ Role ]
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
 module.exports = controllers;

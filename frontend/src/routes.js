@@ -36,6 +36,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
  /* EVENTOS */
  import Eventos_novo_cadastro from './pages/eventos/eventos';
  import Listar_evento_cliente from './pages/eventos/list';  
+ import Listar_evento_servico from './pages/eventos/listar_servicos';  
 
  /* TRANSLADOS */
  import Translados_incluir from './pages/translados/form';
@@ -76,6 +77,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 /*ADMINISTRADOR */
 import Area_administrador from './pages/administrador/area_administrador';
 import Cartao_creedito_cadastrar from './pages/cartao/cartao_credito';
+import Lista_cad_Incompleto from './pages/administrador/lista_cad_incompleto';
 
 /* MATRIZ */
 import Matriz_tarifaria_criar from './pages/matriz_tarifaria/form';
@@ -142,6 +144,7 @@ export default function Routes() {
              <Route path="/criar_eventos/:id" component={Eventos_novo_cadastro} />              
 
              <Route path="/listaeventocliente/:id" component={Listar_evento_cliente} />           
+             <Route path="/lista_evento_servico/:id" component={Listar_evento_servico} />           
 
              <Route path="/listporevento/:id" component={Translado_listar} />    
              <Route path="/transladoscriar" component={Translados_incluir} />    
@@ -193,7 +196,8 @@ export default function Routes() {
              <Route path="/cartao_credito" component={Cartao_creedito_cadastrar} />
              
              <Route path="/area_operador" component={Area_operador} />
-             
+
+             <Route path="/lista_cad_incompleto/:id" component={Lista_cad_Incompleto} />
   
             <Rodape />
          </div>

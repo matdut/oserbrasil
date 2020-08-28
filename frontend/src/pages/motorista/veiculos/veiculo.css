@@ -327,6 +327,22 @@
   margin-top: 50px !important; 
   padding: 2px !important; 
   text-align: center !important;   
-  width: 250px !important; 
-  margin-left: 208px !important;
+  width: 450px !important; 
+  margin-left: 108px !important;
+  height: 330px !important;   
+}
+
+.titulocrvl {
+  padding: 1px;
+  text-align: left !important;   
+  text-decoration: blue !important;  
+  font-size: 18px;  
+  font-style: initial;
+  color: #0F074E !important;  
+  font-weight: bold;
+}
+
+.descricaocrvl {
+  padding: 1px;
+  text-align: left !important;   
 }

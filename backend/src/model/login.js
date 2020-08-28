@@ -48,4 +48,7 @@ var Login = sequelize.define(nametable,{
   timestamps:false
 });
 
+Login.belongsTo(Perfil);
+Login.belongsTo(Status);
+
 module.exports = Login

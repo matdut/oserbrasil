@@ -183,7 +183,7 @@ class empresarialComponent extends React.Component{
             endereco: "/area_operador" 
           })  
           
-          localStorage.setItem('lograzao_social', this.state.campNome);  
+        //  localStorage.setItem('lograzao_social', this.state.campNome);  
 
         }  
       })        
@@ -637,7 +637,9 @@ sendUpdate(){
     senha: this.state.campSenha,     
     statusId: 1
   }  
-    
+     
+        localStorage.setItem('logstatus', 1);   
+
         api.put(`/operador/update/${localStorage.getItem('logid')}`, datapost)
 
         api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
@@ -849,7 +851,16 @@ verifica_botao(inicio) {
                     
                 );     
               }
-            }    
+            }  else {
+              return (
+
+                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
+                        <div className="d-flex justify-content-center">
+                        <label> Salvar Alterações </label>
+                        </div>     
+                  </Box>           
+              );    
+            }  
           }    
     } 
 } 

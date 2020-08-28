@@ -53,7 +53,7 @@ router.put("/foto/update/:id", multer(multerConfig).single('file'), async (req, 
 router.put("/documentoCNH/update/:id", multer(multerConfig).single('file'), async (req, res) => {
    
   console.log('req.file documentoCNH - '+JSON.stringify(req.file, null, "    "));  
-
+  
   const { originalname: name, size, filename: key, location: url = ""} = req.file;
   //const { originalname: name2, size2, filename: key2, location: url3 = ""} = req.file2;
 
@@ -64,6 +64,7 @@ router.put("/documentoCNH/update/:id", multer(multerConfig).single('file'), asyn
   const url2 = req.protocol + '://' + req.get('host')  
   //console.log('entrou aqui = '+id);
   // update data
+  // path: /home/oser/apps_nodejs/backend/tmp/uploads/ 
   
   await Motorista.update({
     foto_CNH_name: name,

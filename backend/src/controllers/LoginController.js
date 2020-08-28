@@ -38,8 +38,6 @@ controllers.getMotorista = async (req, res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-
-
   const {  email, senha, statusId, perfilId, logid } = req.body;
   //console.log("ROle es ==>"+role)
   //create

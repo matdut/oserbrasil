@@ -313,7 +313,7 @@ verificar_menu(){
                
                <div>
                   <div className="botao_navegacao">
-                     <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
+            
                   </div>   
                </div>   
           <div>
@@ -337,7 +337,7 @@ verificar_menu(){
            
            <div>
               <div className="botao_navegacao">
-                 <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
+            
               </div>   
            </div>   
          
@@ -372,12 +372,14 @@ return (
               <Grid container spacing={1}>
                   <Grid item xs>
                     <Paper className="grid1">
+                       <div className="titulocrvl">CRVL 1</div>
+                        <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
                         <Container>                            
                             <Content>
                               <Upload onUpload={this.handleUploadCRVL} />
                                 {!!uploadedCRVL.length && (
                                   <FileList files={uploadedCRVL} />
-                                )}
+                                )}  
                             </Content>                
                           </Container>    
                     </Paper>

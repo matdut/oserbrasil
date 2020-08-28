@@ -592,15 +592,14 @@ sendUpdate(){
            // console.log('Atualiza perfil id - '+localStorage.getItem('logperfil')); 
             localStorage.setItem('logid', response.data.data.id);
             if (localStorage.getItem('logperfil') == 1) {
-              localStorage.setItem('logperfil', 1);
-              this.props.history.push(`/empresa_endereco/`+localStorage.getItem('logid'));    
+              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid')); 
             } else if (localStorage.getItem('logperfil') == 2) {
-                 this.props.history.push(`/area_cliente_individual`);       
+              this.props.history.push(`/area_cliente_individual`);       
             } else if (localStorage.getItem('logperfil') == 7) {
-               this.props.history.push(`/area_cliente_empresarial`);       
-            } else if (localStorage.getItem('logperfil') == 0) {      
-              this.props.history.push(`/empresa_endereco/`+localStorage.getItem('logid'));              
-            } 
+              this.props.history.push(`/area_cliente_empresarial`);                                  
+            } else if (localStorage.getItem('logperfil') == 0) {
+              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid'));      
+            }    
   
           }
           else {
@@ -620,15 +619,14 @@ sendUpdate(){
            // console.log('Atualiza perfil id - '+localStorage.getItem('logperfil')); 
             //localStorage.setItem('logid', response.data.data.id);
             if (localStorage.getItem('logperfil') == 1) {
-              localStorage.setItem('logperfil', 1);
-              this.props.history.push(`/empresa_endereco/`+localStorage.getItem('logid'));    
+              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid')); 
             } else if (localStorage.getItem('logperfil') == 2) {
-                 this.props.history.push(`/area_cliente_individual`);       
+              this.props.history.push(`/area_cliente_individual`);       
             } else if (localStorage.getItem('logperfil') == 7) {
-               this.props.history.push(`/area_cliente_empresarial`);       
-            } else if (localStorage.getItem('logperfil') == 0) {      
-              this.props.history.push(`/empresa_endereco/`+localStorage.getItem('logid'));              
-            } 
+              this.props.history.push(`/area_cliente_empresarial`);                                  
+            } else if (localStorage.getItem('logperfil') == 0) {
+              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid'));      
+            }    
   
           }
           else {

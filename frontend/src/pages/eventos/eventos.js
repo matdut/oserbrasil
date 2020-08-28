@@ -37,29 +37,29 @@ class operadoresComponent extends React.Component{
       campordem_servico: '', 
       campnome_evento: '', 
       campdata_evento: '',    
-      camptipoTransporteId: '', 
+    //  camptipoTransporteId: '', 
       campvalor_total: '',      
       nome: "",
       perfil: "",   
       criador_logado_Id: "",      
       listEstados:[],
-      listTipoTransporte:[],    
+   //   listTipoTransporte:[],    
       mensagem_ordem_servico: '',  
       mensagem_nome_evento: '',  
       mensagem_data_evento: '',  
       mensagem_valor_total: '',      
-      incluir: false, 
+      incluir: true, 
       inicio: 1,
       progresso: 0,      
       validate: {
         ordem_servicoState: '',      
         nome_eventoState: '',   
         data_eventoState: '',     
-        tipo_transporteState: '',   
+      //  tipo_transporteState: '',   
       }    
     }
    
-    this.tipoChange = this.tipoChange.bind(this);    
+    //this.tipoChange = this.tipoChange.bind(this);    
     this.ordem_servicoChange = this.ordem_servicoChange.bind(this);    
     this.nome_eventoChange = this.nome_eventoChange.bind(this);    
     this.data_eventoChange = this.data_eventoChange.bind(this);    
@@ -68,6 +68,10 @@ class operadoresComponent extends React.Component{
     this.busca_operador = this.busca_operador.bind(this);
    // this.busca_cliente = this.busca_cliente.bind(this);
     this.verificar_menu = this.verificar_menu.bind(this);
+
+    this.verifica_nome_evento = this.verifica_nome_evento.bind(this);  
+    this.verifica_ordem_servico = this.verifica_ordem_servico.bind(this);  
+    this.verifica_data_evento = this.verifica_data_evento.bind(this);  
 
     //this.envio_email = this.envio_email.bind(this);   
     
@@ -85,7 +89,7 @@ class operadoresComponent extends React.Component{
     console.log('Perfil log - '+localStorage.getItem('logperfil'));    
     
     //const logperfil = localStorage.getItem('logperfil');
-    this.loadTipoTransporte();
+   // this.loadTipoTransporte();
 
     if (localStorage.getItem('logperfil') == 2) {      
        this.busca_cliente();
@@ -104,6 +108,57 @@ class operadoresComponent extends React.Component{
     
   }
 
+  verifica_nome_evento(){    
+      const { validate } = this.state
+         if (this.state.campnome_evento.length == 0) {
+          validate.nome_eventoState = 'has-danger'
+          this.setState({ 
+            validate,
+            mensagem_nome_evento: 'O campo nome do evento é obrigatório.'  
+           })      
+         } else {
+          validate.nome_eventoState = 'has-success' ;        
+  
+          this.setState({ 
+            mensagem_nome_evento: ''
+         });  
+  
+         }              
+  } 
+  verifica_ordem_servico(){    
+    const { validate } = this.state
+       if (this.state.campordem_servico.length == 0) {
+        validate.ordem_servicoState = 'has-danger'
+        this.setState({ 
+          validate,
+          mensagem_ordem_servico: 'O campo Ordem de serviço é obrigatório.'  
+         })      
+       } else {
+        validate.ordem_servicoState = 'has-success' ;        
+
+        this.setState({ 
+          mensagem_ordem_servico: ''
+       });  
+
+       }                     
+} 
+verifica_data_evento(){    
+  const { validate } = this.state
+     if (this.state.campdata_evento.length == 0) {
+      validate.data_eventoState = 'has-danger'
+      this.setState({ 
+        validate,
+        mensagem_data_evento: 'O campo Data do evento é obrigatório.'  
+       })      
+     } else {
+      validate.data_eventoState = 'has-success' ;        
+
+      this.setState({ 
+        mensagem_data_evento: ''
+     });  
+
+     }              
+} 
   verifica_nome_operador(nome){
     let nome_titulo = nome.substring(0,nome.indexOf(" ")) 
     if (nome_titulo == "") {
@@ -173,19 +228,28 @@ class operadoresComponent extends React.Component{
   
   }
   
-  tipoChange(e) {
-    this.setState({ camptipoTransporteId: e.target.value })
-  }
+ // tipoChange(e) {
+  //  this.setState({ camptipoTransporteId: e.target.value })
+ // }
   ordem_servicoChange(e) {
     this.setState({ campordem_servico: e.target.value })
   }
   nome_eventoChange(e) {
     this.setState({ campnome_evento: e.target.value })
   }
-  data_eventoChange(event) {     
-    this.setState({        
-        campdata_evento: event.target.value
-    });    
+  data_eventoChange(event) {         
+    const { validate } = this.state
+    //if (this.state.campdata_evento.length > 0) {    
+       
+      validate.data_eventoState = 'has-success' ;        
+
+      this.setState({ 
+        mensagem_data_evento: '',
+        campdata_evento: event.target.value,
+        inicio: 2
+      });  
+
+   // }      
   } 
  
   verificaEmailonfocus(e){   
@@ -260,7 +324,7 @@ class operadoresComponent extends React.Component{
        }        
    }
 
-   loadTipoTransporte() {
+   /*loadTipoTransporte() {
     api.get('/tipoTransporte/list')
     .then(res=>{
       if (res.data.success == true) {
@@ -273,7 +337,7 @@ class operadoresComponent extends React.Component{
       alert("Error server "+error)
     })
 
-  }  
+  } 
 
   loadFillData(){  
   
@@ -283,7 +347,7 @@ class operadoresComponent extends React.Component{
       )
     })
   }
-
+ */
   verificaNome() {
     const { validate } = this.state
        if (this.state.campNome.length == 0) {
@@ -418,6 +482,7 @@ validaDataNascimentoChange(e){
 }
 
 verifica_botao(inicio) {
+
   const { validate } = this.state    
   console.log('perfil verifica_botao -'+localStorage.getItem('logperfil'))
   
@@ -465,9 +530,8 @@ verifica_botao(inicio) {
             </Box>           
         );   
       } else {
-      if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
-          && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
-          && validate.telefone1State == 'has-success') {
+        if (validate.data_eventoState == 'has-success' && validate.nome_eventoState == 'has-success'  
+        && validate.ordem_servicoState == 'has-success') {
             return (           
               <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_evento_habilitado"  p={2} onClick={()=>this.sendSave()}>
               <div className="d-flex justify-content-center">
@@ -497,9 +561,8 @@ verifica_botao(inicio) {
           </Box>           
       );   
     } else {
-    if (validate.data_eventoState == 'has-success' && validate.nome_eventoState == 'has-success'  
-        && validate.ordem_servicoState == 'has-success' && validate.nomeState == 'has-success' 
-        && validate.telefone1State == 'has-success') {
+      if (validate.data_eventoState == 'has-success' && validate.nome_eventoState == 'has-success'  
+      && validate.ordem_servicoState == 'has-success') {
           return (           
             <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_evento_habilitado"  p={2} onClick={()=>this.sendSave()}>
             <div className="d-flex justify-content-center">
@@ -529,9 +592,8 @@ verifica_botao(inicio) {
             </Box>           
         );   
       } else {
-      if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
-          && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
-          && validate.telefone1State == 'has-success') {
+        if (validate.data_eventoState == 'has-success' && validate.nome_eventoState == 'has-success'  
+        && validate.ordem_servicoState == 'has-success') {
             return (           
               <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_evento_habilitado"  p={2} onClick={()=>this.sendSave()}>
               <div className="d-flex justify-content-center">
@@ -561,22 +623,25 @@ sendSave(){
         perfilId: localStorage.getItem('logperfil'),    
         ordem_servico: this.state.campordem_servico, 
         nome_evento: this.state.campnome_evento, 
-        data_evento: this.state.campdata_evento,         
-        tipoTransporteId: this.state.camptipoTransporteId, 
+        data_evento: this.state.campdata_evento,            
         //statusId: 7,      
        // situacaoId: 1
        }           
 
        console.log('incluir - '+JSON.stringify(datapost_incluir, null, "    ")); 
-        api.post('/evento/create',datapost_incluir)
+        api.post('/eventos/create',datapost_incluir)
         .then(response=>{
-          if (response.data.success) {                       
-          
+          if (response.data.success == true) {                                   
+            
+            localStorage.setItem('logeventoId',response.data.data.id );
+
+            console.log(' logperfil '+localStorage.getItem('logperfil'));
+
           if (localStorage.getItem('logperfil') == 1) {
              localStorage.setItem('logperfil', 1);
              this.props.history.push('/area_administrador');                 
           } else if (localStorage.getItem('logperfil') == 7) {            
-            this.props.history.push(`/area_cliente_empresarial`);       
+            this.props.history.push("/lista_evento_servico/"+localStorage.getItem('logid'));       
           } else if (localStorage.getItem('logperfil') == 8) {
             localStorage.setItem('lognome', this.state.campNome);  
             localStorage.setItem('logperfil', 8);
@@ -599,7 +664,7 @@ sendSave(){
         tipoTransporteId: this.state.camptipoTransporteId, 
        }           
       console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-      api.put(`/evento/update/${localStorage.getItem('logid')}`, datapost_alterar)
+      api.put(`/eventos/update/${localStorage.getItem('logid')}`, datapost_alterar)
       .then(response=>{
         if (response.data.success==true) {                                  
     
@@ -784,7 +849,7 @@ return (
                         value={this.state.campnome_evento}
                         valid={ this.state.validate.nome_eventoState === 'has-success' }
                         invalid={ this.state.validate.nome_eventoState === 'has-danger' }
-                        onBlur={this.verificaAno}                       
+                        onBlur={this.verifica_nome_evento}                       
                         onChange={ (e) => {
                           this.nome_eventoChange(e)
                         }}    
@@ -811,7 +876,7 @@ return (
                         value={this.state.campordem_servico}
                         valid={ this.state.validate.ordem_servicoState === 'has-success' }
                         invalid={ this.state.validate.ordem_servicoState === 'has-danger' }
-                        onBlur={this.verificaPlaca}                   
+                        onBlur={this.verifica_ordem_servico}                   
                         onChange={ (e) => {
                           this.ordem_servicoChange(e)                       
                         }}    
@@ -835,7 +900,7 @@ return (
                         value={this.state.campdata_evento}
                         valid={ this.state.validate.data_eventoState === 'has-success' }
                         invalid={ this.state.validate.data_eventoState === 'has-danger' }
-                        onBlur={this.verificaAnoDUT}
+                        //onKeyDown={this.verifica_data_evento}
                         onChange={ (e) => {
                           this.data_eventoChange(e)                       
                         }}    
@@ -847,24 +912,7 @@ return (
                       </FormFeedback>    
                        </div>                                                       
                 </div>    
-            </div>      
-            <div class="p-2">               
-             <FormControl variant="outlined" className="select_matriz_tipo">
-                <InputLabel id="demo-simple-select-outlined-label">Tipo de Transporte *</InputLabel>
-                <Select                
-                  labelId="demo-simple-select-outlined-label"
-                  id="demo-simple-select-outlined"
-                  value={this.state.camptipoTransporteId}
-                  onFocus={this.verificaTipo_veiculo}          
-                  onChange={ (e) => {
-                    this.tipoChange(e)
-                  }}    
-                  label="Tipo Transporte"
-                >
-                  {this.loadFillData()}                    
-                </Select>
-              </FormControl>                                         
-            </div>                             
+            </div>                                           
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
     </div>             

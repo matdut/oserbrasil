@@ -9,7 +9,7 @@ const FileList = ({ files, onDelete }) => (
   {files.map(uploadedFile => (
     <li key={uploadedFile.id}>
       <FileInfo className="">         
-        <Preview src={uploadedFile.preview} />               
+        <Preview src={uploadedFile.preview} />                     
       </FileInfo>
       <div>
         {!uploadedFile.uploaded &&

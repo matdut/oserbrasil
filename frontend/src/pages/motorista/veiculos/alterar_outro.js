@@ -971,7 +971,7 @@ verificar_menu() {
                 
                 <div>
                    <div className="botao_navegacao">
-                      <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
+        
                    </div>   
                 </div>   
               
@@ -998,7 +998,7 @@ verificar_menu() {
                
                <div>
                   <div className="botao_navegacao">
-                     <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
+        
                   </div>   
                </div>   
              

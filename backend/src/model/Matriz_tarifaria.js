@@ -33,6 +33,9 @@ var Matriz = sequelize.define(nametable,{
   },
   valor_tempo:  {  
     type: Sequelize.DECIMAL(20,2)  
+  },
+  valor_diaria:  {  
+    type: Sequelize.DECIMAL(20,2)  
   },  
   bandeira:  {  
     type: Sequelize.DECIMAL(20,2)

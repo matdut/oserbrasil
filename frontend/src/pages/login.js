@@ -209,7 +209,8 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logemail', resoperador.data.data[0].email);            
                           localStorage.setItem('lognome', resoperador.data.data[0].nome);
                           localStorage.setItem('logid', resoperador.data.data[0].id);  
-                          localStorage.setItem('logperfil', res.data.data[0].perfilId);           
+                          localStorage.setItem('logperfil', res.data.data[0].perfilId);   
+                          localStorage.setItem('logstatus', res.data.data[0].statusId);   
                           localStorage.setItem('lograzao_social', resoperador.data.data[0].empresa.razao_social);                         
                           
                           this.setState({ 

@@ -33,7 +33,12 @@ class menu_clienteComponent extends React.Component  {
         nome: "",
         perfil:"",
         id: "",
-        isOpen: false
+        criar_evento: false,
+        listar_evento: false,
+        dados_pessoais: false,
+        alterar_senha: false,
+        isOpen: false,
+        status: localStorage.getItem('logstatus'),
       }
       
     }    
@@ -43,8 +48,17 @@ class menu_clienteComponent extends React.Component  {
     this.setState({
       perfil: localStorage.getItem('logperfil'),    
       nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      id: localStorage.getItem('logid'),      
     });
+    
+    if (this.state.status == 7) {
+      this.setState({
+        criar_evento: true,
+        listar_evento: true,
+        dados_pessoais: true,
+        alterar_senha: false,
+      });
+    } 
    // this.verifica_menu();
     
 
@@ -57,7 +71,8 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logprogress');
     localStorage.removeItem('logcep');   
     localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('lograzao_social');  
+    localStorage.removeItem('logstatus');  
+    localStorage.removeItem('lograzao_social');
     localStorage.removeItem('lograzaosocial');  
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);
@@ -116,10 +131,10 @@ class menu_clienteComponent extends React.Component  {
                    EVENTOS
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={"/criar_eventos/"+this.state.id}>
+                <DropdownItem disabled={this.state.criar_evento} href={"/criar_eventos/"+this.state.id}>
                 <i class="fas fa-plus-square"></i> CRIAR
                 </DropdownItem>
-                <DropdownItem href={"/listaeventocliente/"+this.state.id}>
+                <DropdownItem disabled={this.state.listar_evento} href={"/listaeventocliente/"+this.state.id}>
                 <i class="fas fa-list-ul"></i> LISTAR
                 </DropdownItem>
                 <DropdownItem divider />                
@@ -130,10 +145,10 @@ class menu_clienteComponent extends React.Component  {
               <i class="fas fa-list"></i> ALTERAR
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={`/operadores/`+localStorage.getItem('logid')}>
+                <DropdownItem disabled={this.state.dados_pessoais} href={`/operadores/`+localStorage.getItem('logid')}>
                 <i class="far fa-user"></i> Dados Pessoais
                 </DropdownItem>      
-                <DropdownItem href={`/senha_operador/`+localStorage.getItem('logid')}>
+                <DropdownItem disabled={this.state.alterar_senha} href={`/senha_operador/`+localStorage.getItem('logid')}>
                   <i class="fas fa-key"></i> Alterar Senha
                 </DropdownItem>          
                 <DropdownItem divider />                

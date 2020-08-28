@@ -209,6 +209,24 @@
   margin-left: 108px;
 }
 
+.botao_cadastro_endereco_motorista {
+  margin-top: 158px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+
+.botao_cadastro_endereco_motorista_habilitado {
+  margin-top: 158px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}
+
 .botao_cadastro_senha {
   margin-top: 140px !important; 
   width: 480px !important;
@@ -245,6 +263,12 @@
   margin-left: 108px !important;
 }
 
+.card_mot_endereco{
+  color: #0F074E !important;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 12px;
+}
 
 .progress_linear {
   height: 10px;

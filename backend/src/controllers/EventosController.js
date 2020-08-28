@@ -58,10 +58,8 @@ controllers.listaevento = async (req,res) => {
 }
 
 controllers.create = async (req,res) => {  
-
   // DATA parametros desde post
-  const { logid, perfilId, ordem_servico, nome_evento, data_inicio_evento, data_final_evento, 
-    tipoTransporteId, valor_total } = req.body;
+  const { logid, perfilId, ordem_servico, nome_evento, data_evento, valor_total } = req.body;
 
   //console.log(req.body);          
   //console.log("ROle es ==>"+role)
@@ -71,9 +69,7 @@ controllers.create = async (req,res) => {
     perfilId: perfilId,    
     ordem_servico: ordem_servico, 
     nome_evento: nome_evento, 
-    data_inicio_evento: data_inicio_evento, 
-    data_final_evento: data_final_evento, 
-    tipoTransporteId: tipoTransporteId, 
+    data_evento: data_evento,     
     valor_total: valor_total
   })
   .then( function (data){
@@ -90,17 +86,16 @@ controllers.update = async (req, res) => {
   const { id } = req.params;  
 
   // parameter post
-  const { perfilId, ordem_servico, nome_evento, data_inicio_evento, data_final_evento, 
-    tipoTransporteId, valor_total } = req.body;
+  const { logid, perfilId, ordem_servico, nome_evento, data_evento, valor_total } = req.body;
+  
   // update data
   
   await Eventos.update({  
+    logid: logid,
     perfilId: perfilId,    
     ordem_servico: ordem_servico, 
     nome_evento: nome_evento, 
-    data_inicio_evento: data_inicio_evento, 
-    data_final_evento: data_final_evento, 
-    tipoTransporteId: tipoTransporteId, 
+    data_evento: data_evento,     
     valor_total: valor_total
   },{
     where: { logid: id}
@@ -119,6 +114,21 @@ controllers.get = async (req, res) => {
 
   await Eventos.findAll({
     where: { id: id }   
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getcliente = async (req, res) => {
+  const { id } = req.params;
+
+  await Eventos.findAll({
+    where: { logid: id }   
   })
   .then( function (data){
     return res.json({success:true, data: data});

@@ -617,7 +617,7 @@ sendUpdate(){
     statusId: 1
   }  
     
-        console.log('cliente 1- '+JSON.stringify(logindata, datapost, "    ")); 
+        console.log('cliente - '+JSON.stringify(logindata, datapost, "    ")); 
         api.put(`/cliente/update/${localStorage.getItem('logrepresentante')}`, datapost)
         
         console.log('login 1- '+JSON.stringify(logindata, null, "    ")); 
@@ -627,7 +627,7 @@ sendUpdate(){
            
             //localStorage.setItem('logprogress', this.state.progresso);              
             
-            console.log('Perfil state '+localStorage.getItem('logperfil'));             
+           // console.log('Perfil state '+localStorage.getItem('logperfil'));             
 
             if (localStorage.getItem('logperfil') == 1) {              
                this.props.history.push(`/lista_empresarial`);                                 

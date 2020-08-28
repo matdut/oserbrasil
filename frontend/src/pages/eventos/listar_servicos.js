@@ -28,29 +28,42 @@ class listaeventosComponent extends React.Component  {
     super(props);
     this.state = {
       perfil: perfil,
-      eventoId: '', 
-      listEventos:[]
+      eventoId: '',       
+      campCpf: '',
+      campordem_servico: '',
+      campnome_evento: '',
+      campdata_evento: '',
+      listServicos:[]
     }
   }
 
   componentDidMount(){
     this.setState({
       perfil: localStorage.getItem('logperfil'),
-      id: localStorage.getItem('logid')   
+      id: localStorage.getItem('logid'),
+      eventoId: localStorage.getItem('logeventoId')           
     });
-    this.loadlistEventos();    
+
+    this.loadEventos();    
 
   }
 
-  loadlistEventos(){
+  loadEventos(){
    // const url = baseUrl+"/cliente/list"
    let userId = this.props.match.params.id;  
 
-   api.get(`/eventos/getCliente/${userId}`)
+   api.get(`/eventos/get/${localStorage.getItem('logeventoId')}`)
     .then(res=>{
-      if (res.data.success) {
-        const data = res.data.data    
-        this.setState({listEventos:data})
+      if (res.data.success == true) {
+        
+        const data = res.data.data      
+        this.setState({
+          campordem_servico: data[0].ordem_servico,
+          campnome_evento: data[0].nome_evento,
+          campdata_evento: data[0].data_evento,
+        });   
+        
+        // this.setState({listEventos:data})
       }
       else {
         alert("Erro de conexão")
@@ -107,10 +120,56 @@ class listaeventosComponent extends React.Component  {
           {this.verifica_menu()}
           </div>
       <div className="container-fluid">       
-          <center><h3><strong>Lista de Eventos</strong></h3></center>
-          <div>              
+          <center><h3><strong>Lista de Serviços</strong></h3></center>
+          <div>  
+              <div>
+              <div class="p-2">    
+                 <div class="d-flex justify-content-start">
+                 <div>
+                    <label for="inputAddress">Ordem Serviço </label>
+                      <Input              
+                        disabled= {true}
+                        type="text"
+                        name="nome"              
+                        id="examplnome"
+                        placeholder=""
+                        autoComplete='off'
+                        autoCorrect='off'
+                        value={this.state.campordem_servico}                                                                                                 
+                      />                               
+                       </div> 
 
-          <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Eventos</Link>                 
+                     <div>
+                       <label for="inputAddress">Nome Evento </label>
+                      <Input              
+                        disabled= {true}
+                        type="text"
+                        name="nome"              
+                        id="examplnome"
+                        placeholder=""
+                        autoComplete='off'
+                        autoCorrect='off'
+                        value={this.state.campnome_evento}                                                                                                 
+                      />                               
+                       </div> 
+                       <div>
+                       <label for="inputAddress">Data Evento </label>
+                       <Input           
+                        disabled= {true}                   
+                        type="date"
+                        name="nome"
+                        id="examplnome"
+                        placeholder=""                        
+                        value={this.state.campdata_evento}                                                
+                      />      
+
+                       </div>
+                    </div>
+                 </div>
+                
+              </div>
+
+          <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Serviços</Link>                 
         <br/>
         </div>  
         <table className="table table-hover danger">
@@ -127,7 +186,7 @@ class listaeventosComponent extends React.Component  {
             {this.loadFillData()}
           </tbody>
         </table>
-        <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Eventos</Link>       
+        <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Serviços</Link>       
        </div>  
       </div>   
     );
@@ -135,7 +194,7 @@ class listaeventosComponent extends React.Component  {
 
   loadFillData(){
 
-    return this.state.listEventos.map((data, index)=>{
+    return this.state.listServicos.map((data, index)=>{
       return(
         <tr>
           <th>{index + 1}</th>          
@@ -144,7 +203,7 @@ class listaeventosComponent extends React.Component  {
           <td>{ dateFormat(data.data_evento, "dd/mm/yyyy")}</td>
           <td>
             <div style={{width:"250px"}}>                    
-                <Link className="btn btn-outline-info" to={"/lista_evento_servico/"+data.id}>Serviços</Link>        
+                <Link className="btn btn-outline-info" to={"/listporevento/"+this.state.eventoId}>Translados</Link>        
               {'   '}       
               <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
             </div>            

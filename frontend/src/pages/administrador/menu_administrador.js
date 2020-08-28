@@ -92,6 +92,10 @@ class menu_administradorComponent extends React.Component  {
                 <i class="fas fa-money-bill-wave"></i> VALORES TARIFÁRIOS
                 </DropdownItem>   
                 <DropdownItem divider />                
+                <DropdownItem href={"/lista_cad_incompleto"}>
+                <i class="fas fa-money-bill-wave"></i> CADASTROS INCOMPLETOS
+                </DropdownItem>                   
+                <DropdownItem divider />                
               </DropdownMenu>
             </UncontrolledDropdown>                       
             <NavItem>

@@ -656,9 +656,9 @@ sendUpdate(){
     senha: this.state.campSenha,     
     statusId: 1
   }
-        api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
-
-        api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+       api.put(`/login/update/${localStorage.getItem('logid')}`, logindata)      
+       
+       api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)        
         .then(response=>{
           if (response.data.success==true) {            
             

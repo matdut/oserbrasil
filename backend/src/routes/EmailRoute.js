@@ -29,7 +29,7 @@ router.post('/send', (req, res, next) => {
   const email = req.body.email
   const texto = req.body.texto
   //const url = req.protocol + '://' + res.get('host')+'/login' 
-  const url = 'http://www.oser.app.br:21497/login' 
+  const url = 'http://www.oser.app.br:21497/login ' 
     
   const content = texto+ `\n Acesse o link abaixo e após se logar troque a sua senha: \n ${url} `  
 

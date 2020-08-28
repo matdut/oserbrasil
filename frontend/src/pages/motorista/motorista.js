@@ -1207,24 +1207,12 @@ return (
                   
                   <div>
                   <FormControlLabel
-                    control={<Switch checked={this.state.campMotorista_bilingue} onChange={this.handleChangeBilingue} name="checkedA" />}
+                    control={<Switch checked={this.state.campMotorista_bilingue} 
+                    onChange={this.handleChangeBilingue} name="checkedA" />}
                     label="Bilingue?"
                     labelPlacement="top"
                   />                 
                   </div>                    
-                                      
-                 <div>  
-                 <label for="inputAddress">selecione o idioma</label>   
-                 <Multiselect                                     
-                      options={this.state.options} // Options to display in the dropdown
-                      selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
-                      onSelect={this.onSelect} // Function will trigger on select event
-                      onRemove={this.onRemove} // Function will trigger on remove event
-                      displayValue="name" // Property name to display in the dropdown options
-                      selectionLimit={this.state.seleciona_limit}
-                      onChange={(e) => { this.seleciona_idioma(e)} } 
-                      />             
-                  </div>
                  </div>     
                </div>
             </div>              

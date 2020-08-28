@@ -1,9 +1,12 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-var Tipo_transporte = require('./Tipo_transporte');
-var Translados = require('./Translado_evento');
-var Cliente = require('./Cliente');
-var Operador = require('./Operador');
+var Perfil = require('./Perfil');
+var Status = require('./Status');
+
+//var perfil = require('./Tipo_transporte');
+//var Translados = require('./Translado_evento');
+//var Cliente = require('./Cliente');
+//var Operador = require('./Operador');
 //var eventos = require('./');
 // import Role for FK roleId
 //var Role = require('./Role');
@@ -44,12 +47,23 @@ var Eventos = sequelize.define(nametable,{
   },
   valor_total: {
     type: Sequelize.DECIMAL(20,2),  
-    allowNull: false,     
+    allowNull: true,     
+  },
+  statusId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Status,
+      key: 'id'
+    } 
   }
 })
 
-Eventos.hasMany(Tipo_transporte, {foreignKey: 'id'})
-Tipo_transporte.belongsTo(Eventos, {foreignKey: 'id'})
+Eventos.belongsTo(Perfil);
+Eventos.belongsTo(Status);
+
+//Eventos.hasMany(Tipo_transporte, {foreignKey: 'id'})
+//Tipo_transporte.belongsTo(Eventos, {foreignKey: 'id'})
 
 //Eventos.hasMany(Translados, {foreignKey: 'eventoId'})
 //Translados.belongsTo(Eventos, {foreignKey: 'eventoId'})
