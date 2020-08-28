@@ -73,7 +73,7 @@ controllers.updatelog = async (req, res) => {
     perfilId: perfilId,
     logid: logid
   },{
-    where: { logid: id, perfilId: perfilId, email: email}
+    where: { logid: id, perfilId: perfilId}
   })
   .then( function (data){
     return res.json({success:true, data: data});

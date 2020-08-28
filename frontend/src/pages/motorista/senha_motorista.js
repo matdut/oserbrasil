@@ -627,15 +627,24 @@ sendUpdate(){
     statusId: 1,  
   }       
 
-  const logindata = {  
-    email: this.state.campEmail,  
-    senha: this.state.campSenha,     
-    statusId: 1
-  }  
-    
+  if (localStorage.getItem('logperfil') == 0) {  
+    const logindata = {  
+      perfilId: localStorage.getItem('logperfil'),
+      senha: this.state.campSenha,     
+      statusId: 1
+    }  
+    api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+  } else {
+    const logindata = {  
+      perfilId: 3,
+      senha: this.state.campSenha,     
+      statusId: 1
+    }  
+    api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+  }
+  
         api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
-
-        api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+        
         .then(response=>{
           if (response.data.success==true) {                        
            

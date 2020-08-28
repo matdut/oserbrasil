@@ -611,19 +611,25 @@ sendUpdate(){
     statusId: 1,  
   }       
 
-  const logindata = {  
-    email: this.state.campEmail,  
-    senha: this.state.campSenha,     
-    statusId: 1
-  }  
-    
-        console.log('cliente - '+JSON.stringify(logindata, datapost, "    ")); 
-        api.put(`/cliente/update/${localStorage.getItem('logrepresentante')}`, datapost)
+  if (localStorage.getItem('logperfil') == 0) {  
+    const logindata = {  
+      perfilId: localStorage.getItem('logperfil'),
+      senha: this.state.campSenha,     
+      statusId: 1
+    }  
+    api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+  } else {
+    const logindata = {  
+      perfilId: 7,
+      senha: this.state.campSenha,     
+      statusId: 1
+    }  
+    api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+  }       
         
-        console.log('login 1- '+JSON.stringify(logindata, null, "    ")); 
-        api.put(`/login/update/${localStorage.getItem('logrepresentante')}`,logindata)
+        api.put(`/cliente/update/${localStorage.getItem('logrepresentante')}`, datapost)
         .then(response=>{
-          if (response.data.success==true) {                        
+          if (response.data.success==true) {                 
            
             //localStorage.setItem('logprogress', this.state.progresso);              
             

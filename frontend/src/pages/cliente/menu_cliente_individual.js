@@ -135,11 +135,7 @@ class menu_clienteComponent extends React.Component  {
                  <DropdownItem  
                     href={`/cliente/`+localStorage.getItem('logid')}> 
                   <i class="far fa-user"></i> Dados Pessoais
-                 </DropdownItem>  
-                 <DropdownItem 
-                    href={`/cliente_endereco/`+localStorage.getItem('logid')}> 
-                   <i class="fas fa-home"></i> Endereço
-                 </DropdownItem>  
+                 </DropdownItem>                  
                  <DropdownItem 
                     href={`/cliente_senha/`+localStorage.getItem('logid')}> 
                     <i class="fas fa-key"></i> Alterar Senha

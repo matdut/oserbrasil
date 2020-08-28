@@ -650,13 +650,21 @@ sendUpdate(){
   const datapost = {  
     statusId: 1,  
   }       
-
-  const logindata = {  
-    email: this.state.campEmail,  
-    senha: this.state.campSenha,     
-    statusId: 1
+  if (localStorage.getItem('logperfil') == 0) {  
+    const logindata = {  
+      perfilId: localStorage.getItem('logperfil'),
+      senha: this.state.campSenha,     
+      statusId: 1
+    }  
+    api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+  } else {
+    const logindata = {  
+      perfilId: 2,
+      senha: this.state.campSenha,     
+      statusId: 1
+    }  
+    api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
   }
-       api.put(`/login/update/${localStorage.getItem('logid')}`, logindata)      
        
        api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)        
         .then(response=>{
