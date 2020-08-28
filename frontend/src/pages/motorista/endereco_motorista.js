@@ -1071,7 +1071,7 @@ return (
                       maxlength="9"                                                                          
                     />     
                     <div className="naoseiocep">
-                        <a className="alink" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">Não sei o cep</a> 
+                        <a className="alink" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">Não sei meu CEP</a> 
                     </div>                               
                     <FormFeedback 
                     invalid={this.state.validate.cepState}>
