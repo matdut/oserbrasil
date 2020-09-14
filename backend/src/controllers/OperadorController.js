@@ -27,6 +27,24 @@ controllers.delete = async (req,res) => {
   })
 
 }
+controllers.deleteEmpresa = async (req,res) => {
+
+  const { empresaId } = req.params;  
+  await Operador.destroy({
+    where: { empresaId: empresaId }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+
+  })
+
+}
+
+
 
 controllers.getOperadorCpf = async (req, res) => {
    // mesmo cpf cadastrado na mesma empresa

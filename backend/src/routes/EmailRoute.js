@@ -28,10 +28,13 @@ router.post('/send', (req, res, next) => {
   const name = req.body.name
   const email = req.body.email
   const texto = req.body.texto
+  const url = req.body.url
+
+ // const url2 = req.protocol + '://' + req.get('host')  
   //const url = req.protocol + '://' + res.get('host')+'/login' 
-  const url = 'http://www.oser.app.br:21497/login ' 
+ // const url = 'http://www.oser.app.br:21497/login ' 
     
-  const content = texto+ `\n Acesse o link abaixo e após se logar troque a sua senha: \n ${url} `  
+  const content = texto+`\n ${url} `  
 
   console.log(JSON.stringify(res.body, null, "    ")); 
   var mail = {

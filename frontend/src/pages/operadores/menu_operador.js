@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Link} from 'react-router-dom';
 import { withRouter } from "react-router-dom";
+import Avatar from '@material-ui/core/Avatar';
 import {
   Collapse,
   Navbar,
@@ -15,13 +16,24 @@ import {
   DropdownItem,
   NavbarText
 } from 'reactstrap';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 //const [isOpen, setIsOpen] = useState(false);
-
+const LightTooltip = withStyles((theme) => ({
+  tooltip: {     
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+    margin: "1px 0",
+    whiteSpace: 0,
+  },
+}))(Tooltip);
 
 
 //const Cabecalho_cliente = props => {
@@ -37,6 +49,12 @@ class menu_clienteComponent extends React.Component  {
         listar_evento: false,
         dados_pessoais: false,
         alterar_senha: false,
+        campgerencia_eventos: false,
+        campefetua_pagamentos: false,
+        campgerencia_todos_eventos: false,
+        campinclui_cartao: false,
+        campinclui_operadores: false,
+        campvisualiza_eventos: false,             
         isOpen: false,
         status: localStorage.getItem('logstatus'),
       }
@@ -50,7 +68,8 @@ class menu_clienteComponent extends React.Component  {
       nome: localStorage.getItem('lognome'),
       id: localStorage.getItem('logid'),      
     });
-    
+
+    /*
     if (this.state.status == 7) {
       this.setState({
         criar_evento: true,
@@ -58,7 +77,7 @@ class menu_clienteComponent extends React.Component  {
         dados_pessoais: true,
         alterar_senha: false,
       });
-    } 
+    } */
    // this.verifica_menu();
     
 
@@ -74,6 +93,7 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logstatus');  
     localStorage.removeItem('lograzao_social');
     localStorage.removeItem('lograzaosocial');  
+    localStorage.removeItem('logoperadorId');      
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);
 
@@ -116,53 +136,53 @@ class menu_clienteComponent extends React.Component  {
 
  return (
   <div>    
-    <Navbar color="#dc3545" light expand="md">
- <NavbarBrand href="#">{localStorage.getItem('lograzao_social')}</NavbarBrand>
-        <NavbarToggler onClick={this.toggle} />
-        <Collapse isOpen={this.isOpen} navbar>
-          <Nav className="ml-auto" navbar>            
-             {this.verifica_menu()}
-            <NavItem>               
-              <NavLink href="#">AVALIAR</NavLink>
-            </NavItem>
-
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                   EVENTOS
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem disabled={this.state.criar_evento} href={"/criar_eventos/"+this.state.id}>
-                <i class="fas fa-plus-square"></i> CRIAR
-                </DropdownItem>
-                <DropdownItem disabled={this.state.listar_evento} href={"/listaeventocliente/"+this.state.id}>
-                <i class="fas fa-list-ul"></i> LISTAR
-                </DropdownItem>
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>          
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-              <i class="fas fa-list"></i> ALTERAR
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem disabled={this.state.dados_pessoais} href={`/operadores/`+localStorage.getItem('logid')}>
-                <i class="far fa-user"></i> Dados Pessoais
-                </DropdownItem>      
-                <DropdownItem disabled={this.state.alterar_senha} href={`/senha_operador/`+localStorage.getItem('logid')}>
-                  <i class="fas fa-key"></i> Alterar Senha
-                </DropdownItem>          
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <NavItem>
-               <button type="button" className="btn btn-danger btn-sm botao_sair" onClick={this.handleClick}>
-               <i class="fas fa-sign-out-alt"></i> SAIR </button>
-            </NavItem>            
-          </Nav>         
-        </Collapse>
-      </Navbar>                                        
-                            
-  </div> 
+  <div className="left">    
+  <br/>
+  <div className="item avatar_titulo">
+       <i><div className="avatar"> <Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                    
+       </div>
+         <div className="teste perfil">
+         <a href={`/operadores_alterar/`+localStorage.getItem('logid')}>   
+              Editar Perfil  
+          </a>  
+         </div>
+       </i>      
+   </div>            
+  <div class="item teste active">
+      <LightTooltip title="Inicio" placement="top">
+        <a href="/area_operador">
+        <i class="fas fa-home"></i>   
+        </a>  
+      </LightTooltip>   
+    </div>   
+  <div className="item teste">
+  <LightTooltip title="Senha" placement="top">
+      <a href={`/senha_operador_alterar/`+localStorage.getItem('logid')}>
+        <i className="fas fa-fw fa-columns"></i>
+      </a>  
+  </LightTooltip>    
+  </div>
+  <div class="item teste">
+  <LightTooltip title="#" placement="top">
+     <a href="#">
+       <i className="fas fa-fw fa-th"></i>
+     </a>  
+  </LightTooltip>   
+  </div>
+  <div className="item teste">
+     <LightTooltip title="Sair" placement="top">
+      <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
+         <i class="fas fa-sign-out-alt"></i> </button>   
+     </LightTooltip>    
+  </div>    
+    
+  <div className="item_sem_borda versao_sistema"> 
+        <img src="/logo.png" alt="..." width="50"/>
+       <div className="data_versao"> 07/09/20 v1.8.0 </div>
+     </div>  
+ </div>                                       
+                          
+</div> 
  );  
  }
 }

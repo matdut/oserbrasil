@@ -1,8 +1,8 @@
 import React from 'react';
-
+import { withStyles } from '@material-ui/core/styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import {Input } from 'reactstrap';
+import { Alert, Input, Button } from 'reactstrap';
 
 //import axios from 'axios';
 import api from '../../services/api';
@@ -16,11 +16,32 @@ import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu from '../../pages/cabecalho' ;
 import Menu_administrador from '../administrador/menu_administrador';
 
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 var dateFormat = require('dateformat');
 //const baseUrl = "http://34.210.56.22:3333";
+
+const StyledButton = withStyles({
+  root: {
+    background: '#FF840A',
+    borderRadius: 23,
+    color: 'white',
+    mensagem: '',    
+    height: 48,
+    padding: '0 30px',  
+  },
+  label: {
+    textTransform: 'capitalize',
+  },
+})(Button);
 
 class listaeventosComponent extends React.Component  {
 
@@ -29,11 +50,16 @@ class listaeventosComponent extends React.Component  {
     this.state = {
       perfil: perfil,
       eventoId: '', 
+      mensagem: '',
+      color: 'light',
       listEventos:[]
     }
   }
 
   componentDidMount(){
+    let userId = this.props.match.params.id;  
+
+    localStorage.setItem('logid',userId)
     this.setState({
       perfil: localStorage.getItem('logperfil'),
       id: localStorage.getItem('logid')   
@@ -43,10 +69,9 @@ class listaeventosComponent extends React.Component  {
   }
 
   loadlistEventos(){
-   // const url = baseUrl+"/cliente/list"
-   let userId = this.props.match.params.id;  
+   // const url = baseUrl+"/cliente/list"   
 
-   api.get(`/eventos/getCliente/${userId}`)
+   api.get(`/eventos/getCliente/${localStorage.getItem('logid')}`)
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data    
@@ -102,17 +127,16 @@ class listaeventosComponent extends React.Component  {
   render()
   {
     return (
-      <div>    
-          <div>
-          {this.verifica_menu()}
-          </div>
-      <div className="container-fluid">       
-          <center><h3><strong>Lista de Eventos</strong></h3></center>
-          <div>              
+      <div>        
+          {this.verifica_menu()}    
+       <div className="titulo_admministrador">
+        <div className="unnamed-character-style-4 descricao_admministrador">          
+           <h3><strong>Eventos</strong></h3>
+         </div>      
+      </div>
 
-          <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Eventos</Link>                 
-        <br/>
-        </div>  
+     <div className="container_alterado_1">
+        <br/>     
         <table className="table table-hover danger">
           <thead>
             <tr>
@@ -127,10 +151,25 @@ class listaeventosComponent extends React.Component  {
             {this.loadFillData()}
           </tbody>
         </table>
-        <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Eventos</Link>       
+        <Alert color={this.state.color}>
+         {this.state.mensagem}
+       </Alert>     
+       <br/>
+          <br/>
+       <div className="botao_lista_incluir">             
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onAdicionar()}> 
+              <AddIcon/> Adicionar Eventos 
+          </Fab>
+         
+       </div>
+    
        </div>  
       </div>   
     );
+  }
+
+  onAdicionar() {
+    this.props.history.push(`/criar_eventos/${localStorage.getItem('logid')}`);   
   }
 
   loadFillData(){
@@ -143,15 +182,22 @@ class listaeventosComponent extends React.Component  {
           <td>{data.nome_evento}</td>
           <td>{ dateFormat(data.data_evento, "dd/mm/yyyy")}</td>
           <td>
-            <div style={{width:"250px"}}>                    
-                <Link className="btn btn-outline-info" to={"/lista_evento_servico/"+data.id}>Serviços</Link>        
+            <div style={{width:"250px"}}>               
+            <IconButton aria-label="delete" onClick={()=>this.onIncluir(data)}>
+                <AddIcon />
+            </IconButton>             
               {'   '}       
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
+              <IconButton aria-label="delete" onClick={()=>this.onDelete(data.email, data.id)}>
+                <DeleteIcon />
+              </IconButton>
             </div>            
           </td>          
         </tr>
       )
     })
+  }
+  onIncluir(data) {  
+    this.props.history.push(`/lista_evento_servico/${data.id}`);   
   }
 
   onDelete(id){
@@ -165,7 +211,7 @@ class listaeventosComponent extends React.Component  {
     }).then((result) => {
       if (result.value) {
         this.sendDelete(id)
-      } else if (result.dismiss == Swal.DismissReason.cancel) {
+    } else if (result.dismiss == Swal.DismissReason.cancel) {
         Swal.fire(
           'Cancelado',
           'Seus dados não foram apagados :)',

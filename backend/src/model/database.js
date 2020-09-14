@@ -4,14 +4,22 @@ var Sequelize = require('sequelize');
  
 const sequelize = new Sequelize (
   
-  'oser', // database
+ /* 'oser', // database
   'oser', // user / usuario
   'uvlb4otd', //password
   {
     host: 'mysql.oser.app.br',
     dialect: 'mysql'
-  } 
-);
+  } */
+  'bancomdc', // database
+  'root', // user / usuario
+  '', //password
+  {
+    host: 'localhost',
+    dialect: 'mysql'
+  }
+
+); 
 /*
 const sequelize = new Sequelize (    
   'bancomdc', // database

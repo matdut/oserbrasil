@@ -59,3 +59,24 @@ height: 50px;
   width: 490px;    
   height: 36px;
 }   
+
+.esqueceu_senha { 
+  margin-top: 6px !important;
+  margin-left: 206px !important;
+}
+
+.mensagem_redefinir_senha{
+  padding-top: 55px;  
+  margin-left: 306px !important;
+}
+.email_redefinir_senha{
+  margin-left: 306px !important;
+}
+.botao_redefinir_senha{
+  margin-left: 236px !important;
+}
+
+.cancelar{
+  padding-top: 6px;
+  margin-left: 252px !important;
+}

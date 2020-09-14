@@ -6,6 +6,9 @@ import {Link} from 'react-router-dom';
 import { cepMask } from '../formatacao/cepmask';
 import { numeroMask } from '../formatacao/numeromask';
 import { cepremoveMask } from '../formatacao/cepremovemask';
+import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
+import Menu_administrador from '../administrador/menu_administrador';
+
 
 import api from '../../services/api';
 import './empresarial.css';
@@ -1000,8 +1003,7 @@ verificar_menu() {
   } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div className="d-flex justify-content-around">
-      <div className="botao_navegacao">
-          <Link to={`/empresa_dados/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+      <div className="botao_navegacao">   
       </div>                  
       <div>           
         <div className="titulo_representante">                
@@ -1022,8 +1024,7 @@ verificar_menu() {
 
       return(
         <div className="d-flex justify-content-around">
-                 <div className="botao_navegacao">
-                 <Link to="/area_cliente_empresarial"> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <div className="botao_navegacao">               
                  </div>                  
                  <div>           
                    <div className="titulo_representante">                        
@@ -1045,18 +1046,28 @@ verificar_menu() {
 
 }
 
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 7) {
+   return( 
+     <Menu_cliente_empresarial />     
+   );
+  }
+
+}
+
+
 render(){  
 
 return (
 <div>    
-<div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+<div className="container_alterado">
+  {this.verificar_menu_lateral()}
+<div className="d-flex justify-content">  
    <div className="area_esquerda">     
       {this.verificar_menu()}       
           
@@ -1270,7 +1281,8 @@ return (
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 
-   </div>  
+   </div> 
+ </div>   
 </div> 
   );
 } 

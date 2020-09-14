@@ -1,10 +1,23 @@
 import React from 'react';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { Alert, Input } from 'reactstrap';
+
+import { Alert, Input, Button } from 'reactstrap';
 //import axios from 'axios';
 import api from '../../services/api';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import TextField from '@material-ui/core/TextField';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import ReactModal from 'react-modal';
+//import Modal from '@material-ui/core/Modal';
+
+import TesteAlteracao from '../cliente/modal/representante';
+//import Modal from '@material-ui/core/Modal';
 
 import { Link } from "react-router-dom";
 
@@ -12,10 +25,45 @@ import { Link } from "react-router-dom";
 import Menu_administrador from '../administrador/menu_administrador';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
+
+
+const customStyles = {
+  content : {
+    top                   : '10px',
+    left                  : '55%',    
+    right                 : '0%',
+    bottom                : 'auto',  
+    height                : '100%',    
+    overflow              : 'scroll',
+       /* display: -webkit-inline-box; 
+    /* Adicionamos essa linha */
+    //marginRight           : '-50%',
+   // transform             : 'translate(-50%, -50%)'   
+  }
+};
+
+let columns = [
+  { id: 'count', label: '#', minWidth: 10 },
+  { id: 'cpf', label: 'Cpf', minWidth: 100 },
+  { id: 'nome', label: 'Nome', minWidth: 200 },
+  { id: 'email', label: 'Email', minWidth: 90 },
+  { id: 'telefone', label: 'Telefone', minWidth: 60 },
+  { id: 'acao', label: 'Ação', minWidth: 100 },
+];
 
 class listComponent extends React.Component  {
 
@@ -26,6 +74,15 @@ class listComponent extends React.Component  {
       campStatus: '',
       inicio: 0,
       mensagem: '',
+      teste: '',
+      campNome: "",
+      campData_nascimento:"",
+      campEmail:"",      
+      campTelefone1:"",
+      campCpf:"",       
+      cpf_selecionado: '',
+      incluir: false,
+      showModal: false,
       color: 'light',
       listCliente:[],
       listaStatus:[]
@@ -41,6 +98,28 @@ class listComponent extends React.Component  {
 
   }
 
+
+ 
+  handleOpenModal (data) {
+    this.setState({ 
+      showModal: true,    
+      teste: data.nome,     
+    });
+    localStorage.setItem('logid', data.id);    
+ //   this.prepareSave();
+  }
+  
+  handleCloseModal () {
+    this.setState({ 
+      showModal: false,
+      incluir: false 
+    });
+    this.loadCliente();  
+    this.carrega_status();  
+    
+  }
+
+  
   loadStatus(){
   
     return this.state.listaStatus.map((data)=>{          
@@ -97,75 +176,92 @@ class listComponent extends React.Component  {
   render()
   {
     return (
-      <div className="container-fluid">    
-          <div>
-            <Menu_administrador />  
-          </div>
-          <center><h3><strong>Lista de Clientes Individual</strong></h3></center>
-          <div>  
-          <Link className="btn btn-outline-info" to={"/cliente/0"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-user-plus"></i> Adicionar Cliente</Link>                 
-        <br/>
-        </div>  
-        <table className="table table-hover danger">
-          <thead>
-            <tr>
-              <th scope="col">#</th>            
-              <th scope="col">CPF</th>
-              <th scope="col">Nome</th>
-              <th scope="col">Email</th>
-              <th scope="col">Endereço</th>
-              <th scope="col">Telefone</th>
-              <th scope="col">Status</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>         
-            {this.loadFillData()}
-          </tbody>
-        </table>
-        <Link className="btn btn-outline-info" to={"/cliente/0"}> <span class="glyphicon glyphicon-plus"></span> <i class="fas fa-user-plus"></i> Adicionar Cliente</Link>       
+      <div>
 
-        <br/>
-        <Alert color={this.state.color}>
-          {this.state.mensagem}
-        </Alert>     
-      </div>   
+      <Menu_administrador />  
+      <div className="titulo_admministrador">     
+        <div className="unnamed-character-style-4 descricao_admministrador">          
+           <h3><strong>Lista de Clientes Individual</strong></h3>
+         </div>      
+      </div>
+      <div className="container_alterado_1">                    
+       
+       <br/>   
+       <TableContainer component={Paper}>
+      <Table  aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>#</TableCell>
+            <TableCell align="left">CPF</TableCell>
+            <TableCell align="left">NOME</TableCell>
+            <TableCell align="left">EMAIL</TableCell>
+            <TableCell align="left">TELEFONE</TableCell>
+            <TableCell align="left">ACAO</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+            {this.loadFillData()}
+        </TableBody>
+      </Table>
+    </TableContainer>
+     
+       <br/>
+       <ReactModal 
+            isOpen={this.state.showModal}
+            style={customStyles}
+            contentLabel="Minimal Modal Example"                                       
+            >  Modal 
+                <IconButton aria-label="editar" onClick={()=>this.handleCloseModal()}>
+                  <CloseOutlinedIcon />
+                </IconButton>                                            
+                 <br/>
+            
+                  <TesteAlteracao />                           
+
+         </ReactModal>  
+       <Alert color={this.state.color}>
+         {this.state.mensagem}
+       </Alert>     
+       <br/>
+          <br/>
+       <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+              <AddIcon/> Adicionar Cliente
+          </Fab>
+       </div>
+                 
+     </div>       
+ 
+    </div>
     );
   }
-
+  
+  
   loadFillData(){
     
     return this.state.listCliente.map((data, index)=>{     
       return(        
-        <tr>
-          <th>{index + 1}</th>          
-          <td>{data.cpf}</td>
-          <td>{data.nome}</td>
-          <td>{data.email}</td>
-          <td>{data.endereco}</td>
-          <td>{data.celular}</td>
-          <td><Input                   
-                    type="select" 
-                    name="select" 
-                    className="status_select"
-                    id="select" 
-                    value={data.status.id}                        
-                    onChange={ (e) => {
-                      this.statusChange(e, data)                                             
-                    }}                                                          >
-              {this.loadStatus()}      
-              </Input>
-          </td>
-          <td>
-            <div style={{width:"150px"}}>           
+        <TableRow key={data.id}>
+          <TableCell component="th" scope="row">
+            {index + 1}
+          </TableCell>
+          <TableCell align="left">{data.cpf}</TableCell>
+          <TableCell align="left">{data.nome}</TableCell>
+          <TableCell align="left">{data.email}</TableCell>
+          <TableCell align="left">{data.celular}</TableCell>
+          <TableCell align="center">
+            <div style={{width:"150px"}}>              
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.email, data.id)}> Deletar </button>
-            </div>            
-          </td>          
-        </tr>
+              <IconButton aria-label="editar" onClick={()=>this.handleOpenModal(data)}>
+                  <AddIcon/>
+              </IconButton>       
+            </div>        
+          </TableCell>
+        </TableRow>        
       )
     })
   }
+  
   statusChange(e, data){
     const datapost = {
       statusId: e.target.value         
@@ -187,10 +283,11 @@ class listComponent extends React.Component  {
   }
   validar_delete(email, id) {
      
-    api.get(`/eventos/listaeventocliente/${id}`)
+    api.get(`/eventos/listaeventocliente/${id}/${localStorage.getItem('logperfil')}`)
     .then(response =>{
 
-      if (response.data.success) {
+      const registros = response.data.data;
+      if (registros.length > 0) {
        // console.log('id - '+response.data);
      //  console.log( JSON.stringify(response.data, null, "    ") );       
           this.setState({ 
@@ -203,11 +300,18 @@ class listComponent extends React.Component  {
       } 
     })
     .catch ( error => {
-      alert("Erro de Conexão")
+      alert("Erro de Conexão "+error)
     })
   
   }
 
+  onEditar(data){
+    this.props.history.push(`/cliente_alterar/${data.id}`);   
+  }
+
+  onIncluir() {
+    this.props.history.push(`/cliente_incluir/0`);   
+  }
   onDelete(email, id){
     Swal.fire({
       title: 'Você está certo?',
@@ -227,7 +331,7 @@ class listComponent extends React.Component  {
 
 
     api.delete(`/login/delete/${email}`)     
-    console.log(`/login/delete/+${email}`)
+    //console.log(`/login/delete/${email}`)
 
     api.delete(`/cliente/delete/${userId}`)
     .then(response =>{
@@ -243,7 +347,7 @@ class listComponent extends React.Component  {
       }
     })
     .catch ( error => {
-      alert("Error 325 ")
+      alert("Error "+error)
     })
   }
 

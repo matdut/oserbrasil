@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import axios from 'axios';
 import api from '../../services/api';
-
+import { Alert, Input } from 'reactstrap';
 import { Link } from "react-router-dom";
 import DateFnsUtils from '@date-io/date-fns';
 import { visualizarmask } from '../formatacao/visualizarmask';
@@ -19,12 +19,20 @@ import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 
+import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
+
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Menu from '../../pages/cabecalho' ;
 import Menu_administrador from '../administrador/menu_administrador';
 import Menu_matriz from '../matriz_tarifaria/menu_matriz';
+
+
 
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
@@ -41,6 +49,8 @@ class listaMatrizComponent extends React.Component  {
     this.state = {
       perfil: perfil,
       descricao: '',
+      mensagem: '',
+      color: 'light',
       campnometransporte: "",
       listaMatriz:[]
     }   
@@ -53,6 +63,21 @@ class listaMatrizComponent extends React.Component  {
     });     
        
     this.loadMatriz();
+  }
+
+  handleOpenModal () {
+    this.setState({ 
+      showModal: true    
+    });
+  
+   // this.prepareSave();
+  }
+  
+  handleCloseModal () {
+    this.setState({ 
+      showModal: false,
+      incluir: false 
+    });
   }
 
   load_tipotransporte() {
@@ -102,7 +127,7 @@ class listaMatrizComponent extends React.Component  {
   
    api.get("/matriz/list")
     .then(res=>{  
-      if (res.data) {
+      if (res.data.success) {
         const data = res.data.data        
         this.setState({listaMatriz:data})
         //console.log(JSON.stringify(data, null, "    ")); 
@@ -130,44 +155,21 @@ class listaMatrizComponent extends React.Component  {
   
   }
 
-  
-  verifica_menu() {
-    
-    if (this.state.perfil == 1) {
-      return ( 
-       <div>
-        <Menu_administrador />         
-       </div> 
-       ); 
-    } else if (this.state.nome == null){
-        return (
-          <Menu />
-        );
-  
-    } else {
-      return (
-       <div> 
-          <Menu_matriz />  
-        <br/>        
-       </div>   
-      );
-     }            
-  }
+ 
+ 
   render()
   {
     return (
       <div>    
-          <div>
-          {this.verifica_menu()}
-          </div>         
-           <div className="container-fluid">                                         
-            <br/>
-            <center><h3><strong>Lista de Valores Tarifários</strong></h3></center>
-            <div>  
-            <Link className="btn btn-outline-info" to={"/matriz_criar"}> <span class="glyphicon glyphicon-plus"></span> <i class="fas fa-money-bill-wave"></i> Adicionar Valores Tarifários</Link>                 
-          <br/>
-          </div>  
-          <table className="table table-hover danger">
+             <Menu_administrador />  
+             <div className="titulo_admministrador">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+                 <h3><strong>Lista de Valores Tarifários</strong></h3>
+              </div>      
+            </div>
+      <div className="container_alterado_1">                                         
+            <br/>                       
+          <table className="table table-hover danger table_novo">
             <thead>
               <tr>
                 <th scope="col">#</th>            
@@ -186,16 +188,23 @@ class listaMatrizComponent extends React.Component  {
               {this.loadFillData()}
             </tbody>
           </table>         
-             <div className="form-row"> 
-                <div className="form-group col-md-2">
-                   <Link className="btn btn-outline-info" to={"/matriz_criar"}> 
-                          <span class="glyphicon glyphicon-plus"></span> <i class="fas fa-money-bill-wave"></i> Adicionar Valores Tarifários
-                   </Link>
-                </div>                 
-            </div>                 
+         
+          <Alert color={this.state.color}>
+               {this.state.mensagem}
+          </Alert>    
+
+        <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+              <AddIcon/> Incluir Valor Tarifário
+          </Fab>
+       </div>
         </div>
       </div>         
     );
+  }
+
+  onIncluir() {
+    this.props.history.push(`/matriz_criar`);   
   }
 
   loadFillData(){     
@@ -214,13 +223,23 @@ class listaMatrizComponent extends React.Component  {
           <td>{visualizarmask(data.bilingue)}</td>    
           <td>
             <div style={{width:"350px"}}>             
+              <IconButton aria-label="editar" onClick={()=>this.onEditar(data)}>
+                <EditIcon />
+              </IconButton>    
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
+              <IconButton aria-label="delete" onClick={()=>this.onDelete(data.id)}>
+                <DeleteIcon />
+              </IconButton>    
             </div>            
           </td>          
         </tr>
       )
     }) 
+  }
+
+  onEditar(data) {
+
+    this.props.history.push(`/matriz_editar/${data.id}`);   
   }
 
   onDelete(id){
@@ -251,13 +270,9 @@ class listaMatrizComponent extends React.Component  {
     // network
     api.delete(`/matriz/delete/${userId}`)
     .then(response =>{
-      if (response.data.success) {
-        Swal.fire(
-          'Deletado',
-          'Você apagou os dados com sucesso.',
-          'success'
-        )
+      if (response.data.success) {       
         this.loadMatriz()
+        this.loadFillData();
       }
     })
     .catch ( error => {

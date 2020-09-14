@@ -1,7 +1,5 @@
 const multer = require("multer");
 const path = require("path");
-const crypto = require("crypto");
-
 
 module.exports = {
   storage: multer.diskStorage({
@@ -9,16 +7,14 @@ module.exports = {
     destination: path.resolve(__dirname, '..', '..', 'tmp', 'uploads'),      
         // Gerando o nome da imagem como um hash usando a lib nativa do node: crypto
     filename: (req, file, cb) => {
-      crypto.randomBytes(16, (err, res) => {
-        if (err) return cb(err);
-           console.log('path -'+ path.resolve(__dirname, '..', '..', 'tmp', 'uploads')); 
+      console.log('teste');
+      return cb(null, `${Date.now()}-img-${path.extname(file.originalname)}`);
+    /*  crypto.randomBytes(16, (err, res) => {
+        if (err) return cb(err);          
         return cb(null, res.toString('hex') + path.extname(file.originalname));
-      });
+      });*/
     },
-  }),  
-  limits: {
-    fileSize: 2 * 1024 * 1024
-  },
+  }),
   fileFilter: (req, file, cb) => {
     const allowedMimes = [
       "image/jpeg",
@@ -26,7 +22,7 @@ module.exports = {
       "image/png",
       "image/gif"
     ];
-
+    console.log('teste 2');
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {

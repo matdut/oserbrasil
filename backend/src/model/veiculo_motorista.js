@@ -53,7 +53,7 @@ var Veiculo = sequelize.define(nametable,{
    allowNull: true,
   },
   foto_CRVL_key: { 
-   type: Sequelize.STRING, 
+    type: Sequelize.TEXT('long'), 
    allowNull: true,
   },
   foto_CRVL_mimetype: { 
@@ -61,7 +61,7 @@ var Veiculo = sequelize.define(nametable,{
    allowNull: true,
   },
   foto_CRVL_url: { 
-   type: Sequelize.STRING, 
+    type: Sequelize.TEXT('long'), 
    allowNull: true,
   },
   apolice: { 

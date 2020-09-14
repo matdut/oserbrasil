@@ -1,9 +1,9 @@
 .area_direita {
-  background-color: #0F074E !important;  
-  width: 521px !important;
-  height: 768px !important;  
+  background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+  width: 521px !important;  
   margin-top: 0px !important;
-  margin-left: 0px !important;    
+  margin-left: 0px !important;  
+  height: 100vh !important;    
 }
 .area_esquerda1 {
   width: 121px !important;    
@@ -112,16 +112,16 @@
   margin-right: 40px;  
 }
 
-.botao_cadastro_empresa {
-  margin-top: 48px !important; 
+.botao_cadastro_operadores {
+  margin-top: 10px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
   margin-left: 108px !important;
 }
-.botao_cadastro_empresa_habilitado {
-  margin-top: 48px !important; 
+.botao_cadastro_operadores_habilitado {
+  margin-top: 10px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background:#FF840A 0% 0% no-repeat padding-box !important;
@@ -163,8 +163,8 @@
   margin-left: 108px;
 }
 
-.botao_cadastro_senha {
-  margin-top: 190px !important; 
+.botao_cadastro_senha_operador {
+  margin-top: 73px  !important;
   width: 480px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
@@ -172,8 +172,8 @@
   margin-left: 108px !important;
 }
 
-.botao_cadastro_senha_habilitado {
-  margin-top: 190px !important; 
+.botao_cadastro_senha_operador_habilitado {
+  margin-top: 73px  !important;
   width: 480px !important;
   line-height: 40px !important;  
   background: #FF840A 0% 0% no-repeat padding-box !important;

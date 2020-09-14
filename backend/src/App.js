@@ -11,12 +11,19 @@ app.set('port',21541);
 
 //Middlewares
 //app.use(cors());
-app.use(express.json());
+//app.use(express.json());
+
 app.use(express.urlencoded({ extended: true}));
+app.use(express.json({limit: '50mb'}));
 app.use(morgan('dev'));
+//app.use(express.limit(100000000));
 //app.use('/static', express.static(__dirname + '/public'));
+// Essa linha faz o servidor disponibilizar o acesso às imagens via URL!
+//app.use(express.static('public'));
 
 // Configurar cabeceras y cors
+
+
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
@@ -26,17 +33,20 @@ app.use((req, res, next) => {
     next();
 });
 
-
 //importing route
 const clienteRouters = require('./routes/ClienteRoute');
 const empresaRouters = require('./routes/EmpresaRoute');
+const emailoperadorRoutes = require('./routes/EmailoperadorRoute');
+const perfilRoutes = require('./routes/PerfilRoute');
+const permissaoRouters = require('./routes/PermissaoRoute');
+const tipo_eventoRoutes = require('./routes/TipoEventoRoute');
 const motoristaRouters = require('./routes/MotoristaRoute');
 const bancoRouters = require('./routes/BancoRoute');
 const estadoRouters = require('./routes/EstadoRoute');
 const loginRouters = require('./routes/LoginRoute');
 const OperadorRouters = require('./routes/OperadorRoute');
 const Cartao_creditoRouters = require('./routes/Cartao_creditoRoute');
-const TransladoRoutes = require('./routes/TransladoRoute');
+const ServicosRoutes = require('./routes/ServicosRoute');
 const FuncionalidadeRouters = require('./routes/FuncionalidadeRoute');
 const Matriz_tarifariaRouters = require('./routes/Matriz_tarifariaRoute');
 const EventosRouters = require('./routes/EventosRoute');
@@ -49,15 +59,19 @@ const VeiculoRouters = require('./routes/VeiculosRoute');
 const MarcaRouters = require('./routes/MarcaRoute');
 const ModeloRouters = require('./routes/ModeloRoute');
 const EmailRouters = require('./routes/EmailRoute');
-/*
+
 app.use(
   "/files",
   express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
 ); 
-*/
+
 //Route
 app.use('/cliente', clienteRouters);
 app.use('/email', EmailRouters);
+app.use('/emailOperador', emailoperadorRoutes);
+app.use('/permissao', permissaoRouters);
+app.use('/perfil', perfilRoutes);
+app.use('/tipoevento', tipo_eventoRoutes);
 app.use('/status', StatusRouters);
 app.use('/empresa', empresaRouters);
 app.use('/motorista', motoristaRouters);
@@ -69,7 +83,7 @@ app.use('/banco', bancoRouters);
 app.use('/estado', estadoRouters);
 app.use('/operador', OperadorRouters);
 app.use('/cartao', Cartao_creditoRouters);
-app.use('/translado', TransladoRoutes);
+app.use('/servicos', ServicosRoutes);
 app.use('/funcionalidade', FuncionalidadeRouters);
 app.use('/matriz', Matriz_tarifariaRouters);
 app.use('/eventos', EventosRouters);
@@ -85,9 +99,11 @@ app.use(
   express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
 ); 
 
+/*
 app.use('/test', (req, res) => {
   res.send("Test route");
 });
+*/
 
 //app.use('/', (req,res) => {
 //  res.send("Hello world from Node.js Server");

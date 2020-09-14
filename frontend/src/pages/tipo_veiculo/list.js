@@ -6,7 +6,11 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { Link } from "react-router-dom";
 import api from '../../services/api';
 
-import { Input } from 'reactstrap';
+import { Input, Alert } from 'reactstrap';
+import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -23,6 +27,8 @@ class listComponent extends React.Component  {
     super(props);
     this.state = {
       perfil: perfil,
+      mensagem: '',
+      color: 'light',
       listaTipoVeiculo:[]
     }
   }
@@ -50,8 +56,7 @@ class listComponent extends React.Component  {
       alert("Error server "+error)
     })
   
-   }  
-  
+   }   
  
   handleClick = () => {
   
@@ -62,17 +67,19 @@ class listComponent extends React.Component  {
   render()
   {
     return (
-      <div className="container-fluid">    
-       <div>
+      <div>    
+
           <Menu_administrador />  
-       </div>       
-       <div>
-          <center><h3><strong>Lista de Tipo de Veículos</strong></h3> </center>         
-         <br/>
-         <Link className="btn btn-outline-info" to={"/tipo_transporte"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-car"></i> Adicionar Veiculo</Link>       
-        <br/>
-        </div>  
-        <table className="table table-hover table-striped">
+
+          <div className="titulo_admministrador">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+                  <h3><strong>Lista de Tipo de Veículos</strong></h3>
+              </div>      
+            </div>
+
+       <div className="container_alterado_1">       
+<br/>      
+        <table className="table table-hover danger">
           <thead>
             <tr>              
               <th scope="col">#</th>            
@@ -84,11 +91,23 @@ class listComponent extends React.Component  {
             {this.loadFillData()}
           </tbody>
         </table>
-         <Link className="btn btn-outline-info" to={"/tipo_transporte"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-car"></i> Adicionar Veiculo</Link>         
+          <Alert color={this.state.color}>
+               {this.state.mensagem}
+          </Alert>             
+
+         <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+              <AddIcon/> Adicionar Tipo Veículo
+          </Fab>
+       </div>
       </div>   
+    </div>  
     );
   }
 
+  onIncluir() {
+    this.props.history.push(`/tipo_transporte`);   
+  }
   loadFillData(){
 
     return this.state.listaTipoVeiculo.map((data, index)=>{
@@ -99,7 +118,9 @@ class listComponent extends React.Component  {
           <td>
             <div style={{width:"150px"}}>              
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
+              <IconButton aria-label="delete" onClick={()=>this.onDelete(data.id)}>
+                <DeleteIcon />
+              </IconButton>    
             </div>            
           </td>          
         </tr>
@@ -134,15 +155,14 @@ class listComponent extends React.Component  {
     //const baseUrl = "http://34.210.56.22:3333/motorista/delete/"+userId    // parameter data post
     //const url = baseUrl+"/motorista/delete/"+userId    // parameter data post
     // network
+    console.log(`/tipoTransporte/delete/${userId}`)
+
     api.delete(`/tipoTransporte/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {
-        Swal.fire(
-          'Deletado',
-          'Você apagou os dados com sucesso.',
-          'success'
-        )
+
         this.loadTipoVeicculo()
+        this.loadFillData()
       }
     })
     .catch ( error => {

@@ -5,6 +5,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import axios from 'axios';
 import api from '../../services/api';
 import { Alert, Input } from 'reactstrap';
+import Modal from 'react-modal';
 
 import { Link } from "react-router-dom";
 import { cnpjMask } from '../formatacao/cnpjmask';
@@ -12,10 +13,28 @@ import { cnpjMask } from '../formatacao/cnpjmask';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Menu_administrador from '../administrador/menu_administrador';
+
+import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
+
+
+const customStyles = {
+  content : {
+    top                   : '40%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
+
 
 class listComponent extends React.Component  {
 
@@ -73,17 +92,22 @@ class listComponent extends React.Component  {
     this.props.history.push('/area_administrador'); 
 
   }
+ 
   render()
   {
     return (
-      <div className="container-fluid">    
-          <div>
+      <div>    
+          <div >
             <Menu_administrador />  
+            <div className="titulo_admministrador">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+                 <h3><strong>Lista de Clientes Empresarial</strong></h3>
+              </div>      
+            </div>
           </div>
-          <center><h3><strong>Lista de Clientes Empresarial</strong></h3></center>
-          <div>  
-          <Link className="btn btn-outline-info" to={"/empresa/0"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-user-plus"></i> Adicionar Cliente</Link>                 
-        <br/>
+      <div className="container_alterado_1">      
+        <div>   
+        <br/>    
         </div>  
         <table className="table table-hover danger">
           <thead>
@@ -102,15 +126,25 @@ class listComponent extends React.Component  {
             {this.loadFillData()}
           </tbody>
         </table>
-        <Link className="btn btn-outline-info" to={"/empresa/0"}> <span class="glyphicon glyphicon-plus"></span><i class="fas fa-user-plus"></i> Adicionar Cliente</Link>       
-
         <br/>
-
         <Alert color={this.state.color}>
                {this.state.mensagem}
-          </Alert>     
+          </Alert>    
+          <br/>
+          <br/>
+        <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+              <AddIcon/> Adicionar Empresa
+          </Fab>
+       </div>
+       
       </div>   
+    </div>      
     );
+  }
+
+  onIncluir() {
+    this.props.history.push(`/empresa_incluir/0`);   
   }
 
   loadFillData(){
@@ -138,7 +172,9 @@ class listComponent extends React.Component  {
           <td>
             <div style={{width:"150px"}}>
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data, data.id)}> Deletar </button>
+              <IconButton aria-label="delete" onClick={()=>this.onDelete(data, data.id)}>
+                <DeleteIcon />
+              </IconButton>              
             </div>            
           </td>          
         </tr>
@@ -184,27 +220,38 @@ class listComponent extends React.Component  {
     })
   }
 
-  validar_delete(data, id) {
-     
-    api.get(`/eventos/listaeventocliente/${id}`)
+  validar_delete(data, id) {     
+    console.log('validar_delete - '+JSON.stringify(data, null, "    ")); 
+    
+    //console.log(`/eventos/listaeventocliente/${id}/${data.cliente.perfilId}`);
+    api.get(`/eventos/listaeventocliente/${id}/${data.cliente.perfilId}`)
     .then(response =>{
 
       if (response.data.success) {
     
-        const registros = response.data.data;
-        if (registros.length > 0) {
-          this.setState({ 
-            color: 'danger',
-            mensagem: 'Cliente tem Evento(s) associado(s), não pode ser excluído'
-          })          
-        } else {
-          this.sendDelete(data, id);
-        }          
-
-      }
+        Swal.fire({
+          title: 'Você está certo?',
+          text: 'Cliente tem Evento(s) associado(s), deseja excluir?',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, apaga isto!',
+          cancelButtonText: 'Não, mantêm'
+        }).then((result) => {
+          if (result.value) {
+            this.sendDelete(data, id);
+          } else if (result.dismiss == Swal.DismissReason.cancel) {
+            this.setState({ 
+              color: 'danger',
+              mensagem: 'Seus dados não foram apagados :)'
+            })  
+          }
+        })
+      } else {
+        this.sendDelete(data, id);
+      } 
     })
     .catch ( error => {
-      alert("Erro de Conexão")
+      alert("Erro exclusão do evento")
     })
   
   }
@@ -231,25 +278,44 @@ class listComponent extends React.Component  {
 
   sendDelete(data, userId){
     // url de backend
-    //console.log('deletar o id - '+userId);
+    console.log('deletar o id - '+userId);
    // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
     // network
-    api.delete(`/login/delete/${data.email}`)     
+    let clienteId = '';
+    console.log('deletar o email - '+data.cliente.email);
+    api.delete(`/login/delete/${data.cliente.email}`)     
     
+    console.log('deletou');
+
+    const datapost = {  
+      perfilId: data.cliente.perfilId,      
+    }   
+     
+    /* tem que excluir os serviços */
+     
+    api.delete(`/eventos/deleteEmpresa/${userId}`,datapost)        
+
+    api.delete(`/operador/deleteEmpresa/${userId}`)        
+
     api.get(`/empresa/getEmpresaCliente/${userId}`)
     .then(res=>{
       if (res.data.success) {
+        
+        clienteId = res.data.data[0].cliente.id;
+        console.log('pegou o cliente '+clienteId);
 
         api.delete(`/empresa/delete/${res.data.data[0].id}`)
         .then(response =>{
          
           if (response.data.success) {       
       
-              api.delete(`/cliente/delete/${res.data.data[0].cliente.id}`)
+            console.log('deleteou a empresa ');
+              api.delete(`/cliente/delete/${clienteId}`)
               .then(response =>{
                 
                 if (response.data.success) {       
             
+                      console.log('deleteou o cliente ');
                       this.loadEmpresas()
           
                 } else {      

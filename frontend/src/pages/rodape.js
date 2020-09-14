@@ -17,7 +17,7 @@ class rodapeComponent extends React.Component  {
       <div className="containner">
       
          <label> <strong><h3>EM DESENVOLVIMENTO</h3></strong>
-            <h5><strong>última atualização: 19/08/2020 - v1.5.0</strong></h5>
+            <h5><strong>última atualização: 28/08/2020 - v1.7.0</strong></h5>
             <br/>
             <div className="d-flex justify-content-center">           
               <img className="logo_inicio" src="../logo_oser_principal.png"/>

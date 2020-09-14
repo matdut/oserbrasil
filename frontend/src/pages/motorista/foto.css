@@ -1,9 +1,9 @@
 .area_direita {
-  background-color: #0F074E !important;  
-  width: 521px !important;
-  height: 768px !important;  
+  background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+  width: 521px !important;  
   margin-top: 0px !important;
   margin-left: 0px !important;    
+  height: 100vh !important;  
 }
 .area_esquerda1 {
   width: 121px !important;    
@@ -14,6 +14,10 @@
 .area_navegacao {
   margin-top: 80px;
   width: 108px !important;     
+}
+
+.foto_borda {
+  border-radius: 118px;
 }
 
 .titulo_logo {
@@ -106,12 +110,27 @@
   padding: 1px;
   text-align: left !important;   
 }
+.foto_motorista_1 {
+  padding: 2px !important;  
+  height: 200px !important;
+}
 
-.foto_motorista {
-  padding: 2px;
-  text-align: center;  
-  width: 250px;
-  margin-left: 100px !important;
+.titulocnh{
+  padding: 1px !important;    
+  font-size: 15px !important;   
+  text-align: left !important;   
+  text-decoration: #0F074E !important;  
+  font-weight: bold !important;   
+  color: #0F074E !important;   
+  margin-left: 1px !important;
+}
+.foto_motorista {  
+  padding: 5px !important;
+  text-align: center !important;
+  width: 500px !important;
+  height: 366px !important;
+  margin-left: -20px !important;
+  margin-top: 48px;
 }
 .grid1 {
   padding: 2px;
@@ -121,13 +140,16 @@
 }
 
 .mensagem_foto {
-  background: white 0% 0% no-repeat padding-box !important;
-  color: black !important;  
-  text-align: center !important;  
+  background: bisque 0% 0% no-repeat padding-box !important;
+  color: chocolate  !important;
+  text-align: center !important;
+  margin-left: -22px;
+  width: 500px;
 }
-.grid3 {
+.grid_foto {
+  margin-top: 5px;      
   padding: 2px !important; 
   text-align: center !important;   
-  width: 400px !important; 
-  margin-left: 30px !important;
+  width: 480px !important; 
+  margin-left: 0px !important;
 }

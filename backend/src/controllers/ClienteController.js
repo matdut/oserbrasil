@@ -13,27 +13,9 @@ var Perfil = require('../model/Perfil');
 sequelize.sync()
 
 controllers.delete = async (req,res) => {
-  
-  // parameter post  
+
   const { id } = req.params;  
- // console.log( JSON.stringify(req.params, null, "    ") ); 
-/*
- await Eventos.findAll({
-  where: { clienteId: id  }  
-  })
-  .then( function (data){
-    if (data == []) {
-       
-    } 
-    return res.json({success:true, data: data});
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  })
- */ 
- //res.j
-  //console.log('delete id  - '+id);
-  // delete sequelize
+
   await Cliente.destroy({
     where: { id: id }
   }).then( function (data){

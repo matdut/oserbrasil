@@ -14,6 +14,7 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { valorMask } from '../formatacao/valormask';
 import { numeroMask } from '../formatacao/numeromask';
 import { cepremoveMask } from '../formatacao/cepremovemask';
+import Menu_administrador from '../administrador/menu_administrador';
 
 import api from '../../services/api';
 import './matriz.css';
@@ -82,6 +83,9 @@ class empresarialComponent extends React.Component{
     this.receptivochange = this.receptivochange.bind(this);
     this.bilinguechange = this.bilinguechange.bind(this);
   
+    this.verificafaixa_inicialOnblur = this.verificafaixa_inicialOnblur.bind(this);
+    this.verificafaixa_finalOnblur = this.verificafaixa_finalOnblur.bind(this);
+
     this.verificaTipo_veiculo = this.verificaTipo_veiculo.bind(this);
     this.verificafaixa_inicial = this.verificafaixa_inicial.bind(this);
     this.verificafaixa_final = this.verificafaixa_final.bind(this);
@@ -213,6 +217,25 @@ verificafaixa_inicial(e) {
       this.setState({ 
         erro_faixa_1: true,
         inicio: 1,                
+        mensagem_faixa_inicial: ""  
+       })            
+     } else {     
+      validate.faixa_inicialState = 'has-success'
+      this.setState({ 
+        validate,
+        erro_faixa_1: false,
+        inicio: 2,        
+        mensagem_faixa_inicial: ""  
+       })            
+     //  this.verifica_botao(this.state.inicio)
+     }     
+}
+verificafaixa_inicialOnblur(e) {
+  const { validate } = this.state
+     if (e.target.value.trim().length == 0) {    
+      this.setState({ 
+        erro_faixa_1: true,
+        inicio: 1,                
         mensagem_faixa_inicial: "O Faixa Inicial é obrigatório."  
        })            
      } else {     
@@ -227,6 +250,25 @@ verificafaixa_inicial(e) {
      }     
 }
 verificafaixa_final(e) { 
+  const { validate } = this.state
+     if (e.target.value.trim().length == 0) {      
+      this.setState({ 
+        erro_faixa_2: true,
+        inicio: 1,        
+        mensagem_faixa_final: ""  
+       })            
+     } else {     
+      validate.faixa_finalState = 'has-success'
+      this.setState({         
+        validate,
+        erro_faixa_2: false,
+        inicio: 2,        
+        mensagem_faixa_final: ""  
+       })            
+      // this.verifica_botao(this.state.inicio)
+     }        
+}
+verificafaixa_finalOnblur(e) { 
   const { validate } = this.state
      if (e.target.value.trim().length == 0) {      
       this.setState({ 
@@ -447,8 +489,8 @@ sendUpdate(){
     valor_tempo: this.state.campvalor_tempo,
     bandeira: this.state.campbandeira,
     receptivo: this.state.campreceptivo,
-    bilingue: this.state.campbilingue
-  //  pedagio: this.state.camppedagio    
+    bilingue: this.state.campbilingue,
+    pedagio: 0.00    
   }          
 
         console.log(JSON.stringify(datapost, null, "    ")); 
@@ -515,18 +557,24 @@ handleChange = (prop) => (event) => {
 };
 */
 
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  }
+
+}
+
+
 render(){  
 
 return (
-<div>    
-<div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+<div> 
+<div className="container_alterado">
+   {this.verificar_menu_lateral()}   
+<div className="d-flex justify-content"> 
    <div className="area_esquerda">     
         
           {this.verificar_menu()}                    
@@ -759,6 +807,7 @@ return (
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 
    </div>  
+ </div>  
 </div> 
   );
 } 

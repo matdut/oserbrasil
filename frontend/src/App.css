@@ -24,7 +24,8 @@
 }
 
 .botao_sair {
-  color: #0F074E;
+  color: #10054D;
+  margin-left: 0px;  
 }
 
 @keyframes App-logo-spin {

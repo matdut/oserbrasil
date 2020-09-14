@@ -1,9 +1,9 @@
 .area_direita {
-  background-color: #0F074E !important;  
-  width: 521px !important;
-  height: 768px !important;  
+  background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+  width: 521px !important;  
   margin-top: 0px !important;
   margin-left: 0px !important;    
+  height: 100vh !important;  
 }
 .area_esquerda1 {
   width: 121px !important;    

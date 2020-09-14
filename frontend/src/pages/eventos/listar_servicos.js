@@ -2,7 +2,7 @@ import React from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import {Input } from 'reactstrap';
+import {Alert, Input } from 'reactstrap';
 
 //import axios from 'axios';
 import api from '../../services/api';
@@ -16,10 +16,17 @@ import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu from '../../pages/cabecalho' ;
 import Menu_administrador from '../administrador/menu_administrador';
 
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+var dateFormat = require('dateformat');
+
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
-var dateFormat = require('dateformat');
+//var dateFormat = require('dateformat');
 //const baseUrl = "http://34.210.56.22:3333";
 
 class listaeventosComponent extends React.Component  {
@@ -30,6 +37,8 @@ class listaeventosComponent extends React.Component  {
       perfil: perfil,
       eventoId: '',       
       campCpf: '',
+      mensagem: '',
+      color: 'light',
       campordem_servico: '',
       campnome_evento: '',
       campdata_evento: '',
@@ -56,11 +65,12 @@ class listaeventosComponent extends React.Component  {
     .then(res=>{
       if (res.data.success == true) {
         
+        console.log(' Evento - '+ JSON.stringify(res.data, null, "    ") );
         const data = res.data.data      
         this.setState({
-          campordem_servico: data[0].ordem_servico,
-          campnome_evento: data[0].nome_evento,
-          campdata_evento: data[0].data_evento,
+          campordem_servico: res.data.data[0].ordem_servico,
+          campnome_evento: res.data.data[0].nome_evento,
+          campdata_evento: res.data.data[0].data_evento,
         });   
         
         // this.setState({listEventos:data})
@@ -115,61 +125,56 @@ class listaeventosComponent extends React.Component  {
   render()
   {
     return (
-      <div>    
-          <div>
+      <div>   
+
           {this.verifica_menu()}
-          </div>
-      <div className="container-fluid">       
-          <center><h3><strong>Lista de Serviços</strong></h3></center>
+          <div className="titulo_admministrador">
+         <div className="unnamed-character-style-4 descricao_admministrador">          
+               {this.state.campnome_evento}
+               <div className="editar_servico">
+                  <a href='#'>           
+                    Editar Perfil  
+                  </a>  
+               </div>  
+               <div class="p-2">    
+                 <div class="d-flex justify-content-start">
+                    <div class="p-2">                       
+                       <i class="far fa-calendar fa-2x"></i>
+                    </div>
+                    <div class="p-2">
+                        <div className="servico_titulo">Ordem Serviço</div>                        
+                        <div className="servico_descricao">{this.state.campordem_servico}</div>                                                     
+                    </div>   
+                    <div class="p-2">
+                       <div className="servico_titulo">Data Evento</div>       
+                       <div className="servico_descricao">{dateFormat(this.state.campdata_evento,'dd/mm/yyyy')}</div>                             
+                    </div>
+
+                    <div className="p-2 icone_servico">                       
+                       <i class='fas fa-route fa-3x'></i>
+                    </div>                   
+                    
+                    <div class="p-2">
+                       <div className="servico_titulo">Total de Viagens</div>       
+                       <div className="servico_descricao">0</div>                             
+                    </div>
+                    <div class="p-2 icone_servico">                       
+                       <i class="fas fa-coins"></i> 
+                        <div className="servico_descricao"></div>     
+                    </div>                   
+                    <div class="p-2">
+                       <div className="servico_titulo">Valor Total</div>       
+                       <div className="servico_descricao">R$ 0,00</div>                             
+                    </div>
+                </div>
+              </div>               
+          </div> 
+        </div>
+      <div className="container_alterado_1">               
           <div>  
               <div>
-              <div class="p-2">    
-                 <div class="d-flex justify-content-start">
-                 <div>
-                    <label for="inputAddress">Ordem Serviço </label>
-                      <Input              
-                        disabled= {true}
-                        type="text"
-                        name="nome"              
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campordem_servico}                                                                                                 
-                      />                               
-                       </div> 
-
-                     <div>
-                       <label for="inputAddress">Nome Evento </label>
-                      <Input              
-                        disabled= {true}
-                        type="text"
-                        name="nome"              
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campnome_evento}                                                                                                 
-                      />                               
-                       </div> 
-                       <div>
-                       <label for="inputAddress">Data Evento </label>
-                       <Input           
-                        disabled= {true}                   
-                        type="date"
-                        name="nome"
-                        id="examplnome"
-                        placeholder=""                        
-                        value={this.state.campdata_evento}                                                
-                      />      
-
-                       </div>
-                    </div>
-                 </div>
-                
-              </div>
-
-          <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Serviços</Link>                 
+                      
+         </div>
         <br/>
         </div>  
         <table className="table table-hover danger">
@@ -184,12 +189,26 @@ class listaeventosComponent extends React.Component  {
           </thead>
           <tbody>         
             {this.loadFillData()}
-          </tbody>
-        </table>
-        <Link className="btn btn-outline-info" to={"/criar_eventos/"+this.state.id}> <span className="glyphicon glyphicon-plus"></span> Adicionar Serviços</Link>       
+          </tbody>         
+        </table>        
+
+        <Alert color={this.state.color}>
+                  {this.state.mensagem}
+                </Alert>     
+
+                <div className="botao_lista_incluir">             
+                    <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}> 
+                        <AddIcon/> Adicionar Serviços 
+                    </Fab>
+                  
+                </div>         
        </div>  
       </div>   
     );
+  }
+
+  onIncluir() {
+    this.props.history.push(`/servicos_evento/${localStorage.getItem('logid')}`);   
   }
 
   loadFillData(){

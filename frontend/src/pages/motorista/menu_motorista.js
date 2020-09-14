@@ -15,10 +15,24 @@ import {
   DropdownItem,
   NavbarText
 } from 'reactstrap';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@material-ui/core/Avatar';
+import api from '../../services/api';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
+const LightTooltip = withStyles((theme) => ({
+  tooltip: {     
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+    margin: "1px 0",
+    whiteSpace: 0,
+  },
+}))(Tooltip);
 //const Cabecalho_cliente = props => {
 class menu_motoristaComponent extends React.Component  {
 
@@ -28,6 +42,7 @@ class menu_motoristaComponent extends React.Component  {
         nome: "",
         perfil:"",
         id: "",
+        foto_perfil: "",
         isOpen: false
       }
   }    
@@ -37,10 +52,30 @@ class menu_motoristaComponent extends React.Component  {
     this.setState({
       perfil: localStorage.getItem('logperfil'),    
       nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid')       
+      id: localStorage.getItem('logid')             
     });
     //this.verifica_menu();
+
+    this.carrega_motorista();
+
   }
+  carrega_motorista() {
+    //console.log('ENTROU AQUI busca_cep_banco')
+    const { validate } = this.state
+
+    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    .then(res=>{
+        if (res.data.data.length > 0) {
+          this.setState({             
+            foto_perfil: res.data.data[0].foto_url,       
+          })          
+        }
+      })        
+      .catch(error=>{
+        alert("Error de conexão  "+error)
+      })   
+  }
+
   handleClick = () => {
     localStorage.removeItem('logemail');
     localStorage.removeItem('lognome');       
@@ -98,87 +133,90 @@ class menu_motoristaComponent extends React.Component  {
   {     
     
  return (
-  <div>  
-  <div>                          
-  <Navbar color="#dc3545" light expand="md">
-        <NavbarBrand href="#"></NavbarBrand>
-        <NavbarToggler onClick={this.toggle} />
-        <Collapse isOpen={this.isOpen} navbar>
-          <Nav className="ml-auto" navbar>            
-            {this.verifica_menu()}
-            <NavItem>               
-              <NavLink href="#">AVALIAR</NavLink>
-            </NavItem>
-            <NavItem>               
-              <NavLink href="#">EVENTOS</NavLink>
-            </NavItem>          
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-              <i class="fas fa-list"></i> ALTERAR
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem href={`/motorista/`+localStorage.getItem('logid')}>
-                <i class="far fa-user"></i> Dados Pessoais
-                </DropdownItem>
-                <DropdownItem href={`/endereco_motorista/`+localStorage.getItem('logid')}>
-                <i class="fas fa-home"></i> Endereço
-                </DropdownItem>                
-                <DropdownItem href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')}>
-                <i class="far fa-file-alt"></i> Meus Documentos
-                </DropdownItem>                                               
-                <DropdownItem href={`/foto_motorista/`+localStorage.getItem('logid')}>
-                <i class="fas fa-car"></i> Minha Foto
-                </DropdownItem>                
-                <DropdownItem href={`/senha_motorista/`+localStorage.getItem('logid')}>
-                <i class="fas fa-key"></i> Alterar Senha
-                </DropdownItem>
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-              <i class="fas fa-list"></i> VEÍCULOS
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem href={`/incluir_veiculos/`+localStorage.getItem('logid')}>
-                <i class="fas fa-money-bill-wave"></i> Incluir
-                </DropdownItem>                           
-                <DropdownItem href={`/lista_veiculos/`+localStorage.getItem('logid')}>
-                <i class="far fa-life-ring"></i> Listar
-                </DropdownItem>                
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-              <i class="fas fa-list"></i> HISTÓRICO
-              </DropdownToggle>
-              <DropdownMenu right>
-              <DropdownItem href="#">
-                <i class="fas fa-money-bill-wave"></i> Meus Ganhos
-                </DropdownItem>
-                <DropdownItem href="#">
-                <i class="fas fa-road"></i> Minhas Viagens
-                </DropdownItem>                
-                <DropdownItem href="#">
-                <i class="far fa-life-ring"></i> Ajuda
-                </DropdownItem>
-                <DropdownItem href="#">
-                <i class="fas fa-sliders-h"></i> Configurações
-                </DropdownItem>
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <NavItem>
-               <button type="button" className="btn btn-danger btn-sm" onClick={this.handleClick}>
-                  <i class="fas fa-sign-out-alt"></i> SAIR
-               </button>
-            </NavItem>            
-          </Nav>         
-        </Collapse>
-      </Navbar>                                          
-   </div> 
-</div>
+  <div>    
+  <div className="left">    
+ <br/> 
+  <div className="item avatar_titulo">
+       <i><div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil} />                    
+       </div>
+         <div className="teste perfil">
+         <a href={`/motorista_alterar/`+localStorage.getItem('logid')}>     
+              Editar Perfil  
+          </a>  
+          <br/>
+         </div>
+       </i>      
+   </div>        
+  <div class="item teste active">
+    <LightTooltip title="Inicio" placement="top">
+       <a href="/area_motorista">
+       <i class="fas fa-home"></i>   
+       </a>  
+    </LightTooltip>   
+    </div>
+  <div className="item teste">    
+     <LightTooltip title="Endereço" placement="top">
+          <a href={`/endereco_motorista_alterar/`+localStorage.getItem('logid')}>           
+          <i class="fas fa-address-card"></i>
+          </a>  
+      </LightTooltip>    
+  </div>  
+  <div className="item teste">
+  <LightTooltip title="Documentos" placement="top">
+      <a href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')}>
+      <i class="fas fa-folder-open"></i>
+      </a>  
+  </LightTooltip>    
+  </div>
+  <div class="item teste">
+  <LightTooltip title="Minha Foto" placement="top">
+     <a href={`/foto_motorista_alterar/`+localStorage.getItem('logid')}>
+        <i class="fas fa-camera"></i>
+     </a>  
+  </LightTooltip>   
+  </div>
+  <div className="item teste">
+    <LightTooltip title="Senha" placement="top">
+      <a href={`/senha_motorista_alterar/`+localStorage.getItem('logid')}>
+          <i class="fas fa-unlock-alt"></i>
+      </a>   
+    </LightTooltip>    
+  </div>
+  <div class="item teste">
+  <LightTooltip title="Veículos" placement="top">
+     <a href={`/lista_veiculos/`+localStorage.getItem('logid')}>
+     <i class="fas fa-car-alt"></i>
+     </a>  
+  </LightTooltip>   
+  </div>    
+  <div class="item teste">
+  <LightTooltip title="Meus Ganhos" placement="top">
+     <a href="#">
+       <i className="fas fa-fw fa-th"></i>
+     </a>  
+  </LightTooltip>   
+  </div>  
+  <div class="item teste">
+  <LightTooltip title="Ajuda" placement="top">
+     <a href="#">
+       <i className="fas fa-fw fa-th"></i>
+     </a>  
+  </LightTooltip>   
+  </div>    
+  <div className="item teste">
+     <LightTooltip title="Sair" placement="top">
+      <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
+         <i class="fas fa-sign-out-alt"></i> </button>   
+     </LightTooltip>    
+  </div>    
+    
+  <div className="item_sem_borda versao_sistema"> 
+        <img src="/logo.png" alt="..." width="50"/>
+       <div className="data_versao"> 07/09/20 v1.8.0 </div>
+     </div>  
+ </div>                                       
+                          
+</div> 
  );  
  }
 }

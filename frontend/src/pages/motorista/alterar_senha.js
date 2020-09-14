@@ -8,7 +8,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 //import axios from 'axios';
 import api from '../../services/api';
-import Menu_motorista from '../motorista/menu_motorista' ;
+import Menu_motorista from './menu_motorista';
+import Menu_administrador from '../administrador/menu_administrador';
 //const baseUrl = "http://34.210.56.22:3333";
 
 class Alterar_senha_Motorista extends React.Component  {

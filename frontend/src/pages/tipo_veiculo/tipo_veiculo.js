@@ -6,9 +6,12 @@ import { celularMask } from '../formatacao/celularmask';
 import { cpfMask } from '../formatacao/cpfmask';
 import api from '../../services/api';
 import './tipo_veiculo.css';
+import Menu_administrador from '../administrador/menu_administrador';
+
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 const andamento_cadastro = localStorage.getItem('logprogress'); 
+
 class empresarialComponent extends React.Component{  
 
   constructor(props){
@@ -199,8 +202,7 @@ verificar_menu() {
     return(
       <div>
       <div className="d-flex justify-content-around">
-           <div className="botao_navegacao">                 
-               <Link to="/area_administrador"> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+           <div className="botao_navegacao">                            
              </div>                  
              <div>
                <div className="titulo_representante">                
@@ -224,18 +226,23 @@ verificar_menu() {
 
 }
 
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } 
+
+}
+
 render(){  
 
 return (
-<div>    
-<div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+<div>   
+<div className="container_alterado">  
+   {this.verificar_menu_lateral()}  
+<div className="d-flex justify-content"> 
     <div className="area_esquerda">     
            {this.verificar_menu()}
 
@@ -262,7 +269,7 @@ return (
                           this.descricaochange(e)                                                 
                           this.validateDescricaoChange(e)
                         }}         
-                        maxlength="14"                                                                 
+                        maxlength="25"                                                                 
                       />                                
                       <FormFeedback 
                       invalid={this.state.validate.descricaoState}>
@@ -271,7 +278,8 @@ return (
               </div>              
             </div>              
             {this.verifica_botao(this.state.inicio)}             
-         </div>                 
+         </div>  
+      </div>                  
    </div>  
 </div> 
   );

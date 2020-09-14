@@ -5,9 +5,11 @@ const LoginController = require('../controllers/LoginController');
 
 router.get('/list',LoginController.list);
 router.get('/getLogin/:email/:senha', LoginController.getLogin);
+router.get('/getSenha/:id/:perfilId', LoginController.getSenha);
 router.get('/get/:id', LoginController.get);
 router.get('/getEmail/:email', LoginController.getEmail);
 router.put('/update/:id',LoginController.updatelog);
+router.put('/updateSenha/:id',LoginController.updateSenha);
 router.post('/create',LoginController.create);
 router.delete('/delete/:email',LoginController.delete);
 

@@ -39,6 +39,40 @@
   line-height: 24px;
 }
 
+.input_email{
+  margin-top: 4px !important;  
+  width: 480px !important;  
+  margin-left: 30px;
+}
+.input_email_1{
+  margin-top: 0px !important;  
+  width: 280px !important;  
+  margin-left: 30px;
+}
+.label_ordem{
+  width: 180px !important;  
+}
+.label_nome{
+  width: 180px !important;  
+  margin-left: 40px;
+}
+
+.label_data{
+  width: 180px !important;  
+  margin-left: 40px;
+}
+
+.select_evento_operador {
+  margin-top: 20px !important;  
+  line-height: 56px !important;  
+  width: 250px !important;  
+}
+
+.botao_evento_operador {
+  margin-top: 25px;
+  margin-left: 32px;
+}
+
 .titulo_representante {  
   text-align: left !important;  
   letter-spacing: 0px !important;
@@ -122,8 +156,25 @@
   margin-right: 40px;  
 }
 
+.botao_cadastro_modal_evento {
+  margin-top: 30px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 23px !important;
+
+}
+.botao_cadastro_modal_evento_habilitado {
+  margin-top: 30px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background:#FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 23px !important;
+}
 .botao_cadastro_evento {
-  margin-top: 120px !important; 
+  margin-top: 30px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
@@ -132,7 +183,7 @@
 }
 
 .botao_cadastro_evento_habilitado {
-  margin-top: 120px !important; 
+  margin-top: 30px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background:#FF840A 0% 0% no-repeat padding-box !important;
@@ -273,3 +324,24 @@
   width: 480px !important;
 
 }
+
+.servico_descricao{ 
+  font: Bold 16px Effra !important;
+}
+
+.servico_titulo{ 
+  font: Bold 10px Effra !important;
+}
+
+.icone_servico{
+  margin-top: 0px !important; 
+  font-size: 17px;
+  vertical-align: middle !important;
+  margin: -13px !important;
+}
+.editar_servico{
+  font-size: 12px;
+  color: #0F93D9;
+  text-decoration: underline;
+}
+

@@ -6,6 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Resizer from 'react-image-file-resizer';
 
 import api from '../../../services/api';
 import './veiculo.css';
@@ -15,11 +16,26 @@ import Upload from "../../UploadDocumentos";
 import FileList from "../../FilelistDocumento";
 import { Container, Content } from "../../style";
 
+import Menu_administrador from '../../administrador/menu_administrador';
+import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
+import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
+import Menu_Motorista from '../../motorista/menu_motorista';
+import Menu_operador from '../../operadores/menu_operador';
+import { TextareaAutosize } from '@material-ui/core';
+
+
 const andamento_cadastro = localStorage.getItem('logprogress');     
 //const cep_empresa = localStorage.getItem('logcep');     
 //const userId = localStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
-
+const resizeFile = (file) => new Promise(resolve => {
+  Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
+  uri => {
+    resolve(uri);
+  },
+  'base64'
+  );
+});
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
 
@@ -55,7 +71,7 @@ class empresarialComponent extends React.Component{
     });  
 
     if (userId !== 0) {
-      localStorage.setItem('logdocumento', userId);
+      localStorage.setItem('logVeiculo', userId);
     }   
   
     this.carrega_doc_veiculo()
@@ -64,6 +80,7 @@ class empresarialComponent extends React.Component{
  
  
  carrega_doc_veiculo() { 
+ //  console.log('logVeiculo - '+localStorage.getItem('logVeiculo'));
   api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
   .then(res=>{        
 
@@ -80,6 +97,8 @@ class empresarialComponent extends React.Component{
           url: file.foto_CRVL_url,
           error: false
         }));        
+
+        console.log(JSON.stringify(uploadedCRVL, null, "    "));
 
         this.setState({                   
           uploadedCRVL: uploadedCRVL,
@@ -197,20 +216,39 @@ verifica_botao(inicio) {
       }
     }     
   }  
-
-sendUpdate(){        
-  console.log('sendupdate - '+JSON.stringify(this.state, null, "    ")); 
-
+  onChange = async (file) => { 
+    const image = await resizeFile(file);
+    return image;
+  }
+  getBase64(file, success) {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      debugger;
+      success( reader.result );
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
+  }
+ async sendUpdate(){        
+  console.log('sendupdate 1 - '+JSON.stringify(this.state, null, "    ")); 
    
-    if (this.state.incluir_foto_2 == false) {
-              const formData = new FormData();  
+    if (this.state.incluir_foto_2 == true) {
+            //  const formData = new FormData();  
+            const file = this.state.uploadedCRVL[0].file;
 
-              formData.append("file", this.state.uploadedCRVL[0].file)                   
-              formData.append('id', localStorage.getItem('logid'));     
-
-              api.put(`/veiculo/documentoCRVL/update/${localStorage.getItem('logdocumento')}`, formData)
+              const formData = {
+                foto_url: await this.onChange(file),
+                name: this.state.uploadedCRVL[0].name
+              }
+        
+              //formData.append("file", this.state.uploadedCRVL[0].file, this.state.uploadedCRVL[0].name)                    
+           //   formData.append('id', localStorage.getItem('logid'));     
+        //   console.log(`/veiculo/documentoCRVL/update/${localStorage.getItem('logVeiculo')}`); 
+              api.put(`/veiculo/documentoCRVL/update/${localStorage.getItem('logVeiculo')}/${localStorage.getItem('logid')}`, formData)
                 .then(response=>{
-                  console.log(JSON.stringify(response.data, null, "    ")); 
+               //   console.log(JSON.stringify(response.data, null, "    ")); 
   
                   if (response.data.success==true) {                          
                     this.setState({                          
@@ -223,7 +261,8 @@ sendUpdate(){
                   }
                 }).catch(error=>{
                   alert("Error conxao crvl ")
-                })          
+                })              
+                
            
       }     
 
@@ -277,7 +316,7 @@ verificar_menu(){
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/alterar_veiculos/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -303,7 +342,7 @@ verificar_menu(){
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/alterar_veiculos/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -327,7 +366,7 @@ verificar_menu(){
       <div>
       <div className="d-flex justify-content-around">             
            <div className="botao_navegacao">
-             <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+             <Link to={`/alterar_veiculos/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
            </div>                  
            <div>
              <div className="titulo_representante">                
@@ -349,6 +388,31 @@ verificar_menu(){
     );
   }  
 }
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 2) {
+   return( 
+     <Menu_cliente_individual />     
+   );
+  } else if (localStorage.getItem('logperfil') == 7) {
+   return( 
+     <Menu_cliente_empresarial />     
+   );
+  } else if (localStorage.getItem('logperfil') == 3) {
+    return( 
+      <Menu_Motorista />     
+    );
+  } else if (localStorage.getItem('logperfil') == 8) {
+   return( 
+     <Menu_operador />     
+   );
+  }
+
+}
 
 render(){  
   const { uploadedCNH } = this.state;
@@ -356,14 +420,10 @@ render(){
   
 return (
 <div>    
+<div className="container_alterado">
+{ this.verificar_menu_lateral()}        
 <div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+
    <div className="area_esquerda">      
        {this.verificar_menu()}   
           
@@ -374,14 +434,22 @@ return (
                     <Paper className="grid1">
                        <div className="titulocrvl">CRVL 1</div>
                         <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
-                        <Container>                            
-                            <Content>
-                              <Upload onUpload={this.handleUploadCRVL} />
-                                {!!uploadedCRVL.length && (
-                                  <FileList files={uploadedCRVL} />
-                                )}  
-                            </Content>                
-                          </Container>    
+                        <Container>   
+                            <div class="d-flex justify-content-start">
+                              <div>
+                              <Content>
+                                  {!!uploadedCRVL.length && (
+                                      <FileList files={uploadedCRVL} />
+                                  )}
+                                </Content>   
+                              </div>
+                              <div>
+                                <Content>
+                                    <Upload onUpload={this.handleUploadCRVL} />                                       
+                                </Content>                                            
+                              </div>
+                            </div>                
+                      </Container>   
                     </Paper>
                     <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto"  p={2}>
                               <div className="d-flex justify-content-left">
@@ -396,7 +464,7 @@ return (
                   <div className="p-2 titulocnh"> 
                     <Grid container spacing={2}>
                       <Grid item xs>
-                           <Paper className="grid4">
+                           <Paper className="grid4_alteracao">
                           <strong> Requisitos de formato: </strong><br/>
                                 tamanho mínimo da imagem: 300x100 pixeis;
                                 formatos aceitáveis: JPG, JPEG, PNG;
@@ -408,6 +476,7 @@ return (
               </div>
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
+      </div>      
     </div>                 
    </div>  
 </div> 

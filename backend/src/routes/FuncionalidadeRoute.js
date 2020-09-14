@@ -5,7 +5,9 @@ const FuncionalidadeController = require('../controllers/FuncionalidadeControlle
 
 router.get('/list',FuncionalidadeController.list);
 router.post('/create',FuncionalidadeController.create);
-router.get('/get/:id', FuncionalidadeController.get);
+router.get('/get/:perfilId/:descricao', FuncionalidadeController.get);
 router.put('/update/:id',FuncionalidadeController.update);
+router.delete('/delete/:id/:perfilId',FuncionalidadeController.delete);
+router.get('/get/:perfilId', FuncionalidadeController.getPerfil);
 
 module.exports = router;

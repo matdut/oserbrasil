@@ -1,27 +1,42 @@
 import React from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import CircularProgressbar from "react-circular-progressbar";
 import { MdCheckCircle, MdError, MdLink } from "react-icons/md";
-
+import Avatar from '@material-ui/core/Avatar';
 import { Container, FileInfo, Preview } from "./styles";
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  },
+  small: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  large: {
+    width: theme.spacing(20),
+    height: theme.spacing(20),
+  },
+}));
+
 const FileList = ({ files, onDelete }) => (
-  <Container>   
+  
+  <Container>       
   {files.map(uploadedFile => (
     <li key={uploadedFile.id}>
-      <FileInfo className="">         
-        <Preview src={uploadedFile.preview} />               
-      </FileInfo>
-      <div>
-        {uploadedFile.url && (
-          <a
+      <FileInfo>         
+         <a
             href={uploadedFile.url}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <MdLink style={{ marginRight: 8 }} size={24} color="#222" />
-          </a>
-        )}
-
+             <Preview src={uploadedFile.preview} className="foto_borda" />                    
+        </a>        
+      </FileInfo>
+      <div>
         {uploadedFile.uploaded && <MdCheckCircle size={24} color="#78e5d5" />}
         {uploadedFile.error && <MdError size={24} color="#e57878" />}
       </div>        

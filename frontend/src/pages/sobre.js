@@ -5,8 +5,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Cabecalho from './cabecalho';
 import FileUpload from "../pages/FileUpload";
 
-
-
 class sobreComponent extends React.Component  {
 //const Sobre = props => {
     constructor(props){
@@ -35,6 +33,7 @@ class sobreComponent extends React.Component  {
     return (
         <div>
         <Cabecalho />
+        <br/>         
         <br/>         
         <div>    
       </div>        

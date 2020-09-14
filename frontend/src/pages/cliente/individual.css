@@ -1,11 +1,12 @@
 .area_direita {
-  background-color: #0F074E !important;  
-  width: 521px !important;
-  height: 768px !important;  
+  background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+  width: 521px !important;  
   margin-top: 0px !important;
-  margin-left: 0px !important;    
+  margin-left: 0px !important;     
+  height: 100vh !important;  
 }
 .area_esquerda1 {
+  overflow-y: hidden;
   width: 121px !important;    
   height: 140px !important;
   top: 0px !important;
@@ -29,14 +30,14 @@
   line-height: 24px !important;
 }
 
-.titulo_representante {  
+.titulo_representante_cliente {  
   text-align: left !important;  
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
   margin-top: 64px !important;  
-  line-height: 54px !important;  
-  width: 580px !important;
+/*  line-height: 54px !important;   */
+  width: 480px !important;
   font-size: 44px !important;   
 }  
 
@@ -114,16 +115,16 @@
   margin-right: 40px !important;  
 }
 
-.botao_cadastro_empresa {
-  margin-top: 48px !important; 
+.botao_cadastro_cliente {
+  margin-top: 17px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
   margin-left: 108px !important;
 }
-.botao_cadastro_empresa_habilitado {
-  margin-top: 48px !important; 
+.botao_cadastro_cliente_habilitado {
+  margin-top: 17px !important; 
   width: 480px !important;
   line-height: 40px !important;  
   background:#FF840A 0% 0% no-repeat padding-box !important;
@@ -203,11 +204,11 @@
 .progress_linear {
   height: 10px !important;
   border-radius: 5px !important;
-  background-color: #FF840A !important;
+  background-color: #FF840A !important;  
 }
 
-.botao_navegacao {
-  margin-top: 64px !important;  
+.botao_navegacao_cliente {
+  margin-top: 25px !important;  
   width: 108px !important;
   line-height: 114px !important;  
 }
@@ -260,4 +261,23 @@
 }
 .status_select{
   width: 248px !important;
+}
+
+.cpf_text {
+  width: 480px !important;     
+  font: Regular var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra) !important;  
+
+}
+
+.nome_text {
+  width: 480px !important;    
+  font: Regular var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra) !important;  
+}
+
+.data_text {
+  width: 480px !important;    
+  font: Regular var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra) !important;  
+}
+.alignright {
+  margin-left: 108px !important;
 }

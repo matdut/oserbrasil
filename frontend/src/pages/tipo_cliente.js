@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
   backButton: {
     marginRight: theme.spacing(1),
   },
-  cabacalho: {
-    backgroundColor: '#0F074E',    
+  cabacalho: {    
+    background: 'transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box',
     width: '100% !important',
     lineHeight: '320px !important',
             
@@ -134,10 +134,10 @@ export default function Tipo_cliente() {
     </div>         
     <div className="d-flex justify-content-center">       
         <div className={classes.botao_left}>
-            <Link to='/empresa/0'> Empresarial <i className="fa fa-chevron-right espacamento_seta"  aria-hidden="true"></i></Link> 
+            <Link to='/empresa_incluir/0'> Empresarial <i className="fa fa-chevron-right espacamento_seta"  aria-hidden="true"></i></Link> 
         </div>        
         <div className={classes.botao_rigth}>
-          <Link to='/cliente/0'> Individual <i className="fa fa-chevron-right espacamento_seta_2" aria-hidden="true"></i></Link>                 
+          <Link to='/cliente_incluir/0'> Individual <i className="fa fa-chevron-right espacamento_seta_2" aria-hidden="true"></i></Link>                 
         </div>       
     </div>    
     <br/>

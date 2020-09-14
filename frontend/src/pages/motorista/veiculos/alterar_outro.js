@@ -5,6 +5,11 @@ import Autocomplete1 from 'react-autocomplete';
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
+import Menu_administrador from '../../administrador/menu_administrador';
+import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
+import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
+import Menu_Motorista from '../../motorista/menu_motorista';
+import Menu_operador from '../../operadores/menu_operador';
 
 import api from '../../../services/api';
 import './veiculo.css';
@@ -355,11 +360,7 @@ class empresarialComponent extends React.Component{
             })        
             .catch(error=>{
               alert("Error de conexão  "+error)
-            })               
-     
-          
-
-         
+            })     
          
 
         } else {
@@ -913,9 +914,9 @@ sendUpdate(){
             if (response.data.success==true) {                        
             
                 if (localStorage.getItem('logperfil') == 1) {
-                  this.props.history.push(`/alterar_documentos/`+localStorage.getItem('logid'));    
+                  this.props.history.push(`/alterar_documentos/`+localStorage.getItem('logVeiculo'));    
                 } else if (localStorage.getItem('logperfil') == 3) {
-                  this.props.history.push(`/alterar_documentos/`+localStorage.getItem('logid'));                  
+                  this.props.history.push(`/alterar_documentos/`+localStorage.getItem('logVeiculo'));                  
                 }  
             }
             else {
@@ -988,7 +989,7 @@ verificar_menu() {
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/operador_lista_empresa/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/lista_veiculos/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -1013,19 +1014,40 @@ verificar_menu() {
 
 
 }
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 2) {
+   return( 
+     <Menu_cliente_individual />     
+   );
+  } else if (localStorage.getItem('logperfil') == 7) {
+   return( 
+     <Menu_cliente_empresarial />     
+   );
+  } else if (localStorage.getItem('logperfil') == 3) {
+    return( 
+      <Menu_Motorista />     
+    );
+  } else if (localStorage.getItem('logperfil') == 8) {
+   return( 
+     <Menu_operador />     
+   );
+  }
+
+}
 
 render(){  
 
 return (
 <div>    
+<div className="container_alterado">
+{ this.verificar_menu_lateral()}        
 <div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+  
    <div className="area_esquerda">     
          {this.verificar_menu()}        
           <div class="d-flex flex-column espacamento_caixa_texto">              
@@ -1245,6 +1267,7 @@ return (
             </div>                    
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
+          </div>  
     </div>                 
    </div>  
 </div> 

@@ -61,7 +61,10 @@ controllers.updatelog = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  //console.log('entrou aqui = '+id);
+  //console.log('log - '+req.body);
+
+  console.log('updatelog - '+JSON.stringify(req.body, null, "    ") );      
+    
   // parameter post
   const { email, senha, statusId, perfilId, logid } = req.body;
   // update data
@@ -76,7 +79,37 @@ controllers.updatelog = async (req, res) => {
     where: { logid: id, perfilId: perfilId}
   })
   .then( function (data){
-    return res.json({success:true, data: data});
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+}
+
+controllers.updateSenha = async (req, res) => {
+  // parameter id get  
+  const { id } = req.params;
+    
+  // parameter post
+  const { senha } = req.body;
+  // update data
+  
+  await Login.update({
+    senha: senha,   
+  },{
+    where: { id: id}
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
   })
   .catch(error => {
     return res.json({success:false, message: error});
@@ -92,6 +125,29 @@ controllers.getOperador = async (req, res) => {
   await Operador.findAll({
       where: { email: email, 
                senha: senha }
+               
+    })
+    .then( function (data){
+      if (data.length > 0) {
+        return res.json({success:true, data:data});
+       } else {
+        return res.json({success:false, data:data});
+       }
+    })
+    .catch(error => {
+      return res.json({success:false, message: error});
+    }) 
+
+} 
+
+controllers.getSenha = async (req, res) => {
+  
+  const id = req.params.id;  
+  const perfilId = req.params.perfilId; 
+
+  await Login.findAll({
+      where: { logid: id, 
+               perfilId: perfilId }
                
     })
     .then( function (data){

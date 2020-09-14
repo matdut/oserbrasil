@@ -34,7 +34,7 @@ const Inicio = props => {
                     <Link to='/tipo'> Ainda não é cliente? <i className="fa fa-chevron-right espacamento_seta_2" aria-hidden="true"></i></Link>         
                 </div>
                 <div class="p-2 inicio_cliente"> 
-                     <Link to='/motorista/0'> Seja nosso motorista <i className="fa fa-chevron-right espacamento_seta_2" aria-hidden="true"></i></Link>                  
+                     <Link to='/motorista_incluir/0'> Seja nosso motorista <i className="fa fa-chevron-right espacamento_seta_2" aria-hidden="true"></i></Link>                  
                 </div>
           </div>      
         </div>  

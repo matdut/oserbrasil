@@ -7,10 +7,10 @@ import {Link} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
+
 import 'sweetalert2/src/sweetalert2.scss';
 import TextField from '@material-ui/core/TextField';
 import './inicio.css';
-
 
 //import axios from 'axios';
 //const baseUrl = "http://34.210.56.22:3333";
@@ -25,8 +25,8 @@ import FormControl from '@material-ui/core/FormControl';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 
-
 const nodemailer = require('nodemailer');
+
 class loginComponent extends React.Component  {  
   
     constructor(props) {
@@ -41,24 +41,31 @@ class loginComponent extends React.Component  {
           validaSenha: false,
           validaEmail: false,
           fireRedirect: false,
+          showModal: false,
           validate: {
             emailState: '',
           },
         }
         
-        this.handleChange = this.handleChange.bind(this);      
+        this.handleChange = this.handleChange.bind(this);     
+        //this.handleOpenModal = this.handleOpenModal.bind(this);     
+        //this.handleCloseModal = this.handleCloseModal.bind(this);      
         this.toggleSenhaShow = this.toggleSenhaShow.bind(this);
-
+        this.redefinir_senha = this.redefinir_senha.bind(this);
+        
+     //   this.esqueceu_senha = this.esqueceu_senha.bind(this);
         this.verifica_emailonblur = this.verifica_emailonblur.bind(this);
       }
 
-   toggleSenhaShow() {     
+  toggleSenhaShow() {     
      this.setState({ hiddenSenha: !this.state.hiddenSenha });
-  }
-
+  } 
+  
+  
   componentDidMount(){ 
     
-  }  
+  }
+ 
   verifica_emailonblur(){
     const { validate } = this.state
     if (validate.emailState == 'has-danger') {
@@ -132,7 +139,11 @@ class loginComponent extends React.Component  {
     } else {      
            // const url = baseUrl+"/login/get/"+this.state.email+"/"+this.state.senha
             //console.log( JSON.stringify(`/login/get/${this.state.email}/${this.state.senha}`, null, "") );            
-
+            this.setState({ 
+              color: 'light',
+              mensagem: '',
+            })
+            
             api.get(`/login/getLogin/${this.state.email}/${this.state.senha}`)
             .then(res=>{          
               //console.log( JSON.stringify(res.data, null, "    ") );
@@ -168,7 +179,8 @@ class loginComponent extends React.Component  {
                     
                         if (resempresa.data.success) {  
                           
-                          localStorage.setItem('logemail', resempresa.data.data[0].cliente.email);                             
+                          localStorage.setItem('logemail', resempresa.data.data[0].cliente.email);           
+                          localStorage.setItem('lognome',  resempresa.data.data[0].cliente.nome);                          
                           localStorage.setItem('logid',  resempresa.data.data[0].id); 
                           localStorage.setItem('logperfil', res.data.data[0].perfilId);      
                           localStorage.setItem('lograzao_social',  resempresa.data.data[0].razao_social);                   
@@ -209,8 +221,8 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logemail', resoperador.data.data[0].email);            
                           localStorage.setItem('lognome', resoperador.data.data[0].nome);
                           localStorage.setItem('logid', resoperador.data.data[0].id);  
-                          localStorage.setItem('logperfil', res.data.data[0].perfilId);   
-                          localStorage.setItem('logstatus', res.data.data[0].statusId);   
+                          localStorage.setItem('logperfil', resoperador.data.data[0].perfilId);   
+                          localStorage.setItem('logstatus', resoperador.data.data[0].statusId);   
                           localStorage.setItem('lograzao_social', resoperador.data.data[0].empresa.razao_social);                         
                           
                           this.setState({ 
@@ -256,40 +268,11 @@ class loginComponent extends React.Component  {
       mensagem: ''
     })
      //this.loadCliente()
-  }  
+  }   
  
-  esqueceu_senha(){
+  redefinir_senha(){
+    this.props.history.push(`/esqueceu_senha`);
 
-   
- /*   const transporter = nodemailer.createTransport({
-      host: "smtps.uol.com.br",
-      //host: "smtps.uol.com.br",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-          //user: "mateus.dutra@oserbrasil.com.br",
-          user: "mateus.dutra@oserbrasil.com.br",
-          pass: "uvlb4otd"
-      },
-      tls: { rejectUnauthorized: false }
-  });
-    
-    const mailOptions = {
-     // from: "mateus.dutra@oserbrasil.com.br",
-      from: "mateus.dutra@oserbrasil.com.br",
-      to: "mateus.dutra@oserbrasil.com.br",
-      subject: "E-mail enviado usando Node!",
-      text: "Bem vindo matesu sadsa das ao Oser, sua senha é 12345. "
-    };
-  
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-          console.log('erro de envio - '+error);
-      } else {
-        console.log('Email enviado: ' + info.response);
-      }
-    });
-*/
   }
 
   senhachange(e) {
@@ -379,11 +362,15 @@ class loginComponent extends React.Component  {
           <div className="d-flex justify-content-center">  
             <Button className="botao_entrar">Entrar</Button>        
           </div>
-             
+          <div className="esqueceu_senha">
+          <Link href="#" onClick={this.redefinir_senha}>
+            Esqueceu Senha
+          </Link>
+          </div>
       </Form>
-        </div>      
+        </div>            
         
-      </Container>
+      </Container>            
       <br/>
       <br/>
       <br/>

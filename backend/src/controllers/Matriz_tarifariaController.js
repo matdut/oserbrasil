@@ -108,7 +108,7 @@ controllers.get = async (req, res) => {
 
   // Find all projects with a least one task where task.state === project.task
  await Matriz_tarifaria.findAll({ 
-   id: id //,
+  where: { id: id }//.  id: id //,
    //include: [Tipo]
   })  
   .then( function (data){

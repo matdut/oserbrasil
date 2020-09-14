@@ -7,17 +7,36 @@ import { Alert, Input } from 'reactstrap';
 import api from '../../services/api';
 
 import { Link } from "react-router-dom";
+import Modal from 'react-modal';
 
 //library sweetalert
 import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial' ;
 import Menu_administrador from '../administrador/menu_administrador';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
+
+import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 const logid = localStorage.getItem('logid');
 //const baseUrl = "http://34.210.56.22:3333";
+const customStyles = {
+  content : {
+    top                   : '40%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
 
 class listComponent extends React.Component  {
 
@@ -92,13 +111,18 @@ class listComponent extends React.Component  {
   render()
   {
     return (
-      <div className="container-fluid">    
+      <div>    
           <div>
             <Menu_cliente_empresarial />  
+            <div className="titulo_admministrador">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+                  <h3><strong>Lista de Operadores</strong></h3>
+              </div>      
+            </div>
           </div>
-          <center><h3><strong>Lista de Operadores</strong></h3></center>
-          <div>  
-          <Link className="btn btn-outline-info" to={`/operadores/`+localStorage.getItem('logid')}> <span class="glyphicon glyphicon-plus"></span> Adicionar Operador</Link>                 
+     <div className="container_alterado_1">          
+      
+          <div> 
         <br/>
         </div>  
         <table className="table table-hover danger">
@@ -117,14 +141,58 @@ class listComponent extends React.Component  {
             {this.loadFillData()}
           </tbody>
         </table>
-        <Link className="btn btn-outline-info" to={`/operadores/`+localStorage.getItem('logid')}> <span class="glyphicon glyphicon-plus"></span> Adicionar Operador</Link>       
 
         <br/>
         <Alert color={this.state.color}>
           {this.state.mensagem}
         </Alert>     
+
+        <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+              <AddIcon/> Adicionar Operadores
+          </Fab>
+       </div>
+
+
+      <Modal 
+        isOpen={this.state.showModal}
+        style={customStyles}
+        contentLabel="Minimal Modal Example"
+        >
+          <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.handleCloseModal()}>
+              <HighlightOffIcon/> Close
+          </Fab>
+          </div>      
+          <br/> 
+          <br/>     
+
+            teste asdsasdasda
+
+      </Modal>  
       </div>   
+    </div>  
     );
+  }
+
+  handleOpenModal () {
+    this.setState({ 
+      showModal: true    
+    });
+  
+     
+    //this.props.history.push(`/incluir_operador/`+localStorage.getItem('logid')); 
+ //   this.prepareSave();
+  }
+  
+  handleCloseModal () {
+    this.setState({ 
+      showModal: false,
+      incluir: false 
+    });
+  }
+  onIncluir() {
+    this.props.history.push(`/incluir_operador/`+localStorage.getItem('logid'));   
   }
 
   loadFillData(){
@@ -149,10 +217,11 @@ class listComponent extends React.Component  {
               {this.loadStatus()}      
               </Input></td>
           <td>
-            <div style={{width:"150px"}}>      
-              <button className="btn btn-outline-primary" onClick={()=>this.onSenha(data)}> Email </button>   
+            <div style={{width:"150px"}}>                  
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data, data.id)}> Deletar </button>
+              <IconButton aria-label="delete" onClick={()=>this.onDelete(data.email, data.id)}>
+                <DeleteIcon />
+              </IconButton>    
             </div>            
           </td>          
         </tr>
@@ -182,23 +251,13 @@ class listComponent extends React.Component  {
   
   onSenha(data) {
     
-    const senhaAleatoria = Math.random().toString(36).slice(-8);
-
-    const params_email = {
-      name:  data.nome,   
-      email: data.email,                
-      texto: `Bem vindo(a), ${data.nome} \n Sua senha inicial è ${senhaAleatoria} \n ` 
+    const params_email = {    
+      email: data.email,                      
+      url: `http://www.oser.app.br:21497/operadores_incluir/${localStorage.getItem('logid')}/${data.email}`,        
+      texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
     }
     
-    api.post("/email/send", params_email)    
-
-    const logindata = {      
-      senha: senhaAleatoria,
-      email: data.email,        
-      perfilId: 8
-    }  
-
-    api.put(`/login/update/${data.id}`,logindata)
+    api.post("/email/send", params_email)       
 
     alert('Mensagem Enviada');
 

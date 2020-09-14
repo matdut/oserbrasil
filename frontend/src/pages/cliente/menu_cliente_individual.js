@@ -15,17 +15,28 @@ import {
   DropdownItem,
   NavbarText
 } from 'reactstrap';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import './area_cliente.css';
 
+import Avatar from '@material-ui/core/Avatar';
 
+const LightTooltip = withStyles((theme) => ({
+  tooltip: {     
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+    margin: "1px 0",
+    whiteSpace: 0,
+  },
+}))(Tooltip);
 //const [isOpen, setIsOpen] = useState(false);
-
-
-
 //const Cabecalho_cliente = props => {
-class menu_clienteComponent extends React.Component  {
+class menu_clienteComponent extends React.Component  {  
 
   constructor(props){
     super(props);    
@@ -67,16 +78,12 @@ class menu_clienteComponent extends React.Component  {
 
   verifica_menu() {
     if ( this.state.perfil == 1) {
-      return (         
-        <NavItem className="nav-item"> 
-           <NavLink href="#"><strong><span class="glyphicon glyphicon-user"></span> BEM VINDO, ADMINISTRADOR </strong></NavLink>                                     
-        </NavItem>          
+      return (            
+           <strong> ADMINISTRADOR </strong>
        ); 
     } else {
-      return ( 
-         <NavItem className="nav-item">            
-           <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {this.state.nome.toUpperCase()} </strong></NavLink>                              
-         </NavItem>   
+      return (      
+         <strong>{this.state.nome.toUpperCase()}</strong>
        ); 
     }            
   }
@@ -98,58 +105,62 @@ class menu_clienteComponent extends React.Component  {
   
   render()
   {  
-
+  
  return (
   <div>    
-    <Navbar color="#dc3545" light expand="md">
-        <NavbarBrand href="#"></NavbarBrand>
-        <NavbarToggler onClick={this.toggle} />
-        <Collapse isOpen={this.isOpen} navbar>
-          <Nav className="ml-auto" navbar>            
-             {this.verifica_menu()}
-            <NavItem>               
-              <NavLink href="#">AVALIAR</NavLink>
-            </NavItem>
-            
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                   EVENTOS
-              </DropdownToggle>
-              <DropdownMenu right>
-                 <DropdownItem
-                    href={"/criar_eventos/"+this.state.id}> 
-                    <i class="fas fa-plus-square"></i> CRIAR  
-                 </DropdownItem>                
-                 <DropdownItem className="menu_link_outros" 
-                    href={"/listaeventocliente/"+this.state.id}> 
-                      <i class="fas fa-list-ul"></i> LISTAR
-                 </DropdownItem>                                
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>          
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                   <i class="fas fa-list"></i> ALTERAR
-              </DropdownToggle>
-              <DropdownMenu right>
-                 <DropdownItem  
-                    href={`/cliente/`+localStorage.getItem('logid')}> 
-                  <i class="far fa-user"></i> Dados Pessoais
-                 </DropdownItem>                  
-                 <DropdownItem 
-                    href={`/cliente_senha/`+localStorage.getItem('logid')}> 
-                    <i class="fas fa-key"></i> Alterar Senha
-                 </DropdownItem>  
-                <DropdownItem divider />                
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            <NavItem>
-               <button type="button" className="btn btn-danger btn-sm botao_sair" onClick={this.handleClick}>
-               <i class="fas fa-sign-out-alt"></i> SAIR </button>
-            </NavItem>            
-          </Nav>         
-        </Collapse>
-      </Navbar>                                        
+    <div className="left">    
+    <br/>      
+    <div className="item avatar_titulo">
+       <i><div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                         
+       </div>
+         <div className="teste perfil">
+          <a href={`/cliente_alterar/`+localStorage.getItem('logid')}>           
+              Editar Perfil  
+          </a>  
+          <br/>
+         </div>
+       </i>      
+   </div>   
+    <div class="item teste active">
+    <LightTooltip title="Inicio" placement="top">
+       <a href="/area_cliente_individual">
+       <i class="fas fa-home"></i>   
+       </a>  
+    </LightTooltip>   
+    </div>
+    <div className="item teste">    
+       <LightTooltip title="Eventos" placement="top">
+            <a href={"/listaeventocliente/"+this.state.id+"/"+localStorage.getItem('logperfil')}>           
+            <i class="fas fa-bell"></i>
+            </a>  
+        </LightTooltip>    
+    </div>  
+    <div className="item teste">
+    <LightTooltip title="Senha" placement="top">
+        <a href={`/cliente_senha_alterar/`+localStorage.getItem('logid')}>        
+         <i class="fas fa-unlock-alt"></i>
+        </a>  
+    </LightTooltip>    
+    </div>   
+    <div className="item teste">
+      <LightTooltip title="#" placement="top">
+        <a href="#">
+            <i className="fas fa-fw fa-th"></i> 
+        </a>   
+      </LightTooltip>    
+    </div>
+    <div className="item teste">
+       <LightTooltip title="Sair" placement="top">
+        <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
+           <i class="fas fa-sign-out-alt"></i> </button>   
+       </LightTooltip>    
+    </div>         
+    
+     <div className="item_sem_borda versao_sistema"> 
+        <img src="/logo.png" alt="..." width="50"/>
+       <div className="data_versao"> 07/09/20 v1.8.0 </div>
+     </div>  
+   </div>                                       
                             
   </div> 
  );  

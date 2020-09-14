@@ -8,31 +8,16 @@ const FileList = ({ files, onDelete }) => (
   <Container>   
   {files.map(uploadedFile => (
     <li key={uploadedFile.id}>
-      <FileInfo className="">         
-        <Preview src={uploadedFile.preview} />                     
-      </FileInfo>
-      <div>
-        {!uploadedFile.uploaded &&
-          !uploadedFile.error && (
-            <CircularProgressbar
-              styles={{
-                root: { width: 60 },
-                path: { stroke: "#7159c1" }
-              }}
-              strokeWidth={10}
-              percentage={uploadedFile.progress}
-            />
-          )}
-
-        {uploadedFile.url && (
-          <a
+      <FileInfo className="">  
+      <a
             href={uploadedFile.url}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <MdLink style={{ marginRight: 8 }} size={24} color="#222" />
-          </a>
-        )}
+            <Preview src={uploadedFile.preview} />               
+        </a>                   
+      </FileInfo>
+      <div>       
 
         {uploadedFile.uploaded && <MdCheckCircle size={24} color="#78e5d5" />}
         {uploadedFile.error && <MdError size={24} color="#e57878" />}

@@ -1,9 +1,9 @@
 .area_direita {
-  background-color: #0F074E !important;  
+  background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
   width: 521px !important;
-  height: 768px !important;  
   margin-top: 0px !important;
   margin-left: 0px !important;    
+  height: 100vh !important;  
 }
 .area_esquerda1 {
   width: 121px !important;    
@@ -187,18 +187,18 @@
 }
 
 .botao_cadastro_senha_empresa {
-  margin-top: 100px !important; 
+  margin-top: 130px !important; 
   width: 480px !important;
-  line-height: 80px !important;  
+  line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
   margin-left: 108px !important;
 }
 
 .botao_cadastro_senha_empresa_habilitado {
-  margin-top: 100px !important; 
+  margin-top: 130px !important; 
   width: 480px !important;
-  line-height: 80px !important;  
+  line-height: 40px !important;  
   background: #FF840A 0% 0% no-repeat padding-box !important;
   opacity: 1 !important;
   margin-left: 108px !important;

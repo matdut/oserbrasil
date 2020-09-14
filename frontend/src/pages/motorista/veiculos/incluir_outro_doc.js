@@ -6,6 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Resizer from 'react-image-file-resizer';
 
 import api from '../../../services/api';
 import './veiculo.css';
@@ -19,7 +20,14 @@ const andamento_cadastro = localStorage.getItem('logprogress');
 //const cep_empresa = localStorage.getItem('logcep');     
 //const userId = localStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
-
+const resizeFile = (file) => new Promise(resolve => {
+  Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
+  uri => {
+    resolve(uri);
+  },
+  'base64'
+  );
+});
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
 
@@ -197,20 +205,39 @@ verifica_botao(inicio) {
       }
     }     
   }  
-
-sendUpdate(){        
+  onChange = async (file) => { 
+    const image = await resizeFile(file);
+    return image;
+  }
+  getBase64(file, success) {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      debugger;
+      success( reader.result );
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
+  }
+async sendUpdate(){        
   console.log('sendupdate - '+JSON.stringify(this.state, null, "    ")); 
 
    
     if (this.state.incluir_foto_2 == true) {
-              const formData = new FormData();  
+             // const formData = new FormData();  
+             const file = this.state.uploadedCRVL[0].file;
+             
+               const formData = {
+                 foto_url: await this.onChange(file),
+                 name: this.state.uploadedCRVL[0].name
+               }
+         
+             // formData.append("file", this.state.uploadedCRVL[0].file, this.state.uploadedCRVL[0].name)                      
 
-              formData.append("file", this.state.uploadedCRVL[0].file)                   
-              formData.append('id', localStorage.getItem('logid'));     
-
-              api.put(`/veiculo/documentoCRVL/update/${localStorage.getItem('logid')}`, formData)
+              api.put(`/veiculo/documentoCRVL/update/${localStorage.getItem('logVeiculo')}/${localStorage.getItem('logid')}`, formData)
                 .then(response=>{
-                  console.log(JSON.stringify(response.data, null, "    ")); 
+              //    console.log(JSON.stringify(response.data, null, "    ")); 
   
                   if (response.data.success==true) {                          
                     this.setState({                          
@@ -223,8 +250,8 @@ sendUpdate(){
                   }
                 }).catch(error=>{
                   alert("Error conxao crvl ")
-                })          
-           
+               })                   
+
       }     
 
       if (localStorage.getItem('logperfil') == 1) {
@@ -372,14 +399,22 @@ return (
               <Grid container spacing={1}>
                   <Grid item xs>
                     <Paper className="grid1">
-                        <Container>                            
-                            <Content>
-                              <Upload onUpload={this.handleUploadCRVL} />
-                                {!!uploadedCRVL.length && (
-                                  <FileList files={uploadedCRVL} />
-                                )}
-                            </Content>                
-                          </Container>    
+                    <Container>   
+                            <div class="d-flex justify-content-start">
+                              <div>
+                              <Content>
+                                  {!!uploadedCRVL.length && (
+                                      <FileList files={uploadedCRVL} />
+                                  )}
+                                </Content>   
+                              </div>
+                              <div>
+                                <Content>
+                                    <Upload onUpload={this.handleUploadCRVL} />                                       
+                                </Content>                                            
+                              </div>
+                            </div>                
+                      </Container>   
                     </Paper>
                     <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto"  p={2}>
                               <div className="d-flex justify-content-left">

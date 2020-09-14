@@ -30,6 +30,37 @@ controllers.delete = async (req,res) => {
 
 }
 
+controllers.uploadCRVLFiles = async (req, res) => {
+  
+  console.log('req.file documentoCRVL/update - '+JSON.stringify(req.body, null, "    "));  
+
+ // const { originalname: name, mimetype, size, filename: key, location: url = ""} = req.file;  
+ const { foto_url,  name} = req.body;  
+
+  const id = req.params.id;     
+  const motoristaId = req.params.motoristaId;     
+  //const url2 = req.protocol + '://' + req.get('host')  
+  //console.log('entrou aqui = '+id);
+  // update data
+  
+  await Veiculo.update({   
+    foto_CRVL_name: name,
+    //foto_CRVL_size: size,
+   // foto_CRVL_mimetype: mimetype,
+    foto_CRVL_key: foto_url,
+    foto_CRVL_url: foto_url
+    },{
+    where: { id: id,  motoristaId: motoristaId}
+    })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+}
+
 controllers.deleteMotorista = async (req,res) => {
   
   // parameter post  

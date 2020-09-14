@@ -8,7 +8,8 @@ import TextField from '@material-ui/core/TextField';
 
 import api from '../../services/api';
 import './motorista.css';
-
+import Menu_motorista from './menu_motorista';
+import Menu_administrador from '../administrador/menu_administrador';
 const andamento_cadastro = localStorage.getItem('logprogress');     
 //const cep_empresa = localStorage.getItem('logcep');     
 //const userId = localStorage.getItem('logid');
@@ -771,18 +772,27 @@ verificar_menu() {
 
 }
 
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 3) {
+   return( 
+     <Menu_motorista />     
+   );
+  }
+
+}
+
 render(){  
 
 return (
 <div>    
-<div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+<div className="container_alterado">
+{this.verificar_menu_lateral()}
+<div className="d-flex justify-content"> 
    <div className="area_esquerda">     
          {this.verificar_menu()}        
           <div class="d-flex flex-column espacamento_caixa_texto">              
@@ -977,6 +987,7 @@ return (
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 
    </div>  
+ </div>  
 </div> 
   );
 } 

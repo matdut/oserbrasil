@@ -5,6 +5,13 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import axios from 'axios';
 import { Link } from "react-router-dom";
 import api from '../../../services/api';
+import { Input, Alert } from 'reactstrap';
+
+import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -21,6 +28,8 @@ class listComponent extends React.Component  {
     super(props);
     this.state = {
       perfil: perfil,
+      mensagem: '',
+      color: 'light',
       listVeiculos:[]
     }
   }
@@ -61,16 +70,17 @@ class listComponent extends React.Component  {
   render()
   {
     return (
-      <div className="container-fluid">    
-       <div>
-          <Menu_motorista />  
-       </div>       
-       <div>
-          <center><h3><strong>Lista de Veículos</strong></h3> </center>         
-         <br/>
-         <Link className="btn btn-outline-info" to={`/incluir_veiculos/`+localStorage.getItem('logid')}> <span class="glyphicon glyphicon-plus"></span> Adicionar Veículo</Link>       
+      <div>           
+        <Menu_motorista />         
+        <div className="titulo_admministrador">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+                  <h3><strong>Lista de Veículos</strong></h3>
+              </div>      
+            </div>
+       <div className="container_alterado_1">        
+    
         <br/>
-        </div>  
+     
         <table className="table table-hover table-striped">
           <thead>
             <tr>              
@@ -85,12 +95,25 @@ class listComponent extends React.Component  {
           <tbody>         
             {this.loadFillData()}
           </tbody>
-        </table>
-         <Link className="btn btn-outline-info" to={`/incluir_veiculos/`+localStorage.getItem('logid')}> <span class="glyphicon glyphicon-plus"></span> Adicionar Veículo</Link>         
+        </table>       
+
+         <Alert color={this.state.color}>
+               {this.state.mensagem}
+          </Alert>    
+
+        <div className="botao_lista_incluir">
+          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+              <AddIcon/> Adicionar Veículo
+          </Fab>
+       </div>
       </div>   
+     </div> 
     );
   }
 
+  onIncluir() {
+    this.props.history.push(`/incluir_veiculos/`+localStorage.getItem('logid'));   
+  }
   loadFillData(){
 
     return this.state.listVeiculos.map((data, index)=>{
@@ -102,15 +125,23 @@ class listComponent extends React.Component  {
           <td>{data.placa}</td>
           <td>{data.ano}</td>          
           <td>
-            <div style={{width:"150px"}}>       
-            <Link className="btn btn-outline-info" to={"/alterar_veiculos/"+data.id}>Editar</Link>
+            <div style={{width:"150px"}}>               
+              <IconButton aria-label="editar" onClick={()=>this.onEditar(data)}>
+                <EditIcon />
+              </IconButton>  
               {'   '}
-              <button className="btn btn-outline-danger" onClick={()=>this.onDelete(data.id)}> Deletar </button>
+              <IconButton aria-label="delete" onClick={()=>this.onDelete(data.email, data.id)}>
+                <DeleteIcon />
+              </IconButton>  
             </div>            
           </td>          
         </tr>
       )
     })
+  }
+
+  onEditar(data) {
+    this.props.history.push(`/alterar_veiculos/${data.id}`);   
   }
 
   onDelete(id){

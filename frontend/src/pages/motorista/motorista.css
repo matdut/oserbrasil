@@ -1,9 +1,9 @@
 .area_direita {
-  background-color: #0F074E !important;  
-  width: 521px !important;
-  height: 768px !important;  
+  background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+  width: 521px !important;  
   margin-top: 0px !important;
   margin-left: 0px !important;    
+  height: 100vh !important;  
 }
 .area_esquerda1 {
   width: 121px !important;    
@@ -14,6 +14,10 @@
 .area_navegacao {
   margin-top: 80px;
   width: 108px !important;     
+}
+
+.endereco_motorista_left{
+  margin-left: -20px;
 }
 
 .titulo_logo {
@@ -29,14 +33,36 @@
   line-height: 24px;
 }
 
-.titulo_representante {  
+.titulo_seha_motorista {
   text-align: left !important;  
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
   margin-top: 64px !important;  
   line-height: 54px !important;  
-  width: 580px !important;
+  width: 480px !important;
+  font-size: 44px !important;   
+}
+
+.titulo_endereco_motorista {
+  text-align: left !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+  margin-top: 64px !important;  
+  line-height: 54px !important;  
+  width: 480px !important;
+  font-size: 44px !important;   
+}
+
+.titulo_representante_motorista {  
+  text-align: left !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+  margin-top: 64px !important;  
+  line-height: 54px !important;  
+  width: 480px !important;
   font-size: 44px !important;   
 }  
 
@@ -67,7 +93,7 @@
 }
 
 .bilingue_texto {
-  margin-top: 10px !important;  
+  margin-top: 30px !important;
 }
 .idioma_texto{
   width: 30px !important;  
@@ -159,7 +185,7 @@
 }
 
 .botao_cadastro_motorista {
-  margin-top: 30px !important; 
+  margin-top: 22px !important; 
   width: 510px !important;
   line-height: 40px !important;  
   background: #C9C9C9 0% 0% no-repeat padding-box !important;
@@ -167,7 +193,7 @@
   margin-left: 108px !important;
 }
 .botao_cadastro_motorista_habilitado {
-  margin-top: 30px !important; 
+  margin-top: 22px !important; 
   width: 510px !important;
   line-height: 40px !important;  
   background:#FF840A 0% 0% no-repeat padding-box !important;
@@ -267,7 +293,8 @@
   color: #0F074E !important;
   font-weight: bold;
   font-size: 20px;
-  line-height: 12px;
+  line-height: 21px;
+  margin-left: -21px;
 }
 
 .progress_linear {

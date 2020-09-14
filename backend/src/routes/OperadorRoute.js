@@ -12,4 +12,8 @@ router.delete('/delete/:id',OperadorController.delete);
 router.get('/getOperadorCpf/:cpf/:cnpj', OperadorController.getOperadorCpf);
 router.get('/listaempresa/:id', OperadorController.listaempresa);
 
+router.delete('/deleteEmpresa/:empresaId',OperadorController.deleteEmpresa);
+
+
+
 module.exports = router;

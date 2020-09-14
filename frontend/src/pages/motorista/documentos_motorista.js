@@ -6,6 +6,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Menu_motorista from './menu_motorista';
+import Resizer from 'react-image-file-resizer';
 
 import api from '../../services/api';
 import './documentos.css';
@@ -14,13 +16,22 @@ import './documentos.css';
 import filesize from "filesize";
 import Upload from "../UploadDocumentos";
 import FileList from "../FilelistDocumento";
+//import Upload from "../Upload";
+//import FileList from "../Filelist";
 import { Container, Content } from "../style";
 
 const andamento_cadastro = localStorage.getItem('logprogress');     
 //const cep_empresa = localStorage.getItem('logcep');     
 //const userId = localStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
-
+const resizeFile = (file) => new Promise(resolve => {
+  Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
+  uri => {
+    resolve(uri);
+  },
+  'base64'
+  );
+});
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
 
@@ -110,7 +121,7 @@ verifica_botao(inicio) {
       if (inicio == 1) {
         return (
     
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_doc_foto"  p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                   <div className="d-flex justify-content-center">
                   <label> Próximo </label>
                   </div>     
@@ -122,7 +133,7 @@ verifica_botao(inicio) {
             if (this.state.foto1State == 'has-success') {
 
               return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_doc_foto_habilitado" p={2} onClick={()=>this.sendUpdate()}>
+                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
                 <div className="d-flex justify-content-center">
                 <label> Próximo </label>
                 </div>     
@@ -131,7 +142,7 @@ verifica_botao(inicio) {
           } else {
             return (
     
-              <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_doc_foto"  p={2}>
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                       <div className="d-flex justify-content-center">
                       <label> Próximo </label>
                       </div>     
@@ -143,7 +154,7 @@ verifica_botao(inicio) {
       if (inicio == 1) {
         return (
     
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_doc_foto"  p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                   <div className="d-flex justify-content-center">
                   <label> Salvar Alterações </label>
                   </div>     
@@ -154,7 +165,7 @@ verifica_botao(inicio) {
           if (this.state.foto1State == 'has-success') {
 
               return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_foto_habilitado" p={2} onClick={()=>this.sendUpdate()}>
+                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
                 <div className="d-flex justify-content-center">
                 <label> Salvar Alterações </label>
                 </div>     
@@ -163,7 +174,7 @@ verifica_botao(inicio) {
         }  else {
           return (
   
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_doc_foto"  p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                     <div className="d-flex justify-content-center">
                     <label> Próximo </label>
                     </div>     
@@ -177,7 +188,7 @@ verifica_botao(inicio) {
         return (
     
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_foto"  p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                   <div className="d-flex justify-content-center">
                   <label> Salvar Alterações </label>
                   </div>     
@@ -188,7 +199,7 @@ verifica_botao(inicio) {
           if (this.state.foto1State == 'has-success') {
 
               return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_foto_habilitado" p={2} onClick={()=>this.sendUpdate()}>
+                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
                 <div className="d-flex justify-content-center">
                 <label> Salvar Alterações </label>
                 </div>     
@@ -197,7 +208,7 @@ verifica_botao(inicio) {
         }  else {
           return (
   
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_doc_foto"  p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                     <div className="d-flex justify-content-center">
                     <label> Próximo </label>
                     </div>     
@@ -207,31 +218,52 @@ verifica_botao(inicio) {
       }
     }     
   }  
-
-sendUpdate(){        
-  console.log('sendupdate - '+JSON.stringify(this.state, null, "    ")); 
+  onChange = async (file) => { 
+    const image = await resizeFile(file);
+    return image;
+  }
+  getBase64(file, success) {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      debugger;
+      success( reader.result );
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
+  }
+  async sendUpdate(){        
+  //console.log('sendupdate - '+JSON.stringify(this.state, null, "    ")); 
 
    if (this.state.incluir_foto_1 == true) {
-       const formData = new FormData();              
-  
-        formData.append("file", this.state.uploadedCNH[0].file)         
-        formData.append('id', localStorage.getItem('logid'));     
 
-        api.put(`/motorista/documentoCNH/update/${localStorage.getItem('logid')}`, formData)
-        .then(response=>{
-          console.log(JSON.stringify(response.data, null, "    ")); 
+     //  const formData = new FormData();              
+     const file = this.state.uploadedCNH[0].file;
+       // formData.append("file", this.state.uploadedCNH[0].file)         
+       // formData.append('id', localStorage.getItem('logid'));     
+   
+         const formData = {
+          foto_url: await this.onChange(file),
+           name: this.state.uploadedCNH[0].name
+         }
 
-              if (response.data.success==true) {                         
-                this.setState({                          
-                  foto_incluida_1: true
-                });
-              }
-              else {
-                alert("Error conexão CNH ")              
-              }     
-        }).catch(error=>{
-          alert("Error conxao CNH ")          
-        }) 
+         
+          api.put(`/motorista/documentoCNH/update/${localStorage.getItem('logid')}`, formData)
+          .then(response=>{
+           // console.log(JSON.stringify(response.data, null, "    ")); 
+
+                if (response.data.success==true) {                         
+                  this.setState({                          
+                    foto_incluida_1: true
+                  });
+                }
+                else {
+                  alert("Error conexão CNH ")              
+                }     
+          }).catch(error=>{
+            alert("Error conxao CNH ")          
+          })      
     } 
 
       if (localStorage.getItem('logperfil') == 1) {
@@ -356,8 +388,7 @@ verificar_menu(){
     return(
       <div>
           <div className="d-flex justify-content-around">             
-               <div className="botao_navegacao">
-                 <Link to="/area_motorista"> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+               <div className="botao_navegacao">      
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -381,14 +412,9 @@ render(){
   
 return (
 <div>    
-<div className="d-flex justify-content">
-  <div className="d-flex justify-content-start"> 
-      <div className="area_direita">   
-          <div>   
-            <img className="titulo_logo" src="../logo.png"/>
-         </div>      
-      </div>    
-   </div>
+<div className="container_alterado">
+  <Menu_motorista />  
+<div className="d-flex justify-content"> 
    <div className="area_esquerda">      
        {this.verificar_menu()}   
           
@@ -400,16 +426,23 @@ return (
                     <Paper className="documento_motorista_cnh">
                        <div>
                         <div className="titulocnh"><stronger>CNH </stronger></div>                      
-                        <div className="descricaocnh">Carteira Nacional de Habilitação</div>
-                        <div className="descricaocnh"> <br/></div>
-                        <Container>                            
-                            <Content>
-                              <Upload onUpload={this.handleUploadCNH} />
-                                {!!uploadedCNH.length && (
-                                  <FileList files={uploadedCNH} />
-                                )}
-                            </Content>                                            
-                          </Container> 
+                        <div className="descricaocnh">Carteira Nacional de Habilitação</div>                        
+                        <Container>                      
+                                <div class="d-flex justify-content-start">
+                                   <div>
+                                   <Content>
+                                      {!!uploadedCNH.length && (
+                                          <FileList files={uploadedCNH} />
+                                       )}
+                                    </Content>   
+                                   </div>
+                                   <div>
+                                     <Content>
+                                         <Upload onUpload={this.handleUploadCNH} />                                       
+                                    </Content>                                            
+                                   </div>
+                                 </div>    
+                           </Container>   
                           <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
                             <div className="d-flex justify-content-center">
                             <label> {this.state.mensagem_foto1} </label>
@@ -440,6 +473,7 @@ return (
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 
    </div>  
+  </div> 
 </div> 
   );
 } 

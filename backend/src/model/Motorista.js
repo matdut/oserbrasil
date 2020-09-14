@@ -89,13 +89,13 @@ var Motorista = sequelize.define(nametable,{
   type: Sequelize.STRING, 
  },
  foto_key: { 
-  type: Sequelize.STRING, 
+  type: Sequelize.TEXT('long'), 
  },
  foto_mimetype: { 
   type: Sequelize.STRING, 
  },
  foto_url: { 
-  type: Sequelize.STRING, 
+  type: Sequelize.TEXT('long'), 
   allowNull: true,
  },
  foto_CNH_name: { 
@@ -105,13 +105,13 @@ var Motorista = sequelize.define(nametable,{
   type: Sequelize.STRING, 
  },
  foto_CNH_key: { 
-  type: Sequelize.STRING, 
+  type: Sequelize.TEXT('long'), 
  },
  foto_CNH_mimetype: { 
   type: Sequelize.STRING, 
  },
  foto_CNH_url: { 
-  type: Sequelize.STRING, 
+  type: Sequelize.TEXT('long'), 
   allowNull: true,
  },
  numero_carteira: { 

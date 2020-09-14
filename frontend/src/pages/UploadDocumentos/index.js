@@ -5,7 +5,7 @@ import { DropContainer, UploadMessage } from "./styles";
 export default class Upload extends Component {
   renderDragMessage = (isDragActive, isDragReject) => {
     if (!isDragActive) {
-      return <UploadMessage>Arraste seu arquivo aqui ou busque seu arquivo</UploadMessage>;
+      return <UploadMessage className="incluirarquivo">Incluir Arquivo</UploadMessage>;
     }
     if (isDragReject) {
       return <UploadMessage type="error">Arquivo não suportado</UploadMessage>;
@@ -22,10 +22,11 @@ export default class Upload extends Component {
             {...getRootProps()}
             isDragActive={isDragActive}
             isDragReject={isDragReject}
-          >
+            className="incluir_titulo"
+          >           
             <input {...getInputProps()} />
             {this.renderDragMessage(isDragActive, isDragReject)}
-          </DropContainer>
+          </DropContainer>          
         )}
       </Dropzone>
     );
