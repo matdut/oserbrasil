@@ -203,6 +203,28 @@ controllers.getVeiculo = async (req, res) => {
   
 }
 
+controllers.getMotoristaVeiculos = async (req, res) => {
+  const { id } = req.params;
+  
+  await Veiculo.findAll({
+    include: [{
+      model: Motorista,      
+      where: { id: id }      
+     }]     
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
 controllers.get = async (req, res) => {
   const { id } = req.params;
   await Veiculo.findAll({    

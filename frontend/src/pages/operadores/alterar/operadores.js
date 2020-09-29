@@ -7,6 +7,24 @@ import { cpfMask } from '../../formatacao/cpfmask';
 import api from '../../../services/api';
 import '../operadores.css';
 import Menu_operador from '../menu_operador';
+import Menu_administrador from '../../administrador/menu_administrador';
+
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import FilledInput from '@material-ui/core/FilledInput';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import CheckIcon from '@material-ui/icons/Check';
+import TextField from '@material-ui/core/TextField';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+import { dataMask } from '../../formatacao/datamask';
+
+import { Data } from '@react-google-maps/api';
 
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
@@ -26,6 +44,7 @@ class operadoresComponent extends React.Component{
       campNomeTitulo: '',
       campData_nascimento:"",
       campEmail:"",      
+      campEmailAnterior:"",   
       campTelefone1:"",
       campRazao_social: "",
       empresaId: 0,
@@ -43,7 +62,17 @@ class operadoresComponent extends React.Component{
       mensagem_data_nascimento: '',        
       incluir: false, 
       inicio: 1,
-      progresso: 0,      
+      progresso: 0,  
+      erro_cpf: false,
+      erro_nome: false,
+      erro_datanascimento: false,
+      erro_email: false,
+      erro_telefone: false,
+      validacao_cpf: false,
+      validacao_nome: false,
+      validacao_datanascimento: false,
+      validacao_email: false,
+      validacao_telefone: false,    
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -65,8 +94,10 @@ class operadoresComponent extends React.Component{
     this.verificaDataNascimento = this.verificaDataNascimento.bind(this);  
     this.verificaCpfOnblur = this.verificaCpfOnblur.bind(this);  
     
-    
+    this.verificaCpfonfocus = this.verificaCpfonfocus.bind(this);  
     this.verificaEmailonfocus = this.verificaEmailonfocus.bind(this);
+    this.verificaTelefone1onfocus = this.verificaTelefone1onfocus.bind(this);   
+    this.verificaNomeonfocus = this.verificaNomeonfocus.bind(this);       
 
     this.validaEmailChange = this.validaEmailChange.bind(this);    
     this.validaCpfChange = this.validaCpfChange.bind(this);  
@@ -91,7 +122,8 @@ class operadoresComponent extends React.Component{
     let email = this.props.match.params.email;         
 
     console.log('Email '+email);
-    localStorage.setItem('logperfil', 0);
+    localStorage.setItem('logid',  userId);
+    //localStorage.setItem('logperfil', 0);
     
     if (email !== "0") {
       localStorage.setItem('logemailId', userId);
@@ -99,15 +131,26 @@ class operadoresComponent extends React.Component{
       this.busca_email(); 
     } else {
       localStorage.setItem('logoperadorId', userId);  
+      //localStorage.setItem('logid', userId);  
       this.busca_operador();
     }    
 
     this.busca_empresa();
 
-    console.log('operador ID '+localStorage.getItem('logoperadorId'));
+    console.log('operador ID alterar'+localStorage.getItem('logoperadorId'));
     console.log('operador perfil - '+localStorage.getItem('logperfil'));   
   }  
 
+  verificaTelefone1onfocus(e){   
+    const { validate } = this.state
+    validate.telefone1State = ''
+       this.setState({ 
+            validate,
+            erro_telefone: false,   
+            validacao_telefone: true,    
+            mensagem_telefone1: ''              
+        })                   
+   } 
   verifica_nome_operador(nome){
     let nome_titulo = nome.substring(0,nome.indexOf(" ")) 
     if (nome_titulo == "") {
@@ -119,7 +162,7 @@ class operadoresComponent extends React.Component{
   } 
   busca_empresa() {    
     //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
-    api.get(`/empresa/get/${localStorage.getItem('logid')}`)
+    api.get(`/empresa/get/${localStorage.getItem('logempresaid')}`)
     .then(res=>{       
         if (res.data.success) {
            
@@ -168,6 +211,36 @@ class operadoresComponent extends React.Component{
       })       
   
   } 
+
+  verificaNomeonfocus(e) {
+    const { validate } = this.state
+    if (e.target.value.length == 0) {
+      validate.nomeState = ''
+      this.setState({ 
+        validate,        
+        erro_nome: false,   
+        validacao_nome: false,    
+        mensagem_nome: ''  
+       })            
+    } 
+  } 
+  
+  verificaCpfonfocus(e) {
+    const { validate } = this.state
+    if (e.target.value.length == 0) {
+      validate.cpfState = ''
+      this.setState({ 
+        validate,               
+        erro_cpf: false,   
+        validacao_cpf: false,    
+        mensagem_cpf: ''  
+       })            
+    } else if (e.target.value.length == 14)  {
+      console.log('é valido asasas - '+e.target.value);
+      this.busca_cpf(e);// se existir não deixa cadastrar 
+      
+    }
+  } 
   busca_operador() {
     const { validate } = this.state
    // console.log('busca operador ID '+localStorage.getItem('logid'));
@@ -180,16 +253,22 @@ class operadoresComponent extends React.Component{
           this.setState({ 
             campCpf: res.data.data[0].cpf,
             campNome: res.data.data[0].nome,
-            campData_nascimento: res.data.data[0].data_nascimento,
-            campEmail: res.data.data[0].email,      
+            campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
+            campEmail: res.data.data[0].email,    
+            campEmailAnterior: res.data.data[0].email,        
             campTelefone1: res.data.data[0].celular,            
             campStatusId: res.data.data[0].statusId,
             empresaId: res.data.data[0].empresa.id,
             incluir: false,
             inicio: 2,
+            validacao_cpf: true,
+            validacao_nome: true,
+            validacao_datanascimento: true,
+            validacao_email: true,
+            validacao_telefone: true,
           })                        
          
-          localStorage.setItem('logid', res.data.data[0].empresaId);
+          localStorage.setItem('logempresaid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
             validate.cpfState = 'has-success'      
@@ -288,7 +367,9 @@ class operadoresComponent extends React.Component{
           mensagem_email: ''  
       })                   
     } else {
-      this.busca_email_ja_cadastrado(e.target.value)         
+      if (this.state.campEmailAnterior !== e.target.value) {
+        this.busca_email_ja_cadastrado(e.target.value)         
+      }  
     }            
    } 
 
@@ -445,8 +526,16 @@ class operadoresComponent extends React.Component{
           validate.emailState = 'has-success'     
          // console.log(' valida email - '+e.target.value);   
           //console.log(' valida email - '+this.state.campEmail);   
-          this.busca_email_ja_cadastrado(e.target.value)                
-                  
+          if (this.state.campEmailAnterior !== e.target.value) {
+            this.busca_email_ja_cadastrado(e.target.value)                
+         } else {
+           this.setState({ 
+             validate,
+             erro_email: false,
+             validacao_email: true,
+             mensagem_email: '' 
+           })          
+         }        
           
       } else {
         validate.emailState = 'has-danger'
@@ -565,7 +654,7 @@ verifica_botao(inicio) {
 
         <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
               <div className="d-flex justify-content-center">
-              <label> Alterar </label>
+              <label> Salvar Alterações </label>
               </div>     
         </Box>           
     );   
@@ -576,7 +665,7 @@ verifica_botao(inicio) {
         return (           
           <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendSave()}>
           <div className="d-flex justify-content-center">
-          <label> Alterar </label>
+          <label> Salvar Alterações </label>
           </div>     
           </Box>           
         );
@@ -585,7 +674,7 @@ verifica_botao(inicio) {
 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
                 <div className="d-flex justify-content-center">
-                <label> Alterar </label>
+                <label> Salvar Alterações </label>
                 </div>     
           </Box>           
       );   
@@ -626,14 +715,20 @@ envio_email(email, nome, senhaaleatoria) {
 */
 
 sendSave(){        
-  
+  const { validate } = this.state;       
+  validate.cpfState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, salvando os dados...',       
+     validate 
+  }); 
+    
    //  const senhaAleatoria = Math.random().toString(36).slice(-8);
       
       const datapost_alterar = {
         nome: this.state.campNome,              
         email: this.state.campEmail,
         celular: this.state.campTelefone1,    
-        data_nascimento: this.state.campData_nascimento,    
+        data_nascimento: moment(this.state.campData_nascimento, "DD MM YYYY"),      
         cpf: this.state.campCpf,
         perfilId: 8,
        }  
@@ -652,20 +747,14 @@ sendSave(){
           api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata)
 
         //  localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);
+          //localStorage.setItem('logid', userId);    
           if (localStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (localStorage.getItem('logperfil') == 7) {
-              this.props.history.push(`/area_cliente_empresarial`);                   
           } else if (localStorage.getItem('logperfil') == 8) {
-              this.props.history.push(`/senha_operador_alterar/`+localStorage.getItem('logoperadorId'));                                  
+              this.props.history.push(`/area_operador/`);                                  
           }            
 
-        }
-        else {
-//console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
-          alert("Error na Criação verificar log")              
-        }           
+        }        
       }).catch(error=>{
         alert("Erro verificar log  ")
       })           
@@ -694,151 +783,245 @@ verificar_menu() {
 
 }
 
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 8) {
+   return( 
+     <Menu_operador />     
+   );
+  }
+
+}
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
+
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
+}
+
+
 render(){  
 
 return (
-<div>   
-<div className="container_alterado">
-  <Menu_operador />   
-<div className="d-flex justify-content"> 
-    <div className="area_esquerda">     
-           {this.verificar_menu()}
+<div>    
+<div className="container_alteracao">
+   {this.verificar_menu_lateral()}
+   <div className="d-flex justify-content"> 
+    <div>     
+    <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_alteracao">                                
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
+
+              <br/>
+              <br/>
+              <br/>
+          </div> 
 
             <div class="d-flex flex-column espacamento_caixa_texto">
-              <div class="p-2"> 
-                  <label for="inputPassword4">CPF *</label>
-                    <Input 
-                        disabled={this.state.camp_cpf_disabled}
-                        className="input_text_operadores"                        
-                        type="text"
-                        name="cpf"
-                        id="examplcpf"
-                        autoComplete='off'
-                        autoCorrect='off'
-                       //ref={cepInput} 
-                        placeholder=""
+              <div class="p-2">              
+                  <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">CPF</InputLabel>
+                     <OutlinedInput
+                        autoComplete="off"         
+                        readOnly={this.state.camp_cpf_disabled}                        
+                        error={this.state.erro_cpf}
+                        helperText={this.state.mensagem_cpf}
+                        className="data_operador"                       
+                        id="outlined-basic"                      
+                        variant="outlined"
                         value={this.state.campCpf}
-                        valid={ this.state.validate.cpfState === 'has-success' }
-                        invalid={ this.state.validate.cpfState === 'has-danger' }
-                        onBlur={this.verificaCpfOnblur}
                         onKeyUp={this.verificaCpf}
-                       // onFocus={this.verificaCpf}
+                        onFocus={this.verificaCpfonfocus}
+                        onBlur={this.verificaCpfonblur}
                         onChange={ (e) => {
-                          this.cpfchange(e)                       
-                          this.validaCpfChange(e)
-                        }}         
-                        maxlength="14"                                                                 
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.cpfState}>
-                          {this.state.mensagem_cpf}
-                      </FormFeedback> 
+                         this.cpfchange(e)                       
+                         this.validaCpfChange(e)
+                        }}                         
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cpf? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />
+                   <FormHelperText error={this.state.erro_cpf}>
+                         {this.state.mensagem_cpf}
+                   </FormHelperText>
+                  </FormControl>     
               </div>
               <div class="p-2"> 
-                  <label for="inputEmail4">Nome *</label>
-                  <Input      
-                      disabled={this.state.camp_nome_disabled}
-                      className="input_text_operadores"                  
-                      type="text"
-                      name="nome"
-                      id="examplnome"
-                      placeholder=""
-                      autoComplete='off'
-                      autoCorrect='off'
-                      value={this.state.campNome}
-                      valid={ this.state.validate.nomeState === 'has-success' }
-                      invalid={ this.state.validate.nomeState === 'has-danger' }
-                      onBlur={this.verificaNome}
+                 <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome</InputLabel>
+                     <OutlinedInput          
+                        autoComplete="off"                     
+                        error={this.state.erro_nome}
+                        helperText={this.state.mensagem_cpf}
+                        className="data_operador"                       
+                        id="outlined-basic"                   
+                        variant="outlined"
+                        value={this.state.campNome}
+                        onBlur={this.verificaNome}
+                        onFocus={this.verificaNomeonfocus}
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)
-                      }}    
-                      maxlength="120"                                                                      
-                    />                                
-                    <FormFeedback 
-                    invalid={this.state.validate.nomeState}>
-                        {this.state.mensagem_nome}
-                    </FormFeedback> 
+                      }}                      
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_nome? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />
+                   <FormHelperText error={this.state.erro_nome}>
+                         {this.state.mensagem_nome}
+                   </FormHelperText>
+                  </FormControl>      
               </div> 
-              <div class="p-2">                                
-                  <Label for="exampleDatetime">Data de nascimento *</Label>
-                  <Input                                    
-                    className="input_operadores_date"                  
-                    type="date"
-                    name="senha2"
-                    id="exampleEmail2"                    
-                    placeholder=""                    
-                    value={this.state.campData_nascimento}
-                    valid={ this.state.validate.datanascimentoState === 'has-success' }
-                    invalid={ this.state.validate.datanascimentoState === 'has-danger' }
-                    onBlur={this.verificaDataNascimento}
-                    onChange={ (e) => {
-                      this.data_nascimentochange(e)                       
-                      this.validaDataNascimentoChange(e)
-                    }}  
-                    maxlength="10"               
-                  />                                
-                  <FormFeedback 
-                  invalid={this.state.validate.datanascimentoState}>
-                       {this.state.mensagem_data_nascimento}
-                  </FormFeedback>  
+              <div class="p-2">   
+                <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Data de nascimento</InputLabel>
+                     <OutlinedInput            
+                        autoComplete="off"                    
+                        error={this.state.erro_datanascimento}
+                        helperText={this.state.mensagem_data_nascimento}
+                        className="data_operador"                       
+                        id="outlined-basic"                   
+                        variant="outlined"
+                        value={this.state.campData_nascimento}
+                        onBlur={this.verificaDataNascimento}
+                        onChange={ (e) => {
+                          this.data_nascimentochange(e)                       
+                          this.validaDataNascimentoChange(e)
+                        }}                                    
+                        inputProps={{
+                          maxLength: 10,
+                        }} 
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_datanascimento? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={180}                      
+                    />
+                   <FormHelperText error={this.state.erro_datanascimento}>
+                         {this.state.mensagem_data_nascimento}
+                   </FormHelperText>
+                </FormControl>  
               </div>
               <div class="p-2">
-                      <label for="email1">Email *</label>
-                      <Input     
-                        disabled    
-                        className="input_text_operadores"
-                        type="email"                   
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Email</InputLabel>
+                     <OutlinedInput              
+                        autoComplete="off"                
+                        type="email"
+                        error={this.state.erro_email}
+                        helperText={this.state.mensagem_email}
+                        className="data_operador"                       
+                        id="outlined-basic"                   
+                        variant="outlined"
                         value={this.state.campEmail}
-                        valid={ this.state.validate.emailState === 'has-success' }
-                        invalid={ this.state.validate.emailState === 'has-danger' }
-                     //   onBlur={this.verificaEmail}
-                       // onKeyPress={this.verificaEmail}
-                        onFocus={this.verificaEmailonfocus}                        
+                        onBlur={this.verificaEmail}                     
+                        onFocus={this.verificaEmailonfocus}
                         onChange={ (e) => {
                                     this.emailchange(e) 
                                     this.validateEmail(e)
                                     this.validaEmailChange(e)                                
-                                  } }
-                        maxlength="80"          
-                      />                  
-                      <FormFeedback 
-                      invalid={this.state.validate.emailState}>
-                          {this.state.mensagem_email}
-                      </FormFeedback> 
+                                  } }                        
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_email? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}                      
+                    />
+                   <FormHelperText error={this.state.erro_email}>
+                         {this.state.mensagem_email}
+                   </FormHelperText>
+                </FormControl>                       
               </div>
               <div class="p-2">
-                      <label for="inputEmail4">Telefone *</label>                     
-                      <Input                        
-                        className="input_text_operadores"
-                        type="text"
-                        name="senha2"
-                        id="exampleEmail2"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campTelefone1}
-                        valid={ this.state.validate.telefone1State === 'has-success' }
-                        invalid={ this.state.validate.telefone1State === 'has-danger' }
-                        onBlur={this.verificaTelefone1}
-                        onKeyUp={this.verificaTelefone1}
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                     <OutlinedInput        
+                        autoComplete="off"                   
+                        error={this.state.erro_telefone}
+                        helperText={this.state.mensagem_telefone1}
+                        className="data_operador"                       
+                        id="outlined-basic"                   
+                        variant="outlined"
+                        value={this.state.campTelefone1}                
+                        onBlur={this.verificaTelefone1}            
+                        onFocus={this.verificaTelefone1onfocus}
                         onChange={ (e) => {
                           this.telefone1change(e)                       
                           this.validatelefone1Change(e)
-                        }}                
-                        maxlength="16"                                                          
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.telefone1State}>
-                          {this.state.mensagem_telefone1}
-                      </FormFeedback>
-               </div>
+                        }}                                      
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_telefone? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={80}                      
+                    />
+                   <FormHelperText error={this.state.erro_telefone}>
+                         {this.state.mensagem_telefone1}
+                   </FormHelperText>
+                </FormControl>                            
+               </div>     
             </div>              
             {this.verifica_botao(this.state.inicio)}             
-         </div>                 
+         </div>    
+         <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>                      
      </div>    
    </div>  
 </div> 

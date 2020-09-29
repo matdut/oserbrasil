@@ -11,6 +11,23 @@ import '../empresarial.css';
 import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
 import Menu_administrador from '../../administrador/menu_administrador';
 
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import FilledInput from '@material-ui/core/FilledInput';
+import CheckIcon from '@material-ui/icons/Check';
+import TextField from '@material-ui/core/TextField';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
+import { dataMask } from '../../formatacao/datamask';
+
+import { Data } from '@react-google-maps/api';
 
 const andamento_cadastro = localStorage.getItem('logprogress');     
 //const userId = localStorage.getItem('logid');
@@ -30,12 +47,19 @@ class empresarialComponent extends React.Component{
       campBairro: '',
       campNumero: '',
       encontrou_cnpj: true,
-      campEstado: '',      
+      campEstado: '',   
+      campNome: '',   
       campo_cnpj_disabled:false,
       campo_razao_social_disabled:false,
       campo_nome_fantasia_disabled:false,
       campComplemento: '',
       campCidade: '',
+      erro_cnpj: false,
+      erro_razaosocial: false,
+      erro_nomefantasia: false,
+      validacao_cnpj: false,
+      validacao_razaosocial: false,
+      validacao_nomefantasia: false,
       inicio: 1,
       incluir: true, 
       progresso: "",    
@@ -72,6 +96,8 @@ class empresarialComponent extends React.Component{
 
     this.verifica_botao = this.verifica_botao.bind(this);  
     this.verificaSaidacnpj = this.verificaSaidacnpj.bind(this);      
+
+    this.verifica_nome_empresa = this.verifica_nome_empresa.bind(this);
     
   }
 
@@ -122,6 +148,15 @@ class empresarialComponent extends React.Component{
     //this.cnpjInput.focus();
   }
 
+  verifica_nome_empresa(n){
+    let nome_titulo = n.substring(0,n.indexOf(" ")) 
+    if (nome_titulo == "") {
+      nome_titulo = n
+    }
+    return(    
+          nome_titulo          
+       );  
+  } 
   limpar_cnpj_nao_encontrado() {
     this.setState({      
       campCnpj: "",          
@@ -147,11 +182,13 @@ class empresarialComponent extends React.Component{
             campBairro: res.data.data[0].bairro,
             campEstado: res.data.data[0].estadoId,
             campEndereco: res.data.data[0].endereco,          
-            campCep: res.data.data[0].cep,            
+            campCep: res.data.data[0].cep,        
+            campNome: res.data.data[0].cliente.nome,            
             inicio: 2,
-            incluir: false, 
+            incluir: false,                         
           })     
-
+          
+          console.log('state '+ JSON.stringify(this.state));
           if (localStorage.getItem('logperfil') == 2) { 
             this.setState({ 
               endereco: "/area_cliente_individual" 
@@ -181,12 +218,21 @@ class empresarialComponent extends React.Component{
 
           if (this.state.campCnpj !== "") {
             validate.cnpjState = 'has-success'
+            this.setState({ 
+              validacao_cnpj: true
+            })
           }             
           if (this.state.campRazao_social !== ""){
             validate.razao_socialState = 'has-success'      
+            this.setState({ 
+              validacao_razaosocial: true
+            })
           }
           if (this.state.campNome_fantasia !== "") {
             validate.nome_fantasiaState = 'has-success'      
+            this.setState({ 
+              validacao_nomefantasia: true
+            })
           }          
   
           this.setState({ validate, inicio: 2 })
@@ -336,113 +382,39 @@ class empresarialComponent extends React.Component{
 
    verifica_botao(inicio) {
     const { validate } = this.state
-    console.log('verifica botao - '+JSON.stringify(this.state, null, "    "));
-    console.log('verifica inicio - '+JSON.stringify(inicio, null, "    "));
+    if (inicio == 1) {
+      return (
+  
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
+                <div className="d-flex justify-content-center">
+                <label> Salvar Alterações </label>
+                </div>     
+          </Box>           
+      );   
+    } else {    
+    
+          if (validate.cnpjState == 'has-success' && validate.razao_socialState == 'has-success') {            
 
-    if (this.state.campo_cnpj_disabled !== true) {
-    //console.log(JSON.stringify(inicio, null, "    "));
-    if (localStorage.getItem('logperfil') == 0) {
-        if (inicio == 1) {
-          return (
-      
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_dados"  p={2}>
-                    <div className="d-flex justify-content-center">
-                    <label> Próximo </label>
-                    </div>     
-              </Box>           
-          );   
-        } else {    
-        
-              if (validate.cnpjState == 'has-success' && validate.razao_socialState == 'has-success') {            
-
-                  return (
-                    <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_dados_habilitado2"  p={2} onClick={()=>this.sendUpdate()}>
-                    <div className="d-flex justify-content-center">
-                        <label> Próximo </label>
-                    </div>     
-                    </Box>           
-                  );
-              }  else {
-                return (
-      
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_dados"  p={2}>
-                          <div className="d-flex justify-content-center">
-                          <label> Próximo </label>
-                          </div>     
-                    </Box>           
-                );    
-              }        
-                  
-        }
-      }  else if (localStorage.getItem('logperfil') == 1) {
-        if (inicio == 1) {
-          return (
-      
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_dados"  p={2}>
-                    <div className="d-flex justify-content-center">
-                    <label> Próximo </label>
-                    </div>     
-              </Box>           
-          );   
-        } else {    
-        
-              if (validate.cnpjState == 'has-success' && validate.razao_socialState == 'has-success') {            
-
-                  return (
-                    <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_dados_habilitado2"  p={2} onClick={()=>this.sendUpdate()}>
-                    <div className="d-flex justify-content-center">
-                    <label> Próximo </label>
-                    </div>     
-                    </Box>           
-                  );
-              }  else {
-                return (
-      
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_dados"  p={2}>
-                          <div className="d-flex justify-content-center">
-                          <label> Próximo </label>
-                          </div>     
-                    </Box>           
-                );    
-              }        
-                  
-        }
-
-      }  else if (localStorage.getItem('logperfil') == 2 && localStorage.getItem('logperfil') == 7) {
-        if (inicio == 1) {
-          return (
-      
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_dados"  p={2}>
-                    <div className="d-flex justify-content-center">
+              return (
+                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
+                <div className="d-flex justify-content-center">
                     <label> Salvar Alterações </label>
-                    </div>     
-              </Box>           
-          );   
-        } else {    
-        
-              if (validate.cnpjState == 'has-success' && validate.razao_socialState == 'has-success') {            
-
-                  return (
-                    <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_dados_habilitado2"  p={2} onClick={()=>this.sendUpdate()}>
-                    <div className="d-flex justify-content-center">
-                    <label> Salvar Alterações </label>
-                    </div>     
-                    </Box>           
-                  );
-              }  else {
-                return (
-      
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_dados"  p={2}>
-                          <div className="d-flex justify-content-center">
-                          <label> Salvar Alterações </label>
-                          </div>     
-                    </Box>           
-                );    
-              }        
-                  
-        }
-      }    
-    }  
+                </div>     
+                </Box>           
+              );
+          }  else {
+            return (
+  
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
+                      <div className="d-flex justify-content-center">
+                      <label> Salvar Alterações </label>
+                      </div>     
+                </Box>           
+            );    
+          }        
+              
+    }
+    
   } 
   
   cnpjchange(e) {
@@ -566,6 +538,12 @@ class empresarialComponent extends React.Component{
   }
 
 sendUpdate(){        
+  const { validate } = this.state;       
+  validate.cpfState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, alterando os dados...',
+     validate 
+  }); 
 
   const datapost = {    
     razao_social: this.state.campRazao_social,              
@@ -580,38 +558,7 @@ sendUpdate(){
     cep: this.state.campCep,
     clienteId: localStorage.getItem('logrepresentante')
   }          
-
-  console.log(' resultado empresa - '+JSON.stringify(datapost, null, "    "));     
-  console.log(' state.incluir - '+this.state.incluir);
-
-    if (this.state.incluir == true) { 
-        //console.log(' dados empresa - '+JSON.stringify(datapost, null, "    "));        
-        api.post("/empresa/create", datapost)
-        .then(response=>{
-         // console.log(' resultado empresa - '+JSON.stringify(response.data, null, "    "));        
-          if (response.data.success==true) {           
-            
-            localStorage.setItem('lograzao_social', this.state.campRazao_social);              
-           // console.log('Atualiza perfil id - '+localStorage.getItem('logperfil')); 
-            localStorage.setItem('logid', response.data.data.id);
-            if (localStorage.getItem('logperfil') == 1) {
-              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid')); 
-            } else if (localStorage.getItem('logperfil') == 2) {
-              this.props.history.push(`/area_cliente_individual`);       
-            } else if (localStorage.getItem('logperfil') == 7) {
-              this.props.history.push(`/area_cliente_empresarial`);                                  
-            } else if (localStorage.getItem('logperfil') == 0) {
-              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid'));      
-            }    
-  
-          }
-          else {
-            alert("Error de conexao - ")              
-          }
-        }).catch(error=>{
-          alert("Erro verificar log  ")
-        })
-      } else {
+    
       //  console.log(' dados empresa - '+JSON.stringify(datapost, null, "    "));        
         api.put(`/empresa/update/${localStorage.getItem('logid')}`, datapost)
         .then(response=>{
@@ -622,14 +569,10 @@ sendUpdate(){
            // console.log('Atualiza perfil id - '+localStorage.getItem('logperfil')); 
             //localStorage.setItem('logid', response.data.data.id);
             if (localStorage.getItem('logperfil') == 1) {
-              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid')); 
-            } else if (localStorage.getItem('logperfil') == 2) {
-              this.props.history.push(`/area_cliente_individual`);       
-            } else if (localStorage.getItem('logperfil') == 7) {
+              this.props.history.push(`/area_administrador/`);            
+            } else {
               this.props.history.push(`/area_cliente_empresarial`);                                  
-            } else if (localStorage.getItem('logperfil') == 0) {
-              this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid'));      
-            }    
+            }
   
           }
           else {
@@ -637,8 +580,7 @@ sendUpdate(){
           }
         }).catch(error=>{
           alert("Erro verificar log  ")
-        })
-      }    
+        })          
 }  
 validaterazaosocialChange(e){
   const { validate } = this.state
@@ -754,9 +696,7 @@ loadcnpj(e) {
 
  verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
+  return(
     <div>
     <div className="d-flex justify-content-around">
         <div className="botao_navegacao">
@@ -775,75 +715,11 @@ loadcnpj(e) {
         </div>         
     </div>       
       <br/>
-      <div>
+      <div className="barra_incluir">
               <Progress color="warning" value={this.state.progresso} className="progressbar"/>
         </div>
    </div>         
    );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div className="d-flex justify-content-around">
-           <div className="botao_navegacao">
-               <Link to={`/cliente/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-             </div>                  
-             <div>
-               <div className="titulo_representante">                
-               <label> Dados da Empresa </label>     
-               </div>
-             </div>   
-             
-             <div>
-                <div className="botao_navegacao">
-                <div></div>                      
-                </div>   
-             </div>   
-         </div>
-      );
-
-  } else if (localStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL               
-
-    return(
-      <div className="d-flex justify-content-around">
-            <div className="botao_navegacao">
-               <Link to="/area_cliente_individual"> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-             </div>                  
-             <div>
-               <div className="titulo_representante">                
-               <label> Dados da Empresa </label>     
-               </div>
-             </div>   
-             
-             <div>
-                <div className="botao_navegacao">
-                   <div></div>                      
-                </div>   
-             </div>   
-      </div>
-      );
-    } else if (localStorage.getItem('logperfil') == 7) { // CLIENTE EMPRESARIAL              
-
-      return(
-        <div className="d-flex justify-content-around">
-              <div className="botao_navegacao">              
-               </div>                  
-               <div>
-                 <div className="titulo_representante">                
-                 <label> Dados da Empresa </label>     
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <div></div>                      
-                  </div>   
-               </div>   
-        </div>
-        );
-  
-  }
-
-
 }
 analisando_retorno() {
 
@@ -868,106 +744,185 @@ verificar_menu_lateral() {
 
 }
 
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
+
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
+}
+
 render(){  
 
 return (
 <div>    
-<div className="container_alterado">
+<div className="container_alteracao">
  {this.verificar_menu_lateral()}
 <div className="d-flex justify-content">  
-    <div className="area_esquerda">     
-    {this.verificar_menu()}    
+    <div>     
+       <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_alteracao">      
+               <h5> {localStorage.getItem('lograzao_social')} </h5>                                         
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
 
-            <div class="d-flex flex-column espacamento_caixa_texto">
+              <br/>
+              <br/>
+              <br/>
+          </div> 
+
+            <div className="d-flex flex-column espacamento_caixa_texto">
             <div>                
               </div>
               <div class="p-2"> 
-              <label for="inputPassword4">CNPJ *</label>
-                <Input             
-                    disabled={this.state.campo_cnpj_disabled}                         
-                    className="input_text_empresa"    
-                    type="text"
-                    name="cnpj"
-                    id="examplnome"
-                    placeholder=""
-                    autoComplete='off'
-                    autoCorrect='off'
-                    value={this.state.campCnpj}
-                    valid={ this.state.validate.cnpjState === 'has-success' }
-                    invalid={ this.state.validate.cnpjState === 'has-danger' }
-                    onBlur={this.verificaSaidacnpj}
-                    onFocus={this.verificacnpjonfocus}                   
-                    onKeyUp={this.verificacnpj}                   
-                    onChange={ (e) => {
-                      this.cnpjchange(e)                       
-                      this.validatecnpjChange(e)
-                    }}   
-                    maxLength="18"                                                                      
-                  />   
-                  { this.analisando_retorno() }                  
-                  <FormFeedback 
-                  invalid={this.state.validate.cnpjState}>
-                       {this.state.mensagem_CNPJ}
-                  </FormFeedback>  
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">CNPJ</InputLabel>
+                     <OutlinedInput
+                        autoComplete="off"         
+                        readOnly={this.state.campo_cnpj_disabled}                        
+                        error={this.state.erro_cnpj}
+                        helperText={this.state.mensagem_CNPJ}
+                        className="data_text"              
+                        id="outlined-basic"                      
+                        variant="outlined"
+                        value={this.state.campCnpj}
+                        onBlur={this.verificaSaidacnpj}
+                        onFocus={this.verificacnpjonfocus}                   
+                        onKeyUp={this.verificacnpj}                   
+                        onChange={ (e) => {
+                          this.cnpjchange(e)                       
+                          this.validatecnpjChange(e)
+                        }}   
+                        inputProps={{
+                          maxLength: 18,
+                        }}          
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cnpj? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />
+                   <FormHelperText error={this.state.erro_cnpj}>
+                         {this.state.mensagem_CNPJ}
+                   </FormHelperText>
+                  </FormControl>                 
               </div>
               <div class="p-2"> 
-              <label for="inputEmail4">Razão Social *</label>
-                <Input
-                    disabled={this.state.campo_razao_social_disabled}
-                    className="input_text_empresa"    
-                    type="text"
-                    name="cnpj"
-                    id="examplnome"
-                    placeholder=""
-                    autoComplete='off'
-                    autoCorrect='off'
-                    value={this.state.campRazao_social}
-                    valid={ this.state.validate.razao_socialState === 'has-success' }
-                    invalid={ this.state.validate.razao_socialState === 'has-danger' }
-                    onBlur={this.verificarazaosocial}
-                    onKeyUp={this.verificarazaosocial}
-                    onChange={ (e) => {
-                      this.razaosocialchange(e)                       
-                      this.validaterazaosocialChange(e)
-                    }}   
-                    maxlength="120"                                                                                                                                                                      
-                  />                                
-                  <FormFeedback 
-                  invalid={this.state.validate.razao_socialState}>
-                       {this.state.mensagem_razao_social}
-                  </FormFeedback>    
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Razão Social</InputLabel>
+                     <OutlinedInput
+                        autoComplete="off"         
+                        readOnly={this.state.campo_razao_social_disabled}                        
+                        error={this.state.erro_razaosocial}
+                        helperText={this.state.mensagem_razao_social}
+                        className="data_text"  
+                        id="outlined-basic"                      
+                        variant="outlined"
+                        value={this.state.campRazao_social}                      
+                        onBlur={this.verificarazaosocial}
+                        onKeyUp={this.verificarazaosocial}
+                        onChange={ (e) => {
+                          this.razaosocialchange(e)                       
+                          this.validaterazaosocialChange(e)
+                        }}   
+                        inputProps={{
+                          maxLength: 18,
+                        }}          
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_razaosocial? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={110}
+                    />
+                   <FormHelperText error={this.state.erro_razaosocial}>
+                         {this.state.mensagem_razao_social}
+                   </FormHelperText>
+                  </FormControl>                     
               </div> 
-              <div class="p-2">               
-              <label for="inputEmail4">Nome Fantasia</label>
-                <Input
-                    disabled={this.state.campo_nome_fantasia_disabled}
-                    className="input_text_empresa"    
-                    type="text"
-                    name="cnpj"
-                    id="examplnome"
-                    placeholder=""
-                    autoComplete='off'
-                    autoCorrect='off'
-                    value={this.state.campNome_fantasia}
-                    valid={ this.state.validate.nome_fantasiaState === 'has-success' }
-                    invalid={ this.state.validate.nome_fantasiaState === 'has-danger' }
-                    onBlur={this.verificanomefantasia}
-                    onKeyUp={this.verificanomefantasia}
-                    //onFocus={this.verificanomefantasia}
-                    onChange={ (e) => {
-                      this.nomefantasiachange(e)                       
-                      this.validatenomefantasiaChange(e)
-                    }}      
-                    maxlength="150"                                                                     
-                  />                                
-                  <FormFeedback 
-                  invalid={this.state.validate.nome_fantasiaState}>
-                       {this.state.mensagem_nome_fantasia}
-                  </FormFeedback>    
+              <div class="p-2">    
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome Fantasia</InputLabel>
+                     <OutlinedInput
+                        autoComplete="off"         
+                        readOnly={this.state.campo_nome_fantasia_disabled}                        
+                        error={this.state.erro_nomefantasia}
+                        helperText={this.state.mensagem_nome_fantasia}
+                        className="data_text"      
+                        id="outlined-basic"                      
+                        variant="outlined"
+                        value={this.state.campNome_fantasia}                      
+                        onBlur={this.verificanomefantasia}
+                        onKeyUp={this.verificanomefantasia}                
+                        onChange={ (e) => {
+                          this.nomefantasiachange(e)                       
+                          this.validatenomefantasiaChange(e)
+                        }}                                  
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_nomefantasia? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={140}
+                    />
+                   <FormHelperText error={this.state.erro_nomefantasia}>
+                         {this.state.mensagem_nome_fantasia}
+                   </FormHelperText>
+                  </FormControl>                        
               </div>                     
-            </div>                
+            </div>      
+            <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div>            
             {this.verifica_botao(this.state.inicio)}             
-         </div>        
+         </div>     
+         <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>     
      </div>             
    </div>  
 </div> 

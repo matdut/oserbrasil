@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import {Form, Progress, Input, FormFeedback, Select, Button, Alert } from 'reactstrap';
 import {Link} from 'react-router-dom';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
 
 import { cepMask } from '../../formatacao/cepmask';
 import api from '../../../services/api';
@@ -722,137 +724,57 @@ controle_um_numero() {
 
 verifica_botao(inicio) {
   const { validate } = this.state;
-  //console.log(JSON.stringify(this.state, null, "    "));
-  //console.log(JSON.stringify(inicio, null, "    "));
-  if (localStorage.getItem('logperfil') == 0) {
 
-      if (inicio == 1) {
-        return (
+  if (inicio == 1) {
+    return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {
+      <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
+              <div className="d-flex justify-content-center">
+              <label> Salvar Alterações </label>
+              </div>     
+        </Box>           
+    );   
+  } else {
+  
+      if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
+            && validate.umnumeroState == 'has-success' ) {
+
       
-          if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
-                && validate.umnumeroState == 'has-success' ) {
+          if (this.state.campSenha !== '' && this.state.campSenhaTeste !== '' 
+              && this.state.campSenha == this.state.campSenhaTeste) {
+            return (
+              <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
+              <div className="d-flex justify-content-center">
+              <label> Salvar Alterações </label>
+              </div>     
+              </Box>           
+            );
+          } else {
+            return (
 
-          
-              if (this.state.campSenha !== '' && this.state.campSenhaTeste !== '' 
-                  && this.state.campSenha == this.state.campSenhaTeste) {
-                return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                  </div>     
-                  </Box>           
-                );
-              } else {
-                return (
+              <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
+                      <div className="d-flex justify-content-center">
+                      <label> Salvar Alterações </label>
+                      </div>     
+                </Box>                        
+                
+            );     
+          }
 
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                          <div className="d-flex justify-content-center">
-                          <label> Próximo </label>
-                          </div>     
-                    </Box>                        
-                    
-                );     
-              }
-
-            } else {
-        
-              return (
-
-                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                        <div className="d-flex justify-content-center">
-                        <label> Próximo </label>
-                        </div>     
-                  </Box>        
-                  
-                  
-              );   
-            }    
-      }
-    } else if (localStorage.getItem('logperfil') == 1) {
-      if (inicio == 1) {
-        return (
-
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {
-           if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
-                && validate.umnumeroState == 'has-success') {
-
-          
-              if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
-                  && this.state.campSenha == this.state.campSenhaTeste) {
-                return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                  </div>     
-                  </Box>           
-                );
-              } else {
-                return (
-
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                          <div className="d-flex justify-content-center">
-                          <label> Próximo </label>
-                          </div>     
-                    </Box>                        
-                    
-                );     
-              }
-            }    
-       }      
-
-    } else if (localStorage.getItem('logperfil') == 3) {  
+        } else {
     
-      if (inicio == 1) {
-        return (
+          return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {
-           if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
-                && validate.umnumeroState == 'has-success') {
-
-          
-              if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
-                  && this.state.campSenha == this.state.campSenhaTeste) {
-                return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-                  </Box>           
-                );
-              } else {
-                return (
-
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
-                          <div className="d-flex justify-content-center">
-                          <label> Salvar Alterações </label>
-                          </div>     
-                    </Box>                        
-                    
-                );     
-              }
-            }    
-          }    
-    } 
+            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
+                    <div className="d-flex justify-content-center">
+                    <label> Salvar Alterações </label>
+                    </div>     
+              </Box>        
+              
+              
+          );   
+        }    
+  }  
 } 
 
 
@@ -903,10 +825,7 @@ handleMouseDownPassword = (event) => {
 };
 
 verificar_menu() {   
-
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
+  return(
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
@@ -930,50 +849,6 @@ verificar_menu() {
         </div>
    </div>         
    );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div className="d-flex justify-content-around">
-           <div className="botao_navegacao">
-                 <Link to={`/foto_motorista_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_seha_motorista">                
-                  <label>  {this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>
-                  </div>   
-               </div>   
-         </div>
-      );
-
-  } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
-
-    return(
-      <div className="d-flex justify-content-around">
-          <div className="botao_navegacao">             
-               </div>                  
-               <div>
-                 <div className="titulo_seha_motorista">                
-                  <label>  {this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                  <div></div>                                            
-                  </div>   
-               </div>   
-      </div>
-      );
-
-  }
-
-
 }
 
 verificar_menu_lateral() {
@@ -990,17 +865,72 @@ verificar_menu_lateral() {
 
 }
 
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
+
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
+}
+
 render(){  
 
 return (
 <div>    
-<div className="container_alterado">
-  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content">
-  
-   <div className="area_esquerda">               
-          {this.verificar_menu()}                                          
-          <div class="d-flex flex-column espacamento_caixa_texto_senha">
+<div className="container_alteracao">
+ {this.verificar_menu_lateral()}
+<div className="d-flex justify-content"> 
+    <div>     
+    <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
+
+              <br/>
+              <br/>
+              <br/>
+          </div> 
+
+            <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2">    
               <FormControl variant="filled">
                   <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
@@ -1096,7 +1026,12 @@ return (
             </div>                        
             
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                 
+    </div>   
+    <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>                   
    </div>  
   </div>  
 </div> 

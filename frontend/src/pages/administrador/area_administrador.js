@@ -11,12 +11,12 @@ import Typography from '@material-ui/core/Typography';
 class Area_administrador extends React.Component  {
 
   constructor(props){
-    super(props);
-    
+    super(props);    
+
   }
 
   componentDidMount(){
-     //this.loadCliente()
+     //this.loadCliente()    
   }
   
   verifica_horario(){

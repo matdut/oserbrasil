@@ -137,7 +137,7 @@ class menu_motoristaComponent extends React.Component  {
   <div className="left">    
  <br/> 
   <div className="item avatar_titulo">
-       <i><div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil} />                    
+       <i><div className="avatar_motorista"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil}/>                    
        </div>
          <div className="teste perfil">
          <a href={`/motorista_alterar/`+localStorage.getItem('logid')}>     
@@ -211,7 +211,7 @@ class menu_motoristaComponent extends React.Component  {
   </div>    
     
   <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50"/>
+        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
        <div className="data_versao"> 07/09/20 v1.8.0 </div>
      </div>  
  </div>                                       

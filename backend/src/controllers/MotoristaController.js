@@ -1,5 +1,8 @@
 const controllers = {}
 
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 // import model and sequelize
 var sequelize = require('../model/database');
 var Motorista = require('../model/Motorista');
@@ -180,7 +183,7 @@ controllers.getMotoristaCpf = async (req, res) => {
       return res.json({success:false, message: error});
     })
   
-  }
+  }  
 
 controllers.update = async (req, res) => {
 
@@ -320,7 +323,12 @@ controllers.get = async (req, res) => {
 }
 controllers.list = async (req,res) => {
  await Motorista.findAll({
-     include: [{ model: Status  }]
+     include: [{ model: Status  }],
+     where: { 
+      statusId: {
+        [Op.notIn]: [7]             
+      }
+   } 
   })
   .then( function (data){
     return res.json({success:true, data:data});    
@@ -330,6 +338,22 @@ controllers.list = async (req,res) => {
   })
  
 }
+
+controllers.listExcluidos = async (req,res) => {
+  await Motorista.findAll({
+    include: [{ model: Status  }],
+    where: { 
+     statusId: 7
+    }
+   })
+   .then( function (data){
+     return res.json({success:true, data:data});    
+   })
+   .catch(error => {
+     return res.json({success:false, message: error});
+   })
+  
+ }
 
 /*
 controllers.putdoc = async (req,res) => {

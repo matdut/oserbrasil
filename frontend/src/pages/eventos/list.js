@@ -2,7 +2,9 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { Alert, Input, Button } from 'reactstrap';
+import { Input, Button } from 'reactstrap';
+import { Alert, Tabs, Tab } from 'react-bootstrap';
+import MaterialTable from 'material-table';
 
 //import axios from 'axios';
 import api from '../../services/api';
@@ -127,35 +129,160 @@ class listaeventosComponent extends React.Component  {
   render()
   {
     return (
-      <div>        
-          {this.verifica_menu()}    
-       <div className="titulo_admministrador">
+      <div>
+
+      <Menu_administrador />  
+      <div className="titulo_admministrador">     
         <div className="unnamed-character-style-4 descricao_admministrador">          
-           <h3><strong>Eventos</strong></h3>
+           <h3><strong>Lista de Eventos</strong></h3>
          </div>      
       </div>
+      <div className="container_modal_list"> 
+       <br/>   
 
-     <div className="container_alterado_1">
-        <br/>     
-        <table className="table table-hover danger">
-          <thead>
-            <tr>
-              <th scope="col">#</th>            
-              <th scope="col">Ordem de Serviço</th>
-              <th scope="col">Nome do Evento</th>
-              <th scope="col">Data do Evento</th>              
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>         
-            {this.loadFillData()}
-          </tbody>
-        </table>
-        <Alert color={this.state.color}>
-         {this.state.mensagem}
-       </Alert>     
+       <Tabs 
+           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">          
+          <Tab eventKey="ativos" title="Ativos">
+          <div style={{ maxWidth: '95%' }}>    
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: '40px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
+                              { title: 'Data do Evento', field: 'data_evento', width: '350px' },                              
+                              { title: '', field: '#', width: '50px' },
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },            
+                            ]}
+                            data={this.state.listEventos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Add',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{                             
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              /* searchFieldStyle: '.teste_css', */
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              exportFileName: 'Relatorio_empresa_evento',
+                              search: true,     
+                              exportAllData: true,                              
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 5,
+                              pageSize: 7,
+                              pageSizeOptions: [7],                     
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                tooltip: 'editar',                                
+                                onClick: (evt, data) => this.handleOpenModal(data)
+                              }
+                            ]}
+                          />      
+                </div>    
+          </Tab>        
+          <Tab eventKey="finalizados" title="Finalizados">
+              <div style={{ maxWidth: '95%'}}>    
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: '40px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
+                              { title: 'Data do Evento', field: 'data_evento', width: '350px' },                                                                          
+                              { title: '', field: '#', width: '50px' },
+                              { title: '', field: '', align: 'left', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                            ]}
+                            data={this.state.listClienteExcluidos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Add',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Relatorio_emp_evento_finalizados',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 5,
+                              pageSize: 7,
+                              pageSizeOptions: [7],                       
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                tooltip: 'Editar',
+                                onClick: (evt, data) => this.handleOpenModal(data)
+                              }
+                            ]}
+                          />      
+                </div>      
+          </Tab>          
+        </Tabs>  
+           
+      
        <br/>
-          <br/>
+
        <div className="botao_lista_incluir">             
           <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onAdicionar()}> 
               <AddIcon/> Adicionar Eventos 

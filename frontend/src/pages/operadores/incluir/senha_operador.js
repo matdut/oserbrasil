@@ -14,6 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 import Menu_operador from '../menu_operador';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 //const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -116,15 +118,15 @@ class empresarialComponent extends React.Component{
     });      
  
     let userId = this.props.match.params.id;
-   
+    localStorage.setItem('logoperadorId', userId);      
+
+    console.log('perfil - '+localStorage.getItem('logperfil'))
+    console.log('logoperadorId - '+localStorage.getItem('logoperadorId'))
+
     this.setState({      
       perfil: localStorage.getItem('logperfil'),
       progresso: 50
     });  
-
-    if (userId !== 0) {
-      localStorage.setItem('logoperadorId', userId);      
-    } 
     
     //if (localStorage.getItem('logid') !== 0) { 
       this.carrega_senha(); 
@@ -612,16 +614,16 @@ sendUpdate(){
     statusId: 1,  
   }       
   const logindata = {   
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: 8,
     senha: this.state.campSenha,     
     statusId: 1   
   }        
         
       //  localStorage.setItem('logstatus', 1);     
-        api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost)  
+        api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost);  
 
         console.log(JSON.stringify(logindata, null, "    "));  
-        api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata)       
+        api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata) ;      
            
             console.log('this.state.campEmail - '+JSON.stringify(this.state.campEmail, null, "    "));  
             api.get(`/emailOperador/getemail/${this.state.campEmail}`)
@@ -779,11 +781,10 @@ sendUpdate(){
 
             if (localStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (localStorage.getItem('logperfil') == 3) {
-              this.props.history.push(`/area_operador`);
-            } else if (localStorage.getItem('logperfil') == 8) {
-              this.props.history.push(`/area_operador`);              
             } else if (localStorage.getItem('logperfil') == 0) {          
+              localStorage.setItem('logperfil', 8);  
+              this.props.history.push('/area_operador');  
+            } else if (localStorage.getItem('logperfil') == 8) {          
               localStorage.setItem('logperfil', 8);  
               this.props.history.push('/area_operador');  
             }                    
@@ -955,7 +956,7 @@ verificar_menu() {
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/operadores_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/operadores_incluir/`+localStorage.getItem('logoperadorId')+`/0`}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -970,7 +971,7 @@ verificar_menu() {
                </div>          
        </div>      
         <br/>    
-        <div>
+        <div className="barra_incluir">
            <Progress color="warning" value={this.state.progresso} className="progressbar"/>
         </div>
    </div>         
@@ -996,9 +997,9 @@ return (
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
+                  <InputLabel className="label_text" htmlFor="filled-adornment-password">Senha</InputLabel>
                   <FilledInput
-                    className="input_text_senha_operadores"  
+                    className="data_operador"  
                     autoCorrect="off"
                     autoComplete="off"
                     error={this.state.validaSenha}
@@ -1039,9 +1040,9 @@ return (
               </div>
               <div class="p-2">                    
                 <FormControl variant="filled">
-                    <InputLabel htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
                     <FilledInput
-                      className="input_text_senha_operadores"  
+                      className="data_operador"  
                       id="filled-adornment-password"
                       error={this.state.validaSenhaConfirma}
                       type={this.state.hiddenSenhaConfirma ? "password" : "text"}           
@@ -1090,6 +1091,11 @@ return (
             
             {this.verifica_botao(this.state.inicio)}                                       
     </div>  
+    <div className="area_neutra">
+              <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '220px' }} />
+              </Container>            
+         </div>  
     </div>               
    </div>  
 </div> 

@@ -16,6 +16,7 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_administrador from '../../administrador/menu_administrador';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
@@ -61,7 +62,8 @@ class empresarialComponent extends React.Component{
       mensagem_umnumero: '',
       mensagem_umaletramaiuscula: '',
       mensagem_caracterespecial: '',  
-      backgroundColor: "#4285F4",      
+      backgroundColor: "#4285F4",     
+      mensagem_aguarde: '', 
       validate: {
         senhaState: '',
         senhatesteState: '',
@@ -654,6 +656,13 @@ class empresarialComponent extends React.Component{
   }  
   
 sendUpdate(){    
+  const { validate } = this.state;       
+  validate.senhaState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, alterando os dados...',
+     validate 
+  }); 
+
   const datapost = {  
     statusId: 1,  
   }       
@@ -973,7 +982,7 @@ render(){
 
 return (
 <div>    
-<div className="container_alterado">
+<div className="container_alteracao">
   {this.verificar_menu_lateral()}
 <div className="d-flex justify-content">  
    <div>               
@@ -993,9 +1002,9 @@ return (
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
+                  <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Senha</InputLabel>
                   <FilledInput
-                    className="input_text_cliente_senha"  
+                    className="data_cliente_individual"  
                     autoComplete='off'
                     autoCorrect='off'
                     error={this.state.validaSenha}
@@ -1036,9 +1045,9 @@ return (
               </div>
               <div class="p-2">                    
                 <FormControl variant="filled">
-                    <InputLabel htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
                     <FilledInput
-                      className="input_text_cliente_senha"  
+                      className="data_cliente_individual"  
                       id="filled-adornment-password"
                       type={this.state.hiddenSenhaConfirma ? "password" : "text"}           
                       value={this.state.campSenhaTeste}
@@ -1082,10 +1091,20 @@ return (
               <Alert className="mensagem_erro" color={this.state.color}>
                {this.state.mensagem_senha_erro}
               </Alert>                
-            </div>                        
-            
+            </div>  
+
+            <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div>  
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                     
+    </div>   
+    <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>                  
    </div>  
  </div>  
 </div> 

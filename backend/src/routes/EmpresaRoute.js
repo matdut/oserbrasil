@@ -4,6 +4,7 @@ const router = express.Router();
 const EmpresaController = require('../controllers/EmpresaController');
 
 router.get('/list',EmpresaController.list);
+router.get('/listExcluidos',EmpresaController.listExcluidos); 
 router.post('/create',EmpresaController.create);
 router.get('/get/:id', EmpresaController.get);
 router.put('/update/:id',EmpresaController.update);

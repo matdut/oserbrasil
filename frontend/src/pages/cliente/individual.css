@@ -6,12 +6,13 @@
   height: 100vh !important;  
 }
 .area_esquerda1 {
-  overflow-y: hidden;
-  width: 121px !important;    
+  /* overflow-y: hidden; */
+  width: 100% !important;    
   height: 140px !important;
   top: 0px !important;
   margin-left: 0px !important;  
 }
+
 .area_navegacao {
   margin-top: 80px !important;
   width: 108px !important;     
@@ -19,7 +20,7 @@
 
 .titulo_logo {
   margin-top: 213px !important;
-  margin-left: 166px !important;
+  margin-left: 160px !important;
   width: 190px !important; 
   line-height: 52px !important;    
 }
@@ -30,7 +31,8 @@
   line-height: 24px !important;
 }
 
-.titulo_representante_cliente {  
+.titulo_representante_cliente {   
+  font: normal normal normal Effra !important; 
   text-align: left !important;  
   letter-spacing: 0px !important;
   color: #0F074E !important;
@@ -115,21 +117,21 @@
   margin-right: 40px !important;  
 }
 
-.botao_cadastro_cliente {
-  margin-top: 17px !important; 
-  width: 480px !important;
-  line-height: 40px !important;  
-  background: #C9C9C9 0% 0% no-repeat padding-box !important;
-  opacity: 1 !important;
-  margin-left: 108px !important;
+.label_CPF_text {
+  font: normal normal medium 12px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;   
 }
-.botao_cadastro_cliente_habilitado {
-  margin-top: 17px !important; 
-  width: 480px !important;
-  line-height: 40px !important;  
-  background:#FF840A 0% 0% no-repeat padding-box !important;
-  opacity: 1 !important;
-  margin-left: 108px !important;
+
+.text_nome_text{
+  width: 480px !important;     
+  font: normal normal bold 12px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+  border: 0px !important;
+  margin: 0px !important;
 }
 
 .naoseiocep{
@@ -264,20 +266,65 @@
 }
 
 .cpf_text {
-  width: 480px !important;     
-  font: Regular var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra) !important;  
+  width: 240px !important;     
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
 
+.cpf_incluir_text{
+  width: 480px !important;     
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
+
+.nome_incluir_text{
+  width: 480px !important;     
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
 }
 
 .nome_text {
   width: 480px !important;    
-  font: Regular var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra) !important;  
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
 }
-
 .data_text {
   width: 480px !important;    
-  font: Regular var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-effra) !important;  
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
 }
+
+.data_modal_text {
+  width: 240px !important;   
+  padding: 0px !important;
+  border: 0px !important;
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
+
+.select_modal_text {
+  width: 220px !important;   
+  padding: 0px !important;
+  border: 0px !important;
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
+
 .alignright {
   margin-left: 108px !important;
 }
+

@@ -322,7 +322,7 @@ class loginComponent extends React.Component  {
           <Col>
           <FormControl fullWidth variant="outlined">
               <InputLabel htmlFor="outlined-adornment-password">Email</InputLabel>
-              <OutlinedInput
+              <OutlinedInput                  
                 className="texto_senha"
                 autoComplete="off"
                 id="outlined-adornment-password"
@@ -343,7 +343,7 @@ class loginComponent extends React.Component  {
           <Col>
             <FormControl fullWidth variant="outlined">
               <InputLabel htmlFor="outlined-adornment-password">Senha</InputLabel>
-              <OutlinedInput
+              <OutlinedInput              
                 className="texto_senha"
                 autoComplete="off"
                 id="outlined-adornment-password"

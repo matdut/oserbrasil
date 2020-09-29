@@ -6,6 +6,19 @@ import {Link} from 'react-router-dom';
 import { cepMask } from '../../formatacao/cepmask';
 import { numeroMask } from '../../formatacao/numeromask';
 import { cepremoveMask } from '../../formatacao/cepremovemask';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container'; 
+import Menu_administrador from '../../administrador/menu_administrador';
+
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+
+import FormHelperText from '@material-ui/core/FormHelperText';
+
+import CheckIcon from '@material-ui/icons/Check';
 
 import api from '../../../services/api';
 import '../motorista.css';
@@ -70,21 +83,13 @@ class empresarialComponent extends React.Component{
     this.handleClick = this.handleClick.bind(this);
     this.limpar_endereco = this.limpar_endereco.bind(this);
 
-    this.verificaEstado = this.verificaEstado.bind(this);  
     this.verificaCep = this.verificaCep.bind(this);  
-    this.verificaEndereco = this.verificaEndereco.bind(this);  
     this.verificaNumero = this.verificaNumero.bind(this);  
-    this.verificaBairro = this.verificaBairro.bind(this);  
-    this.verificaCidade = this.verificaCidade.bind(this);  
     this.verificaComplemento = this.verificaComplemento.bind(this);  
 
-    this.validaCepChange = this.validaCepChange.bind(this);  
-    this.validaEnderecoChange = this.validaEnderecoChange.bind(this);  
-    this.validaNumeroChange = this.validaNumeroChange.bind(this);  
-    this.validaBairroChange = this.validaBairroChange.bind(this);  
-    this.validaCidadeChange = this.validaCidadeChange.bind(this);  
-    this.validaComplementoChange = this.validaComplementoChange.bind(this);  
-    this.validaEstadoChange = this.validaEstadoChange.bind(this);  
+    this.validaCepChange = this.validaCepChange.bind(this);      
+    this.validaNumeroChange = this.validaNumeroChange.bind(this);      
+    this.validaComplementoChange = this.validaComplementoChange.bind(this);     
 
     this.verifica_botao = this.verifica_botao.bind(this);  
     //this.verifica_cep = this.verifica_cep.bind(this);  
@@ -506,6 +511,8 @@ cep_preenchido(cep) {
           this.setState({             
               validate,
               cep_encontrado: '',
+              erro_cep: true,
+              validacao_cep: false,
               mensagem_cep: 'O cep não encontrado', 
               campCep: "",
               campEndereco: "",
@@ -546,8 +553,10 @@ verificaCep(e) {
         validate.enderecoState = ''
         validate.cepState = 'has-danger'
         this.setState({           
-          inicio: 1,       
-          mensagem_cep: 'O campo CEP é obrigatório.'            
+          inicio: 1,    
+          erro_cep: false,
+          validacao_cep: false,   
+          mensagem_cep: ''            
         })            
         this.setState({ validate })
     }   
@@ -560,8 +569,10 @@ verificaCep(e) {
       validate.numeroState = 'has-danger'
       this.setState({ 
         validate,
-        inicio: 1,        
-        mensagem_numero: 'O campo Numero é obrigatório.'  
+        inicio: 1,   
+        erro_numero: false,
+        validacao_numero: false,     
+        mensagem_numero: ''  
        })            
      }      
  }
@@ -572,91 +583,14 @@ verificaCep(e) {
       validate.complementoState = 'has-danger'
       this.setState({ 
         validate,
-        inicio: 1,             
-        mensagem_complemento: 'O campo Complemento é obrigatório.'  
+        inicio: 1,  
+        erro_complemento: false,
+        validacao_complemento: false,                
+        mensagem_complemento: ''  
        })             
      }      
  }
 
- verificaBairro(e) {
-  const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.bairroState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 1,       
-        mensagem_bairro: 'O campo Bairro é obrigatório.'  
-       })           
-     }      
- }
- verificaCidade(e) {
-  const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.cidadeState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 1,
-        mensagem_cidade: 'O campo cidade é obrigatório.'  
-       })        
-     }      
- }
- verificaEndereco(e) {
-  const { validate } = this.state
-   //console.log('on blur '+e.target.value)
-     if (e.target.value.trim().length == 0) {           
-      validate.enderecoState = 'has-danger'      
-      this.setState({ 
-        validate,
-        inicio: 1,
-        mensagem_endereco: 'O campo Endereço é obrigatório.'  
-       })            
-     } else {                 
-      validate.enderecoState = 'has-success'      
-      this.setState({ 
-        validate,
-        mensagem_endereco: ''  
-       })    
-     }     
- }
-verificaEstado() {
-  const { validate } = this.state
-    
-     if (this.state.campEstadoId == 0) {
-
-      validate.estadoState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 1,
-        mensagem_estado: 'O campo Estado é obrigatório'  
-       })      
-     } else if (this.state.campEstadoId == "Selecione o estado") {
-      validate.estadoState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 2,
-        mensagem_estado: 'O campo Estado é obrigatório'  
-       })      
-     }          
- }
-
-
-validaEnderecoChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.enderecoState = 'has-danger'
-      this.setState({ 
-          inicio: 1,
-          mensagem_endereco: 'O campo Endereço é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.enderecoState = 'has-success'      
-      this.setState({           
-        inicio: 2
-      })    
-    }  
-    this.setState({ validate })    
-}
 validaNumeroChange(e){
   const { validate } = this.state
   
@@ -664,51 +598,21 @@ validaNumeroChange(e){
       validate.numeroState = 'has-danger'
       this.setState({ 
           inicio: 1,
-          mensagem_numero: 'O campo Número é obrigatório.' 
+          erro_numero: false,
+          validacao_numero: false,     
+          mensagem_numero: '' 
       })  
     } else if (e.target.value.trim().length > 0) {
       validate.numeroState = 'has-success'  
-      this.setState({           
-        inicio: 2
+      this.setState({                   
+        inicio: 2,
+        erro_numero: false,
+        validacao_numero: true,     
       })
      
     }  
     this.setState({ validate })   
    
-}
-validaBairroChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.bairroState = 'has-danger'
-      this.setState({ 
-        inicio: 1,
-        mensagem_bairro: 'O campo Bairro é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0){
-      validate.bairroState = 'has-success'  
-      this.setState({           
-        inicio: 2
-      })      
-    }  
-    this.setState({ validate })  
-}
-validaCidadeChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.cidadeState = 'has-danger'
-      this.setState({ 
-        inicio: 1,
-        mensagem_cidade: 'O campo Cidade é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.cidadeState = 'has-success'  
-      this.setState({           
-        inicio: 2
-      })     
-    }  
-    this.setState({ validate })    
 }
 validaComplementoChange(e){
   const { validate } = this.state
@@ -717,32 +621,18 @@ validaComplementoChange(e){
       validate.complementoState = 'has-danger'
       this.setState({ 
         inicio: 1,
-        mensagem_complemento: 'O campo Complemento é obrigatório.' 
+        erro_complemento: false,
+        validacao_complemento: false,     
+        mensagem_complemento: '' 
       })  
     } else if (e.target.value.trim().length > 0) {
       validate.complementoState = 'has-success'       
-      this.setState({           
+      this.setState({      
+        erro_numero: false,
+        validacao_numero: true,          
         inicio: 2
       })     
       this.verifica_botao(this.state.inicio) 
-    }  
-    this.setState({ validate })
-    
-}
-validaEstadoChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.estadoState = 'has-danger'
-      this.setState({ 
-         inicio: 1,
-         mensagem_estado: 'O campo Estado é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.estadoState = 'has-success'  
-      this.setState({           
-        inicio: 2
-      })     
     }  
     this.setState({ validate })
     
@@ -761,12 +651,16 @@ validaCepChange(e){
       validate.cidadeState = ''
       this.setState({ 
          inicio: 1,
+         erro_cep: true,
+         validacao_cep: false,     
          mensagem_cep: 'CEP inválido' 
       })  
     } else if (e.target.value.length == 9) {      
             validate.cepState = 'has-success'                  
             this.setState({ 
               busca_cep: e.target.value,
+              erro_numero: false,
+              validacao_numero: true,     
               mensagem_cep: ''                                            
             })
             
@@ -788,95 +682,25 @@ loadFillData(){
 
 verifica_botao(inicio) {
   const { validate } = this.state
- if (localStorage.getItem('logperfil') == 0) { 
-    if (inicio == 1) {
-      return (
-  
-        <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_endereco_motorista"  p={2} >
-                <div className="d-flex justify-content-center">
-                <label> Próximo </label>
-                 </div>     
-           </Box>           
-       );   
-    } else {
-    
-     // console.log(JSON.stringify(this.state, null, "    "));
-      if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
-        && validate.cidadeState == 'has-success' && validate.complementoState == 'has-success'
-        && validate.enderecoState == 'has-success' && validate.estadoState == 'has-success'
-        && validate.numeroState == 'has-success') {
+  if (inicio == 1) {
+    return (
 
-            return (
-              <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_endereco_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
               <div className="d-flex justify-content-center">
-              <label> Próximo </label>
-              </div>     
-              </Box>           
-            );         
-      } else {
-        return (
+              <label> Salvar Alterações </label>
+               </div>     
+         </Box>           
+     );   
+  } else {
   
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_endereco_motorista"  p={2}>
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                   </div>     
-             </Box>           
-         );   
-      }          
-     }
-    } else if (localStorage.getItem('logperfil') == 1) {
-      if (inicio == 1) {
-        return (
-    
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_endereco_motorista"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                   </div>     
-             </Box>           
-         );   
-      } else {
-          if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
-          && validate.cidadeState == 'has-success' && validate.complementoState == 'has-success'
-          && validate.enderecoState == 'has-success' && validate.estadoState == 'has-success'
-          && validate.numeroState == 'has-success') {
-
-              return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_endereco_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                <div className="d-flex justify-content-center">
-                <label> Próximo </label>
-                </div>     
-                </Box>           
-              );         
-        } else {
-          return (
-
-            <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_endereco_motorista"  p={2}>
-                    <div className="d-flex justify-content-center">
-                    <label> Próximo </label>
-                    </div>     
-              </Box>           
-          );   
-        } 
-     }         
-
-    } else if (localStorage.getItem('logperfil') == 3) {
-      if (inicio == 1) {
-        return (
-    
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_endereco_motorista"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                   </div>     
-             </Box>           
-         );   
-      } else {
-      if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
+   // console.log(JSON.stringify(this.state, null, "    "));
+    if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
       && validate.cidadeState == 'has-success' && validate.complementoState == 'has-success'
       && validate.enderecoState == 'has-success' && validate.estadoState == 'has-success'
       && validate.numeroState == 'has-success') {
 
           return (
-            <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_endereco_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
+            <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
             <div className="d-flex justify-content-center">
             <label> Salvar Alterações </label>
             </div>     
@@ -885,23 +709,19 @@ verifica_botao(inicio) {
     } else {
       return (
 
-        <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_endereco_motorista"  p={2}>
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                 <div className="d-flex justify-content-center">
                 <label> Salvar Alterações </label>
                  </div>     
            </Box>           
        );   
-    }         
-  } 
-
-    }
+    }          
+   }
   } 
 
   verificar_menu() {   
 
-    if (localStorage.getItem('logperfil') == 0) {
-     
-     return(
+    return(
       <div>
       <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
@@ -925,57 +745,7 @@ verifica_botao(inicio) {
                              <Progress color="warning" value={this.state.progresso} className="progressbar"/>
                          </div>       
       </div>                          
-     );
-  
-    } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-      return(
-        <div>
-        <div className="d-flex justify-content-around">
-               <div className="botao_navegacao">
-                   <Link to={`/motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-                 </div>                  
-                 <div>
-                   <div className="titulo_endereco_motorista">                
-                       <label>{this.verifica_nome_motorista(this.state.campNome)}, agora fale onde você mora. </label>             
-                   </div>
-                 </div>   
-                 
-                 <div>
-                    <div className="botao_navegacao">
-                       <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                    </div>   
-                 </div>  
-           
-           </div>      
-                           <br/>    
-                           <div>        
-                               <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-                           </div>       
-        </div>                          
-        );
-  
-    } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE INDIVIDUAL OU EMPRESARIAL              
-  
-      return(
-        <div className="d-flex justify-content-around">
-              <div className="botao_navegacao">       
-               </div>                  
-               <div>
-                 <div className="titulo_endereco_motorista">                
-                     <label>{this.verifica_nome_motorista(this.state.campNome)}, altere seu endereço. </label>             
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <div></div>                      
-                  </div>   
-               </div>   
-        </div>
-        );
-  
-    }
-  
+     );    
   
   }
 sendUpdate(){        
@@ -1032,118 +802,197 @@ mostrar_endereco() {
   }
 }
 
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
+
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
+}
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 3) {
+   return( 
+     <Menu_motorista />     
+   );
+  }
+
+}
 render(){  
 
 return (
 <div>    
-<div className="container_alterado">
-   <Menu_motorista />  
-<div className="d-flex justify-content">  
-   <div className="area_esquerda">     
-        
-          {this.verificar_menu()}                    
-         
+<div className="container_alteracao">
+ {this.verificar_menu_lateral()}
+<div className="d-flex justify-content"> 
+    <div>     
+    <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
+
+              <br/>
+              <br/>
+              <br/>
+          </div> 
+
           <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2"> 
-              <label for="inputAddress">Cep *</label>          
-                  <Form inline>
-                      <Input                   
-                      className="input_text"    
-                      type="text"
-                      name="nome"                
-                      id="examplnome"
-                      placeholder=""
-                      autoComplete='off'
-                      autoCorrect='off'
-                      value={this.state.campCep}
-                      valid={ this.state.validate.cepState === 'has-success' }
-                      invalid={ this.state.validate.cepState === 'has-danger' }
-                      onblur={this.verificaCep}
-                      onKeyUp={this.verificaCep}                      
-                   //   onFocus={ (e) => {                        
-                   //     this.validaCepChange(e)
-                   //   }}    
-                      onChange={ (e) => {
-                        this.cepchange(e)                       
-                        this.validaCepChange(e)
-                      }}    
-                      maxlength="9"                                                                          
-                    />     
-                    <div className="naoseiocep">
+              <FormControl variant="outlined">
+                    <InputLabel className="label_cep_incluir_motorista" htmlFor="filled-adornment-password">Cep</InputLabel>
+                     <OutlinedInput 
+                        autoComplete="off"                                   
+                        type="text"                       
+                        error={this.state.erro_cep}
+                        helperText={this.state.mensagem_cep}
+                        className="cep_incluir_motorista"                       
+                        id="cep_incluir"                      
+                        variant="outlined"
+                        value={this.state.campCep}
+                        onblur={this.verificaCep}
+                        onKeyUp={this.verificaCep}   
+                        onChange={ (e) => {
+                          this.cepchange(e)                       
+                          this.validaCepChange(e)
+                        }}                         
+                        maxlength="9"     
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cep? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={30}
+                    />
+                     <div className="naoseiocep">
                         <a className="alink" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">Não sei meu CEP</a> 
-                    </div>                               
-                    <FormFeedback 
-                    invalid={this.state.validate.cepState}>
-                        {this.state.mensagem_cep}
-                    </FormFeedback>                                  
-                </Form>    
+                    </div> 
+                   <FormHelperText error={this.state.erro_cep}>
+                         {this.state.mensagem_cep}
+                   </FormHelperText>
+                  </FormControl>                  
               </div>
               <div class="p-2">                                
                   <div>
-                      {this.mostrar_endereco()}
-                      
+                      {this.mostrar_endereco()}                      
                   </div>               
               </div> 
               <div class="p-2">               
                   <div class="d-flex justify-content-start">
                        <div>
-                       <label for="inputAddress">Número *</label>  
-                       <Input
-                          className="input_numero"   
-                          type="text"
-                          name="numero"
-                          id="examplnome"
-                          placeholder=""
-                          autoComplete='off'
-                          autoCorrect='off'
-                          value={this.state.campNumero}
-                          valid={ this.state.validate.numeroState === 'has-success' }
-                          invalid={ this.state.validate.numeroState === 'has-danger' }
-                          onblur={this.verificaNumero}
-                          onKeyUp={this.verificaNumero}
-                          onChange={ (e) => {
-                            this.numerochange(e)                       
-                            this.validaNumeroChange(e)
-                          }}      
-                          maxlength="6"                                                                    
-                        />                                
-                        <FormFeedback 
-                        invalid={this.state.validate.numeroState}>
+                       <FormControl variant="outlined">
+                        <InputLabel className="label_numero_incluir_motorista" htmlFor="filled-adornment-password">Número</InputLabel>
+                        <OutlinedInput 
+                            autoComplete="off"                                   
+                            type="text"                       
+                            error={this.state.erro_numero}
+                            helperText={this.state.mensagem_numero}
+                            className="numero_incluir_motorista"                       
+                            id="numero_incluir"                      
+                            variant="outlined"
+                            value={this.state.campNumero}
+                            onblur={this.verificaNumero}
+                            onKeyUp={this.verificaNumero}
+                            onChange={ (e) => {
+                              this.numerochange(e)                       
+                              this.validaNumeroChange(e)
+                            }}                          
+                            maxlength="9"     
+                          endAdornment={
+                            <InputAdornment position="end">
+                                {this.state.validacao_numero? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }
+                          labelWidth={80}
+                        />                        
+                      <FormHelperText error={this.state.erro_numero}>
                             {this.state.mensagem_numero}
-                        </FormFeedback>     
-                       </div> 
-                       
+                      </FormHelperText>
+                      </FormControl>                             
+                       </div>                        
                        <div>
-                          <label className="label_complemento" for="inputAddress">Complemento *</label>
-                          <Input
-                            className="input_complemento"    
-                            type="text"
-                            name="complemento"
-                            id="examplnome"
-                            placeholder=""
-                            autoComplete='off'
-                            autoCorrect='off'
+                       <FormControl variant="outlined">
+                        <InputLabel className="label_complemento_incluir_motorista" htmlFor="filled-adornment-password">Complemento</InputLabel>
+                        <OutlinedInput 
+                            autoComplete="off"                                   
+                            type="text"                       
+                            error={this.state.erro_complemento}
+                            helperText={this.state.mensagem_complemento}
+                            className="complemento_incluir_motorista"                       
+                            id="complemento_incluir"                      
+                            variant="outlined"
                             value={this.state.campComplemento}
-                            valid={ this.state.validate.complementoState === 'has-success' }
-                            invalid={ this.state.validate.complementoState === 'has-danger' }
                             onblur={this.verificaComplemento}
                             onKeyUp={this.verificaComplemento}
                             onChange={ (e) => {
                               this.complementochange(e)                       
                               this.validaComplementoChange(e)
-                            }}          
-                            maxlength="60"                                                                
-                          />                                
-                          <FormFeedback className="label_complemento"     
-                          invalid={this.state.validate.complementoState}>
-                              {this.state.mensagem_complemento}
-                          </FormFeedback>       
-                       </div>                        
+                            }}                                  
+                            maxlength="9"     
+                          endAdornment={
+                            <InputAdornment position="end">
+                                {this.state.validacao_complemento? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }
+                          labelWidth={110}
+                        />                        
+                      <FormHelperText error={this.state.erro_complemento}>
+                            {this.state.mensagem_complemento}
+                      </FormHelperText>
+                      </FormControl>       
+                     </div>                        
                   </div>
               </div>                                                    
-            </div>       
+            </div>      
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                 
+    </div>   
+    <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>                   
    </div>  
   </div>  
 </div> 

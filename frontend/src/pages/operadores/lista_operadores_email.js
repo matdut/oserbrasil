@@ -8,6 +8,8 @@ import api from '../../services/api';
 
 import { Link } from "react-router-dom";
 
+import { Tabs, Tab } from 'react-bootstrap';
+import MaterialTable from 'material-table';
 //library sweetalert
 import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial' ;
 import Menu_administrador from '../administrador/menu_administrador';
@@ -102,36 +104,138 @@ class listComponent extends React.Component  {
   {
     return (
       <div>    
-          <div>
+           <div>
             <Menu_cliente_empresarial />  
             <div className="titulo_admministrador">
-              <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <h3><strong>Lista de Cadastros Incompletos</strong></h3>
+              <div className="unnamed-character-style-4 descricao_admministrador">        
+                  <h5> {localStorage.getItem('lograzao_social')} </h5>                                           
+                   <h3><strong>Lista de Cadastros Incompletos</strong></h3>
               </div>      
             </div>
-          </div>
-     <div className="container_alterado_1">              
-          <div>          
+          </div>          
+        <div className="container_modal_list">              
         <br/>
-        </div>  
-        <table className="table table-hover danger">
-          <thead>
-            <tr>
-              <th scope="col">#</th>                        
-              <th scope="col">Email</th>                            
-              <th scope="col">Status</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>         
-            {this.loadFillData()}
-          </tbody>
-        </table>
-
-        <br/>
-        <Alert color={this.state.color}>
-          {this.state.mensagem}
-        </Alert>     
+    
+    <Tabs 
+       defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
+      <Tab eventKey="ativos" title="Ativos">
+          <div style={{ maxWidth: '95%' }}>    
+                    <MaterialTable          
+                        title=""
+                        columns={[
+                          { title: '', field: '#', width: '40px' },
+                          { title: 'Status', field: 'status.descricao' },                         
+                          { title: 'Email', field: 'email' },                          
+                          { title: '', field: '#', width: '50px' },
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                        ]}
+                        data={this.state.listOperadores}   
+                        localization={{
+                          body: {
+                            emptyDataSourceMessage: 'Nenhum registro para exibir'
+                          },
+                          toolbar: {
+                            searchTooltip: 'Pesquisar',
+                            searchPlaceholder: 'buscar operadores',        
+                          },
+                          pagination: {
+                            labelRowsSelect: 'linhas',
+                            labelDisplayedRows: '{count} de {from}-{to}',
+                            firstTooltip: 'Primeira página',
+                            previousTooltip: 'Página anterior',
+                            nextTooltip: 'Próxima página',
+                            lastTooltip: 'Última página'
+                          },
+                          header: {
+                            actions: 'Ação',
+                          },
+                        }}        
+                        options={{
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportFileName: 'Relatorio_adm_empresa_excluidos',
+                              search: true,     
+                              exportAllData: true,                              
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 3,
+                              pageSize: 7,
+                              pageSizeOptions: [7],       
+                        }}
+                        actions={[
+                          {             
+                            icon: 'mail',
+                            tooltip: 'Enviar',
+                            onClick: (evt, data) => this.onSenha(data)
+                          },
+                          {
+                            icon: 'delete',                                                             
+                            tooltip: 'Deleta Operadores',                      
+                            onClick: (data, event) => this.onDelete(data.email, data.id)
+                          }
+                        ]}
+                      />      
+            </div>      
+      </Tab>       
+      <Tab eventKey="excluidos" title="Excluidos">
+          <div style={{ maxWidth: '95%' }}>    
+                    <MaterialTable          
+                        title=""
+                        columns={[
+                          { title: '', field: '#', width: '40px' },
+                          { title: 'Status', field: 'status.descricao' },                         
+                          { title: 'Email', field: 'email' },                          
+                          { title: '', field: '#', width: '50px' },
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                    
+                        ]}
+                        data={this.state.listOperadoresExcluidos}   
+                        localization={{
+                          body: {
+                            emptyDataSourceMessage: 'Nenhum registro para exibir'
+                          },
+                          toolbar: {
+                            searchTooltip: 'Pesquisar',
+                            searchPlaceholder: 'buscar operadores',        
+                          },
+                          pagination: {
+                            labelRowsSelect: 'linhas',
+                            labelDisplayedRows: '{count} de {from}-{to}',
+                            firstTooltip: 'Primeira página',
+                            previousTooltip: 'Página anterior',
+                            nextTooltip: 'Próxima página',
+                            lastTooltip: 'Última página'
+                          },
+                          header: {
+                            actions: 'Ação',
+                          },
+                        }}        
+                        options={{
+                          paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportFileName: 'Relatorio_adm_empresa_excluidos',
+                              search: true,     
+                              exportAllData: true,                              
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 7,
+                              pageSize: 7,
+                              pageSizeOptions: [7],       
+                        }}
+                        actions={[
+                          {             
+                            icon: 'edit',
+                            tooltip: 'Editar',
+                            onClick: (evt, data) => this.handleOpenModalEdit(data)
+                          }
+                        ]}
+                      />      
+            </div>      
+      </Tab>          
+    </Tabs>   
 
 
       </div>   

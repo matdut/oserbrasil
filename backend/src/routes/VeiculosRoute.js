@@ -14,6 +14,7 @@ router.get('/getVeiculo/:id', VeiculoController.getVeiculo);
 router.put('/update/:id',VeiculoController.update);
 router.delete('/delete/:id',VeiculoController.delete);
 router.delete('/deleteMotorista/:id',VeiculoController.deleteMotorista);
+router.get('/getMotoristaVeiculos/:id', VeiculoController.getMotoristaVeiculos);
 //router.put("/documentoCRVL/update/:id", multer(multerConfig).single('file'), VeiculoController.uploadCRVLFiles);
 router.put("/documentoCRVL/update/:id/:motoristaId", VeiculoController.uploadCRVLFiles);
 /*

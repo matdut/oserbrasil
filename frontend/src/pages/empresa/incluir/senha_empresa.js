@@ -16,7 +16,9 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
 import Menu_administrador from '../../administrador/menu_administrador';
-
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 //const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -49,6 +51,7 @@ class empresarialComponent extends React.Component{
       inicio: 1,   
       mensagem_senha_erro: '',
       color: 'light',
+      mensagem_aguarde: '',
       validacao_inicial: 2, 
       showPassword: false,
       mensagem_senha: '',  
@@ -166,7 +169,7 @@ class empresarialComponent extends React.Component{
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {           
-
+          localStorage.setItem('logid', res.data.data[0].id); 
           this.setState({                            
             campRazao_social: res.data.data[0].razao_social,
             campNome: res.data.data[0].cliente.nome,
@@ -174,7 +177,8 @@ class empresarialComponent extends React.Component{
           })      
 
           localStorage.setItem('lograzao_social', this.state.campRazao_social);  
-          localStorage.setItem('lognome',  this.state.campNome);       
+          localStorage.setItem('lognome',  this.state.campNome);   
+                 
         }  
       })        
       .catch(error=>{
@@ -611,16 +615,20 @@ class empresarialComponent extends React.Component{
   }  
   
 sendUpdate(){        
+  const { validate } = this.state;       
+  validate.cpfState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, salvando os dados...',       
+     validate 
+  }); 
+
+
   const datapost = {  
     statusId: 1,  
   }       
   
-  if (localStorage.getItem('logperfil') == 0) {
-    localStorage.setItem('logperfil', 7);
-  }    
-
   const logindata = {  
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: 7,
     senha: this.state.campSenha,     
     statusId: 1
   }  
@@ -635,7 +643,9 @@ sendUpdate(){
 
             if (localStorage.getItem('logperfil') == 1) {              
                this.props.history.push(`/lista_empresarial`);                                 
-            } else if (localStorage.getItem('logperfil') == 7) {   
+            } else  {   
+              localStorage.setItem('logperfil', 7);
+
               this.props.history.push(`/area_cliente_empresarial`);                                   
             }             
 
@@ -808,76 +818,29 @@ handleMouseDownPassword = (event) => {
 };
 
 verificar_menu() {   
-
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
-   <div>
-    <div className="d-flex justify-content-around">
-    <div className="botao_navegacao">
-        <Link to={`/empresa_dados_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-    </div>                  
+  return(
     <div>
-      <div className="titulo_representante">                
-       <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, Cadastre a sua senha de acesso  </label>       
-      </div>
-    </div>   
-    
-    <div>
-       <div className="botao_navegacao">  
-       </div>   
-    </div>
-</div>    
-<br/>
-        <div>
-           <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-        </div>    
-    </div>  
-   );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div className="d-flex justify-content-around">
-               <div className="botao_navegacao">
-               <Link to={`/empresa_dados_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_representante">                
-                  <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, Cadastre a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                  <div></div>                              
-                  </div>   
-               </div>   
-             
-          </div>    
-      );
-
-  } else if (localStorage.getItem('logperfil') == 7) { // CLIENTE EMPRESARIAL             
-
-      return(
-        <div className="d-flex justify-content-around">
-        <div className="botao_navegacao">      
-        </div>                  
-        <div>
-          <div className="titulo_representante">                          
-           <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, altere sua senha  </label>       
-          </div>
+     <div className="d-flex justify-content-around">
+     <div className="botao_navegacao">
+         <Link to={`/empresa_dados_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+     </div>                  
+     <div>
+       <div className="titulo_representante">                
+        <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, Cadastre a sua senha de acesso  </label>       
+       </div>
+     </div>   
+     
+     <div>
+        <div className="botao_navegacao">  
         </div>   
-        
-        <div>
-           <div className="botao_navegacao">
-           <div></div>                             
-           </div>   
-        </div>   
-      
-   </div>    
-        );
-  
-  }
+     </div>
+ </div>    
+ <br/>
+         <div className="barra_incluir">
+            <Progress color="warning" value={this.state.progresso} className="progressbar"/>
+         </div>    
+     </div>  
+    );  
 }
 
 verificar_menu_lateral() {
@@ -913,9 +876,9 @@ return (
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
+                  <InputLabel className="label_text" htmlFor="filled-adornment-password">Senha</InputLabel>
                   <FilledInput
-                    className="input_text_empresa"  
+                    className="data_text"
                     autoComplete='off'
                     autoCorrect='off'
                     id="filled-adornment-password"
@@ -955,9 +918,9 @@ return (
               </div>
               <div class="p-2">                    
                 <FormControl variant="filled">
-                    <InputLabel htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
                     <FilledInput
-                      className="input_text_empresa"  
+                     className="data_text"
                       autoComplete='off'
                       autoCorrect='off'
                       id="filled-adornment-password"
@@ -1003,9 +966,19 @@ return (
                {this.state.mensagem_senha_erro}
               </Alert>     
             </div>                        
-            
+
+             <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div>   
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                 
+    </div>
+    <div className="area_neutra">
+              <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '220px' }} />
+              </Container>            
+         </div>                   
    </div>  
   </div> 
 </div> 

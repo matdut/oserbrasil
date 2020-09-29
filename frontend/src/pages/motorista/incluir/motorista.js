@@ -4,6 +4,7 @@ import {Form, Progress, Input, FormFeedback, Label,  Select, Button, Alert } fro
 import {Link} from 'react-router-dom';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
+import { dataMask } from '../../formatacao/datamask';
 import api from '../../../services/api';
 import '../motorista.css';
 import Menu_motorista from '../menu_motorista';
@@ -12,7 +13,22 @@ import Menu_administrador from '../../administrador/menu_administrador';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
+import FilledInput from '@material-ui/core/FilledInput';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
+import FormHelperText from '@material-ui/core/FormHelperText';
+
+import CheckIcon from '@material-ui/icons/Check';
+
 
 import { Multiselect } from 'multiselect-react-dropdown';
 var dateFormat = require('dateformat');
@@ -52,6 +68,20 @@ class motoristaComponent extends React.Component{
       mensagem_data_nascimento: '',        
       mensagem_numero_carteira: '',    
       mensagem_datavalidade: '',    
+      erro_cpf: false,
+      erro_nome: false,
+      erro_datanascimento: false,
+      erro_dataCNH: false,
+      erro_numero_carteira: false,
+      erro_email: false,
+      erro_telefone: false,
+      validacao_cpf: false,
+      validacao_nome: false,
+      validacao_datanascimento: false,
+      validacao_numero_carteira: false,
+      validacao_dataCNH: false,
+      validacao_email: false,
+      validacao_telefone: false, 
       incluir: false, 
       inicio: 1,
       progresso: 0,      
@@ -82,6 +112,9 @@ class motoristaComponent extends React.Component{
     this.verificaNome = this.verificaNome.bind(this);  
     this.verificaDataValidade = this.verificaDataValidade.bind(this);  
     this.verificaDataNascimento = this.verificaDataNascimento.bind(this);  
+
+    this.verificaTelefone1onfocus = this.verificaTelefone1onfocus.bind(this);  
+    
 
     this.verificaCpfonfocus = this.verificaCpfonfocus.bind(this);  
     this.handleChange = this.handleChange.bind(this);   
@@ -192,6 +225,11 @@ class motoristaComponent extends React.Component{
             campMotorista_bilingue: res.data.data[0].bilingue,   
             inicio: 2,
             incluir: false, 
+            validacao_cpf: true,
+            validacao_datanascimento: true,
+            validacao_email: true,
+            validacao_nome: true,
+            validacao_telefone: true,
           })                           
 
           this.setState({ 
@@ -237,7 +275,9 @@ class motoristaComponent extends React.Component{
           
           validate.cpfState = 'has-danger'
           this.setState({ 
-             mensagem_cpf: 'Motorista já cadastrado'  
+            erro_cpf: true,
+            validacao_cpf: false,
+            mensagem_cpf: 'Motorista já cadastrado'  
           });
           this.state.incluir= false
  
@@ -245,6 +285,8 @@ class motoristaComponent extends React.Component{
        } else {
            validate.cpfState = 'has-success'
            this.setState({ 
+            erro_cpf: false,
+            validacao_cpf: true,
              mensagem_cpf: ''  
            });
  
@@ -264,7 +306,7 @@ class motoristaComponent extends React.Component{
   }
 
   Data_validadeChange(e) {
-    this.setState({ campData_CNH: e.target.value })
+    this.setState({ campData_CNH: dataMask(e.target.value) })
   }
 
   telefone1change(e) {
@@ -279,7 +321,7 @@ class motoristaComponent extends React.Component{
     });    
   } 
   data_nascimentochange(e) {
-    this.setState({ campData_nascimento: e.target.value })
+    this.setState({ campData_nascimento: dataMask(e.target.value) })
   }
 
   handleChangeBilingue(e) {     
@@ -333,12 +375,16 @@ class motoristaComponent extends React.Component{
         validate.numero_carteiraState = 'has-danger'
         this.setState({ 
           validate,
+          erro_numero_carteira: true,
+          validacao_numero_carteira: false,
           mensagem_numero_carteira: 'O campo Número CNH é obrigatório.'  
          })      
        } else {
         validate.numero_carteiraState = 'has-success' ;        
 
         this.setState({ 
+          erro_numero_carteira: false,
+          validacao_numero_carteira: true,
           mensagem_numero_carteira: ''
        });  
 
@@ -350,12 +396,16 @@ class motoristaComponent extends React.Component{
        // validate.numero_carteiraState = 'has-danger'
         this.setState({ 
           validate,
+          erro_numero_carteira: false,
+          validacao_numero_carteira: false,
           mensagem_numero_carteira: ''  
          })      
        } else {
         validate.numero_carteiraState = 'has-success' ;        
 
         this.setState({ 
+          erro_numero_carteira: false,
+          validacao_numero_carteira: true,
           mensagem_numero_carteira: ''
        });  
 
@@ -376,6 +426,8 @@ class motoristaComponent extends React.Component{
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
+          erro_cpf: true,
+          validacao_cpf: false,
           mensagem_cpf: 'O campo CPF é obrigatório'  
          })            
        } else if (e.target.value.length == 14) {
@@ -386,7 +438,11 @@ class motoristaComponent extends React.Component{
 
         } else {
           validate.cpfState = 'has-danger'       
-          this.setState({ mensagem_cpf: 'O campo CPF é inválido' })     
+          this.setState({ 
+            erro_cpf: true,
+            validacao_cpf: false,
+            mensagem_cpf: 'O campo CPF é inválido' 
+          })     
         } 
        }  
    }
@@ -396,7 +452,9 @@ class motoristaComponent extends React.Component{
     if (e.target.value.length == 0) {
       validate.cpfState = ''
       this.setState({ 
-        validate,               
+        validate,     
+        erro_cpf: false,
+        validacao_cpf: false,          
         mensagem_cpf: ''  
        })            
     }  
@@ -417,6 +475,8 @@ class motoristaComponent extends React.Component{
         campEmail: '',
         campTelefone1: '',
         inicio: 1,
+        erro_cpf: true,
+        validacao_cpf: false,
         mensagem_cpf: 'O campo CPF é obrigatório'  
         })            
       }  
@@ -430,6 +490,8 @@ class motoristaComponent extends React.Component{
         this.setState({ 
           validate,
           inicio: 1,
+          erro_telefone: true,
+          validacao_telefone: false,
           mensagem_telefone1: 'O campo Telefone é obrigatório.'
          })      
        } else {       
@@ -437,6 +499,8 @@ class motoristaComponent extends React.Component{
         if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success' ;                
             this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: true,
               mensagem_telefone1: ''
           });           
         }
@@ -452,6 +516,8 @@ class motoristaComponent extends React.Component{
         this.setState({ 
           validate,
           inicio: 1,
+          erro_telefone: false,
+          validacao_telefone: false,
           mensagem_telefone1: ''
          })      
        } else {       
@@ -459,6 +525,34 @@ class motoristaComponent extends React.Component{
         if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success' ;                
             this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: true,
+              mensagem_telefone1: ''
+          });           
+        }
+
+       }        
+   }
+
+   verificaTelefone1onfocus(e) {
+   
+    const { validate } = this.state
+       if (e.target.value.length < 15) {          
+        validate.telefone1State = ''
+        this.setState({ 
+          validate,
+          inicio: 1,
+          erro_telefone: false,
+          validacao_telefone: false,
+          mensagem_telefone1: ''
+         })      
+       } else {       
+
+        if (e.target.value.length == 15) {
+            validate.telefone1State = 'has-success' ;                
+            this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: true,
               mensagem_telefone1: ''
           });           
         }
@@ -473,11 +567,15 @@ class motoristaComponent extends React.Component{
       validate.emailState = 'has-danger'
       this.setState({ 
         validate,
-        mensagem_email: 'Email é obrigatório.'  
+        erro_email: false,
+        validacao_email: false,
+        mensagem_email: ''  
     })
     } else if (e.target.value.length > 0 && validate.emailState == 'has-danger') {
     this.setState({ 
       validate,
+      erro_email: true,
+      validacao_email: false,
       mensagem_email: 'Email é obrigatório.'  
      })                                   
     }    
@@ -489,33 +587,41 @@ class motoristaComponent extends React.Component{
         validate.nomeState = 'has-danger'
         this.setState({ 
           validate,
+          erro_nome: true,
+          validacao_nome: false,
           mensagem_nome: 'O campo nome é obrigatório.'  
          })      
        } else {
         validate.nomeState = 'has-success' ;        
 
         this.setState({ 
+          erro_nome: false,
+          validacao_nome: true,
           mensagem_nome: ''
        });  
 
        }         
    }
-  verificaDataNascimento() {
+   verificaDataNascimento() {
     const { validate } = this.state
        if (this.state.campData_nascimento.length == 0) {
         validate.datanascimentoState = 'has-danger'
         this.setState({ 
           validate,
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,    
           mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
          })      
-       } else {
+       } else if (this.state.campData_nascimento.length == 10) {
 
-          validate.datanascimentoState = 'has-success' ;        
-          this.setState({ 
-            mensagem_data_nascimento: ''
-          });     
+        validate.datanascimentoState = 'has-success' ;        
+        this.setState({ 
+          erro_datanascimento: false,   
+          validacao_datanascimento: true,    
+          mensagem_data_nascimento: ''
+        });     
 
-       }        
+     }           
    }
 
    verificaDataValidade() {
@@ -524,12 +630,16 @@ class motoristaComponent extends React.Component{
         validate.data_validadeState = 'has-danger'
         this.setState({ 
           validate,
+          erro_dataCNH: true,
+          validacao_dataCNH: false,
           mensagem_datavalidade: 'O campo Data de Validade é obrigatório.'  
          })      
        } else {
 
           validate.data_validadeState = 'has-success' ;        
           this.setState({ 
+            erro_dataCNH: false,
+            validacao_dataCNH: true,
             mensagem_datavalidade: ''
           });     
 
@@ -550,24 +660,29 @@ class motoristaComponent extends React.Component{
       const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       const { validate } = this.state
       
-      if (emailRex.test(e.target.value)) {                         
-          validate.emailState = 'has-success'     
-         // console.log(' valida email - '+e.target.value);   
-          //console.log(' valida email - '+this.state.campEmail);   
-          this.busca_email_ja_cadastrado(e.target.value)                
-                  
-          
-      } else {
-        validate.emailState = 'has-danger'
-        this.setState({ 
-          validate,
-          mensagem_email: '' })  
-      }
+        if (emailRex.test(e.target.value)) {                         
+            validate.emailState = 'has-success'     
+            this.setState({              
+              erro_email: false,
+              validacao_email: true,
+              mensagem_email: '' })    
+            //console.log(' valida email - '+e.target.value);   
+            //console.log(' valida email - '+this.state.campEmail);   
+            this.busca_email_ja_cadastrado(e.target.value)                
+                    
+            
+        } else {
+          validate.emailState = 'has-danger'
+          this.setState({ 
+            validate,
+            erro_email: true,
+            validacao_email: false,
+            mensagem_email: '' })  
+        }
 
-      this.setState({ validate })
-
-
-    }   
+        this.setState({ validate })
+    }       
+    
     
     
     validaCpfChange(e){
@@ -575,7 +690,11 @@ class motoristaComponent extends React.Component{
       
         if (e.target.value.length == 0) {
           validate.cpfState = 'has-danger'
-          this.setState({ mensagem_cpf: 'O campo CPF é obrigatório' })  
+          this.setState({ 
+            erro_cpf: true,
+            validacao_cpf: false,
+            mensagem_cpf: 'O campo CPF é obrigatório' 
+          })  
         } else if (e.target.value.length == 14) {          
           //valida o cpf 
            console.log('e.target.value - '+e.target.value);
@@ -586,7 +705,11 @@ class motoristaComponent extends React.Component{
 
            } else {
             validate.cpfState = 'has-danger'       
-            this.setState({ mensagem_cpf: 'O campo CPF é inválido' })     
+            this.setState({ 
+              erro_cpf: true,
+              validacao_cpf: false,
+              mensagem_cpf: 'O campo CPF é inválido' 
+            })     
            } 
         //  this.busca_cpf(e) 
         //  validate.cpfState = 'has-success'       
@@ -600,17 +723,22 @@ class motoristaComponent extends React.Component{
        
         if (e.target.value.length == 0) {
           validate.telefone1State = 'has-danger'
-          this.setState({ mensagem_telefone1: 'O campo Telefone é obrigatório.' })  
+          this.setState({
+            erro_telefone: true,
+            validacao_telefone: false,
+            mensagem_telefone1: 'O campo Telefone é obrigatório.'
+          })  
         } else {          
           
           if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success'       
-            this.setState({ mensagem_telefone1: '' })  
-
             this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: true,
               inicio: 2,  
               progresso: 15,        
-            });              
+              mensagem_telefone1: '' 
+            })              
           }          
         }  
         this.setState({ validate })
@@ -622,10 +750,18 @@ validaNomeChange(e){
   
     if (e.target.value.length == 0) {
       validate.nomeState = ''
-      this.setState({ mensagem_nome: '' })  
+      this.setState({ 
+        erro_nome: false,
+        validacao_nome: false,
+        mensagem_nome: '' 
+      })  
     } else if (e.target.value.length > 0) {      
       validate.nomeState = 'has-success'       
-      this.setState({ mensagem_nome: '' })  
+      this.setState({ 
+        erro_nome: false,
+        validacao_nome: true,
+        mensagem_nome: '' 
+      })  
     }  
     this.setState({ validate })  
 }
@@ -641,10 +777,18 @@ validaCnhChange(e){
   
     if (e.target.value.length == 0) {
       validate.numero_carteiraState = ''
-      this.setState({ mensagem_numero_carteira: '' })  
+      this.setState({ 
+        erro_numero_carteira: false,
+        validacao_numero_carteira: false,
+        mensagem_numero_carteira: '' 
+      })  
     } else if (e.target.value.length > 0) {      
       validate.numero_carteiraState = 'has-success'       
-      this.setState({ mensagem_numero_carteira: '' })  
+      this.setState({ 
+        erro_numero_carteira: false,
+        validacao_numero_carteira: true,
+        mensagem_numero_carteira: '' 
+      })  
     }  
     this.setState({ validate })  
 }
@@ -653,35 +797,11 @@ validaDataValidadeChange(e){
   
     if (e.target.value.length < 10) {
       validate.data_validadeState = 'has-danger'
-      this.setState({ mensagem_datavalidade: 'O campo Data de Validade é obrigatório.' })  
-    } else {    
-      
-      if (e.target.value.length == 13) {
-        
-        //var data_nascimento = new Date(e.target.value).toString;  
-        //console.log('e.target.value.length - '+e.target.value.length);
-        if (dateFormat(e.target.value) ) {
-          validate.data_validadeState = 'has-success' ;        
-          this.setState({ 
-            mensagem_datavalidade: ''
-          });  
-
-        } else {
-         // console.log('DATA NASCIMENTO - '+this.state.campData_nascimento)
-          validate.data_validadeState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_datavalidade: 'Formato inválido'  
-          })      
-        }    
-      } else if (e.target.value.length > 10) {
-        validate.data_validadeState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_datavalidade: 'Formato inválido'  
-          })      
-      }
-      
+      this.setState({ 
+          erro_dataCNH: true,
+          validacao_dataCNH: false,
+          mensagem_datavalidade: 'O campo Data de Validade é obrigatório.' 
+        })  
     }  
     this.setState({ validate })
 }
@@ -690,35 +810,11 @@ validaDataNascimentoChange(e){
   
     if (e.target.value.length < 10) {
       validate.datanascimentoState = 'has-danger'
-      this.setState({ mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' })  
-    } else {    
-      
-      if (e.target.value.length == 13) {
-        
-        //var data_nascimento = new Date(e.target.value).toString;  
-        //console.log('e.target.value.length - '+e.target.value.length);
-        if (dateFormat(e.target.value) ) {
-          validate.datanascimentoState = 'has-success' ;        
-          this.setState({ 
-            mensagem_data_nascimento: ''
-          });  
-
-        } else {
-         // console.log('DATA NASCIMENTO - '+this.state.campData_nascimento)
-          validate.datanascimentoState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_data_nascimento: 'Formato inválido'  
-          })      
-        }    
-      } else if (e.target.value.length > 10) {
-        validate.datanascimentoState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_data_nascimento: 'Formato inválido'  
-          })      
-      }
-      
+      this.setState({ 
+        erro_datanascimento: true,
+        validacao_datanascimento: false,
+        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
+      })  
     }  
     this.setState({ validate })
 }
@@ -766,9 +862,9 @@ sendSave(){
     nome: this.state.campNome,              
     email: this.state.campEmail,
     celular: this.state.campTelefone1,    
-    data_nascimento: this.state.campData_nascimento,    
+    data_nascimento: moment(this.state.campData_nascimento, "DD MM YYYY"),         
     cpf: this.state.campCpf,
-    data_validade: this.state.campData_CNH, 
+    data_validade: moment(this.state.campData_CNH, "DD MM YYYY"), 
     numero_carteira: this.state.campCNH,    
     bilingue: this.state.campMotorista_bilingue,   
     perfilId: 3,
@@ -941,8 +1037,10 @@ busca_email_ja_cadastrado(email) {
     if (res.data.success) {
 
             validate.emailState = 'has-danger'
-              this.setState({ 
+              this.setState({                 
                 validate,
+                erro_email: true,
+                validacao_email: false,
                 mensagem_email: 'Email já cadastrado.'  
             })                          
 
@@ -958,6 +1056,8 @@ verificaEmailonfocus(e){
     validate.emailState = ''
     this.setState({ 
         validate,
+        erro_email: false,
+        validacao_email: false,
         mensagem_email: ''  
     })                   
   } else {
@@ -999,198 +1099,241 @@ return (
               <div class="p-2"> 
                 <div class="d-flex justify-content-start">
                   <div>
-                    <label for="inputPassword4">CPF *</label>
-                      <Input 
-                          disabled={this.state.camp_cpf_disabled}
-                          className="input_text"                        
-                          type="text"
-                          name="cpf"
-                          id="examplcpf"
-                          autoComplete='off'
-                          autoCorrect='off'
-                          autoCapitalize='off'
-                        //ref={cepInput} 
-                          placeholder=""
-                          value={this.state.campCpf}
-                          valid={ this.state.validate.cpfState === 'has-success' }
-                          invalid={ this.state.validate.cpfState === 'has-danger' }
-                          onBlur={this.verificaCpfonblur}
+                  <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">CPF</InputLabel>
+                     <OutlinedInput 
+                        className="input_text"         
+                        autoComplete="off"                                   
+                        type="text"                       
+                        error={this.state.erro_cpf}
+                        helperText={this.state.mensagem_cpf}                     
+                        id="cep_incluir"                      
+                        variant="outlined"
+                        value={this.state.campCpf}
+                        onBlur={this.verificaCpfonblur}
                           onKeyUp={this.verificaCpf}
                           onFocus={this.verificaCpfonfocus}
                           onChange={ (e) => {
                             this.cpfchange(e)                       
                             this.validaCpfChange(e)
-                          }}         
-                          maxlength="14"                                                                 
-                        />                                
-                        <FormFeedback 
-                        invalid={this.state.validate.cpfState}>
-                            {this.state.mensagem_cpf}
-                        </FormFeedback> 
+                          }}  
+                          inputProps={{
+                            maxLength: 14,
+                          }}                                      
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cpf? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />                
+                   <FormHelperText error={this.state.erro_cpf}>
+                         {this.state.mensagem_cpf}
+                   </FormHelperText>
+                  </FormControl>                      
                   </div>
                   <div>
-                        <Label for="exampleDatetime" className="label_date">Data de nascimento *</Label>
-                        <Input                                    
-                          className="input_text_date"                  
-                          type="date"
-                          name="senha2"
-                          id="exampleEmail2"                    
-                          placeholder=""
-                          value={this.state.campData_nascimento}
-                          valid={ this.state.validate.datanascimentoState === 'has-success' }
-                          invalid={ this.state.validate.datanascimentoState === 'has-danger' }
-                          onBlur={this.verificaDataNascimento}
-                          onChange={ (e) => {
-                            this.data_nascimentochange(e)                       
-                            this.validaDataNascimentoChange(e)
-                          }}  
-                          maxlength="10"               
-                        />                                
-                        <FormFeedback 
-                        invalid={this.state.validate.datanascimentoState}>
-                            {this.state.mensagem_data_nascimento}
-                        </FormFeedback>  
+                  <FormControl variant="outlined">
+                    <InputLabel className="input_date_motorista" htmlFor="filled-adornment-password">Data de nascimento</InputLabel>
+                     <OutlinedInput    
+                        autoComplete="off"                     
+                        error={this.state.erro_datanascimento}
+                        helperText={this.state.mensagem_data_nascimento}
+                        className="input_date_motorista"                       
+                        id="data_incluir"                   
+                        variant="outlined"
+                        value={this.state.campData_nascimento}
+                        onBlur={this.verificaDataNascimento}
+                        onKeyUp={this.verificaDataNascimento}
+                        onChange={ (e) => {
+                          this.data_nascimentochange(e)                       
+                          this.validaDataNascimentoChange(e)
+                        }}                                    
+                        inputProps={{
+                          maxLength: 10,
+                        }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_datanascimento? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={180}                      
+                    />
+                   <FormHelperText error={this.state.erro_datanascimento}>
+                         {this.state.mensagem_data_nascimento}
+                   </FormHelperText>
+                </FormControl>  
 
                   </div>
                 </div>          
               </div>              
               <div class="p-2"> 
-                  <label for="inputEmail4">Nome *</label>
-                  <Input      
-                      disabled={this.state.camp_nome_disabled}
-                      className="input_text_nome"                  
-                      type="text"
-                      name="nome"
-                      id="examplnome"
-                      placeholder=""
-                      autoComplete='off'
-                      autoCorrect='off'
-                      value={this.state.campNome}
-                      valid={ this.state.validate.nomeState === 'has-success' }
-                      invalid={ this.state.validate.nomeState === 'has-danger' }
-                      onBlur={this.verificaNome}
+               <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome</InputLabel>
+                     <OutlinedInput
+                        autoComplete="off"
+                        type="text"                       
+                        error={this.state.erro_nome}
+                        helperText={this.state.mensagem_cpf}
+                        className="nome_incluir_text"                       
+                        id="nome_incluir"                   
+                        variant="outlined"
+                        value={this.state.campNome}
+                        onBlur={this.verificaNome}
+                        onFocus={this.verificaNomeonfocus}
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)
-                      }}    
-                      maxlength="120"                                                                      
-                    />                                
-                    <FormFeedback 
-                    invalid={this.state.validate.nomeState}>
-                        {this.state.mensagem_nome}
-                    </FormFeedback> 
+                      }}           
+                      inputProps={{
+                        maxLength: 40,
+                      }}           
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_nome? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />
+                   <FormHelperText error={this.state.erro_nome}>
+                         {this.state.mensagem_nome}
+                   </FormHelperText>
+               </FormControl>      
               </div> 
               <div class="p-2">                                
               <div class="d-flex justify-content-start">
                   <div>
-                    <label for="inputPassword4">Número da CNH *</label>
-                      <Input                           
-                          className="input_text"                        
-                          type="text"
-                          name="cpf"
-                          id="examplcpf"
-                          autoComplete='off'
-                          autoCorrect='off'
-                          autoCapitalize='off'
-                        //ref={cepInput} 
-                          placeholder=""
-                          value={this.state.campCNH}
-                          valid={ this.state.validate.numero_carteiraState === 'has-success' }
-                          invalid={ this.state.validate.numero_carteiraState === 'has-danger' }
-                          onBlur={this.verificaCnhonblur}
-                          onKeyUp={this.verificaCnh}
-                        // onFocus={this.verificaCpf}
-                          onChange={ (e) => {
-                            this.Cnhchange(e)                       
-                            this.validaCnhChange(e)
-                          }}         
-                          maxlength="14"                                                                 
-                        />                                
-                        <FormFeedback 
-                        invalid={this.state.validate.numero_carteiraState}>
-                            {this.state.mensagem_numero_carteira}
-                        </FormFeedback> 
+                  <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Número da CNH</InputLabel>
+                     <OutlinedInput 
+                        className="input_text"         
+                        autoComplete="off"                                   
+                        type="text"                       
+                        error={this.state.erro_cpf}
+                        helperText={this.state.mensagem_cpf}                     
+                        id="cep_incluir"                      
+                        variant="outlined"
+                        value={this.state.campCNH}
+                        onBlur={this.verificaCnhonblur}
+                        onKeyUp={this.verificaCnh}
+                      // onFocus={this.verificaCpf}
+                        onChange={ (e) => {
+                          this.Cnhchange(e)                       
+                          this.validaCnhChange(e)
+                        }}   
+                        inputProps={{
+                          maxLength: 14,
+                        }}                                 
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_numero_carteira? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={140}
+                    />                
+                   <FormHelperText error={this.state.erro_numero_carteira}>
+                         {this.state.mensagem_numero_carteira}
+                   </FormHelperText>
+                  </FormControl>                     
                   </div>
                   <div>
-                        <Label for="exampleDatetime" className="label_date">Data de validade *</Label>
-                        <Input                                    
-                          className="input_text_date"                  
-                          type="date"
-                          name="senha2"
-                          id="exampleEmail2"                    
-                          placeholder=""
-                          value={this.state.campData_CNH}
-                          valid={ this.state.validate.data_validadeState === 'has-success' }
-                          invalid={ this.state.validate.data_validadeState === 'has-danger' }
-                          onBlur={this.verificaDataValidade}
-                          onChange={ (e) => {
-                            this.Data_validadeChange(e)                       
-                            this.validaDataValidadeChange(e)
-                          }}  
-                          maxlength="10"               
-                        />                                
-                        <FormFeedback 
-                        invalid={this.state.validate.data_validadeState}>
-                            {this.state.mensagem_datavalidade}
-                        </FormFeedback>  
-
+                  <FormControl variant="outlined">
+                    <InputLabel className="input_date_motorista" htmlFor="filled-adornment-password">Data de validade</InputLabel>
+                     <OutlinedInput    
+                        autoComplete="off"                     
+                        error={this.state.erro_dataCNH}
+                        helperText={this.state.mensagem_datavalidade}
+                        className="input_date_motorista"                       
+                        id="data_incluir"                   
+                        variant="outlined"
+                        value={this.state.campData_CNH}
+                        onBlur={this.verificaDataValidade}
+                        onChange={ (e) => {
+                          this.Data_validadeChange(e)                       
+                          this.validaDataValidadeChange(e)
+                        }}                                        
+                        inputProps={{
+                          maxLength: 10,
+                        }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_dataCNH? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={140}                      
+                    />
+                   <FormHelperText error={this.state.erro_dataCNH}>
+                         {this.state.mensagem_datavalidade}
+                   </FormHelperText>
+                </FormControl>  
                   </div>
                 </div>      
               </div>
               <div class="p-2">
-                      <label for="email1">Email *</label>
-                      <Input         
-                        className="input_text_email"
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Email</InputLabel>
+                     <OutlinedInput          
+                        autoComplete="off"                  
                         type="email"
-                        ref={this.textInput} 
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
+                        error={this.state.erro_email}
+                        helperText={this.state.mensagem_email}
+                        className="data_text"                       
+                        id="email_incluir"                   
+                        variant="outlined"
                         value={this.state.campEmail}
-                        valid={ this.state.validate.emailState === 'has-success' }
-                        invalid={ this.state.validate.emailState === 'has-danger' }
-                        onBlur={this.verificaEmail}
-                        //onKeyPress={this.verificaEmail}
+                        onBlur={this.verificaEmail}                     
                         onFocus={this.verificaEmailonfocus}
                         onChange={ (e) => {
                                     this.emailchange(e) 
                                     this.validateEmail(e)
                                     this.validaEmailChange(e)                                
-                                  } }
-                        maxlength="80"          
-                      />                  
-                      <FormFeedback 
-                      invalid={this.state.validate.emailState}>
-                          {this.state.mensagem_email}
-                      </FormFeedback> 
+                                  } }       
+                        inputProps={{
+                            maxLength: 50,
+                        }}                            
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_email? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}                      
+                    />
+                   <FormHelperText error={this.state.erro_email}>
+                         {this.state.mensagem_email}
+                   </FormHelperText>
+                </FormControl>   
               </div>
               <div class="p-2">
                 <div class="d-flex justify-content-start">
-                  <div>
-                      <label for="inputEmail4">Telefone *</label>                     
-                      <Input                        
-                        className="input_text_motorista_1"
-                        type="text"
-                        name="senha2"
-                        id="exampleEmail2"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campTelefone1}
-                        valid={ this.state.validate.telefone1State === 'has-success' }
-                        invalid={ this.state.validate.telefone1State === 'has-danger' }
-                        onBlur={this.verificaTelefone1onblur}
-                        onKeyUp={this.verificaTelefone1}
+                  <div>            
+                  <FormControl variant="outlined">
+                    <InputLabel className="input_text_motorista_novo" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                     <OutlinedInput     
+                        autoComplete="off"                              
+                        type="text"                                      
+                        error={this.state.erro_telefone}
+                        helperText={this.state.mensagem_telefone1}
+                        className="input_text_motorista_novo"                       
+                        id="telefone_incluir"                   
+                        variant="outlined"
+                        value={this.state.campTelefone1}                
+                        onKeyUp={this.verificaTelefone1}            
+                        onFocus={this.verificaTelefone1onfocus}
                         onChange={ (e) => {
                           this.telefone1change(e)                       
                           this.validatelefone1Change(e)
-                        }}                
-                        maxlength="16"                                                          
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.telefone1State}>
-                          {this.state.mensagem_telefone1}
-                      </FormFeedback>
+                        }}                                      
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_telefone? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={80}                      
+                    />
+                   <FormHelperText error={this.state.erro_telefone}>
+                         {this.state.mensagem_telefone1}
+                   </FormHelperText>
+                </FormControl>        
                   </div>
                   
                   <div>     

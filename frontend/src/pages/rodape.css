@@ -7,7 +7,7 @@
   color: #0F074E;
   left: 200px !important;
 
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;  
+  font-family: Effra !important;   
 }
 
 a:hover {
@@ -28,14 +28,14 @@ a {
 }
 
 .texto_logo {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;    
+  font-family: Effra !important; 
   color: #0F0B2F;
   font-size: 12px !important;     
   opacity: 1;
 }
 
 .logo {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;    
+  font-family: Effra !important;     
   color: white;  
   opacity: 1;
 }

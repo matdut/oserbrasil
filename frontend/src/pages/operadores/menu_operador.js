@@ -177,7 +177,7 @@ class menu_clienteComponent extends React.Component  {
   </div>    
     
   <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50"/>
+        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
        <div className="data_versao"> 07/09/20 v1.8.0 </div>
      </div>  
  </div>                                       

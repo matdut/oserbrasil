@@ -1,7 +1,11 @@
 const controllers = {}
 
 // import model and sequelize
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 var sequelize = require('../model/database');
+
 var Cliente = require('../model/Cliente');
 var Status = require('../model/Status');
 var Situacao = require('../model/Situacao');
@@ -35,13 +39,15 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  console.log('entrou aqui = '+id);
+  console.log('entrou aqui = '+id); 
 
   // parameter post
   const { nome, email, senha, endereco, numero, complemento, telefone1,
     telefone2, celular, cidade, bairro, estadoId, cep, tipo_cliente, inscricao_municipal, statusId,
     cpf, data_nascimento, contato, cnpj, inscricao_estadual, razao_social, nome_fantasia, situacaoId, perfilId} = req.body;
   // update data
+  
+  console.log('data_nascimento = '+data_nascimento);
   
   await Cliente.update({
             nome: nome,              
@@ -111,6 +117,154 @@ controllers.getClienteCpf = async (req, res) => {
   
   }
 
+  controllers.findcliente = async (req, res) => { 
+    
+    const {fcliente, perfil } = req.params;              
+    //console.log('cliente - '+ fcliente +'  status '+status+ '  perfilId  '+perfil);
+    //const fstatus = req.params.fstatus;            
+
+    await Cliente.findAll({
+        include: [{ model: Status  }],
+        where: 
+        {  
+          [Op.or]: 
+                  [
+                  { nome: {
+                        [Op.like]: `%${fcliente}%`             
+                      }}, 
+                  {
+                    cpf: {
+                      [Op.like]: `%${fcliente}%`             
+                    }
+                  },
+                  {
+                    email: {
+                      [Op.like]: `%${fcliente}%`             
+                    }
+                  }
+                ],                
+          statusId: {
+                  [Op.notIn]: [7]             
+                }, 
+          perfilId: perfil
+      }
+      })
+      .then( function (data){      
+        return res.json({success:true, data:data});
+        /* if (data.length > 0) {
+          return res.json({success:true, data:data});
+         } else {
+          return res.json({success:false, data:data});
+         }  */       
+      })
+      .catch(error => {
+        return res.json({success:false, message: error});
+      })
+    
+    }    
+    controllers.findclientestatus = async (req, res) => { 
+    
+      const {fcliente, perfil, status } = req.params;              
+      //console.log('cliente - '+ fcliente +'  status '+status+ '  perfilId  '+perfil);
+      //const fstatus = req.params.fstatus;            
+  
+      await Cliente.findAll({
+          include: [{ model: Status  }],
+          where: 
+          {  
+            [Op.or]: 
+                    [
+                    { nome: {
+                          [Op.like]: `%${fcliente}%`             
+                        }}, 
+                    {
+                      cpf: {
+                        [Op.like]: `%${fcliente}%`             
+                      }
+                    },
+                    {
+                      email: {
+                        [Op.like]: `%${fcliente}%`             
+                      }
+                    }
+                  ],
+            perfilId: perfil,
+            statusId: status
+        }
+        })
+        .then( function (data){      
+          return res.json({success:true, data:data});
+          /* if (data.length > 0) {
+            return res.json({success:true, data:data});
+           } else {
+            return res.json({success:false, data:data});
+           }  */       
+        })
+        .catch(error => {
+          return res.json({success:false, message: error});
+        })
+      
+      }    
+
+      controllers.findstatus = async (req, res) => { 
+    
+        const { status, perfil } = req.params;                    
+        //const fstatus = req.params.fstatus;            
+    
+        await Cliente.findAll({
+            include: [{ model: Status  }],
+            where: 
+            {
+              perfilId: perfil,
+              statusId: status
+            }
+          })
+          .then( function (data){      
+            return res.json({success:true, data:data});
+            /* if (data.length > 0) {
+              return res.json({success:true, data:data});
+             } else {
+              return res.json({success:false, data:data});
+             }  */       
+          })
+          .catch(error => {
+            return res.json({success:false, message: error});
+          })
+        
+        }  
+ /*   
+    controllers.findcliente = async (req, res) => { 
+    
+      const {fcliente, perfil, status } = req.params;            
+
+    console.log('cliente - '+ fcliente +'  status '+status+ '  perfilId  '+perfil);
+    //const fstatus = req.params.fstatus;            
+
+    await Cliente.findAll({
+        include: [{ model: Status  }],
+        where: 
+        {  
+          nome: {
+             [Op.like]: `%${fcliente}%`             
+          },
+          perfilId: perfil,
+          statusId: status
+      }
+      })
+      .then( function (data){      
+        return res.json({success:true, data:data});
+        /* if (data.length > 0) {
+          return res.json({success:true, data:data});
+         } else {
+          return res.json({success:false, data:data});
+         }         
+      })
+      .catch(error => {
+        return res.json({success:false, message: error});
+      })
+    
+    }    
+*/
   controllers.getClienteCnpj = async (req, res) => {
  
     //const cpf = req.params.email;  
@@ -175,32 +329,47 @@ controllers.get = async (req, res) => {
 controllers.list = async (req,res) => {
   await Cliente.findAll({
      include: [{ model: Status  }],
-     where: { perfilId: 2} 
+     where: { 
+        statusId: {
+          [Op.notIn]: [7]             
+        },      
+       perfilId: 2 
+     } 
   })
   .then( function (data){
 
+    if (data.length > 0) {
       return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }        
       
   })
   .catch(error => {
     return res.json({success:false, message: error});
   }) 
 }
-
-controllers.listarIndividual = async (req,res) => {
-  await Cliente.findAll({       
-    include: [{ model: Status  }],
-    where: { tipo_cliente: 'F'}
-    //,
-    //include: [ Role ]
-  })
+controllers.listarExcluidos = async (req,res) => {
+  const status = 2;
+  await Cliente.findAll({
+    include: [{ model: Status }],   
+    where: {       
+      perfilId: 2, 
+      statusId: 7
+    } 
+ })
   .then( function (data){
-    return res.json({success:true, data:data});    
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }        
   })
   .catch(error => {
     return res.json({success:false, message: error});
   }) 
 }
+
 
 controllers.listarEmpresarial = async (req,res) => {
   await Cliente.findAll({   
@@ -225,7 +394,7 @@ controllers.create = async (req,res) => {
     telefone2, celular, cidade, bairro, estadoId, cep, tipo_cliente, inscricao_municipal, statusId,
     cpf,  data_nascimento, contato, cnpj, inscricao_estadual, razao_social, nome_fantasia, situacaoId, perfilId } = req.body;
   //console.log("ROle es ==>"+role)
-  //create
+  //create  
   await Cliente.create({
     nome: nome,              
     email: email,

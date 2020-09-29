@@ -60,7 +60,7 @@ class Area_cliente extends React.Component  {
         <Menu_cliente_empresarial />  
           <div className="titulo_admministrador">    
           <div className="unnamed-character-style-4 descricao_admministrador">                                
-            <h5> {localStorage.getItem('lograzao_social')} </h5>   
+            <h5 className="titulo_area_empresarial"> {localStorage.getItem('lograzao_social')} </h5>   
                {this.verifica_menu()}, {this.verifica_horario()} !
             </div>                    
             

@@ -16,6 +16,10 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_administrador from '../../administrador/menu_administrador';
+import FormHelperText from '@material-ui/core/FormHelperText';
+
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@\$%\^&\*])(?=.{8,})");
 //const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -56,6 +60,7 @@ class empresarialComponent extends React.Component{
       mensagem_umnumero: '',
       mensagem_umaletramaiuscula: '',
       mensagem_caracterespecial: '',  
+      mensagem_aguarde: '',
       backgroundColor: "#4285F4",      
       validate: {
         senhaState: '',
@@ -133,7 +138,7 @@ class empresarialComponent extends React.Component{
 
   carrega_senha() {
     const { validate } = this.state;
-    api.get(`/login/getSenha/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`) 
+    api.get(`/login/getSenha/${localStorage.getItem('logid')}/2`) 
     .then(res=>{
       if (res.data.success) {
         this.setState({     
@@ -171,7 +176,7 @@ class empresarialComponent extends React.Component{
     const { validate } = this.state;
     api.get(`/cliente/get/${localStorage.getItem('logid')}`)
     .then(res=>{
-        console.log(JSON.stringify(res.data, null, "    ")); 
+       // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
            
           this.setState({                        
@@ -639,6 +644,13 @@ class empresarialComponent extends React.Component{
   }  
   
 sendUpdate(){    
+  const { validate } = this.state;       
+  validate.senhaState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, salvando os dados...',       
+     validate 
+  }); 
+
   const datapost = {  
     statusId: 1,  
   }       
@@ -652,8 +664,8 @@ sendUpdate(){
     senha: this.state.campSenha,     
     statusId: 1
   }  
-  console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
-  console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
+  //console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
+  //console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
        
      api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)        
         .then(response=>{
@@ -663,7 +675,8 @@ sendUpdate(){
                
                 if (localStorage.getItem('logperfil') == 1) {
                   this.props.history.push(`/lista_individual`);                   
-                } else if (localStorage.getItem('logperfil') == 2) {              
+                } else {          
+                  localStorage.setItem('logperfil', 2);    
                   this.props.history.push('/area_cliente_individual');                
                 }        
                
@@ -835,9 +848,7 @@ handleMouseDownPassword = (event) => {
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
+  return(
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
@@ -856,62 +867,11 @@ verificar_menu() {
                </div>          
        </div>      
         <br/>    
-        <div>
+        <div className="barra_incluir">
            <Progress color="warning" value={this.state.progresso} className="progressbar"/>
         </div>
    </div>         
    );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div>
-      <div className="d-flex justify-content-around">
-               <div className="botao_navegacao">
-               <Link to={`/cliente_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-                 </div>                  
-                 <div>
-                   <div className="titulo_representante_cliente">                
-                    <label>{this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>       
-                   </div>
-                 </div>   
-                 
-                 <div>
-                    <div className="botao_navegacao">
-                       <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                    </div>   
-                 </div>          
-         </div>      
-          <br/>    
-          <div>
-             <Progress color="warning" value={50} className="progressbar"/>
-          </div>
-     </div>    
-      );
-
-  } else if (localStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL             
-
-    return(
-      <div className="d-flex justify-content-around">
-          <div className="botao_navegacao">
-                 <Link to="/area_cliente_individual"> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_representante_cliente">                
-                  <label>  {this.verifica_nome(this.state.campNome)}, altere a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                  <div></div>                                            
-                  </div>   
-               </div>   
-      </div>
-      );
-
-  }
-
-
 }
 
 verificar_menu_lateral() {
@@ -946,9 +906,9 @@ return (
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
+                  <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Senha</InputLabel>
                   <FilledInput
-                    className="input_text_cliente_senha"  
+                    className="data_cliente_individual"  
                     autoComplete='off'
                     autoCorrect='off'
                     error={this.state.validaSenha}
@@ -989,9 +949,9 @@ return (
               </div>
               <div class="p-2">                    
                 <FormControl variant="filled">
-                    <InputLabel htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
                     <FilledInput
-                      className="input_text_cliente_senha"  
+                      className="data_cliente_individual"  
                       id="filled-adornment-password"
                       type={this.state.hiddenSenhaConfirma ? "password" : "text"}           
                       value={this.state.campSenhaTeste}
@@ -1036,9 +996,18 @@ return (
                {this.state.mensagem_senha_erro}
               </Alert>                
             </div>                        
-            
+            <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div> 
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                     
+    </div>    
+         <div className="area_neutra">
+              <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '244px' }} />
+              </Container>            
+         </div>                     
    </div>  
  </div>  
 </div> 

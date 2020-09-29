@@ -14,7 +14,7 @@ var Transporte = sequelize.define(nametable,{
     autoIncrement:true 
   },
   descricao:  {  
-    type: Sequelize.STRING(200),
+    type: Sequelize.STRING(30),
     allowNull: false,     
   }
 },

@@ -1,30 +1,28 @@
 import React  from 'react';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
-import {Link} from 'react-router-dom';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
 import api from '../../../services/api';
 import '../individual.css';
 import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_administrador from '../../administrador/menu_administrador';
-
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
 import FilledInput from '@material-ui/core/FilledInput';
-
 import FormHelperText from '@material-ui/core/FormHelperText';
-
 import CheckIcon from '@material-ui/icons/Check';
-
 import TextField from '@material-ui/core/TextField';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
 
+import { dataMask } from '../../formatacao/datamask';
+
+import { Data } from '@react-google-maps/api';
 
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
@@ -39,7 +37,8 @@ class cliente_alterarComponent extends React.Component{
       campId: 0,     
       campNome: "",
       campData_nascimento:"",
-      campEmail:"",      
+      campEmail:"",    
+      campEmailAnterior: '',  
       campTelefone1:"",
       campCpf:"",       
       camp_cpf_disabled: false,
@@ -54,6 +53,7 @@ class cliente_alterarComponent extends React.Component{
       validacao_datanascimento: false,
       validacao_email: false,
       validacao_telefone: false,
+      mensagem_aguarde: '',
       campStatusId:'',
       campCnpj:"",
       endereco:"",     
@@ -108,7 +108,7 @@ class cliente_alterarComponent extends React.Component{
   }
 
   componentDidMount(){ 
-   
+    moment.locale('pt-br');
     let userId = this.props.match.params.id;    
     
     localStorage.setItem('logid', userId);
@@ -168,12 +168,15 @@ class cliente_alterarComponent extends React.Component{
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
-           
+
+        //  const dataF = new Data(res.data.data[0].data_nascimento);          
+          
           this.setState({ 
             campCpf: res.data.data[0].cpf,
             campNome: res.data.data[0].nome,
-            campData_nascimento: dateFormat(res.data.data[0].data_nascimento, 'dd/mm/yyyy'),
+            campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].email,      
+            campEmailAnterior: res.data.data[0].email,      
             campTelefone1: res.data.data[0].celular,           
             campStatusId: res.data.data[0].statusId,
             incluir: false, 
@@ -210,32 +213,35 @@ class cliente_alterarComponent extends React.Component{
   
   }
   busca_cpf(e){
-   const { validate } = this.state
-  api.get(`/cliente/getClienteCpf/${e.target.value}`)
-  .then(res=>{
-      console.log(JSON.stringify(res.data, null, "    ")); 
-      if (res.data.success) {
-         
-         validate.cpfState = 'has-danger'
-         this.setState({ 
-            mensagem_cpf: 'Representante já cadastrado'  
-         });
-         this.state.incluir= false
-
-        this.setState({ validate })
-      } else {
-          validate.cpfState = 'has-success'
+    const { validate } = this.state
+   api.get(`/cliente/getClienteCpf/${e.target.value}`)
+   .then(res=>{
+       console.log(JSON.stringify(res.data, null, "    ")); 
+       if (res.data.success) {
+          
+          validate.cpfState = 'has-danger'
           this.setState({ 
-            mensagem_cpf: ''  
+             erro_cpf: true,
+             mensagem_cpf: 'Representante já cadastrado'  
           });
-
-          this.state.incluir= true 
-      }  
-    })        
-    .catch(error=>{
-      alert("Error de conexão  "+error)
-    })   
-  }
+          this.state.incluir= false
+ 
+         this.setState({ validate })
+       } else {
+           validate.cpfState = 'has-success'
+           this.setState({ 
+             erro_cpf: false, 
+             validacao_cpf: true,        
+             mensagem_cpf: '',
+             incluir: true   
+           });
+           
+       }  
+     })        
+     .catch(error=>{
+       alert("Error de conexão  "+error)
+     })   
+   }
   cpfchange(e) {
     this.setState({ campCpf: cpfMask(e.target.value) })
   }
@@ -251,7 +257,7 @@ class cliente_alterarComponent extends React.Component{
     });    
   } 
   data_nascimentochange(e) {
-    this.setState({ campData_nascimento: e.target.value })
+    this.setState({ campData_nascimento: dataMask(e.target.value) })
   }
 
   verificaCpfonfocus(e) {
@@ -259,7 +265,9 @@ class cliente_alterarComponent extends React.Component{
     if (e.target.value.length == 0) {
       validate.cpfState = ''
       this.setState({ 
-        validate,               
+        validate,    
+        erro_cpf: false, 
+        validacao_cpf: true,               
         mensagem_cpf: ''  
        })            
     }  
@@ -269,7 +277,9 @@ class cliente_alterarComponent extends React.Component{
     if (e.target.value.length == 0) {
       validate.nomeState = ''
       this.setState({ 
-        validate,               
+        validate,  
+        erro_nome: false, 
+        validacao_nome: true,                 
         mensagem_nome: ''  
        })            
     }  
@@ -289,7 +299,9 @@ class cliente_alterarComponent extends React.Component{
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
-          mensagem_cpf: 'O campo CPF é obrigatório'  
+          erro_cpf: false, 
+          validacao_cpf: false,    
+          mensagem_cpf: ''  
          })            
        }  
    }  
@@ -309,21 +321,25 @@ class cliente_alterarComponent extends React.Component{
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
+          erro_cpf: true, 
+          validacao_cpf: false,    
           mensagem_cpf: 'O campo CPF é obrigatório'  
          })            
+       } else if (e.target.value.length == 14){                
+        console.log('é valido - '+e.target.value);
+        this.busca_cpf(e);// se existir não deixa cadastrar 
        }  
    }
   
-  verificaTelefone1(e) {
-    console.log('Keypress - '+this.state.campTelefone1)
-    console.log('Keypress length - '+this.state.campTelefone1.length)
-    console.log('Keypress length - '+e.target.value.length)
+  verificaTelefone1(e) {  
     const { validate } = this.state
        if (e.target.value.length < 15) {          
         validate.telefone1State = 'has-danger'
         this.setState({ 
           validate,
           inicio: 1,
+          erro_telefone: true, 
+          validacao_telefone: false,    
           mensagem_telefone1: 'O campo Telefone é obrigatório.'
          })      
        } else {       
@@ -331,6 +347,8 @@ class cliente_alterarComponent extends React.Component{
         if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success' ;                
             this.setState({ 
+              erro_cpf: false, 
+              validacao_cpf: true,    
               mensagem_telefone1: ''
           });           
         }
@@ -344,18 +362,26 @@ class cliente_alterarComponent extends React.Component{
         validate.emailState = ''
         this.setState({ 
             validate,
+            erro_email: false, 
+            validacao_cpf: false,    
             mensagem_email: ''  
         })                   
-      }  
-   } 
+      } else {
+        if (this.state.campEmailAnterior !== e.target.value) {
+           this.busca_email_ja_cadastrado(e.target.value)         
+        }   
+      }            
+     } 
 
    verificaTelefone1onfocus(e){   
-    const { validate } = this.state
+    /* const { validate } = this.state
     validate.telefone1State = ''
        this.setState({ 
             validate,
+            erro_telefone: false, 
+            validacao_telefone: true,    
             mensagem_telefone1: ''  
-        })                   
+        })                    */
    } 
 
   verificaEmail(e){   
@@ -364,11 +390,15 @@ class cliente_alterarComponent extends React.Component{
       validate.emailState = 'has-danger'
       this.setState({ 
         validate,
-        mensagem_email: 'Email é obrigatório.'  
+        erro_email: false, 
+        validacao_cpf: false,    
+        mensagem_email: ''  
     })                          
     } else if (e.target.value.length > 0 && validate.emailState == 'has-danger') {
     this.setState({ 
       validate,
+      erro_email: true, 
+      validacao_cpf: false,    
       mensagem_email: 'Email é obrigatório.'  
      })     
     }
@@ -380,7 +410,9 @@ class cliente_alterarComponent extends React.Component{
         validate.nomeState = 'has-danger'
         this.setState({ 
           validate,
-          mensagem_nome: 'O campo nome é obrigatório.'  
+          erro_nome: false, 
+          validacao_nome: false,    
+          mensagem_nome: ''  
          })      
        } else {
         validate.nomeState = 'has-success' ;        
@@ -397,12 +429,16 @@ class cliente_alterarComponent extends React.Component{
         validate.datanascimentoState = 'has-danger'
         this.setState({ 
           validate,
-          mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
+          erro_datanascimento: false, 
+          validacao_datanascimento: false,    
+          mensagem_data_nascimento: ''  
          })      
-       } else {
+       } else if (this.state.campData_nascimento.length == 10) {
 
           validate.datanascimentoState = 'has-success' ;        
           this.setState({ 
+            erro_datanascimento: false, 
+            validacao_datanascimento: true,    
             mensagem_data_nascimento: ''
           });     
 
@@ -428,6 +464,8 @@ class cliente_alterarComponent extends React.Component{
             validate.emailState = 'has-danger'
             this.setState({ 
                 validate,
+                erro_email: true, 
+                validacao_email: false,    
                 mensagem_email: 'Email já cadastrado.'  
             })                            
         }      
@@ -442,16 +480,29 @@ class cliente_alterarComponent extends React.Component{
       const { validate } = this.state
       
         if (emailRex.test(e.target.value)) {                         
-            validate.emailState = 'has-success'     
-            //console.log(' valida email - '+e.target.value);   
-            //console.log(' valida email - '+this.state.campEmail);   
-            this.busca_email_ja_cadastrado(e.target.value)                
+            validate.emailState = 'has-success'           
+           
+           console.log('email anterior '+this.state.campEmailAnterior);
+           console.log('email atual '+ e.target.value);
+           
+           if (this.state.campEmailAnterior !== e.target.value) {
+              this.busca_email_ja_cadastrado(e.target.value)                
+           } else {
+             this.setState({ 
+               validate,
+               erro_email: false,
+               validacao_email: true,
+               mensagem_email: '' 
+             })          
+           }          
                     
             
         } else {
           validate.emailState = 'has-danger'
           this.setState({ 
             validate,
+            erro_email: false, 
+            validacao_email: true,    
             mensagem_email: '' })  
         }
 
@@ -463,7 +514,11 @@ class cliente_alterarComponent extends React.Component{
       
         if (e.target.value.length == 0) {
           validate.cpfState = ''
-          this.setState({ mensagem_cpf: '' })  
+          this.setState({ 
+            erro_cpf: false, 
+            validacao_cpf: false,    
+            mensagem_cpf: '' 
+          })  
         } else if (e.target.value.length == 14) {          
           //valida o cpf 
            console.log('e.target.value - '+e.target.value);
@@ -474,7 +529,11 @@ class cliente_alterarComponent extends React.Component{
 
            } else {
             validate.cpfState = 'has-danger'       
-            this.setState({ mensagem_cpf: 'O campo CPF é inválido' })     
+            this.setState({ 
+              erro_cpf: true, 
+              validacao_cpf: false,    
+              mensagem_cpf: 'O campo CPF é inválido' 
+            })     
            } 
         //  this.busca_cpf(e) 
         //  validate.cpfState = 'has-success'       
@@ -488,17 +547,22 @@ class cliente_alterarComponent extends React.Component{
        
         if (e.target.value.length == 0) {
           validate.telefone1State = 'has-danger'
-          this.setState({ mensagem_telefone1: 'O campo Telefone é obrigatório.' })  
+          this.setState({ 
+             erro_telefone: true, 
+             validacao_telefone: false,    
+             mensagem_telefone1: 'O campo Telefone é obrigatório.'
+          })  
         } else {          
           
           if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success'       
-            this.setState({ mensagem_telefone1: '' })  
-
             this.setState({ 
+              erro_telefone: false, 
+              validacao_telefone: true,    
+              mensagem_telefone1: '',
               inicio: 2,
-              progresso: 25
-            });             
+              progresso: 25 
+            })  
           }          
         }  
         this.setState({ validate })
@@ -510,10 +574,18 @@ validaNomeChange(e){
   
     if (e.target.value.length == 0) {
       validate.nomeState = ''
-      this.setState({ mensagem_nome: '' })  
+      this.setState({ 
+        erro_nome: false, 
+        validacao_telefone: true,    
+        mensagem_nome: '' 
+      })  
     } else if (e.target.value.length > 0) {      
       validate.nomeState = ''       
-      this.setState({ mensagem_nome: '' })  
+      this.setState({ 
+        erro_nome: false, 
+        validacao_telefone: true,    
+        mensagem_nome: '' 
+      })  
     }  
     this.setState({ validate })  
 }
@@ -523,8 +595,14 @@ validaDataNascimentoChange(e){
   
     if (e.target.value.length < 1) {
       validate.datanascimentoState = 'has-danger'
-      this.setState({ mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' })  
-    } else {    
+      this.setState({ 
+        erro_datanascimento: true, 
+        validacao_telefone: false,    
+        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
+      })  
+    }
+    
+    /*else {    
       
       if (e.target.value.length == 1) {
         
@@ -553,7 +631,7 @@ validaDataNascimentoChange(e){
           })      
       }
       
-    }  
+    }  */ 
     this.setState({ validate })
 }
 
@@ -595,57 +673,23 @@ verifica_botao(inicio) {
 } 
 
 sendSave(){        
+  const { validate } = this.state;       
+  validate.cpfState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, alterando os dados...',
+     validate 
+  }); 
 
   const datapost = {
       nome: this.state.campNome,              
       email: this.state.campEmail,
       celular: this.state.campTelefone1,    
-      data_nascimento: this.state.campData_nascimento,    
+      data_nascimento: moment(this.state.campData_nascimento, "DD MM YYYY"),    
       cpf: this.state.campCpf,    
       perfilId: 2,
       statusId: this.state.campStatusId,
       situacaoId: 1
- } 
-
-     if (this.state.incluir) {      
-        console.log('incluir 1 - '+JSON.stringify(datapost, null, "    ")); 
-        api.post('/cliente/create',datapost)
-        .then(response=>{
-          if (response.data.success) {                        
-            
-            const logindata = {  
-              email: this.state.campEmail,  
-              perfilId: 2,
-              statusId: this.state.campStatusId,
-              logid: response.data.data.id
-            }
-
-            console.log('logindata 1- '+JSON.stringify(logindata, null, "    ")); 
-            api.post('/login/create',logindata)
-
-          //console.log('logprogress - '+ this.state.progresso);          
-          localStorage.setItem('lognome', this.state.campNome);  
-          localStorage.setItem('logid', response.data.data.id);
-         
-         if (localStorage.getItem('logperfil') == 1) {
-            localStorage.setItem('logperfil', 1);
-            this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
-         } else if (localStorage.getItem('logperfil') == 2) {
-             this.props.history.push(`/area_cliente_individual`);
-         } else if (localStorage.getItem('logperfil') == 7) {  
-             this.props.history.push(`/area_cliente_empresarial`);                              
-         } else if (localStorage.getItem('logperfil') == 0) {
-             this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
-         }             
-  
-          }
-          else {
-            alert("Error 34 ")              
-          }
-        }).catch(error=>{
-          alert("Erro verificar log  ")
-        })
-    } else {   
+ }      
 
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
       api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
@@ -665,7 +709,7 @@ sendSave(){
        
           if (localStorage.getItem('logperfil') == 1) {
             localStorage.setItem('logperfil', 1);
-            this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
+            this.props.history.push(`/area_administrador/`);   
          } else if (localStorage.getItem('logperfil') == 2) {
              this.props.history.push(`/area_cliente_individual`);
          } else if (localStorage.getItem('logperfil') == 7) {  
@@ -684,7 +728,7 @@ sendSave(){
         alert("Error 34 ")
       })
 
-    }      
+         
 }  
 
 verificar_menu() {   
@@ -771,7 +815,7 @@ render(){
 
 return (
 <div>    
-<div className="container_alterado">
+<div className="container_alteracao">
  {this.verificar_menu_lateral()}
 <div className="d-flex justify-content"> 
     <div>     
@@ -781,7 +825,7 @@ return (
             </div>             
             
               <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh' }} />
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
               </Container>
 
               <br/>
@@ -792,12 +836,13 @@ return (
             <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2">              
                   <FormControl variant="outlined">
-                    <InputLabel htmlFor="filled-adornment-password">CPF</InputLabel>
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">CPF</InputLabel>
                      <OutlinedInput
+                        autoComplete="off"         
                         readOnly={this.state.camp_cpf_disabled}                        
                         error={this.state.erro_cpf}
                         helperText={this.state.mensagem_cpf}
-                        className="cpf_text"                       
+                        className="data_cliente_individual"                       
                         id="outlined-basic"                      
                         variant="outlined"
                         value={this.state.campCpf}
@@ -822,20 +867,24 @@ return (
               </div>
               <div class="p-2"> 
                  <FormControl variant="outlined">
-                    <InputLabel htmlFor="filled-adornment-password">Nome</InputLabel>
-                     <OutlinedInput                      
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Nome</InputLabel>
+                     <OutlinedInput          
+                        autoComplete="off"                     
                         error={this.state.erro_nome}
                         helperText={this.state.mensagem_cpf}
-                        className="cpf_text"                       
+                        className="data_cliente_individual"                       
                         id="outlined-basic"                   
                         variant="outlined"
                         value={this.state.campNome}
                         onBlur={this.verificaNome}
-                        onFocus={this.verificaNomeonfocus}
+                        onFocus={this.verificaNomeonfocus}                        
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)
-                      }}                      
+                      }}    
+                      inputProps={{
+                        maxLength: 50,
+                      }}                  
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_nome? <CheckIcon />: ''}
@@ -850,20 +899,24 @@ return (
               </div> 
               <div class="p-2">   
                 <FormControl variant="outlined">
-                    <InputLabel htmlFor="filled-adornment-password">Data de nascimento</InputLabel>
-                     <OutlinedInput                       
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Data de nascimento</InputLabel>
+                     <OutlinedInput                  
+                        autoComplete="off"              
                         error={this.state.erro_datanascimento}
                         helperText={this.state.mensagem_data_nascimento}
-                        className="data_text"                       
+                        className="data_cliente_individual"                       
                         id="outlined-basic"                   
                         variant="outlined"
                         value={this.state.campData_nascimento}
                         onBlur={this.verificaDataNascimento}
+                        onKeyUp={this.verificaDataNascimento}
                         onChange={ (e) => {
                           this.data_nascimentochange(e)                       
                           this.validaDataNascimentoChange(e)
                         }}                                    
-                        maxlength={8}      
+                        inputProps={{
+                          maxLength: 10,
+                        }} 
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_datanascimento? <CheckIcon />: ''}
@@ -878,12 +931,13 @@ return (
               </div>
               <div class="p-2">
               <FormControl variant="outlined">
-                    <InputLabel htmlFor="filled-adornment-password">Email</InputLabel>
-                     <OutlinedInput                     
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Email</InputLabel>
+                     <OutlinedInput    
+                        autoComplete="off"                          
                         type="email"
                         error={this.state.erro_email}
                         helperText={this.state.mensagem_email}
-                        className="data_text"                       
+                        className="data_cliente_individual"                       
                         id="outlined-basic"                   
                         variant="outlined"
                         value={this.state.campEmail}
@@ -893,7 +947,10 @@ return (
                                     this.emailchange(e) 
                                     this.validateEmail(e)
                                     this.validaEmailChange(e)                                
-                                  } }                        
+                                  } }        
+                        inputProps={{
+                            maxLength: 40,
+                        }}                                                  
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_email? <CheckIcon />: ''}
@@ -908,11 +965,12 @@ return (
               </div>
               <div class="p-2">
               <FormControl variant="outlined">
-                    <InputLabel htmlFor="filled-adornment-password">Telefone</InputLabel>
-                     <OutlinedInput                  
+                    <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                     <OutlinedInput      
+                        autoComplete="off"                     
                         error={this.state.erro_telefone}
                         helperText={this.state.mensagem_telefone1}
-                        className="data_text"                       
+                        className="data_cliente_individual"                       
                         id="outlined-basic"                   
                         variant="outlined"
                         value={this.state.campTelefone1}                
@@ -934,10 +992,21 @@ return (
                    </FormHelperText>
                 </FormControl>                            
                </div>     
-            </div>              
+            </div>    
+            <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div>            
             {this.verifica_botao(this.state.inicio)}             
-         </div>                 
+         </div>                
+        <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>
    </div>  
+   
  </div>
 </div> 
   );

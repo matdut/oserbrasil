@@ -1,11 +1,14 @@
 const controllers = {}
 
+const Sequelize = require('sequelize');
+
+//const { QueryTypes } = require('sequelize');
+const Op = Sequelize.Op;
 // import model and sequelize
 var sequelize = require('../model/database');
 var Empresa = require('../model/Empresa');
 var Status = require('../model/Status');
 var Cliente = require('../model/Cliente');
-
 sequelize.sync()
 
 controllers.delete = async (req,res) => {
@@ -174,18 +177,64 @@ await Empresa.findAll({
 
 
 }  
-controllers.list = async (req,res) => {
+
+controllers.listExcluidos = async (req,res) => {
   await Empresa.findAll({   
    include: [
      { 
-       model: Cliente,       
+      model: Cliente,
+          where: { 
+            statusId: 7
+        },    
        required: true,  
        include: Status  
-     }]
+     }]    
   })
   .then( function (data){
 
+    if (data.length > 0) {
       return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }        
+      
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  }) 
+}
+controllers.list = async (req,res) => {
+/*
+  await sequelize.query(
+    "SELECT CONCAT(SUBSTRING(e.cnpj, 1,2), '.', SUBSTRING(e.cnpj,3,3), '.', SUBSTRING(e.cnpj,6,3), '/', SUBSTRING(e.cnpj,9,4), '-', SUBSTRING(e.cnpj,13, 2)) as cnpj_formatado, "+
+    "e.*, c.*,  st.* "+
+    " FROM empresas e join clientes c on e.clienteId = c.id join statuses st on st.id = c.statusId "+
+    " where c.statusId < 7",
+    {      
+      type: QueryTypes.SELECT
+    }
+  )
+  */
+  await Empresa.findAll({   
+   select: "",  
+   include: [
+     { 
+      model: Cliente,
+          where: { 
+            statusId: {
+              [Op.notIn]: [7]             
+            }
+        },    
+       required: true,  
+       include: Status  
+     }]    
+   }).then( function (data){
+
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }        
       
   })
   .catch(error => {

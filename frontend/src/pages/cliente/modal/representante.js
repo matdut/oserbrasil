@@ -1,6 +1,6 @@
 import React  from 'react';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
+import {Input, FormFeedback, Label, Button, Alert } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
@@ -9,6 +9,7 @@ import { dataMask } from '../../formatacao/datamask';
 import '../individual.css';
 import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_administrador from '../../administrador/menu_administrador';
+import Select from '@material-ui/core/Select';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -49,6 +50,7 @@ class cliente_alterarComponent extends React.Component{
       campEmail:"",      
       campTelefone1:"",
       campCpf:"",  
+      incluir: false,
       showModal: true,     
       camp_cpf_disabled: false,
       camp_nome_disabled: false,
@@ -74,8 +76,7 @@ class cliente_alterarComponent extends React.Component{
       mensagem_cpf: '',  
       mensagem_email: '',  
       mensagem_telefone1: '',
-      mensagem_data_nascimento: '',        
-      incluir: false, 
+      mensagem_data_nascimento: '',             
       inicio: 1,
       progresso: 0,   
       listaStatus: [],   
@@ -118,12 +119,21 @@ class cliente_alterarComponent extends React.Component{
     this.verificar_menu = this.verificar_menu.bind(this);    
 
     this.verifica_nome_individual = this.verifica_nome_individual.bind(this);  
+   
   }
 
   componentDidMount(){     
 
     this.carrega_status();
-    this.busca_cliente();
+    
+    //console.log('incluir modal '+localStorage.getItem('logincluir'));
+    console.log('logeditid '+localStorage.getItem('logeditid'));
+
+    if (localStorage.getItem('logeditid') !== '') {      
+       localStorage.setItem('logid', localStorage.getItem('logeditid'));
+       console.log('buscar_cliente ');
+       this.busca_cliente();
+    }   
     
     if (localStorage.getItem('logperfil') == 1) {
       this.setState({ 
@@ -131,10 +141,9 @@ class cliente_alterarComponent extends React.Component{
         camp_nome_disabled: true,
         camp_datanasc_disabled: false,
         camp_email_disabled: true,
-        camp_telefone_disabled: true,
+        camp_telefone_disabled: false,
       });
     }
-     
 
   }
 
@@ -146,13 +155,7 @@ class cliente_alterarComponent extends React.Component{
     return(    
           nome_titulo          
        );  
-  } 
-
-  handleCloseModal () {
-    this.setState({ 
-      showModal: false,  
-    });
-  }
+  }   
 
   busca_cliente() {
     const { validate } = this.state
@@ -558,32 +561,51 @@ verifica_botao(inicio) {
   const { validate } = this.state    
   if (inicio == 1) {
     return (
-
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
+     <div>         
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_excluir" p={2}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir Cliente </label>
+              </div>     
+        </Box>   
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal" p={2}>
               <div className="d-flex justify-content-center">
               <label> Salvar Alterações </label>
               </div>     
         </Box>           
+    </div>     
     );   
   } else {
   if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
       && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
       && validate.telefone1State == 'has-success') {
-        return (           
-          <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendSave()}>
-          <div className="d-flex justify-content-center">
-              <label> Salvar Alterações </label>
-          </div>     
-          </Box>           
+        return (    
+          <div>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_excluir" p={2} onClick={()=>this.sendDelete()}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir Cliente </label>
+              </div>     
+            </Box>   
+            <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
+              <div className="d-flex justify-content-center">
+                  <label> Salvar Alterações </label>
+              </div>     
+            </Box>           
+          </div>       
         );
       } else {
         return (
-
-          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
-                <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                </div>     
-          </Box>           
+          <div>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_excluir" p={2}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir Cliente </label>
+              </div>     
+            </Box>   
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal" p={2}>
+                  <div className="d-flex justify-content-center">
+                    <label> Salvar Alterações </label>
+                  </div>     
+            </Box>           
+          </div>
       );   
       }   
     }      
@@ -591,7 +613,7 @@ verifica_botao(inicio) {
  
 } 
 
-sendSave(){          
+sendSave(){            
 
   //const conversaodate = Moment("04/12/1974").format('YYYY/MM/DD');
   //console.log('data 1 - '+JSON.stringify(dateFormat("23/08/2020", 'YYYY/MM/DD'), null, "    "));  
@@ -664,10 +686,12 @@ sendSave(){
           //console.log(`/login/update/${localStorage.getItem('logid')}`); 
           api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
           
-          localStorage.setItem('lognome', this.state.campNome);  
+          localStorage.setItem('lognome', this.state.campNome);      
+           
+          this.setState({ mensagem_salvo: "Dados salvos com sucesso" });
 
-
-          this.setState({ mensagem_salvo: "Dados salvo com sucesso" })
+          //this.handleCloseModal();
+          //this.props.history.push('/lista_individual'); 
           
           //this.handleCloseModal();   
 
@@ -688,7 +712,7 @@ sendSave(){
 
         }
         else {
-          console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
+         // console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
           alert("Error na Criação verificar log")              
         }
       }).catch(error=>{
@@ -738,25 +762,7 @@ verificar_menu_lateral() {
 statusChange(e, data){
   console.log('status cliente '+e.target.value);
   const status =  e.target.value;         
-  const datapost = {
-    statusId: e.target.value         
-  }    
-  api.put(`/login/update/${data}`, datapost)
-  
-  api.put(`/cliente/update/${data}`, datapost)
-  .then(response =>{
-
-    if (response.data.success) {
-
-     this.setState({ campStatusId: status })
-    //   this.loadCliente();
-    //  this.loadFillData();  
-    }  
-    
-  })
-  .catch ( error => {
-    alert("Erro de Conexão")
-  })
+  this.setState({ campStatusId: status })  
 }
 loadStatus(){
   
@@ -824,24 +830,23 @@ validar_delete(email, id) {
 
 }
 
-sendDelete(email, userId){  
+sendDelete(){  
 
-
-  api.delete(`/login/delete/${email}`)     
+  //api.delete(`/login/delete/${email}`)     
   //console.log(`/login/delete/${email}`)
 
-  api.delete(`/cliente/delete/${userId}`)
+  //api.delete(`/cliente/delete/${userId}`)
+  const datapost = {
+    statusId: 7
+  }    
+  api.put(`/login/update/${localStorage.getItem('logid')}`, datapost)
+  
+  api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
   .then(response =>{
 
-    if (response.data.success) {       
-      //this.loadCliente()
-
-    } else {      
-      this.setState({ 
-        color: 'danger',
-        mensagem: 'Seus dados não foram apagados :)'
-      })                     
-    }
+    if (response.data.success) {             
+        
+    } 
   })
   .catch ( error => {
     alert("Error "+error)
@@ -855,7 +860,9 @@ return (
   <div className="d-flex justify-content"> 
     <div>     
             <div class="d-flex flex-column espacamento_caixa_texto">
-              <div class="p-2">              
+              <div class="p-2">  
+              <div class="d-flex justify-content-start">
+                 <div>             
                   <FormControl variant="outlined">
                     <InputLabel htmlFor="filled-adornment-password">CPF</InputLabel>
                      <OutlinedInput
@@ -884,6 +891,24 @@ return (
                          {this.state.mensagem_cpf}
                    </FormHelperText>
                   </FormControl>     
+               </div>   
+               <div>
+               <FormControl variant="outlined" className="buscar_status_modal">
+                            <InputLabel id="demo-simple-select-outlined-label">Status </InputLabel>
+                            <Select                                                    
+                              labelId="demo-simple-select-outlined-label"
+                              id="busca"
+                              value={this.state.campStatusId}                                    
+                              onChange={ (e) => {
+                                this.statusChange(e)
+                              }}                  
+                              labelWidth={100}          
+                             >                                            
+                              {this.loadStatus()}                    
+                              </Select>
+                          </FormControl>                           
+               </div>
+              </div> 
               </div>
               <div class="p-2"> 
                  <FormControl variant="outlined">
@@ -892,7 +917,7 @@ return (
                         readOnly={this.state.camp_nome_disabled}                     
                         error={this.state.erro_nome}
                         helperText={this.state.mensagem_cpf}
-                        className="cpf_text"                       
+                        className="nome_text"                       
                         id="outlined-basic"                   
                         variant="outlined"
                         value={this.state.campNome}
@@ -1002,30 +1027,7 @@ return (
                          {this.state.mensagem_telefone1}
                    </FormHelperText>
                 </FormControl>                            
-               </div> 
-               <div class="p-2">
-                  <div class="d-flex justify-content-start">
-                       <div> 
-                           <Input                             
-                              type="select" 
-                              name="select"                               
-                              id="exampleSelect" 
-                              className="autocomplete_marca"                              
-                              value={this.state.campStatusId}                                                                   
-                              onChange={ (e) => {
-                                this.statusChange(e, localStorage.getItem('logid'))                                                
-                              }}                                                          >
-                              <option selected>Selecione o status</option>               
-                              {this.loadStatus()}   
-                          </Input>                                                                
-                       </div>                       
-                       <div className="alignright">
-                       <IconButton aria-label="delete" onClick={()=>this.onDelete(this.state.campEmail, localStorage.getItem('logid'))}>
-                          <DeleteIcon />
-                        </IconButton>    
-                       </div>    
-                  </div>        
-               </div> 
+               </div>               
                <FormHelperText>
                    {this.state.mensagem_salvo}
                </FormHelperText>                 

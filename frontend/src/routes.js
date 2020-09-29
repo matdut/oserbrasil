@@ -224,7 +224,7 @@ export default function Routes() {
              <Route path="/incluir_documentos/:id" component={incluir_documentos} />
              <Route path="/alterar_veiculos/:id" component={alterar_Veiculos} />                   
              <Route path="/alterar_documentos/:id" component={alterar_documentos} />
-
+          
              <Route path="/operadores_incluir/:id/:email" component={Operador_cadastro_incluir} />
              <Route path="/senha_operador_incluir/:id" component={Operador_senha_incluir} />         
 

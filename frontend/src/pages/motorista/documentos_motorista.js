@@ -7,7 +7,9 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Menu_motorista from './menu_motorista';
+import Menu_administrador from '../administrador/menu_administrador';
 import Resizer from 'react-image-file-resizer';
+import Typography from '@material-ui/core/Typography';
 
 import api from '../../services/api';
 import './documentos.css';
@@ -113,110 +115,55 @@ class empresarialComponent extends React.Component{
 
   }
  
+  verificar_menu_lateral() {
+
+    if (localStorage.getItem('logperfil') == 1) {
+     return( 
+       <Menu_administrador />     
+     );
+    } else if (localStorage.getItem('logperfil') == 3) {
+     return( 
+       <Menu_motorista />     
+     );
+    }
+  
+  }
  
 verifica_botao(inicio) {
    // console.log(JSON.stringify(this.state, null, "    "));
    // console.log(JSON.stringify(inicio, null, "    "));
-   if (localStorage.getItem('logperfil') == 0) {
-      if (inicio == 1) {
+   if (inicio == 1) {
+    return (
+
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
+              <div className="d-flex justify-content-center">
+              <label> Próximo </label>
+              </div>     
+        </Box>           
+    );   
+  } else {
+      //console.log(JSON.stringify(this.state, null, "    "));
+      //  console.log(JSON.stringify(' validacao campo ', null, "    "));
+        if (this.state.foto1State == 'has-success') {
+
+          return (
+            <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
+            <div className="d-flex justify-content-center">
+            <label> Próximo </label>
+            </div>     
+            </Box>           
+          );         
+      } else {
         return (
-    
+
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                   <div className="d-flex justify-content-center">
                   <label> Próximo </label>
                   </div>     
             </Box>           
         );   
-      } else {
-          //console.log(JSON.stringify(this.state, null, "    "));
-          //  console.log(JSON.stringify(' validacao campo ', null, "    "));
-            if (this.state.foto1State == 'has-success') {
-
-              return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
-                <div className="d-flex justify-content-center">
-                <label> Próximo </label>
-                </div>     
-                </Box>           
-              );         
-          } else {
-            return (
-    
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-                      <div className="d-flex justify-content-center">
-                      <label> Próximo </label>
-                      </div>     
-                </Box>           
-            );   
-          }         
-      }
-    } else if (localStorage.getItem('logperfil') == 1) {
-      if (inicio == 1) {
-        return (
-    
-          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {          
-          //  console.log(JSON.stringify(' validacao campo ', null, "    "));
-          if (this.state.foto1State == 'has-success') {
-
-              return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
-                <div className="d-flex justify-content-center">
-                <label> Salvar Alterações </label>
-                </div>     
-                </Box>           
-              );         
-        }  else {
-          return (
-  
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-                    <div className="d-flex justify-content-center">
-                    <label> Próximo </label>
-                    </div>     
-              </Box>           
-          );   
-        }              
-      }
-
-    } else if (localStorage.getItem('logperfil') == 3) {
-      if (inicio == 1) {
-        return (
-    
-
-          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {    
-          
-          if (this.state.foto1State == 'has-success') {
-
-              return (
-                <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
-                <div className="d-flex justify-content-center">
-                <label> Salvar Alterações </label>
-                </div>     
-                </Box>           
-              );         
-        }  else {
-          return (
-  
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-                    <div className="d-flex justify-content-center">
-                    <label> Próximo </label>
-                    </div>     
-              </Box>           
-          );   
-        }              
-      }
-    }     
+      }         
+  }  
   }  
   onChange = async (file) => { 
     const image = await resizeFile(file);
@@ -334,77 +281,73 @@ handleUploadCNH = files => {
 }
 
 verificar_menu(){
-  if (localStorage.getItem('logperfil') == 0) {  
-    return(
-      <div>
-          <div className="d-flex justify-content-around">             
-               <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_representante">                
-                     <label> faça o upload dos seus documentos. </label>                        
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                  </div>   
-               </div>   
-             
-          </div>              
-          <div>
-                <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-          </div>
-     </div>    
-    );
 
-  } else if (localStorage.getItem('logperfil') == 1) { 
-    return(
-      <div>
-          <div className="d-flex justify-content-around">             
-               <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_representante">                
-                     <label> faça o upload dos seus documentos. </label>                        
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                  </div>              
-               </div>   
-        </div>   
-        <div>
-                <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-          </div>                     
-     </div>    
-    );
-  } else if (localStorage.getItem('logperfil') == 3) { 
-    return(
-      <div>
-          <div className="d-flex justify-content-around">             
-               <div className="botao_navegacao">      
-               </div>                  
-               <div>
-                 <div className="titulo_representante">                
-                     <label> faça o upload dos seus documentos. </label>                        
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">                                          
-                  </div>   
-               </div>   
+  return(
+    <div>
+        <div className="d-flex justify-content-around">             
+             <div className="botao_navegacao">
+               <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+             </div>                  
+             <div>
+               <div className="titulo_representante">                
+                   <label> faça o upload dos seus documentos. </label>                        
+               </div>
+             </div>   
              
-          </div>                        
-     </div>    
-    );
-  }  
+             <div>
+                <div className="botao_navegacao">
+                   <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
+                </div>   
+             </div>   
+           
+        </div>              
+        <div>
+              <Progress color="warning" value={this.state.progresso} className="progressbar"/>
+        </div>
+   </div>    
+  );  
+}
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
+
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
 }
 
 render(){  
@@ -412,13 +355,25 @@ render(){
   
 return (
 <div>    
-<div className="container_alterado">
-  <Menu_motorista />  
+<div className="container_alteracao">
+ {this.verificar_menu_lateral()}
 <div className="d-flex justify-content"> 
-   <div className="area_esquerda">      
-       {this.verificar_menu()}   
-          
-          <div className="d-flex flex-column">              
+    <div>     
+    <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
+
+              <br/>
+              <br/>
+              <br/>
+          </div> 
+
+            <div class="d-flex flex-column espacamento_caixa_texto">          
               <div class="p-2">    
               <div class="d-flex justify-content-start">
                  <div>
@@ -471,7 +426,12 @@ return (
               </div>
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                 
+    </div>   
+    <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>                  
    </div>  
   </div> 
 </div> 

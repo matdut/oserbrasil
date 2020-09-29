@@ -64,12 +64,16 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logemail');
     localStorage.removeItem('lognome');       
     localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');   
-    localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
+    localStorage.removeItem('logperfil'); 
+    localStorage.removeItem('logcep');      
+    localStorage.removeItem('logclienteId');
+    localStorage.removeItem('logcpfrep');
+    localStorage.removeItem('logdocumento');
+    localStorage.removeItem('logemailId');
+    localStorage.removeItem('logeventoId');
+    localStorage.removeItem('logMarca');
+    localStorage.removeItem('logmatrizId');
+    localStorage.removeItem('logModelo');    
 
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);
@@ -157,7 +161,7 @@ class menu_clienteComponent extends React.Component  {
     </div>         
     
      <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50"/>
+        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
        <div className="data_versao"> 07/09/20 v1.8.0 </div>
      </div>  
    </div>                                       

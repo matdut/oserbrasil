@@ -8,6 +8,26 @@ import { cpfMask } from '../../formatacao/cpfmask';
 import api from '../../../services/api';
 import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
 import Menu_administrador from '../../administrador/menu_administrador';
+import { dataMask } from '../../formatacao/datamask';
+
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import FilledInput from '@material-ui/core/FilledInput';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
+import FormHelperText from '@material-ui/core/FormHelperText';
+
+import CheckIcon from '@material-ui/icons/Check';
+
+import TextField from '@material-ui/core/TextField';
+import { Data } from '@react-google-maps/api';
+
 
 import '../empresarial.css';
 var dateFormat = require('dateformat');
@@ -28,6 +48,7 @@ class empresarialComponent extends React.Component{
       logrepresentante: "",
       campData_nascimento:"",
       campEmail:"",      
+      campEmailAnterior:"",    
       campTelefone1:"",
       campCpf:"",
       campStatusId: '',
@@ -41,7 +62,18 @@ class empresarialComponent extends React.Component{
       mensagem_data_nascimento: '',        
       incluir: false, 
       inicio: 1,
-      progresso: 0,      
+      mensagem_aguarde: '',
+      progresso: 0,    
+      erro_cpf: false,
+      erro_nome: false,
+      erro_datanascimento: false,
+      erro_email: false,
+      erro_telefone: false,
+      validacao_cpf: false,
+      validacao_nome: false,
+      validacao_datanascimento: false,
+      validacao_email: false,
+      validacao_telefone: false,  
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -85,6 +117,7 @@ class empresarialComponent extends React.Component{
   }
 
   componentDidMount(){ 
+    moment.locale('pt-br');
    // localStorage.clear();
    let userId = this.props.match.params.id;        
 
@@ -171,17 +204,23 @@ class empresarialComponent extends React.Component{
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
-           
+          const dataF = new Data(res.data.data[0].data_nascimento);  
           this.setState({ 
             campCpf: res.data.data[0].cpf,
             campNome: res.data.data[0].nome,
-            campData_nascimento: res.data.data[0].data_nascimento,
+            campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].email,      
+            campEmailAnterior: res.data.data[0].email,         
             campTelefone1: res.data.data[0].celular,
             //campCnpj: res.data.data[0].cnpj,
             campStatusId: res.data.data[0].statusId, 
             incluir: false,           
-            inicio: 2
+            inicio: 2,
+            validacao_cpf: true,
+            validacao_datanascimento: true,
+            validacao_email: true,
+            validacao_nome: true,
+            validacao_telefone: true,
           })  
 
           this.setState({                  
@@ -224,7 +263,9 @@ class empresarialComponent extends React.Component{
     if (e.target.value.length == 0) {
       validate.cpfState = ''
       this.setState({ 
-        validate,               
+        validate,            
+        erro_cpf: false,   
+        validacao_cpf: false,        
         mensagem_cpf: ''  
        })            
     }  
@@ -234,7 +275,9 @@ class empresarialComponent extends React.Component{
     if (e.target.value.length == 0) {
       validate.nomeState = ''
       this.setState({ 
-        validate,               
+        validate,       
+        erro_nome: false,   
+        validacao_nome: false,            
         mensagem_nome: ''  
        })            
     }  
@@ -246,10 +289,14 @@ class empresarialComponent extends React.Component{
       validate.emailState = ''
       this.setState({ 
           validate,
+          erro_email: false,   
+          validacao_email: false,    
           mensagem_email: ''  
       })                   
     } else {
-      this.busca_email_ja_cadastrado(e.target.value)         
+      if (this.state.campEmailAnterior !== e.target.value) {
+         this.busca_email_ja_cadastrado(e.target.value)         
+      }   
     }            
    } 
 
@@ -258,7 +305,8 @@ class empresarialComponent extends React.Component{
     validate.telefone1State = ''
        this.setState({ 
             validate,
-           // progresso: 30,
+            erro_telefone: false,   
+            validacao_telefone: true,    
             mensagem_telefone1: ''              
         })                   
    } 
@@ -267,18 +315,21 @@ class empresarialComponent extends React.Component{
    const { validate } = this.state
   api.get(`/cliente/getClienteCpf/${e.target.value}`)
   .then(res=>{
-      console.log(JSON.stringify(res.data, null, "    ")); 
+    /*  console.log(JSON.stringify(res.data, null, "    ")); 
       validate.cpfState = 'has-success'
       this.setState({ 
+        erro_cpf: false,   
+        validacao_cpf: true,    
         mensagem_cpf: ''  
-      });
+      }); */
 
-      this.state.incluir= true 
-
-     /* if (res.data.data.length > 0) {
+     // this.state.incluir= true 
+      if (res.data.data.length > 0) {
          
          validate.cpfState = 'has-danger'
          this.setState({ 
+            erro_cpf: true,   
+            validacao_cpf: false,    
             mensagem_cpf: 'Representante já cadastrado'  
          });
 
@@ -286,11 +337,13 @@ class empresarialComponent extends React.Component{
       } else {
           validate.cpfState = 'has-success'
           this.setState({ 
+            erro_cpf: false,   
+            validacao_cpf: true,  
             mensagem_cpf: ''  
           });
 
           this.state.incluir= true 
-      } */  
+      }   
     })        
     .catch(error=>{
       alert("Error de conexão  "+error)
@@ -311,7 +364,7 @@ class empresarialComponent extends React.Component{
     });    
   } 
   data_nascimentochange(e) {
-    this.setState({ campData_nascimento: e.target.value })
+    this.setState({ campData_nascimento: dataMask(e.target.value) })
   }
 
   verificaCpf(e) {
@@ -329,7 +382,9 @@ class empresarialComponent extends React.Component{
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
-          mensagem_cpf: 'O campo CPF é obrigatório'  
+          erro_cpf: false,   
+          validacao_cpf: false,    
+          mensagem_cpf: ''  
          })            
        } else if (e.target.value.length == 14) {
         if (cpf.isValid(e.target.value)) {
@@ -358,22 +413,23 @@ class empresarialComponent extends React.Component{
         campData_nascimento: '',
         campEmail: '',
         campTelefone1: '',
-        inicio: 1,
+        inicio: 1,     
+        erro_cpf: true,   
+        validacao_cpf: false,       
         mensagem_cpf: 'O campo CPF é obrigatório'  
         })            
       }  
    }
   
-  verificaTelefone1(e) {
-    console.log('Keypress - '+this.state.campTelefone1)
-    console.log('Keypress length - '+this.state.campTelefone1.length)
-    console.log('Keypress length - '+e.target.value.length)
+  verificaTelefone1(e) {    
     const { validate } = this.state
        if (e.target.value.length < 15) {          
         validate.telefone1State = 'has-danger'
         this.setState({ 
           validate,
           inicio: 1,
+          erro_telefone: true,   
+          validacao_telefone: false,    
           mensagem_telefone1: 'O campo Telefone é obrigatório.'
          })      
        } else {       
@@ -381,6 +437,8 @@ class empresarialComponent extends React.Component{
         if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success' ;                
             this.setState({ 
+              erro_telefone: false,   
+              validacao_telefone: true,    
               mensagem_telefone1: ''
           });           
         }
@@ -398,9 +456,17 @@ class empresarialComponent extends React.Component{
               validate.emailState = 'has-danger'
                 this.setState({ 
                   validate,
+                  erro_email: true,   
+                  validacao_email: false,    
                   mensagem_email: 'Email já cadastrado.'  
               })                                 
-      }      
+      } else {
+        this.setState({         
+          erro_email: false,   
+          validacao_email: true,    
+          mensagem_email: ''  
+      })
+      }     
     })        
     .catch(error=>{
       alert("Erro de conexão 3"+error)
@@ -412,11 +478,15 @@ class empresarialComponent extends React.Component{
       validate.emailState = 'has-danger'
       this.setState({ 
         validate,
-        mensagem_email: 'Email é obrigatório.'  
+        erro_email: false,   
+        validacao_email: false,    
+        mensagem_email: ''  
     })
     } else if (e.target.value.length > 0 && validate.emailState == 'has-danger') {
     this.setState({ 
       validate,
+      erro_email: true,   
+      validacao_email: false,    
       mensagem_email: 'Email é obrigatório.'  
      })                                   
     }    
@@ -427,12 +497,16 @@ class empresarialComponent extends React.Component{
         validate.nomeState = 'has-danger'
         this.setState({ 
           validate,
-          mensagem_nome: 'O campo nome é obrigatório.'  
+          erro_nome: false,   
+          validacao_nome: false,    
+          mensagem_nome: ''  
          })      
        } else {
         validate.nomeState = 'has-success' ;        
 
         this.setState({ 
+          erro_nome: false,   
+          validacao_nome: true,    
           mensagem_nome: ''
        });  
 
@@ -444,16 +518,20 @@ class empresarialComponent extends React.Component{
         validate.datanascimentoState = 'has-danger'
         this.setState({ 
           validate,
-          mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
+          erro_datanascimento: false,   
+          validacao_datanascimento: false,    
+          mensagem_data_nascimento: ''  
          })      
-       } else {
+       } else if (this.state.campData_nascimento.length == 10) {
 
-          validate.datanascimentoState = 'has-success' ;        
-          this.setState({ 
-            mensagem_data_nascimento: ''
-          });     
+        validate.datanascimentoState = 'has-success' ;        
+        this.setState({ 
+          erro_datanascimento: false,   
+          validacao_datanascimento: true,    
+          mensagem_data_nascimento: ''
+        });     
 
-       }        
+     }           
    }
 
   validaEmailChange = async (event) => {
@@ -474,14 +552,26 @@ class empresarialComponent extends React.Component{
           validate.emailState = 'has-success'     
          // console.log(' valida email - '+e.target.value);   
           //console.log(' valida email - '+this.state.campEmail);   
-          this.busca_email_ja_cadastrado(e.target.value)                
+         if (this.state.campEmailAnterior !== e.target.value) {
+            this.busca_email_ja_cadastrado(e.target.value)                
+         } else {
+           this.setState({ 
+             validate,
+             erro_email: false,
+             validacao_email: true,
+             mensagem_email: '' 
+           })          
+         }                  
                   
           
       } else {
         validate.emailState = 'has-danger'
         this.setState({ 
           validate,
-          mensagem_email: '' })  
+         // erro_email: true,   
+         // validacao_email: false,    
+          mensagem_email: ''
+         })  
       }
 
       this.setState({ validate })
@@ -494,18 +584,24 @@ class empresarialComponent extends React.Component{
       
         if (e.target.value.length == 0) {
           validate.cpfState = ''
-          this.setState({ mensagem_cpf: '' })  
+          this.setState({ 
+            erro_cpf: false,   
+            validacao_cpf: false,    
+            mensagem_cpf: '' 
+          })  
         } else if (e.target.value.length == 14) {          
-          //valida o cpf 
-           console.log('e.target.value - '+e.target.value);
+          //valida o cpf          
            if (cpf.isValid(e.target.value)) {
-               //cpf válido 
-               console.log('é valido - '+e.target.value);
+               //cpf válido             
                this.busca_cpf(e);// se existir não deixa cadastrar
 
            } else {
             validate.cpfState = 'has-danger'       
-            this.setState({ mensagem_cpf: 'O campo CPF é inválido' })     
+            this.setState({ 
+              erro_cpf: true,   
+              validacao_cpf: true,    
+              mensagem_cpf: 'O campo CPF é inválido' 
+            })     
            } 
         //  this.busca_cpf(e) 
         //  validate.cpfState = 'has-success'       
@@ -518,18 +614,23 @@ class empresarialComponent extends React.Component{
       const { validate } = this.state
        
         if (e.target.value.length == 0) {
-          validate.telefone1State = 'has-danger'
-          this.setState({ mensagem_telefone1: 'O campo Telefone é obrigatório.' })  
+          validate.telefone1State = ''
+          this.setState({ 
+            erro_telefone: false,   
+            validacao_telefone: false,    
+            mensagem_telefone1: '' 
+          })  
         } else {          
           
           if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success'       
-            this.setState({ mensagem_telefone1: '' })  
-
             this.setState({ 
+              erro_telefone: false,   
+              validacao_telefone: false,    
+              mensagem_telefone1: '',
               inicio: 2,
-              progresso: 35
-            });             
+              progresso: 35 
+            })                 
           }          
         }  
         this.setState({ validate })
@@ -541,10 +642,18 @@ validaNomeChange(e){
   
     if (e.target.value.length == 0) {
       validate.nomeState = ''
-      this.setState({ mensagem_nome: '' })  
+      this.setState({ 
+        erro_nome: false,   
+        validacao_nome: false,    
+        mensagem_nome: '' 
+      })  
     } else if (e.target.value.length > 0) {      
       validate.nomeState = 'has-success'       
-      this.setState({ mensagem_nome: '' })  
+      this.setState({ 
+        erro_nome: false,   
+        validacao_nome: false,    
+        mensagem_nome: ''
+       })  
     }  
     this.setState({ validate })  
 }
@@ -553,35 +662,11 @@ validaDataNascimentoChange(e){
   
     if (e.target.value.length < 10) {
       validate.datanascimentoState = 'has-danger'
-      this.setState({ mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' })  
-    } else {    
-      
-      if (e.target.value.length == 13) {
-        
-        //var data_nascimento = new Date(e.target.value).toString;  
-        //console.log('e.target.value.length - '+e.target.value.length);
-        if (dateFormat(e.target.value) ) {
-          validate.datanascimentoState = 'has-success' ;        
-          this.setState({ 
-            mensagem_data_nascimento: '',  
-          });  
-
-        } else {
-         // console.log('DATA NASCIMENTO - '+this.state.campData_nascimento)
-          validate.datanascimentoState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_data_nascimento: 'Formato inválido'  
-          })      
-        }    
-      } else if (e.target.value.length > 10) {
-        validate.datanascimentoState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_data_nascimento: 'Formato inválido'  
-          })      
-      }
-      
+      this.setState({ 
+        erro_datanascimento: true,   
+        validacao_datanascimento: true,    
+        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
+      })  
     }  
     this.setState({ validate })
 }
@@ -625,11 +710,18 @@ verifica_botao(inicio) {
 } 
 
 sendSave(){        
+  const { validate } = this.state;       
+  validate.cpfState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, salvando os dados...',       
+     validate 
+  }); 
+
   const datapost = {
     nome: this.state.campNome,              
     email: this.state.campEmail,
     celular: this.state.campTelefone1,    
-    data_nascimento: this.state.campData_nascimento,    
+    data_nascimento: moment(this.state.campData_nascimento, "DD MM YYYY"),     
     cpf: this.state.campCpf,
     statusId: this.state.campStatusId,
     perfilId: 7,    
@@ -637,7 +729,7 @@ sendSave(){
   }
       
 
-    if (this.state.incluir) {
+    if (this.state.incluir == true) {
         console.log('incluir - '+JSON.stringify(datapost, null, "    "));         
         api.post('/cliente/create',datapost)
         .then(response=>{
@@ -651,23 +743,15 @@ sendSave(){
               logid: response.data.data.id
             }
 
-            api.post('/login/create',logindata)
+           api.post('/login/create',logindata)
             
-          //console.log('logprogress - '+ this.state.progresso);  
-          //localStorage.setItem('logrepresentante', response.data.data[0].id);  
-          //localStorage.setItem('lognome', this.state.campNome);  
+      
           localStorage.setItem('logrepresentante', response.data.data.id);
           localStorage.setItem('logcpfrep', response.data.data.cpf);
           localStorage.setItem('logid', response.data.data.id);          
-          if (localStorage.getItem('logperfil') == 1) {            
-            this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logrepresentante'));   
-          } else if (localStorage.getItem('logperfil') == 2) {
-            this.props.history.push(`/area_cliente_individual`);       
-          } else if (localStorage.getItem('logperfil') == 7) {
-             this.props.history.push(`/area_cliente_empresarial`);                              
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logrepresentante'));     
-          }                      
+
+          this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logid'));   
+          
   
           }
           else {
@@ -677,110 +761,59 @@ sendSave(){
           alert("Erro verificar log  ")
         })
     } else {
-      console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/cliente/update/${localStorage.getItem('logrepresentante')}`, datapost)
+      console.log('atualizar - '+JSON.stringify(datapost, null, "    "));         
+      api.put('/cliente/update/'+localStorage.getItem('logrepresentante'),datapost)
       .then(response=>{
-        if (response.data.success==true) {                        
+        //console.log( JSON.stringify(response.data, null, "    ") ); 
+        if (response.data.success==true) {       
           
           const logindata = {  
             email: this.state.campEmail,  
             perfilId: 7,
-            statusId: this.state.campStatusId
+            statusId: this.state.campStatusId,
+            logid: localStorage.getItem('logrepresentante')
           }
 
-          api.put(`/login/update/${localStorage.getItem('logrepresentante')}`,logindata)
-         
-          if (localStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logid'));   
-          } else if (localStorage.getItem('logperfil') == 2) {
-             this.props.history.push(`/area_cliente_individual`);       
-          } else if (localStorage.getItem('logperfil') == 7) {               
-             this.props.history.push(`/area_cliente_empresarial`);                              
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logid'));     
-          }                      
-          
+        api.put('/login/update/'+localStorage.getItem('logrepresentante'),logindata)          
+
+        this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logid'));           
 
         }
         else {
-          alert("Error 34 ")              
+          alert("Error de conexão ")              
         }
       }).catch(error=>{
-        alert("Error 34 ")
+        alert("Erro verificar log  ")
       })
 
-    }      
-}  
-
+    }
+ }
 verificar_menu(perfil) {   
 
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
+  return(
     <div>
     <div className="d-flex justify-content-around">
         <div className="botao_navegacao">          
-        <Link to={'/tipo'}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+
         </div>                  
         <div>
-          <div className="titulo_representante">                
+          <div className="titulo_representante_empresa">                
             <label>  Representante da Empresa  </label>            
           </div>
         </div>   
         
         <div>
           <div className="botao_navegacao">        
+          <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                        
           </div>   
         </div>
     </div>  
             <br/>
-            <div>
+            <div className="barra_incluir">
                     <Progress color="warning" value={this.state.progresso} className="progressbar"/>
               </div>   
           </div>               
    );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div className="d-flex justify-content-around">
-      <div className="botao_navegacao">
-        <Link to={'/lista_empresarial'}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-      </div>                  
-      <div>
-        <div className="titulo_representante">                
-          <label>  Representante da Empresa  </label>            
-        </div>
-      </div>   
-      
-      <div>
-        <div className="botao_navegacao">        
-        </div>   
-      </div>   
-  </div>  
-      );
-
-  } else if (localStorage.getItem('logperfil') == 7) { // CLIENTE EMPRESARIAL      
-  
-      return(
-        <div className="d-flex justify-content-around">
-        <div className="botao_navegacao">              
-        </div>                  
-        <div>
-          <div className="titulo_representante">                
-            <label>  Representante da Empresa {this.verifica_nome_empresa(this.state.camprazao_social)}, altere seus dados </label>            
-          </div>
-        </div>   
-        
-        <div>
-          <div className="botao_navegacao">        
-          </div>   
-        </div>   
-    </div>  
-        );
-  
-  }
-
-
 }
 
 verificar_menu_lateral() {
@@ -813,143 +846,181 @@ return (
     <div className="area_esquerda">     
     {this.verificar_menu()}  
          
-            <div class="d-flex flex-column espacamento_caixa_texto">
-              <div class="p-2"> 
-                  <label for="inputPassword4">CPF *</label>
-                    <Input 
-                        disabled={this.state.camp_cpf_disabled}
-                        className="input_text_empresa"                        
-                        type="text"
-                        name="cpf"
-                        id="examplcpf"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
+    <div className="d-flex flex-column espacamento_caixa_texto">        
+              <div className="p-2"> 
+               <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">CPF</InputLabel>
+                     <OutlinedInput 
+                        autoComplete="off"                                   
+                        type="text"                       
+                        error={this.state.erro_cpf}
+                        helperText={this.state.mensagem_cpf}
+                        className="data_text"
+                        id="cpf_incluir"                      
+                        variant="outlined"
                         value={this.state.campCpf}
-                        valid={ this.state.validate.cpfState === 'has-success' }
-                        invalid={ this.state.validate.cpfState === 'has-danger' }
-                        onBlur={this.verificaCpfonblur}
                         onKeyUp={this.verificaCpf}
                         onFocus={this.verificaCpfonfocus}
+                        onBlur={this.verificaCpfonblur}
                         onChange={ (e) => {
-                          this.cpfchange(e)                       
-                          this.validaCpfChange(e)
-                        }}         
-                        maxlength="14"                                                                 
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.cpfState}>
-                          {this.state.mensagem_cpf}
-                      </FormFeedback> 
+                         this.cpfchange(e)                       
+                         this.validaCpfChange(e)
+                        }}                                      
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cpf? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />
+                   <FormHelperText error={this.state.erro_cpf}>
+                         {this.state.mensagem_cpf}
+                   </FormHelperText>
+                  </FormControl>      
+              
               </div>
-              <div class="p-2"> 
-                  <label for="inputEmail4">Nome *</label>
-                  <Input      
-                      disabled={this.state.camp_nome_disabled}
-                      className="input_text_empresa"                  
-                      type="text"
-                      name="nome"
-                      id="examplnome"
-                      placeholder=""
-                      autoComplete='off'
-                      autoCorrect='off'
-                      value={this.state.campNome}
-                      valid={ this.state.validate.nomeState === 'has-success' }
-                      invalid={ this.state.validate.nomeState === 'has-danger' }
-                      onBlur={this.verificaNome}
-                      onFocus={this.verificaNomeonfocus}
+              <div className="p-2"> 
+                 <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome</InputLabel>
+                     <OutlinedInput
+                        autoComplete="off"
+                        type="text"                       
+                        error={this.state.erro_nome}
+                        helperText={this.state.mensagem_cpf}
+                        className="data_text"                      
+                        id="nome_incluir"                   
+                        variant="outlined"
+                        value={this.state.campNome}
+                        onBlur={this.verificaNome}
+                        onFocus={this.verificaNomeonfocus}
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)
                       }}    
-                      maxlength="120"                                                                      
-                    />                                
-                    <FormFeedback 
-                    invalid={this.state.validate.nomeState}>
-                        {this.state.mensagem_nome}
-                    </FormFeedback> 
+                      inputProps={{
+                        maxLength: 50,
+                      }}                  
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_nome? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />
+                   <FormHelperText error={this.state.erro_nome}>
+                         {this.state.mensagem_nome}
+                   </FormHelperText>
+                  </FormControl>      
               </div> 
-              <div class="p-2">                                
-                  <Label for="exampleDatetime">Data de nascimento *</Label>
-                  <Input                                    
-                    className="input_text_empresa_date"                  
-                    type="date"
-                    name="senha2"
-                    id="exampleEmail2"                    
-                    placeholder=""
-                    autoComplete='off'
-                    autoCorrect='off'
-                    value={this.state.campData_nascimento}
-                    valid={ this.state.validate.datanascimentoState === 'has-success' }
-                    invalid={ this.state.validate.datanascimentoState === 'has-danger' }
-                    onBlur={this.verificaDataNascimento}
-                    onChange={ (e) => {
-                      this.data_nascimentochange(e)                       
-                      this.validaDataNascimentoChange(e)
-                    }}  
-                    maxlength="10"               
-                  />                                
-                  <FormFeedback 
-                  invalid={this.state.validate.datanascimentoState}>
-                       {this.state.mensagem_data_nascimento}
-                  </FormFeedback>  
+              <div className="p-2">   
+                <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Data de nascimento</InputLabel>
+                     <OutlinedInput    
+                        autoComplete="off"                     
+                        error={this.state.erro_datanascimento}
+                        helperText={this.state.mensagem_data_nascimento}
+                        className="data_text"                
+                        id="data_incluir"                   
+                        variant="outlined"
+                        value={this.state.campData_nascimento}
+                        onBlur={this.verificaDataNascimento}
+                        onKeyUp={this.verificaDataNascimento}
+                        onChange={ (e) => {
+                          this.data_nascimentochange(e)                       
+                          this.validaDataNascimentoChange(e)
+                        }}                                    
+                        inputProps={{
+                          maxLength: 10,
+                        }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_datanascimento? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={180}                      
+                    />
+                   <FormHelperText error={this.state.erro_datanascimento}>
+                         {this.state.mensagem_data_nascimento}
+                   </FormHelperText>
+                </FormControl>  
               </div>
-              <div class="p-2">
-                      <label for="email1">Email *</label>
-                      <Input         
-                        className="input_text_empresa"
+              <div className="p-2">
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Email</InputLabel>
+                     <OutlinedInput          
+                        autoComplete="off"                  
                         type="email"
-                        ref={this.textInput} 
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
+                        error={this.state.erro_email}
+                        helperText={this.state.mensagem_email}
+                        className="data_text"                 
+                        id="email_incluir"                   
+                        variant="outlined"
                         value={this.state.campEmail}
-                        valid={ this.state.validate.emailState === 'has-success' }
-                        invalid={ this.state.validate.emailState === 'has-danger' }
-                        onBlur={this.verificaEmail}
-                        //onKeyPress={this.verificaEmail}
+                        onBlur={this.verificaEmail}                     
                         onFocus={this.verificaEmailonfocus}
                         onChange={ (e) => {
                                     this.emailchange(e) 
                                     this.validateEmail(e)
                                     this.validaEmailChange(e)                                
-                                  } }
-                        maxlength="80"          
-                      />                  
-                      <FormFeedback 
-                      invalid={this.state.validate.emailState}>
-                          {this.state.mensagem_email}
-                      </FormFeedback> 
+                                 } }                        
+                        inputProps={{
+                           maxLength: 50,
+                        }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_email? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}                      
+                    />
+                   <FormHelperText error={this.state.erro_email}>
+                         {this.state.mensagem_email}
+                   </FormHelperText>
+                </FormControl>                       
               </div>
-              <div class="p-2">
-                      <label for="inputEmail4">Telefone *</label>                     
-                      <Input                        
-                        className="input_text_empresa"
-                        type="text"
-                        name="senha2"
-                        id="exampleEmail2"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campTelefone1}
-                        valid={ this.state.validate.telefone1State === 'has-success' }
-                        invalid={ this.state.validate.telefone1State === 'has-danger' }
-                        onBlur={this.verificaTelefone1}
+              <div className="p-2">
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                     <OutlinedInput     
+                        autoComplete="off"                              
+                        type="text"                                      
+                        error={this.state.erro_telefone}
+                        helperText={this.state.mensagem_telefone1}
+                        className="data_text"                   
+                        id="telefone_incluir"                   
+                        variant="outlined"
+                        value={this.state.campTelefone1}                
+                        onKeyUp={this.verificaTelefone1}            
                         onFocus={this.verificaTelefone1onfocus}
                         onChange={ (e) => {
                           this.telefone1change(e)                       
                           this.validatelefone1Change(e)
-                        }}                
-                        maxlength="16"                                                          
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.telefone1State}>
-                          {this.state.mensagem_telefone1}
-                      </FormFeedback>
-               </div>
-            </div>                
+                        }}                                      
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_telefone? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={80}                      
+                    />
+                   <FormHelperText error={this.state.erro_telefone}>
+                         {this.state.mensagem_telefone1}
+                   </FormHelperText>
+                </FormControl>                            
+               </div>          
+            </div>     
+            <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div>         
             {this.verifica_botao(this.state.inicio)}             
-         </div>                 
+         </div>     
+         <div className="area_neutra">
+              <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '244px' }} />
+              </Container>            
+         </div>             
       </div>   
    </div>  
 </div> 

@@ -14,6 +14,9 @@ import FormControl from '@material-ui/core/FormControl';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 import Menu_operador from '../menu_operador';
+import Menu_administrador from '../../administrador/menu_administrador';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 //const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -121,11 +124,11 @@ class empresarialComponent extends React.Component{
       perfil: localStorage.getItem('logperfil'),
       progresso: 95
     });  
-
+/*
     if (userId !== 0) {
       localStorage.setItem('logoperadorId', userId);      
     } 
-    
+  */  
     //if (localStorage.getItem('logid') !== 0) { 
       this.carrega_senha(); 
       this.carrega_operador()
@@ -163,7 +166,7 @@ class empresarialComponent extends React.Component{
       } 
     })        
     .catch(error=>{
-      alert("Error de conexão  "+error)
+      alert("Error de conexão  1  "+error)
     })     
   }
 
@@ -176,13 +179,15 @@ class empresarialComponent extends React.Component{
 
   carrega_operador() {
     const { validate } = this.state;
+
+    console.log('logoperador '+ localStorage.getItem('userId'));
     api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
            
           this.setState({                         
-            camplogid: res.data.data[0].id,                         
+          //  camplogid: res.data.data[0].id,                         
             campNome: res.data.data[0].nome,                 
             campEmail: res.data.data[0].email,                 
             inicio: 2       
@@ -191,7 +196,7 @@ class empresarialComponent extends React.Component{
         }  
       })        
       .catch(error=>{
-        alert("Error de conexão  "+error)
+        alert("Error de conexão  2 "+error)
       })   
     }
 
@@ -611,8 +616,7 @@ sendUpdate(){
   const logindata = {    
     perfilId: localStorage.getItem('logperfil'),
     senha: this.state.campSenha,         
-  }        
-        
+  }                
       //  localStorage.setItem('logstatus', 1);    
 
 
@@ -622,14 +626,11 @@ sendUpdate(){
 
             if (localStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (localStorage.getItem('logperfil') == 3) {
-              this.props.history.push(`/area_operador`);
             } else if (localStorage.getItem('logperfil') == 8) {
               this.props.history.push(`/area_operador`);              
-            } else if (localStorage.getItem('logperfil') == 0) {          
-              localStorage.setItem('logperfil', 8);  
-              this.props.history.push('/area_operador');  
-            }                    
+            }
+            
+            
 }  
 
 controle_oito_caracteres() {   
@@ -694,7 +695,7 @@ verifica_botao(inicio) {
 
         <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
               <div className="d-flex justify-content-center">
-              <label> Alterar </label>
+              <label> Salvar Alterações </label>
               </div>     
         </Box>           
     );   
@@ -708,7 +709,7 @@ verifica_botao(inicio) {
         return (           
           <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
           <div className="d-flex justify-content-center">
-          <label> Alterar </label>
+          <label> Salvar Alterações </label>
           </div>     
           </Box>           
         );
@@ -717,7 +718,7 @@ verifica_botao(inicio) {
 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
                 <div className="d-flex justify-content-center">
-                <label> Alterar </label>
+                <label> Salvar Alterações </label>
                 </div>     
           </Box>           
          );   
@@ -728,7 +729,7 @@ verifica_botao(inicio) {
 
         <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
                 <div className="d-flex justify-content-center">
-                <label> Alterar </label>
+                <label> Salvar Alterações </label>
                 </div>     
           </Box>        
           
@@ -789,7 +790,8 @@ handleMouseDownPassword = (event) => {
 verificar_menu() {   
 
   return(
-    <div>
+    <div className="container_alteracao">    
+    <Menu_operador />   
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
                  <Link to={`/operadores_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
@@ -811,22 +813,90 @@ verificar_menu() {
    ); 
 
 }
+verificar_menu_lateral() {
+
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 8) {
+   return( 
+     <Menu_operador />     
+   );
+  }
+
+}
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
+
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
+}
 
 render(){  
 
 return (
 <div>    
-<div className="container_alterado">
-  <Menu_operador />     
+<div className="container_alteracao">
+{this.verificar_menu_lateral()}  
+
 <div className="d-flex justify-content"> 
-   <div className="area_esquerda">               
-          {this.verificar_menu()}                                          
+   <div>               
+   <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
+
+              <br/>
+              <br/>
+              <br/>
+          </div>           
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
+                  <InputLabel className="label_text" htmlFor="filled-adornment-password">Senha</InputLabel>
                   <FilledInput
-                    className="input_text_senha_operadores"  
+                    className="data_operador"  
                     autoCorrect="off"
                     autoComplete="off"
                     error={this.state.validaSenha}
@@ -867,9 +937,9 @@ return (
               </div>
               <div class="p-2">                    
                 <FormControl variant="filled">
-                    <InputLabel htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
                     <FilledInput
-                      className="input_text_senha_operadores"  
+                      className="data_operador"  
                       id="filled-adornment-password"
                       error={this.state.validaSenhaConfirma}
                       type={this.state.hiddenSenhaConfirma ? "password" : "text"}           

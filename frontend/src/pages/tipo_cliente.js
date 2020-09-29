@@ -14,28 +14,33 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
+  body: {
+    background:'#F5F5F5 0% 0% no-repeat padding-box',
+    font: 'normal normal medium 22px/27px Effra',
+    color: '#0F074E',
+    opacity: '1',
+  },
   backButton: {
     marginRight: theme.spacing(1),
   },
   cabacalho: {    
     background: 'transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box',
     width: '100% !important',
-    lineHeight: '320px !important',
-            
+    lineHeight: '320px !important',            
   },  
   botao_left: {
     margin: theme.spacing(1),
-    width: '384px !important',
+   /* width: '384px !important', */
     lineHeight: '129px !important', 
-    marginLeft: '400px !important',      
+    marginLeft: '450px !important',      
     textAlign: 'left !important',
     fontSize: '22px !important'  
   },
   botao_rigth: {
     margin: theme.spacing(1),
-    width: '384px !important',
+    /* width: '384px !important', */
     lineHeight: '129px !important', 
-    marginLeft: '280px !important',  
+    marginLeft: '107px !important',
     marginRight: '400px !important',  
     textAlign: 'left !important',
     fontSize: '22px !important'  
@@ -96,7 +101,17 @@ export default function Tipo_cliente() {
   localStorage.removeItem('logid');  
   localStorage.removeItem('logperfil'); 
   localStorage.removeItem('logcep');      
-    
+  localStorage.removeItem('logclienteId');
+  localStorage.removeItem('logcpfrep');
+  localStorage.removeItem('logdocumento');
+  localStorage.removeItem('logemailId');
+  localStorage.removeItem('logeventoId');
+  localStorage.removeItem('logMarca');
+  localStorage.removeItem('logmatrizId');
+  localStorage.removeItem('logModelo');
+  localStorage.removeItem('logrepresentante');  
+  localStorage.setItem('logperfil', 0);
+  
   return (
    <div>
      <div className={classes.cabacalho}>   

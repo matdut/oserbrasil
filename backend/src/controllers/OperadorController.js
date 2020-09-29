@@ -1,5 +1,8 @@
 const controllers = {}
 
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 // import model and sequelize
 var sequelize = require('../model/database');
 var Operador = require('../model/Operador');
@@ -76,6 +79,35 @@ controllers.getOperadorCpf = async (req, res) => {
   
   }
   
+  
+  controllers.listaIncompletos = async (req,res) => {
+   
+    const { id } = req.params;  
+    
+    await Operador.findAll({ 
+      include: [
+        {
+          model: Empresa,
+          required: true,
+          where: {id: id}
+        },
+        {
+          model: Status          
+        }
+      ],
+      where: { 
+        statusId: 6
+       }    
+    })
+    .then( function(data){
+      return res.json({success:true, data:data});
+    })
+    .catch(error => {
+       return res.json({success:false});
+    })
+  
+  }
+
   controllers.listaempresa = async (req,res) => {
    
     const { id } = req.params;  
@@ -91,7 +123,12 @@ controllers.getOperadorCpf = async (req, res) => {
         {
           model: Status          
         }
-      ]
+      ],
+      where: { 
+        statusId: {
+          [Op.notIn]: [7]             
+        }
+       }    
     })
     .then( function(data){
       return res.json({success:true, data:data});
@@ -102,17 +139,36 @@ controllers.getOperadorCpf = async (req, res) => {
   
   }
 
+  
+  controllers.listExcluidos = async (req,res) => {
+    await Operador.findAll({       
+      include: [
+        { model: Status }, 
+        { model: Empresa, required: true}
+      ],
+      where: { 
+       statusId: 7                    
+      }    
+    })
+    .then( function(data){
+      return res.json({success:true, data:data});
+    })
+    .catch(error => {
+       return res.json({success:false});
+    })
+  
+  }
 controllers.list = async (req,res) => {
   await Operador.findAll({       
     include: [
-      {
-        model: Empresa,
-        required: true,     
-      },
-      {
-        model: Status          
-      }
-    ]  
+      { model: Status }, 
+      { model: Empresa, required: true}
+    ],
+    where: { 
+     statusId: {
+       [Op.notIn]: [7]             
+     }
+    }    
   })
   .then( function(data){
     return res.json({success:true, data:data});
@@ -128,6 +184,23 @@ controllers.get = async (req, res) => {
   await Operador.findAll({
     include: [{ model: Empresa }],
      where: { id: id}
+  })
+  .then( function(data){
+    return res.json({success:true, data:data});
+  })
+  .catch(error => {
+     return res.json({success:false});
+  })
+  
+}
+
+controllers.getEmpresaOperador = async (req, res) => {
+  const { idEmpresa } = req.params;
+  await Operador.findAll({
+    include: [{ 
+       model: Empresa,
+       where: { id: idEmpresa }  
+     }]
   })
   .then( function(data){
     return res.json({success:true, data:data});

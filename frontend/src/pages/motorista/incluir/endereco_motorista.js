@@ -10,7 +10,22 @@ import { cepremoveMask } from '../../formatacao/cepremovemask';
 import api from '../../../services/api';
 import '../motorista.css';
 import Menu_motorista from '../menu_motorista';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import FilledInput from '@material-ui/core/FilledInput';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import * as moment from 'moment';
 
+import Select from '@material-ui/core/Select';
+import 'moment/locale/pt-br';
+
+import FormHelperText from '@material-ui/core/FormHelperText';
+
+import CheckIcon from '@material-ui/icons/Check';
 
 const andamento_cadastro = localStorage.getItem('logprogress');     
 const cep_empresa = localStorage.getItem('logcep');     
@@ -49,6 +64,12 @@ class empresarialComponent extends React.Component{
       busca_cep: '',     
       listEndereco:[], 
       listEstados:[],
+      erro_cep: false,
+      erro_numero: false,
+      erro_complemento: false,
+      validacao_cep: false,
+      validacao_numero: false,
+      validacao_complemento: false,
       validate: {
         cepState: '',
         enderecoState: '',
@@ -69,25 +90,16 @@ class empresarialComponent extends React.Component{
     this.estadoChange = this.estadoChange.bind(this);    
     this.handleClick = this.handleClick.bind(this);
     this.limpar_endereco = this.limpar_endereco.bind(this);
-
-    this.verificaEstado = this.verificaEstado.bind(this);  
+    
     this.verificaCep = this.verificaCep.bind(this);  
-    this.verificaEndereco = this.verificaEndereco.bind(this);  
-    this.verificaNumero = this.verificaNumero.bind(this);  
-    this.verificaBairro = this.verificaBairro.bind(this);  
-    this.verificaCidade = this.verificaCidade.bind(this);  
+    this.verificaNumero = this.verificaNumero.bind(this);      
     this.verificaComplemento = this.verificaComplemento.bind(this);  
 
-    this.validaCepChange = this.validaCepChange.bind(this);  
-    this.validaEnderecoChange = this.validaEnderecoChange.bind(this);  
-    this.validaNumeroChange = this.validaNumeroChange.bind(this);  
-    this.validaBairroChange = this.validaBairroChange.bind(this);  
-    this.validaCidadeChange = this.validaCidadeChange.bind(this);  
-    this.validaComplementoChange = this.validaComplementoChange.bind(this);  
-    this.validaEstadoChange = this.validaEstadoChange.bind(this);  
+    this.validaCepChange = this.validaCepChange.bind(this);      
+    this.validaNumeroChange = this.validaNumeroChange.bind(this);      
+    this.validaComplementoChange = this.validaComplementoChange.bind(this);      
 
     this.verifica_botao = this.verifica_botao.bind(this);  
-    //this.verifica_cep = this.verifica_cep.bind(this);  
     this.cep_preenchido = this.cep_preenchido.bind(this);
     this.busca_cep_banco = this.busca_cep_banco.bind(this);
 
@@ -152,9 +164,8 @@ class empresarialComponent extends React.Component{
             campCep: res.data.data[0].cep,   
             campCnpj: res.data.data[0].cnpj,  
             progresso: 30, 
-            inicio: 2
-          })            
-               
+            inicio: 2,                 
+          })                          
           
 
           if (this.state.campCnpj == ''){
@@ -205,12 +216,14 @@ class empresarialComponent extends React.Component{
 
          if (this.state.campCep !== "" ) {
             validate.cepState = 'has-success'      
+            this.setState({ validacao_cep: true })                     
           } 
           if (this.state.campEndereco !== "") {
             validate.enderecoState = 'has-success'      
           } 
           if (this.state.campNumero !== "") {
             validate.numeroState = 'has-success'      
+            this.setState({ validacao_numero: true })         
           }        
           if (this.state.campBairro !== "") {
             validate.bairroState = 'has-success'      
@@ -220,6 +233,7 @@ class empresarialComponent extends React.Component{
           }        
           if (this.state.campComplemento !== "")  {
             validate.complementoState = 'has-success'      
+            this.setState({ validacao_complemento: true })            
           }
           if (this.state.campEstadoId !== 0) {
             validate.estadoState = 'has-success'      
@@ -354,7 +368,7 @@ limpar_endereco() {
    buscadorcep(base.replace('-','')).
      then(endereco => { 
 
-      //console.log('Busca '+JSON.stringify(endereco, null, "    "));                  
+      console.log('Busca '+JSON.stringify(endereco, null, "    "));                  
 
           api.get(`/estado/get/${endereco.uf}`)
           .then(res=>{        
@@ -369,7 +383,8 @@ limpar_endereco() {
               //console.log(JSON.stringify(res.data.data.length, null, "    "));          
 
                 if (res.data.success) {      
-                  //console.log(JSON.stringify(res.data, null, "    "));                  
+                  console.log(JSON.stringify(res.data, null, "    "));                  
+
                   
                   if (endereco.logradouro !== "") {
                     validate.enderecoState = 'has-success'         
@@ -507,6 +522,8 @@ cep_preenchido(cep) {
           validate.cepState = 'has-danger'
           this.setState({             
               validate,
+              erro_cep: true,
+              validacao_cep: false,
               cep_encontrado: '',
               mensagem_cep: 'O cep não encontrado', 
               campCep: "",
@@ -549,7 +566,9 @@ verificaCep(e) {
         validate.enderecoState = ''
         validate.cepState = 'has-danger'
         this.setState({           
-          inicio: 1,       
+          inicio: 1,    
+          erro_cep: false,
+          validacao_cep: false,   
           mensagem_cep: 'O campo CEP é obrigatório.'            
         })            
         this.setState({ validate })
@@ -563,7 +582,9 @@ verificaCep(e) {
       validate.numeroState = 'has-danger'
       this.setState({ 
         validate,
-        inicio: 1,        
+        inicio: 1,    
+        erro_numero: true,
+        validacao_numero: false,       
         mensagem_numero: 'O campo Numero é obrigatório.'  
        })            
      }      
@@ -575,91 +596,14 @@ verificaCep(e) {
       validate.complementoState = 'has-danger'
       this.setState({ 
         validate,
-        inicio: 1,             
+        inicio: 1,           
+        erro_complemento: true,
+        validacao_complemento: false,     
         mensagem_complemento: 'O campo Complemento é obrigatório.'  
        })             
      }      
  }
 
- verificaBairro(e) {
-  const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.bairroState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 1,       
-        mensagem_bairro: 'O campo Bairro é obrigatório.'  
-       })           
-     }      
- }
- verificaCidade(e) {
-  const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.cidadeState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 1,
-        mensagem_cidade: 'O campo cidade é obrigatório.'  
-       })        
-     }      
- }
- verificaEndereco(e) {
-  const { validate } = this.state
-   //console.log('on blur '+e.target.value)
-     if (e.target.value.trim().length == 0) {           
-      validate.enderecoState = 'has-danger'      
-      this.setState({ 
-        validate,
-        inicio: 1,
-        mensagem_endereco: 'O campo Endereço é obrigatório.'  
-       })            
-     } else {                 
-      validate.enderecoState = 'has-success'      
-      this.setState({ 
-        validate,
-        mensagem_endereco: ''  
-       })    
-     }     
- }
-verificaEstado() {
-  const { validate } = this.state
-    
-     if (this.state.campEstadoId == 0) {
-
-      validate.estadoState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 1,
-        mensagem_estado: 'O campo Estado é obrigatório'  
-       })      
-     } else if (this.state.campEstadoId == "Selecione o estado") {
-      validate.estadoState = 'has-danger'
-      this.setState({ 
-        validate,
-        inicio: 2,
-        mensagem_estado: 'O campo Estado é obrigatório'  
-       })      
-     }          
- }
-
-
-validaEnderecoChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.enderecoState = 'has-danger'
-      this.setState({ 
-          inicio: 1,
-          mensagem_endereco: 'O campo Endereço é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.enderecoState = 'has-success'      
-      this.setState({           
-        inicio: 2
-      })    
-    }  
-    this.setState({ validate })    
-}
 validaNumeroChange(e){
   const { validate } = this.state
   
@@ -667,11 +611,15 @@ validaNumeroChange(e){
       validate.numeroState = 'has-danger'
       this.setState({ 
           inicio: 1,
-          mensagem_numero: 'O campo Número é obrigatório.' 
+          erro_numero: false,
+          validacao_numero: false,   
+          mensagem_numero: '' 
       })  
     } else if (e.target.value.trim().length > 0) {
       validate.numeroState = 'has-success'  
       this.setState({           
+        erro_numero: false,
+        validacao_numero: true,   
         inicio: 2
       })
      
@@ -679,52 +627,22 @@ validaNumeroChange(e){
     this.setState({ validate })   
    
 }
-validaBairroChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.bairroState = 'has-danger'
-      this.setState({ 
-        inicio: 1,
-        mensagem_bairro: 'O campo Bairro é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0){
-      validate.bairroState = 'has-success'  
-      this.setState({           
-        inicio: 2
-      })      
-    }  
-    this.setState({ validate })  
-}
-validaCidadeChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.cidadeState = 'has-danger'
-      this.setState({ 
-        inicio: 1,
-        mensagem_cidade: 'O campo Cidade é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.cidadeState = 'has-success'  
-      this.setState({           
-        inicio: 2
-      })     
-    }  
-    this.setState({ validate })    
-}
 validaComplementoChange(e){
   const { validate } = this.state
   
     if (e.target.value.trim().length == 0) {
       validate.complementoState = 'has-danger'
       this.setState({ 
+        erro_complemento: false,
+        validacao_complemento: false,   
         inicio: 1,
-        mensagem_complemento: 'O campo Complemento é obrigatório.' 
+        mensagem_complemento: '' 
       })  
     } else if (e.target.value.trim().length > 0) {
       validate.complementoState = 'has-success'       
       this.setState({           
+        erro_complemento: false,
+        validacao_complemento: true,   
         inicio: 2
       })     
       this.verifica_botao(this.state.inicio) 
@@ -732,29 +650,11 @@ validaComplementoChange(e){
     this.setState({ validate })
     
 }
-validaEstadoChange(e){
-  const { validate } = this.state
-  
-    if (e.target.value.trim().length == 0) {
-      validate.estadoState = 'has-danger'
-      this.setState({ 
-         inicio: 1,
-         mensagem_estado: 'O campo Estado é obrigatório.' 
-      })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.estadoState = 'has-success'  
-      this.setState({           
-        inicio: 2
-      })     
-    }  
-    this.setState({ validate })
-    
-}
 validaCepChange(e){
   const { validate } = this.state
   //console.log('teste cep '+e.target.value);
-    if (e.target.value.length < 9) {
-      this.limpar_endereco()
+    if (e.target.value.length == 0) {
+      //this.limpar_endereco()
       validate.cepState = 'has-danger'
       validate.numeroState = ''
       validate.complementoState = ''
@@ -764,16 +664,22 @@ validaCepChange(e){
       validate.cidadeState = ''
       this.setState({ 
          inicio: 1,
+         erro_cep: true,
+         validacao_cep: false,
          mensagem_cep: 'CEP inválido' 
       })  
-    } else if (e.target.value.length == 9) {      
+    } else if (e.target.value.length == 9) {     
+      if (e.key !== 'Enter') {      
             validate.cepState = 'has-success'                  
             this.setState({ 
+              erro_cep: false,
+              validacao_cep: true,
               busca_cep: e.target.value,
               mensagem_cep: ''                                            
             })
             
         this.handleClick(e);
+      }  
     }      
     this.setState({ validate })
 }
@@ -982,100 +888,108 @@ return (
          
           <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2"> 
-              <label for="inputAddress">Cep *</label>          
-                  <Form inline>
-                      <Input                   
-                      className="input_text"    
-                      type="text"
-                      name="nome"                
-                      id="examplnome"
-                      placeholder=""
-                      autoComplete='off'
-                      autoCorrect='off'
-                      value={this.state.campCep}
-                      valid={ this.state.validate.cepState === 'has-success' }
-                      invalid={ this.state.validate.cepState === 'has-danger' }
-                      onblur={this.verificaCep}
-                      onKeyUp={this.verificaCep}                      
-                   //   onFocus={ (e) => {                        
-                   //     this.validaCepChange(e)
-                   //   }}    
-                      onChange={ (e) => {
-                        this.cepchange(e)                       
-                        this.validaCepChange(e)
-                      }}    
-                      maxlength="9"                                                                          
-                    />     
-                    <div className="naoseiocep">
+              <FormControl variant="outlined">
+                    <InputLabel className="label_cep_incluir_motorista" htmlFor="filled-adornment-password">Cep</InputLabel>
+                     <OutlinedInput 
+                        autoComplete="off"                                   
+                        type="text"                       
+                        error={this.state.erro_cep}
+                        helperText={this.state.mensagem_cep}
+                        className="cep_incluir_motorista"                       
+                        id="cep_incluir"                      
+                        variant="outlined"
+                        value={this.state.campCep}
+                        onblur={this.verificaCep}
+                        onKeyUp={this.verificaCep}   
+                        onChange={ (e) => {
+                          this.cepchange(e)                       
+                          this.validaCepChange(e)
+                        }}                         
+                        maxlength="9"     
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cep? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={30}
+                    />
+                     <div className="naoseiocep">
                         <a className="alink" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">Não sei meu CEP</a> 
-                    </div>                               
-                    <FormFeedback 
-                    invalid={this.state.validate.cepState}>
-                        {this.state.mensagem_cep}
-                    </FormFeedback>                                  
-                </Form>    
+                    </div> 
+                   <FormHelperText error={this.state.erro_cep}>
+                         {this.state.mensagem_cep}
+                   </FormHelperText>
+                  </FormControl>                  
               </div>
               <div class="p-2">                                
                   <div>
-                      {this.mostrar_endereco()}
-                      
+                      {this.mostrar_endereco()}                      
                   </div>               
               </div> 
               <div class="p-2">               
                   <div class="d-flex justify-content-start">
                        <div>
-                       <label for="inputAddress">Número *</label>  
-                       <Input
-                          className="input_numero"   
-                          type="text"
-                          name="numero"
-                          id="examplnome"
-                          placeholder=""
-                          autoComplete='off'
-                          autoCorrect='off'
-                          value={this.state.campNumero}
-                          valid={ this.state.validate.numeroState === 'has-success' }
-                          invalid={ this.state.validate.numeroState === 'has-danger' }
-                          onblur={this.verificaNumero}
-                          onKeyUp={this.verificaNumero}
-                          onChange={ (e) => {
-                            this.numerochange(e)                       
-                            this.validaNumeroChange(e)
-                          }}      
-                          maxlength="6"                                                                    
-                        />                                
-                        <FormFeedback 
-                        invalid={this.state.validate.numeroState}>
+                       <FormControl variant="outlined">
+                        <InputLabel className="label_numero_incluir_motorista" htmlFor="filled-adornment-password">Número</InputLabel>
+                        <OutlinedInput 
+                            autoComplete="off"                                   
+                            type="text"                       
+                            error={this.state.erro_numero}
+                            helperText={this.state.mensagem_numero}
+                            className="numero_incluir_motorista"                       
+                            id="numero_incluir"                      
+                            variant="outlined"
+                            value={this.state.campNumero}
+                            onblur={this.verificaNumero}
+                            onKeyUp={this.verificaNumero}
+                            onChange={ (e) => {
+                              this.numerochange(e)                       
+                              this.validaNumeroChange(e)
+                            }}                          
+                            maxlength="9"     
+                          endAdornment={
+                            <InputAdornment position="end">
+                                {this.state.validacao_numero? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }
+                          labelWidth={80}
+                        />                        
+                      <FormHelperText error={this.state.erro_numero}>
                             {this.state.mensagem_numero}
-                        </FormFeedback>     
-                       </div> 
-                       
+                      </FormHelperText>
+                      </FormControl>                             
+                       </div>                        
                        <div>
-                          <label className="label_complemento" for="inputAddress">Complemento *</label>
-                          <Input
-                            className="input_complemento"    
-                            type="text"
-                            name="complemento"
-                            id="examplnome"
-                            placeholder=""
-                            autoComplete='off'
-                            autoCorrect='off'
+                       <FormControl variant="outlined">
+                        <InputLabel className="label_complemento_incluir_motorista" htmlFor="filled-adornment-password">Complemento</InputLabel>
+                        <OutlinedInput 
+                            autoComplete="off"                                   
+                            type="text"                       
+                            error={this.state.erro_complemento}
+                            helperText={this.state.mensagem_complemento}
+                            className="complemento_incluir_motorista"                       
+                            id="complemento_incluir"                      
+                            variant="outlined"
                             value={this.state.campComplemento}
-                            valid={ this.state.validate.complementoState === 'has-success' }
-                            invalid={ this.state.validate.complementoState === 'has-danger' }
                             onblur={this.verificaComplemento}
                             onKeyUp={this.verificaComplemento}
                             onChange={ (e) => {
                               this.complementochange(e)                       
                               this.validaComplementoChange(e)
-                            }}          
-                            maxlength="60"                                                                
-                          />                                
-                          <FormFeedback className="label_complemento"     
-                          invalid={this.state.validate.complementoState}>
-                              {this.state.mensagem_complemento}
-                          </FormFeedback>       
-                       </div>                        
+                            }}                                  
+                            maxlength="9"     
+                          endAdornment={
+                            <InputAdornment position="end">
+                                {this.state.validacao_complemento? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }
+                          labelWidth={110}
+                        />                        
+                      <FormHelperText error={this.state.erro_complemento}>
+                            {this.state.mensagem_complemento}
+                      </FormHelperText>
+                      </FormControl>       
+                     </div>                        
                   </div>
               </div>                                                    
             </div>       

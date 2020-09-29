@@ -428,7 +428,7 @@ render(){
   const { uploadedFilesFoto } = this.state;
 return (
 <div>    
-<div className="container_alterado">
+<div className="container_alteracao">
    <Menu_cliente_empresarial /> 
 <div className="d-flex justify-content"> 
    <div className="area_esquerda">     

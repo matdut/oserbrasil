@@ -105,8 +105,7 @@ class menu_administradorComponent extends React.Component  {
     <div className="item avatar_titulo">
        <i> <div className="avatar_adm"><Avatar className="classe_orange">AD</Avatar>                      
          </div>      
-           <div className="teste perfil">       
-               Editar Perfil         
+           <div className="teste perfil">                
           </div>
        </i>      
    </div>     
@@ -174,7 +173,7 @@ class menu_administradorComponent extends React.Component  {
     </div>    
       
       <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50"/>
+        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
         <div className="data_versao"> 07/09/20 v1.8.0 </div>
      </div>    
    </div>                                       

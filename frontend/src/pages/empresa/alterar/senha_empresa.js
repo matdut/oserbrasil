@@ -6,6 +6,8 @@ import {Link} from 'react-router-dom';
 import { cepMask } from '../../formatacao/cepmask';
 import api from '../../../services/api';
 import '../empresarial.css';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,6 +18,7 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
 import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
 import Menu_administrador from '../../administrador/menu_administrador';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 //const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
@@ -609,7 +612,14 @@ class empresarialComponent extends React.Component{
     this.setState({ validate })
   }  
   
-sendUpdate(){        
+sendUpdate(){     
+  const { validate } = this.state;       
+  validate.cpfState= '';
+  this.setState({ 
+     mensagem_aguarde: 'Aguarde, alterando os dados...',
+     validate 
+  }); 
+
   const datapost = {  
     statusId: 1,  
   }       
@@ -619,7 +629,7 @@ sendUpdate(){
   }    
 
   const logindata = {  
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: 7,
     senha: this.state.campSenha,     
     statusId: 1
   }  
@@ -635,7 +645,8 @@ sendUpdate(){
 
             if (localStorage.getItem('logperfil') == 1) {              
                this.props.history.push(`/lista_empresarial`);                                 
-            } else if (localStorage.getItem('logperfil') == 7) {   
+            } else {   
+              localStorage.setItem('logperfil', 7);
               this.props.history.push(`/area_cliente_empresarial`);                                   
             }             
 
@@ -707,165 +718,56 @@ controle_um_numero() {
 
 verifica_botao(inicio) {
   const { validate } = this.state;
-  //console.log(JSON.stringify(this.state, null, "    "));
-  //console.log(JSON.stringify(inicio, null, "    "));
-  if (localStorage.getItem('logperfil') == 0) {
-      if (inicio == 1) {
-        return (
+  if (inicio == 1) {
+    return (
 
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
+              <div className="d-flex justify-content-center">
+              <label> Salvar Alterações </label>
+              </div>     
+        </Box>           
+    );   
+  } else {
+  
+      if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
+            && validate.umnumeroState == 'has-success') {
+
       
-          if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
-                && validate.umnumeroState == 'has-success') {
+          if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
+              && this.state.campSenha == this.state.campSenhaTeste) {
+            return (
+              <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
+              <div className="d-flex justify-content-center">
+              <label> Salvar Alterações </label>
+              </div>     
+              </Box>           
+            );
+          } else {
+            return (
 
-          
-              if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
-                  && this.state.campSenha == this.state.campSenhaTeste) {
-                return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_empresa_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                  <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
-                  </div>     
-                  </Box>           
-                );
-              } else {
-                return (
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
+                      <div className="d-flex justify-content-center">
+                      <label> Salvar Alterações </label>
+                      </div>     
+                </Box>                        
+                
+            );     
+          }
 
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
-                          <div className="d-flex justify-content-center">
-                          <label> Próximo </label>
-                          </div>     
-                    </Box>                        
-                    
-                );     
-              }
+        } else {
+    
+          return (
 
-            } else {
-        
-              return (
-
-                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
-                        <div className="d-flex justify-content-center">
-                        <label> Próximo </label>
-                        </div>     
-                  </Box>        
-                  
-                  
-              );   
-            }    
-      }
-    } else if (localStorage.getItem('logperfil') == 1) {
-
-      if (inicio == 1) {
-        return (
-
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {
-      
-          if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
-                && validate.umnumeroState == 'has-success') {
-
-          
-              if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
-                  && this.state.campSenha == this.state.campSenhaTeste) {
-                return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_empresa_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-                  </Box>           
-                );
-              } else {
-                return (
-
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
-                          <div className="d-flex justify-content-center">
-                          <label> Salvar Alterações </label>
-                          </div>     
-                    </Box>                        
-                    
-                );     
-              }
-
-            } else {
-        
-              return (
-
-                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_empresa"  p={2} >
-                        <div className="d-flex justify-content-center">
-                        <label> Salvar Alterações </label>
-                        </div>     
-                  </Box>        
-                  
-                  
-              );   
-            }    
-      }
-
-    } else if (localStorage.getItem('logperfil') == 7) {  
-
-      if (inicio == 1) {
-        return (
-
-          <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-            </Box>           
-        );   
-      } else {
-      
-          if (validate.oitocaracteresState == 'has-success' && validate.umaletramaiusculaState == 'has-success' 
-                && validate.umnumeroState == 'has-success') {
-
-          
-              if (this.state.campSenha.length > 0 && this.state.campSenhaTeste.length > 0 
-                  && this.state.campSenha == this.state.campSenhaTeste) {
-                return (
-                  <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-                  </Box>           
-                );
-              } else {
-                return (
-
-                  <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
-                          <div className="d-flex justify-content-center">
-                          <label> Salvar Alterações </label>
-                          </div>     
-                    </Box>                        
-                    
-                );     
-              }
-
-            } else {
-        
-              return (
-
-                <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha"  p={2} >
-                        <div className="d-flex justify-content-center">
-                        <label> Salvar Alterações </label>
-                        </div>     
-                  </Box>                       
-              );   
-            }    
-      }
-
-
-    }  
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
+                    <div className="d-flex justify-content-center">
+                    <label> Salvar Alterações </label>
+                    </div>     
+              </Box>        
+              
+              
+          );   
+        }    
+  }  
 } 
 
 
@@ -918,76 +820,31 @@ handleMouseDownPassword = (event) => {
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
-   <div>
-    <div className="d-flex justify-content-around">
-    <div className="botao_navegacao">
-        <Link to={`/empresa_dados/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-    </div>                  
+  return(
     <div>
-      <div className="titulo_representante">                
-       <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, Cadastre a sua senha de acesso  </label>       
-      </div>
-    </div>   
-    
-    <div>
-       <div className="botao_navegacao">
-          <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-       </div>   
-    </div>
-</div>    
-<br/>
-        <div>
-           <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-        </div>    
-    </div>  
-   );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div className="d-flex justify-content-around">
-               <div className="botao_navegacao">
-               <Link to={`/empresa_dados/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_representante">                
-                  <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, Cadastre a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                  <div></div>                              
-                  </div>   
-               </div>   
-             
-          </div>    
-      );
-
-  } else if (localStorage.getItem('logperfil') == 7) { // CLIENTE EMPRESARIAL             
-
-      return(
-        <div className="d-flex justify-content-around">
-        <div className="botao_navegacao">      
-        </div>                  
-        <div>
-          <div className="titulo_representante">                          
-           <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, altere sua senha  </label>       
-          </div>
+     <div className="d-flex justify-content-around">
+     <div className="botao_navegacao">
+         <Link to={`/empresa_dados/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+     </div>                  
+     <div>
+       <div className="titulo_representante">                
+        <label>  {this.verifica_nome(localStorage.getItem('lograzao_social'))}, Cadastre a sua senha de acesso  </label>       
+       </div>
+     </div>   
+     
+     <div>
+        <div className="botao_navegacao">
+           <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
         </div>   
-        
-        <div>
-           <div className="botao_navegacao">
-           <div></div>                             
-           </div>   
-        </div>   
-      
-   </div>    
-        );
-  
-  }
+     </div>
+ </div>    
+ <br/>
+         <div className="barra_incluir">
+            <Progress color="warning" value={this.state.progresso} className="progressbar"/>
+         </div>    
+     </div>  
+    );
+
 }
 
 verificar_menu_lateral() {
@@ -1003,23 +860,77 @@ verificar_menu_lateral() {
   }
 
 }
+verifica_titulo() {
+  if ( this.state.perfil == 1) {
+    return (            
+         <strong> ADMINISTRADOR </strong>
+     ); 
+  } else {
+    return (      
+       <strong>{this.state.campNome}</strong>
+     ); 
+  }            
+}
 
+verifica_horario(){
+  const d = new Date();
+  const hour = d.getHours();
+
+  if (hour < 5) {
+    return (
+      <strong> boa noite </strong>          
+      );        
+  } else if (hour < 5) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 8) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 12) { 
+    return (
+      <strong> bom dia </strong>          
+      );        
+  } else if (hour < 18) { 
+    return (
+      <strong> boa tarde </strong>          
+      );        
+  } else { 
+    return (
+      <strong> boa noite </strong>          
+      );        
+  }
+}
 render(){  
 
 return (
 <div>    
-<div className="container_alterado">
+<div className="container_alteracao">
    {this.verificar_menu_lateral()}
 <div className="d-flex justify-content">
-   <div className="area_esquerda">     
-   {this.verificar_menu()}           
+   <div>     
+   <div className="titulo_admministrador">        
+           <div className="unnamed-character-style-4 descricao_alteracao">      
+               <h5> {localStorage.getItem('lograzao_social')} </h5>                                                                   
+               {this.verifica_titulo()}, {this.verifica_horario()} !
+            </div>             
+            
+              <Container maxWidth="sm">
+                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
+              </Container>
+
+              <br/>
+              <br/>
+              <br/>
+          </div>    
        
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">
-                  <InputLabel htmlFor="filled-adornment-password">Senha</InputLabel>
+                  <InputLabel htmlFor="filled-adornment-password" className="label_text">Senha</InputLabel>
                   <FilledInput
-                    className="input_text_empresa"  
+                    className="data_text"      
                     autoComplete='off'
                     autoCorrect='off'
                     id="filled-adornment-password"
@@ -1059,9 +970,9 @@ return (
               </div>
               <div class="p-2">                    
                 <FormControl variant="filled">
-                    <InputLabel htmlFor="filled-adornment-password">Confirme a senha</InputLabel>
+                    <InputLabel htmlFor="filled-adornment-password" className="label_text">Confirme a senha</InputLabel>
                     <FilledInput
-                      className="input_text_empresa"  
+                      className="data_text"      
                       autoComplete='off'
                       autoCorrect='off'
                       id="filled-adornment-password"
@@ -1107,9 +1018,18 @@ return (
                {this.state.mensagem_senha_erro}
               </Alert>     
             </div>                        
-            
+            <div className="mensagem_aguarde">
+              <FormHelperText>
+                  {this.state.mensagem_aguarde}
+              </FormHelperText>       
+            </div>  
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>                 
+    </div>        
+    <div className="area_neutra">
+               <Container maxWidth="sm" className="barra_incluir">
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
+              </Container>         
+        </div>          
    </div>  
   </div> 
 </div> 

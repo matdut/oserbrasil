@@ -8,6 +8,7 @@ const Motorista = require("../model/Motorista");
 const MotoristaController = require('../controllers/MotoristaController');
 
 router.get('/list',MotoristaController.list);
+router.get('/listExcluidos',MotoristaController.listExcluidos);
 router.post('/create', MotoristaController.create);
 router.get('/get/:id', MotoristaController.get);
 router.put('/update/:id', MotoristaController.update);

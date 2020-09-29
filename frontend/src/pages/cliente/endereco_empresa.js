@@ -68,11 +68,11 @@ class empresarialComponent extends React.Component{
 
     this.verificaEstado = this.verificaEstado.bind(this);  
     this.verificaCep = this.verificaCep.bind(this);  
-    this.verificaEndereco = this.verificaEndereco.bind(this);  
     this.verificaNumero = this.verificaNumero.bind(this);  
-    this.verificaBairro = this.verificaBairro.bind(this);  
-    this.verificaCidade = this.verificaCidade.bind(this);  
     this.verificaComplemento = this.verificaComplemento.bind(this);  
+    this.verificaEndereco = this.verificaEndereco.bind(this);      
+    this.verificaBairro = this.verificaBairro.bind(this);  
+    this.verificaCidade = this.verificaCidade.bind(this);      
 
     this.validaCepChange = this.validaCepChange.bind(this);  
     this.validaEnderecoChange = this.validaEnderecoChange.bind(this);  
