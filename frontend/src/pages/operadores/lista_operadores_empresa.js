@@ -171,10 +171,9 @@ class listComponent extends React.Component  {
       mensagem_email: '',  
       mensagem_telefone1: '',
       mensagem_data_nascimento: '',      
-      campgerenciar_eventos: false, 
+      campgerencia_eventos: false, 
       campMonitorar_eventos: false, 
-      camprepresentante_legal: false, 
-
+      camprepresentante_legal: false,     
       campgerenciar_todos_eventos: false, 
       campincluir_alterar_cartao: false, 
       campvisualizar_eventos_servicos: false,
@@ -502,6 +501,7 @@ sendEnvioEmail(){
 
     this.loadOperadores();    
     this.loadOperadoresExcluidos();
+    this.loadOperadoresCadIncompletos();
     this.carrega_status();  
     this.loadConvites();
     
@@ -1546,7 +1546,7 @@ carrega_status(){
                           },
                           {
                             icon: 'delete',                                                             
-                            tooltip: 'Deleta Motorista',          
+                            tooltip: 'Deleta Operador',          
                             onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
                           }
                         ]}
@@ -2089,6 +2089,7 @@ carrega_status(){
     this.setState({ 
       showMensagemDelete: true,
       campDeletarId: data.id,      
+      campDeletarEmail: data.email,      
       retorno: '',
       campDescricao: '',
       validacao_descricao: false,
@@ -2163,7 +2164,7 @@ carrega_status(){
       campEmailAnterior: '', 
       erro_email: false,   
       validacao_email: false,
-      campgerenciar_eventos: false, 
+      campgerencia_eventos: false, 
       campMonitorar_eventos: false, 
       camprepresentante_legal: false, 
       validate   
@@ -2348,9 +2349,15 @@ handleCloseModalConviteDelete() {
     // url de backend    
    // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
     // network
+
+    console.log(`/login/delete/${email}`);
     api.delete(`/login/delete/${email}`)    
 
-    api.delete(`/operadores/delete/${id}`)
+    console.log(`/operadorevento/deleteOperadorEvento/${id}`);
+    api.delete(`/operadorevento/deleteOperadorEvento/${id}`)  
+
+    console.log(`/operador/delete/${id}`);
+    api.delete(`/operador/delete/${id}`)
     .then(response =>{
       if (response.data.success) {       
 
@@ -2369,7 +2376,7 @@ handleCloseModalConviteDelete() {
       }
     })
     .catch ( error => {
-      alert("Error motorista delete ")
+      alert("Error operador delete "+ error)
     })
   }
 

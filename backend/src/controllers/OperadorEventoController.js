@@ -31,6 +31,23 @@ controllers.delete = async (req,res) => {
   })
 
 }
+
+controllers.deleteOperadorEvento = async (req,res) => {
+
+  const { id  } = req.params;  
+  await OperadorEvento.destroy({
+    where: {operadorId: id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+
+  })
+
+}
 controllers.list = async (req,res) => {
   await OperadorEvento.findAll({       
     include: [

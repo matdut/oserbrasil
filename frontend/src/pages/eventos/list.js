@@ -93,6 +93,32 @@ const customStyles = {
   }
 };
 
+const customStyles_2 = {
+  overlay: {    
+    position: 'revert',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+   // backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  }, 
+  content : {
+    top                    : '0px',
+    left                   : '33%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '100%',    
+    width                  : '40%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
+
+
 const ConfirmacaodelStyles = {
   overlay: {
     backgroundColor: 'papayawhip',
@@ -159,6 +185,7 @@ class listaeventosComponent extends React.Component  {
       mensagem_nome_evento: '',
       mensagem_evento: '',     
       campOperadorId: '',
+      mudar_estilo: customStyles,
       inicio: 0, 
       value: "1",
       mensagem_tipo_transporte: '',
@@ -474,8 +501,7 @@ class listaeventosComponent extends React.Component  {
               }      
             // console.log(' resultado - '+JSON.stringify(params_email, null, "    "));    
                 
-              api.post("/email/send", params_email);                        
-             
+             api.post("/email/send", params_email);         
 
              this.setState({                          
                 mensagem_usuario: 'Mensagem para operador enviada com sucesso!',                      
@@ -484,6 +510,7 @@ class listaeventosComponent extends React.Component  {
              this.verifica_botao(1);
              this.enviar_botao_modal(1);         
 
+             this.handleCloseModalCompartilha();
              this.envia_mensagemClick();     
 
              // this.handleCloseModalInclusao();
@@ -548,19 +575,23 @@ class listaeventosComponent extends React.Component  {
                  if (respevento.data.success == true) {          
            
                    localStorage.setItem('logeventoId',respevento.data.data.id );                                     
-                     
-                   if (this.state.campOperadorId !== "" || this.state.campOperadorId !== null) { 
+                   console.log('campOperadorId -'+ this.state.campOperadorId);  
 
+                   if (this.state.campOperadorId !== "") { 
+                   
                     const datapost_operador = {
                       operadorId: this.state.campOperadorId, 
-                      eventoId: respevento.data.data.id,
+                      eventoId: localStorage.getItem('logeventoId'),
                       statusId: 1 
                      }        
-                    api.post('/operadorevento/create', datapost_operador);                  
+
+                    console.log('criar operadorevento - '+JSON.stringify(datapost_operador, null, "    ")); 
+                    api.post('/operadorevento/create', datapost_operador);            
+                          
                    }
                  }  
                }).catch(error=>{
-                 alert("Erro verificar log  ")
+                 alert("Erro verificar log  "+ error)
                })  
 
                this.setState({                
@@ -620,6 +651,7 @@ class listaeventosComponent extends React.Component  {
  }  
 
  enviar_botao_modal(inicio) {
+
   const { validate } = this.state 
    // console.log(JSON.stringify(this.state, null, "    "));
     console.log(JSON.stringify(validate, null, "    "));
@@ -1063,7 +1095,7 @@ verificaData_Evento(e) {
      </ReactModal>     
        <ReactModal 
         isOpen={this.state.showModalInclusao}
-        style={customStyles}
+        style={this.state.mudar_estilo}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> Incluir Eventos
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_incluir_evento_modal">
@@ -1349,13 +1381,15 @@ verificaData_Evento(e) {
   handleOpenModalCompartilhar() { 
     this.setState({ 
       showModalCompartilhar: true,      
+    //  mudar_estilo: customStyles_2,
     });      
     
   }
   
   handleCloseModalCompartilha () {
     this.setState({ 
-      showModalCompartilhar: false
+      showModalCompartilhar: false,
+      //mudar_estilo: customStyles,
     }); 
     
    

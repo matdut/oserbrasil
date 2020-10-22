@@ -8,5 +8,6 @@ router.post('/create',OperadorEventoController.create);
 router.get('/get/:id', OperadorEventoController.get);
 router.put('/update/:id', OperadorEventoController.update);
 router.delete('/delete/:id',OperadorEventoController.delete);
+router.delete('/deleteOperadorEvento/:id',OperadorEventoController.deleteOperadorEvento);
 
 module.exports = router;

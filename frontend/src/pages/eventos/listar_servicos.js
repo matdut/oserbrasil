@@ -3,7 +3,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import {Alert, Input } from 'reactstrap';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
 import MaterialTable from 'material-table';
 
 //import axios from 'axios';
@@ -17,6 +17,27 @@ import Menu_cliente_individual from '../cliente/menu_cliente_individual';
 import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu from '../../pages/cabecalho' ;
 import Menu_administrador from '../administrador/menu_administrador';
+import { Button } from 'reactstrap';
+
+import { dataMask } from '../formatacao/datamask';
+import ReactModal from 'react-modal';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import CheckIcon from '@material-ui/icons/Check';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+
+import Tabs from '@material-ui/core/Tabs';
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import { containedTabsStylesHook } from '@mui-treasury/styles/tabs';
 
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -24,12 +45,38 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 var dateFormat = require('dateformat');
-
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 //var dateFormat = require('dateformat');
 //const baseUrl = "http://34.210.56.22:3333";
+
+const customStyles = {
+  overlay: {    
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    top                    : '0px',
+    left                   : '66%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '100%',    
+    width                  : '40%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
+//const tabsStyles = containedTabsStylesHook.useTabs();
+//const tabItemStyles = containedTabsStylesHook.useTabItem();
 
 class listaeventosComponent extends React.Component  {
 
@@ -41,6 +88,8 @@ class listaeventosComponent extends React.Component  {
       campCpf: '',
       mensagem: '',
       color: 'light',
+      value: "1",
+      tabIndex: "1",
       campordem_servico: '',
       campnome_evento: '',
       campdata_evento: '',
@@ -167,13 +216,18 @@ class listaeventosComponent extends React.Component  {
         );        
     }
   }
+  opcao_tabChange = (event, newValue) => {   
+    this.setState({        
+        value: newValue 
+    });    
+  };
   render()
   {
     return (
       <div>   
 
           {this.verifica_menu()}
-          <div className="titulo_lista">     
+          <div className="titulo_lista_servicos">     
             <div className="unnamed-character-style-4 descricao_admministrador">      
             <table>
              <tr>
@@ -181,7 +235,7 @@ class listaeventosComponent extends React.Component  {
                 <a href={"/lista_evento/list"}><img src="/voltar@2x.png" width="22" height="32"/></a>
                 </td> 
               <td> <div className="titulo_bemvindo">  {this.state.campnome_evento} </div>
-              <div className="perfil">
+              <div className="perfil_servico">
               <a href="#">           
                   Editar Evento  
              </a>  
@@ -198,7 +252,7 @@ class listaeventosComponent extends React.Component  {
                <div class="p-2">    
                  <div class="d-flex justify-content-start">
                     <div class="p-2">                       
-                       <i class="far fa-calendar fa-2x"></i>
+                       <i class="far fa-calendar fa-lg"></i>
                     </div>
                     <div class="p-2">
                         <div className="servico_titulo">Ordem Serviço</div>                        
@@ -229,23 +283,33 @@ class listaeventosComponent extends React.Component  {
               </div>               
           </div> 
         </div>
-        <div className="container_modal_list">       
-      <br/>         
-       <Tabs 
-           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">          
-          <Tab eventKey="ativos" title="Serviços do Eventos">
-          <div style={{ maxWidth: '100%',  maxHeight: '100%' }}>
+        <div className="container-fluid margem_left">   
+      <br/>      
+      <div className="selecao_tabs">       
+      <TabContext value={this.state.value} className="tabs_padrao">
+        <AppBar position="static" color="transparent">
+          <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
+            <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>          
+          </TabList>
+        </AppBar>
+        <TabPanel value="1" className="tirar_espaco">
+           <div style={{ maxWidth: '100%' }}>
                         <MaterialTable          
                             title=""
                             columns={[
                               { title: '', field: '#', width: '40px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
-                              { title: 'Data do Evento', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Passageiros', field: 'ordem_servico', width: '255px' },
+                              { title: 'Data', field: 'nome_evento', width: '350px' },
+                              { title: 'Horário', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Qtd Passageiros', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Distância', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Tempo', field: 'nome_evento', width: '350px' },
+                              { title: 'Valor', field: 'nome_evento', width: '350px' },
+                              { title: '', field: '', width: '100px' },
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
                             ]}
-                            data={this.state.listEventos}   
+                            data={this.state.listServicos}   
                             localization={{
                               body: {
                                 emptyDataSourceMessage: 'Nenhum registro para exibir',
@@ -291,7 +355,7 @@ class listaeventosComponent extends React.Component  {
                               //headerStyle: { position: 'sticky', top: 0 },
                               /*exportButton: true, */            
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 4,
+                              actionsColumnIndex: 8,
                              // pageSize: 7,
                               pageSizeOptions: [0],                 
                             }}
@@ -317,16 +381,39 @@ class listaeventosComponent extends React.Component  {
                             
                           />      
                 </div>    
-          </Tab>        
-           
-        </Tabs>       
+        </TabPanel>      
+      </TabContext>        
 
+   </div> 
         </div>
              <div className="botao_lista_incluir">
                         <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Serviços </div>
                         </Fab>
                       </div>    
+
+                      <ReactModal 
+        isOpen={this.state.showModalInclusao}
+        style={customStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div className="editar_titulo_inclusao"> Incluir Serviços
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_incluir_evento_modal">
+              <CloseOutlinedIcon />
+            </IconButton></div>          
+
+             <div className="centraliza_opcao">
+              <Tabs            
+                  value={this.state.tabIndex}
+                  onChange={(e, index) => this.setState({ tabIndex: index }) }
+                >
+                  <Tab value="1" label={'Diária'} />
+                  <Tab value="2" label={'Translado'} />           
+                </Tabs>   
+             </div>
+
+
+
+       </ReactModal>                  
      </div>   
     );
   }
@@ -375,6 +462,45 @@ class listaeventosComponent extends React.Component  {
         )
       }
     })
+  }
+
+  limpar_campos() {
+    this.setState({
+      eventoId: '', 
+      mensagem: '',
+      dataEvento:{}, 
+      campcliente_cnpj: '', 
+      campcliente_nome: '', 
+      campordem_servico: '', 
+      campnome_evento: '', 
+      campdata_evento: '',       
+      camptipoTransporteId: '', 
+      campvalor_total: '',
+      campTipo_cliente: "",
+      mensagem_ordem_servico: '',
+      mensagem_nome_evento: '',
+      mensagem_evento: '',     
+      campOperadorId: '',
+    });  
+  }
+
+
+  handleOpenModalInclusao () { 
+    this.setState({ 
+      showModalInclusao: true,      
+      incluir: true,
+    });  
+
+  //  this.limpar_campos();     
+    
+  }
+  
+  handleCloseModalInclusao () {
+    this.setState({ 
+      showModalInclusao: false
+    }); 
+    
+   
   }
 
   sendDelete(userId){

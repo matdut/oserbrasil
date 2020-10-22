@@ -310,7 +310,7 @@ class listComponent extends React.Component  {
 
    limpar_campos() {
     this.setState({      
-        campgerenciar_eventos: false, 
+        campgerencia_eventos: false, 
         campMonitorar_eventos: false, 
         camprepresentante_legal: false, 
       }); 
@@ -2610,7 +2610,7 @@ mostrar_endereco() {
       return;
     }
     this.setState({ 
-      mensagem_alert: false,
+      mensagem_alert: false,      
       listOperadores: [],      
       listOperadoresCadIncompletos: [],
       listOperadoresExcluidos: [],

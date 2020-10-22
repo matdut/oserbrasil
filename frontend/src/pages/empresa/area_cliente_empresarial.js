@@ -18,7 +18,7 @@ class Area_cliente extends React.Component  {
   verifica_titulo() {    
 
       return (      
-         <strong>{localStorage.getItem('lognome')}</strong>
+         localStorage.getItem('lognome')
        ); 
     
   }  
