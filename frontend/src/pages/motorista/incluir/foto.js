@@ -239,7 +239,7 @@ handleUpload = files => {
 
   //console.log(JSON.stringify(' uploadedFilesFoto - '+this.state.uploadedFilesFoto[0], null, "    "));   
 
-  if (files[0].size <= 2047335) {  
+ // if (files[0].size <= 2047335) {  
     //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));   
     const uploadedFilesFoto = files.map(file => ({
       file,
@@ -249,7 +249,7 @@ handleUpload = files => {
       readableSize: filesize(file.size),
       preview: URL.createObjectURL(file),
       progress: 0,
-      uploaded: true,
+      uploaded: false,
       error: false,
       url: file.url
     })); 
@@ -263,14 +263,14 @@ handleUpload = files => {
       mensagem_foto: ''
     });       
 
-  } else {
+/*  } else {
     this.setState({    
       fotoState: '',
       incluir_foto: false,
       inicio: 1,
       mensagem_foto: 'Foto muito grande, favor adicionar outra '
     });    
-  }  
+  }   */
 
  // uploadedFiles.forEach(this.processUpload);
 }
@@ -405,21 +405,7 @@ return (
                              </div>     
                     </Box>    
                   </Grid>
-               </Grid>    
-               <div className="d-flex flex-column">               
-                  <div className="p-2 titulocnh"> 
-                    <Grid container spacing={2}>
-                      <Grid item xs>
-                           <Paper className="grid_foto">
-                          <strong> Requisitos de formato: </strong><br/>
-                                tamanho mínimo da imagem: 300x100 pixeis;<br/>
-                                formatos aceitáveis: JPG, JPEG, PNG;<br/>
-                                tamanho do arquivo não deve exceder 2 MB. 
-                           </Paper> 
-                      </Grid>
-                    </Grid>                  
-                  </div>
-              </div>                                                   
+               </Grid>                                                                   
               </div> 
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       

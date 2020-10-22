@@ -579,27 +579,25 @@ verificaCep(e) {
  verificaNumero(e) {
   const { validate } = this.state
      if (e.target.value.trim().length == 0) {
-      validate.numeroState = 'has-danger'
+      validate.numeroState = ''
       this.setState({ 
         validate,
         inicio: 1,    
         erro_numero: true,
         validacao_numero: false,       
-        mensagem_numero: 'O campo Numero é obrigatório.'  
+        mensagem_numero: ''  
        })            
      }      
  }
 
  verificaComplemento(e) {
   const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.complementoState = 'has-danger'
+     if (e.target.value.trim().length == 0) {      
       this.setState({ 
-        validate,
-        inicio: 1,           
+        validate,      
         erro_complemento: true,
         validacao_complemento: false,     
-        mensagem_complemento: 'O campo Complemento é obrigatório.'  
+        mensagem_complemento: ''  
        })             
      }      
  }
@@ -630,12 +628,10 @@ validaNumeroChange(e){
 validaComplementoChange(e){
   const { validate } = this.state
   
-    if (e.target.value.trim().length == 0) {
-      validate.complementoState = 'has-danger'
+    if (e.target.value.trim().length == 0) {    
       this.setState({ 
         erro_complemento: false,
-        validacao_complemento: false,   
-        inicio: 1,
+        validacao_complemento: false,           
         mensagem_complemento: '' 
       })  
     } else if (e.target.value.trim().length > 0) {
@@ -644,8 +640,7 @@ validaComplementoChange(e){
         erro_complemento: false,
         validacao_complemento: true,   
         inicio: 2
-      })     
-      this.verifica_botao(this.state.inicio) 
+      })           
     }  
     this.setState({ validate })
     
@@ -709,10 +704,7 @@ verifica_botao(inicio) {
   } else {
   
    // console.log(JSON.stringify(this.state, null, "    "));
-    if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
-      && validate.cidadeState == 'has-success' && validate.complementoState == 'has-success'
-      && validate.enderecoState == 'has-success' && validate.estadoState == 'has-success'
-      && validate.numeroState == 'has-success') {
+   if (this.state.validacao_cep == true && this.state.validacao_numero == true) {
 
           return (
             <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
@@ -736,9 +728,7 @@ verifica_botao(inicio) {
 
   verificar_menu() {   
 
-    if (localStorage.getItem('logperfil') == 0) {
-     
-     return(
+    return(
       <div>
       <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
@@ -763,56 +753,6 @@ verifica_botao(inicio) {
                          </div>       
       </div>                          
      );
-  
-    } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-      return(
-        <div>
-        <div className="d-flex justify-content-around">
-               <div className="botao_navegacao">
-                   <Link to={`/motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-                 </div>                  
-                 <div>
-                   <div className="titulo_endereco_motorista">                
-                       <label>{this.verifica_nome_motorista(this.state.campNome)}, agora fale onde você mora. </label>             
-                   </div>
-                 </div>   
-                 
-                 <div>
-                    <div className="botao_navegacao">
-                       <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                    </div>   
-                 </div>  
-           
-           </div>      
-                           <br/>    
-                           <div>        
-                               <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-                           </div>       
-        </div>                          
-        );
-  
-    } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE INDIVIDUAL OU EMPRESARIAL              
-  
-      return(
-        <div className="d-flex justify-content-around">
-              <div className="botao_navegacao">       
-               </div>                  
-               <div>
-                 <div className="titulo_endereco_motorista">                
-                     <label>{this.verifica_nome_motorista(this.state.campNome)}, altere seu endereço. </label>             
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <div></div>                      
-                  </div>   
-               </div>   
-        </div>
-        );
-  
-    }
-  
   
   }
 sendUpdate(){        
@@ -855,11 +795,13 @@ mostrar_endereco() {
 
   if (this.state.campEndereco !== "") {
   return (
-    <CardBody className="endereco_motorista_left card_mot_endereco">
-    <div>Endereço</div>
-      {this.state.campEndereco} <br/>
-      {this.state.campBairro+' , '+this.state.campCidade+' / '+this.state.estado_selecionado}        
-    </CardBody> 
+    <div> 
+        <div className="titulo_endereceo_alterar">Endereço</div>             
+        <div className="descricao_endereco_endereço">
+          {this.state.campEndereco} <br/>
+          {this.state.campBairro+' , '+this.state.campCidade+' / '+this.state.estado_selecionado} 
+        </div> 
+    </div>     
   );
 
   } else {
@@ -946,7 +888,9 @@ return (
                               this.numerochange(e)                       
                               this.validaNumeroChange(e)
                             }}                          
-                            maxlength="9"     
+                            inputProps={{
+                              maxLength: 8,
+                            }}     
                           endAdornment={
                             <InputAdornment position="end">
                                 {this.state.validacao_numero? <CheckIcon />: ''}
@@ -977,7 +921,9 @@ return (
                               this.complementochange(e)                       
                               this.validaComplementoChange(e)
                             }}                                  
-                            maxlength="9"     
+                            inputProps={{
+                              maxLength: 50,
+                            }}      
                           endAdornment={
                             <InputAdornment position="end">
                                 {this.state.validacao_complemento? <CheckIcon />: ''}

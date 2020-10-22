@@ -129,51 +129,58 @@ class operadoresComponent extends React.Component{
 
     localStorage.setItem('logperfil', 0);
     
-      if (email !== "0") {
+      if (email == "0") {
+
+        console.log('Entrou aqui email == 0 ');
+        localStorage.setItem('logoperadorId', userId);  
+
+        this.busca_operador_cadastro();
+        
+
+      } else {  
+
+        console.log('Entrou aqui email !== 0 ');
         localStorage.setItem('logemailId', userId);
         localStorage.setItem('logemail', email); 
-        
+
         /* verificar se operador já está cadastrado */
             api.get(`/operador/getEmail/${email}`)
             .then(res=>{  
 
-                if (res.data.length > 0) {                  
+                if (res.data.data.length > 0) {                  
           
-                 this.setState({                     
+                 this.setState({       
+                     erro_email: true,
+                     validacao_email: false,              
                      mensagem_aguarde: 'Email já cadastrado',                    
                  });
 
                   this.props.history.push(`/`);                     
+
                 } else {
 
                  this.setState({ 
                     email_disabilitado: true,
-                    campEmail: email, 
+                    campEmail: email,                 
+                    incluir: true, 
                     validacao_email: true,
                  });
 
+                 console.log('busca_email ');   
                  this.busca_email(); 
 
+                 console.log('busca_empresa ');   
+                 this.busca_empresa();    
                 }
             }).catch(error=>{
               alert("Error de conexão busca_empresa "+error)
             })      
             
-        //if (localStorage.getItem('logoperadorId'))
-        
-      } else {
-        localStorage.setItem('logoperadorId', userId);  
-        this.busca_operador();
-      }       
-    
-    this.busca_empresa();    
-
-    console.log('operador ID  1'+localStorage.getItem('logoperadorId'));
-    console.log('operador perfil - '+localStorage.getItem('logperfil'));   
-    console.log('Empresa ID - '+localStorage.getItem('logid'));   
+             //if (localStorage.getItem('logoperadorId'))
+        }                        
   }  
 
-  verificaCpfonfocus(e) {
+  verificaCpfonfocus(e) {    
     const { validate } = this.state
     if (e.target.value.length == 0) {
       validate.cpfState = ''
@@ -184,18 +191,24 @@ class operadoresComponent extends React.Component{
         mensagem_cpf: ''  
        })            
     } else if (e.target.value.length == 14)  {
-      console.log('é valido asasas - '+e.target.value);
-      this.busca_cpf(e);// se existir não deixa cadastrar 
+      validate.cpfState = 'has-success'
+      this.setState({ 
+        validate,               
+        erro_cpf: false,   
+        validacao_cpf: true,    
+        mensagem_cpf: ''  
+       }) 
+      //console.log('é valido asasas - '+e.target.value);
+      // this.busca_cpf(e);// se existir não deixa cadastrar 
       
     }
   } 
   verificaTelefone1onfocus(e){   
-    const { validate } = this.state
-    validate.telefone1State = ''
+    const { validate } = this.state   
        this.setState({ 
             validate,
             erro_telefone: false,   
-            validacao_telefone: true,    
+            validacao_telefone: false,    
             mensagem_telefone1: ''              
         })                   
    } 
@@ -209,15 +222,16 @@ class operadoresComponent extends React.Component{
        );  
   } 
   busca_empresa() {    
-    //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
+    console.log('busca empresa ID '+localStorage.getItem('logid'));    
     api.get(`/empresa/get/${localStorage.getItem('logid')}`)
     .then(res=>{       
         if (res.data.success) {
            
           this.setState({           
-            campCnpj: res.data.data[0].cnpj,
+            campCnpj: res.data.data.cnpj,
             inicio: 2
-          })                 
+          })    
+          console.log('cnpj - '+ this.state.cnpj);             
         } 
       })        
       .catch(error=>{
@@ -228,7 +242,7 @@ class operadoresComponent extends React.Component{
 
   busca_email() {
     const { validate } = this.state
-    //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
+    console.log(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`);    
     api.get(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`)
     .then(res=>{       
         if (res.data.data.length > 0) {
@@ -242,7 +256,10 @@ class operadoresComponent extends React.Component{
    
           validate.emailState = 'has-success'
           this.setState({ validate })
+          console.log('res.data.data[0].empresaId '+ res.data.data[0].empresaId);
           localStorage.setItem('logid', res.data.data[0].empresaId);          
+
+          console.log('Empresa Id - '+localStorage.getItem('logid'));
           if (localStorage.getItem('logperfil') == 8) {
              localStorage.setItem('lograzao_social', this.state.campRazao_social)      
           }   
@@ -259,6 +276,62 @@ class operadoresComponent extends React.Component{
     const { validate } = this.state
    // console.log('busca operador ID '+localStorage.getItem('logid'));
   //  console.log('busca perfil operador state - '+localStorage.getItem('logperfil'));   
+    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+    .then(res=>{
+      //  console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.data.length > 0) {
+           
+          this.setState({ 
+            campCpf: res.data.data[0].cpf,
+            campNome: res.data.data[0].nome,
+            campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
+            campEmail: res.data.data[0].email,      
+            campEmailAnterior: res.data.data[0].email,      
+            campTelefone1: res.data.data[0].celular,            
+            campStatusId: res.data.data[0].statusId,
+            empresaId: res.data.data[0].empresa.id,
+            incluir: false,
+            inicio: 2,
+            validacao_cpf: true,
+            validacao_nome: true,
+            validacao_datanascimento: true,
+            validacao_email: true,
+            validacao_telefone: true,
+          })                        
+         
+          localStorage.setItem('logid', res.data.data[0].empresaId);
+         // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
+          if (this.state.campCpf !== "") {
+            validate.cpfState = 'has-success'      
+          }
+          if (this.state.campNome !== "") {
+            validate.nomeState = 'has-success'      
+          }
+          if (this.state.campData_nascimento !== "") {
+            validate.datanascimentoState = 'has-success'      
+          }
+          if (this.state.campEmail !== "") {
+            validate.emailState = 'has-success'      
+          }   
+          if (this.state.campTelefone1 !== "") {
+            validate.telefone1State = 'has-success'      
+          }            
+  
+          this.setState({ 
+            validate 
+          })
+        } 
+      })        
+      .catch(error=>{
+        alert("Error de conexão busca_operador "+error)
+      })       
+  
+  }
+
+  busca_operador_cadastro() {
+    const { validate } = this.state
+   // console.log('busca operador ID '+localStorage.getItem('logid'));
+    console.log('busca logoperadorId operador state - '+localStorage.getItem('logoperadorId'));   
     api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
@@ -402,24 +475,28 @@ class operadoresComponent extends React.Component{
     const { validate } = this.state
        if (e.target.value.length == 0) {
         //validate.cpfState = 'has-danger'
-        validate.datanascimentoState = ''
-        validate.emailState = ''
-        validate.nomeState = ''
-        validate.telefone1State = ''
+       // validate.datanascimentoState = ''     
+       // validate.nomeState = ''
+       // validate.telefone1State = ''
         this.setState({ 
           validate,       
-          campNome: '',
-          campData_nascimento: '',
-          campEmail: '',
-          campTelefone1: '',
+         // campNome: '',
+          //campData_nascimento: '',        
+          //campTelefone1: '',
           inicio: 1,
+           erro_cpf:false,
+           validacao_cpf: false,
          // mensagem_cpf: 'O campo CPF é obrigatório'  
          })            
        } else if (e.target.value.length == 14) {
         if (cpf.isValid(e.target.value)) {
-          //cpf válido 
+           //cpf válido 
+           this.setState({            
+             erro_cpf:false,
+             validacao_cpf: true,
+           })            
           console.log('é valido - '+e.target.value);
-          this.busca_cpf(e);// se existir não deixa cadastrar
+          //this.busca_cpf(e);// se existir não deixa cadastrar
         }
          
        }  
@@ -427,18 +504,22 @@ class operadoresComponent extends React.Component{
   
   verificaTelefone1(e) {  
     const { validate } = this.state
-       if (e.target.value.length == 0) {          
-        //validate.telefone1State = 'has-danger'
+       if (e.target.value.length == 0) {                  
         this.setState({ 
           validate,
           inicio: 1,
-          //mensagem_telefone1: 'O campo Telefone é obrigatório.'
+          erro_telefone: false,   
+          validacao_telefone: false,    
+          mensagem_telefone1: ''
          })      
        } else {       
 
         if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success' ;                
-            this.setState({ 
+            this.setState({
+              erro_telefone: false,   
+              validacao_telefone: true,    
+              inicio: 2,
               mensagem_telefone1: ''
           });           
         }
@@ -497,13 +578,12 @@ class operadoresComponent extends React.Component{
 
   verificaNome() {
     const { validate } = this.state
-       if (this.state.campNome.length == 0) {
-        validate.nomeState = 'has-danger'
+       if (this.state.campNome.length == 0) {        
         this.setState({ 
           validate,
           erro_nome: true,   
           validacao_nome: false,    
-          mensagem_nome: 'O campo nome é obrigatório.'  
+          mensagem_nome: ''  
          })      
        } else {
         validate.nomeState = 'has-success' ;        
@@ -519,12 +599,12 @@ class operadoresComponent extends React.Component{
   verificaDataNascimento() {
     const { validate } = this.state
        if (this.state.campData_nascimento.length == 0) {
-        validate.datanascimentoState = 'has-danger'
+      //  validate.datanascimentoState = 'has-danger'
         this.setState({ 
           validate,
-          erro_datanascimento: true,   
+          erro_datanascimento: false,   
           validacao_datanascimento: false,    
-          mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
+          mensagem_data_nascimento: ''  
          })      
        } else {
 
@@ -589,7 +669,7 @@ class operadoresComponent extends React.Component{
            if (cpf.isValid(e.target.value)) {
                //cpf válido 
                console.log('é valido - '+e.target.value);
-               this.busca_cpf(e);// se existir não deixa cadastrar
+             //  this.busca_cpf(e);// se existir não deixa cadastrar
 
            } else {
             validate.cpfState = 'has-danger'                   
@@ -645,20 +725,27 @@ validaNomeChange(e){
 validaDataNascimentoChange(e){
   const { validate } = this.state
   
-    if (e.target.value.length < 10) {
-      validate.datanascimentoState = 'has-danger'
+    if (e.target.value.length == 0) {
+      validate.datanascimentoState = ''
       this.setState({ 
-        erro_datanascimento: true,   
+        erro_datanascimento: false,   
         validacao_datanascimento: false,    
-        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
+        mensagem_data_nascimento: '' 
       })  
-    } 
+    } if (e.target.value.length == 10) {
+      this.setState({ 
+        erro_datanascimento: false,   
+        validacao_datanascimento: true,    
+        mensagem_data_nascimento: '' 
+      })  
+    }   
     this.setState({ validate })
 }
 
 verifica_botao(inicio) {
   const { validate } = this.state    
-//  console.log('perfil verifica_botao -'+localStorage.getItem('logperfil'))
+  console.log(JSON.stringify(this.state, null, "    "));
+
 if (inicio == 1) {
   return (
 
@@ -670,9 +757,9 @@ if (inicio == 1) {
   );   
 } else {
 
-  if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
-    && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
-    && validate.telefone1State == 'has-success') {
+  if (this.state.validacao_cpf == true && this.state.validacao_datanascimento == true  
+    && this.state.validacao_email == true && this.state.validacao_nome == true
+    && this.state.validacao_telefone == true) {
       return (           
         <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendSave()}>
         <div className="d-flex justify-content-center">
@@ -743,7 +830,7 @@ sendSave(){
         cpf: this.state.campCpf,  
         perfilId: 8,
         empresaId: this.state.empresaId,
-        statusId: 7,        
+        statusId: 1,        
         situacaoId: 1
        }                 
        console.log('incluir - '+JSON.stringify(datapost_incluir, null, "    ")); 
@@ -754,7 +841,7 @@ sendSave(){
             const logindata = {  
               email: this.state.campEmail,                
               perfilId: 8,
-              statusId: 7,
+              statusId: 1,
               logid: response.data.data.id
             }
 
@@ -774,9 +861,6 @@ sendSave(){
             this.props.history.push('/senha_operador_incluir/'+response.data.data.id);       
           }           
   
-          }
-          else {
-            alert("Error de conexao ")              
           }
         }).catch(error=>{
           alert("Erro verificar log  ")
@@ -832,26 +916,22 @@ sendSave(){
 
 verificaCpfonblur(e) {
   const { validate } = this.state        
-     if (e.target.value.length < 14) {         
-      validate.cpfState = 'has-danger'       
+     if (e.target.value.length == 0) {         
+     // validate.cpfState = 'has-danger'       
       this.setState({ 
-        validate,       
-        campNome: '',
-        campData_nascimento: '',
-        campEmail: '',
-        campTelefone1: '',
+        validate,            
         inicio: 1,
         erro_cpf: true,
         validacao_cpf: false,
-        mensagem_cpf: 'O campo CPF é obrigatório'  
+        mensagem_cpf: '',  
        })                    
      }  else if (e.target.value.length == 14) {          
       //valida o cpf 
        console.log('e.target.value - '+e.target.value);
        if (cpf.isValid(e.target.value)) {
            //cpf válido 
-           console.log('é valido - '+e.target.value);
-           this.busca_cpf(e);// se existir não deixa cadastrar
+          // console.log('é valido - '+e.target.value);
+          // this.busca_cpf(e);// se existir não deixa cadastrar
 
        } else {
         validate.cpfState = 'has-danger'       
@@ -910,6 +990,31 @@ verificaNomeonfocus(e) {
   } 
 } 
 
+busca_email_convite() {
+  const { validate } = this.state
+  //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
+  api.get(`/emailOperador/getEmail/${localStorage.getItem('logemail')}`)
+  .then(res=>{       
+      if (res.data.data.length > 0) {
+         
+        this.setState({           
+          campEmail: res.data.data[0].email,           
+          inicio: 2,
+          incluir: true
+        })                 
+ 
+        validate.emailState = 'has-success'
+        this.setState({ validate })
+      }   
+        
+    })        
+    .catch(error=>{
+      alert("Error de conexão busca_email "+error)
+    })       
+
+} 
+
+
 render(){  
 
 return (
@@ -945,7 +1050,10 @@ return (
                         onChange={ (e) => {
                          this.cpfchange(e)                       
                          this.validaCpfChange(e)
-                        }}                         
+                        }}          
+                        inputProps={{
+                          maxLength: 14,
+                        }}               
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_cpf? <CheckIcon />: ''}
@@ -976,7 +1084,10 @@ return (
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)
-                      }}                      
+                      }}     
+                      inputProps={{
+                        maxLength: 40,
+                      }}                 
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_nome? <CheckIcon />: ''}
@@ -1034,12 +1145,15 @@ return (
                         variant="outlined"
                         value={this.state.campEmail}
                         onBlur={this.verificaEmail}                     
-                        onFocus={this.verificaEmailonfocus}
+                        onFocus={this.verificaEmailonfocus}                       
                         onChange={ (e) => {
                                     this.emailchange(e) 
                                     this.validateEmail(e)
                                     this.validaEmailChange(e)                                
-                                  } }                        
+                                  } }                      
+                         inputProps={{
+                           maxLength: 50,
+                         }}   
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_email? <CheckIcon />: ''}
@@ -1069,8 +1183,11 @@ return (
                         onChange={ (e) => {
                           this.telefone1change(e)                       
                           this.validatelefone1Change(e)
-                        }}                                      
-                      endAdornment={
+                        }}          
+                        inputProps={{
+                          maxLength: 40,
+                        }}                            
+                      endAdornment={                        
                         <InputAdornment position="end">
                              {this.state.validacao_telefone? <CheckIcon />: ''}
                         </InputAdornment>
@@ -1092,7 +1209,7 @@ return (
          </div>   
          <div className="area_neutra">
               <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '244px' }} />
+                  <Typography component="div" style={{ backgroundColor: '#white', height: '220px' }} />
               </Container>            
          </div>               
      </div>         

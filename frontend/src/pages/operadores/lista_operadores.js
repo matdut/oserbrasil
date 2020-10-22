@@ -2,9 +2,11 @@ import React from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { Alert, Input } from 'reactstrap';
 //import axios from 'axios';
 import api from '../../services/api';
+import { Spinner } from 'reactstrap';
+
+//import Switch from 'react-ios-switch';
 
 import ReactModal from 'react-modal';
 import MaterialTable from 'material-table';
@@ -18,14 +20,26 @@ import { cnpjMask } from '../formatacao/cnpjmask';
 //library sweetalert
 import Menu_administrador from '../administrador/menu_administrador';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import 'sweetalert2/src/sweetalert2.scss';
+//import 'sweetalert2/src/sweetalert2.scss';
 import { dataMask } from '../formatacao/datamask';
+import { cepremoveMask } from '../formatacao/cepremovemask';
+import { cnpjremoveMask } from '../formatacao/cnpjremovemask';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
+
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+//import { useIosSwitchStyles } from '@mui-treasury/styles/switch/ios';
+//import { withStyles } from '@material-ui/core/styles';
+
+//import Switch from '@material-ui/core/Switch';
+//import { useIosSwitchStyles } from '@mui-treasury/styles/switch/ios';
+//import { useLovelySwitchStyles } from '@mui-treasury/styles/switch/lovely';
+
 
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -45,21 +59,24 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 const { cpf } = require('cpf-cnpj-validator');
+const { cnpj } = require('cpf-cnpj-validator');
 var dateFormat = require('dateformat');
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 const logid = localStorage.getItem('logid');
+
 //const baseUrl = "http://34.210.56.22:3333";
+
 const customStyles = {
-  overlay: {
-    backgroundColor: 'papayawhip',
+  overlay: {    
     position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   content : {
     top                    : '0px',
@@ -67,6 +84,32 @@ const customStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
+    width                  : '40%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
+
+const ConfirmacaodelStyles = {
+  overlay: {
+    backgroundColor: 'papayawhip',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    top                    : '50%',
+    left                   : '66%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '50%',    
     width                  : '560px',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -76,12 +119,22 @@ const customStyles = {
   }
 };
 
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 class listComponent extends React.Component  {
 
   constructor(props){
     super(props);
     this.state = {
       perfil: perfil,
+      campCnpj:"",
+      mensagem_usuario: '',
+      campRazao_social: "",
+      campNome_fantasia:"",
+      campDeletarId: '',
+      campDeletarEmail: '',
       campNome: "",
       campSenha: '',
       campNomeTitulo: '',
@@ -91,29 +144,52 @@ class listComponent extends React.Component  {
       campTelefone1:"",
       campRazao_social: "",
       campStatusId: 0,
-      campgerencia_eventos: false,
-      campefetua_pagamentos: false,
-      campgerencia_todos_eventos: false,
-      campinclui_cartao: false,
-      campinclui_operadores: false,
-      campvisualiza_eventos: false, 
+      mensagem_alert: false,
+      encontrou_cnpj: true,
+      campo_cnpj_disabled:false,
+      campo_razao_social_disabled:false,
+      campo_nome_fantasia_disabled:false,
+      campgerencia_eventos: false, 
+      campMonitorar_eventos: false, 
+      camprepresentante_legal: false, 
+      checked: true,
+
+   /*   campgerenciar_todos_eventos: false, 
+      campincluir_alterar_cartao: false, 
+      campvisualizar_eventos_servicos: false,
+      campincluir_operadores_eventos: false, 
+      campincluir_operadores: false, 
+      campincluir_eventos_servicos: false,
+      campalterar_eventos_servicos: false,
+      campexcluir_eventos_servicos: false,
+      campemitir_relatorio: false,
+      campalterar_endereco_empresa: false,   */            
       camp_cpf_disabled: false,
       camp_nome_disabled: false,
       camp_datanasc_disabled: false,
       camp_email_disabled: true,
       camp_telefone_disabled: false,
+      validacao_cnpj: false,
+      validacao_razaosocial: false,
+      validacao_nomefantasia: false,
       empresaId: 0,
       campCpf:"",           
       mensagem_nome: '',  
       mensagem_cpf: '',  
       mensagem_email: '',  
       mensagem_telefone1: '',
-      mensagem_data_nascimento: '',      
+      mensagem_data_nascimento: '',     
+      mensagem_razao_social: '',  
+      mensagem_nome_fantasia: '',  
+      consulta_cnpj:'',  
       erro_cpf: false,
       erro_nome: false,
       erro_datanascimento: false,
       erro_email: false,
       erro_telefone: false,
+      erro_cnpj: false,
+      erro_razaosocial: false,
+      erro_nomefantasia: false,
       validacao_cpf: false,
       validacao_nome: false,
       validacao_datanascimento: false,
@@ -125,6 +201,8 @@ class listComponent extends React.Component  {
       color: 'light',
       listOperadores:[],
       listOperadoresExcluidos:[],
+      listOperadoresCadIncompletos:[],
+      listOperadoresConvites:[],
       listaStatus:[],
       validate: {
         nomeState: '',      
@@ -134,6 +212,23 @@ class listComponent extends React.Component  {
         telefone1State: '',     
       }    
     }
+
+    this.cnpjchange = this.cnpjchange.bind(this);     
+    this.nomefantasiachange = this.nomefantasiachange.bind(this);      
+    this.loadcnpj = this.loadcnpj.bind(this);   
+    this.razaosocialchange = this.razaosocialchange.bind(this);   
+  
+    this.verificanomefantasia = this.verificanomefantasia.bind(this);   
+    this.verificacnpj = this.verificacnpj.bind(this);   
+    this.verificarazaosocial = this.verificarazaosocial.bind(this);       
+    this.verificacnpjonfocus = this.verificacnpjonfocus.bind(this);       
+
+    //this.validaNomeChange = this.validaNomeChange.bind(this);  
+    this.validatecnpjChange = this.validatecnpjChange.bind(this);   
+    this.validatenomefantasiaChange = this.validatenomefantasiaChange.bind(this);   
+    this.validaterazaosocialChange = this.validaterazaosocialChange.bind(this); 
+
+    this.verificaSaidacnpj = this.verificaSaidacnpj.bind(this);      
 
     this.cpfchange = this.cpfchange.bind(this);
     this.telefone1change = this.telefone1change.bind(this);  
@@ -164,11 +259,18 @@ class listComponent extends React.Component  {
     this.busca_email = this.busca_email.bind(this);
 
     this.handlegerenciaChange = this.handlegerenciaChange.bind(this);
-    this.handlegerenciatodosChange = this.handlegerenciatodosChange.bind(this);
-    this.handleincluiCartaoChange = this.handleincluiCartaoChange.bind(this);
+    this.handlegerenciarotasChange = this.handlemonitorar_eventosChange.bind(this);
+    this.handleeditaoperadoresChange = this.handlerepresentantelegalChange.bind(this);
+    
+    /*this.handleincluiCartaoChange = this.handleincluiCartaoChange.bind(this);    
     this.handlevisualizaEventosChange = this.handlevisualizaEventosChange.bind(this);
-    this.handleefetuaPagamentoChange = this.handleefetuaPagamentoChange.bind(this);
     this.handleincluiOperadoresChange = this.handleincluiOperadoresChange.bind(this);
+    this.handleincluiOperadoresEventosChange = this.handleincluiOperadoresEventosChange.bind(this);
+    this.handleincluiEventoServicoChange = this.handleincluiEventoServicoChange.bind(this);
+    this.handlealteraEventoServicoChange = this.handlealteraEventoServicoChange.bind(this);
+    this.handleexcluiEventoServicoChange = this.handleexcluiEventoServicoChange.bind(this);
+    this.handleemiterelatorioChange = this.handleemiterelatorioChange.bind(this);
+    this.handlealterarEnderecoEmpresaChange = this.handlealterarEnderecoEmpresaChange.bind(this); */
   }
 
   componentDidMount(){
@@ -181,9 +283,11 @@ class listComponent extends React.Component  {
       this.props.history.push(`/login`);       
 
     } else {
-        this.loadOperadores();    
-        this.loadOperadoresExxcluidos();
+        this.loadOperadores();            
+        this.loadOperadoresExcluidos();
+        this.loadOperadoresCadIncompletos();
         this.carrega_status();  
+        this.loadConvites();
     }    
   }
   
@@ -196,10 +300,229 @@ class listComponent extends React.Component  {
     })     
   
    }
+   limpar_cnpj_nao_encontrado() {
+    this.setState({      
+      campCnpj: "",          
+      campRazao_social: "",
+      campNome_fantasia:"",      
+    });
+   }   
+
+   limpar_campos() {
+    this.setState({      
+        campgerenciar_eventos: false, 
+        campMonitorar_eventos: false, 
+        camprepresentante_legal: false, 
+      }); 
+   }
  
+   loadcnpj(e) {
+    const { validate } = this.state
+    if (this.state.campCnpj.length > 0) { 
+  
+      //console.log(' recebe valores - '+JSON.stringify(this.state , null, "    "));                 
+  
+      //console.log('Consulta CNPJ 1 - '+this.state.campCnpj); 
+      //console.log('Consulta CNPJ target - '+e.target.value); 
+      console.log('Consulta CNPJ - '+cnpjremoveMask(this.state.campCnpj));   
+      //const cnpj_consulta = cnpjremoveMask(this.state.campCnpj);
+     let cnpj = `https://cors-anywhere.herokuapp.com/http://www.receitaws.com.br/v1/cnpj/${cnpjremoveMask(this.state.campCnpj)}`;
+     //let cnpj = `http://www.receitaws.com.br/v1/cnpj/${cnpjremoveMask(this.state.campCnpj)}`;
+      console.log(`campCNPJ - ${cnpj}`);
+     // console.log(cnpj);
+      api.get(cnpj)
+      .then((val)=>{
+        if (val.data !== null) {
+          console.log('Saida Receita - '+JSON.stringify(val, null, "    "));
+  
+          if (val.data.situacao == "ATIVA") {
+           console.log('SITUACAO - '+ val.data.situacao);       
+           console.log(JSON.stringify(val.data , null, "    "));             
+  
+            let estado = ''
+            console.log('val.data.uf - '+val.data.uf)       
+           
+            if (val.data.uf.length > 0) {
+                api.get(`/estado/get/${val.data.uf}`)
+                .then(res=>{      
+                  estado = res.data.data[0].id                   
+                  
+                  console.log('UF - '+ estado)
+                  
+                  this.setState({ 
+                    campRazao_social: val.data.nome,              
+                    //campEmail: atualiza_email,
+                    campNome_fantasia: val.data.fantasia,                                               
+                    //campEmailTeste: atualiza_email,
+                    campBairro: val.data.bairro,
+                    campCidade: val.data.municipio,
+                    campEndereco: val.data.logradouro,
+                    campComplemento: val.data.complemento,
+                    campEstado: estado,
+                    campNumero: val.data.numero,
+                    campCep: cepremoveMask(val.data.cep),           
+                    encontrou_cnpj: true,      
+                  });    
+  
+                  localStorage.setItem('logcepbanco', this.state.campCep);  
+                  if (this.state.campCnpj !== "") {
+                    validate.cnpjState = 'has-success'      
+                  }
+                  if (this.state.campRazao_social !== "") {
+                    validate.razao_socialState = 'has-success'      
+                  }
+                  if (this.state.campNome_fantasia !== "") {
+                    validate.nome_fantasiaState = 'has-success'      
+                  }              
+  
+                  this.setState({ 
+                    validate,              
+                    inicio: 2,
+                    progresso: 50,
+                    erro_cnpj: false,
+                    validacao_cnpj: true,        
+                    erro_razaosocial:false,
+                    validacao_razaosocial: true,                  
+                    mensagem_CNPJ: ''                  
+                  })   
+  
+                  if (this.state.campNome_fantasia !== "") {
+                    this.setState({ 
+                      erro_nomefantasia:false,
+                      validacao_nomefantasia: true,
+                    });
+                  }
+                  
+                  console.log('campEstado - '+this.state.campEstado)
+                })        
+                .catch(error=>{
+                  alert("Error de conexão  "+error)
+                })   
+               }
+                           
+                //console.log('Saida localizacao - '+JSON.stringify(this.state , null, "    "));
+          
+          } else {
+            validate.cnpjState = 'has-danger'
+            this.setState({ 
+              erro_cnpj: true,
+              validacao_cnpj: false,   
+              mensagem_CNPJ: 'CNPJ não regular da receita federal', 
+              encontrou_cnpj: true 
+            })  
+          }
+        } else {
+          validate.cnpjState = 'has-danger'
+          this.setState({ 
+            erro_cnpj: true,
+            validacao_cnpj: false,  
+            mensagem_CNPJ: 'CNPJ não encontrado na receita federal', 
+            encontrou_cnpj: true  
+          })  
+        }
+       // console.log('callapi: ' + JSON.stringify(val))
+      }).catch(error=>{
+        validate.cnpjState = 'has-success'
+        this.setState({        
+            erro_cnpj: false,
+            validacao_cnpj: true,     
+            mensagem_CNPJ: '',           
+            encontrou_cnpj: true  
+         })  
+      })
+       //})
+    //.catch((error) => console.log('callapi:'+ JSON.stringify(error)));
+    }
+   }
+
+   validatecnpjChange(e){
+    const { validate } = this.state
+    
+      console.log('TAMANHO - '+e.target.value.length)
+      if (e.target.value.length == 0) {
+        validate.cnpjState = ''
+        this.setState({ 
+           mensagem_CNPJ: '',
+           erro_cnpj: false,
+           validacao_cnpj: true, 
+           encontrou_cnpj: false, 
+           inicio: 1           
+        })  
+      } else if (e.target.value.length == 18) {   
+        this.setState({ 
+          encontrou_cnpj: false 
+        })
+        if (e.key !== 'Enter') {
+          ///validate.cnpjState = ''
+            this.setState({ 
+            mensagem_CNPJ: '',
+            inicio: 2           
+            })  
+            console.log(' verifica '+e.target.value)                 
+            // verifica se é um número válido
+            if (cnpj.isValid(e.target.value)) {
+                //cnpj válido   
+                console.log(' CNPJ VALIDO '+e.target.value)            
+                this.verifica_cnpj(e)
+
+            } else {
+              console.log(' CNPJ INVALIDO '+e.target.value)
+              validate.cnpjState = 'has-danger'
+              this.setState({ 
+                erro_cnpj: true,
+                validacao_cnpj: false,      
+                mensagem_CNPJ: 'O campo CNPJ é inválido.',
+                encontrou_cnpj: true, 
+                inicio: 1           
+                })                                         
+            }                     
+        }  
+      }  
+        
+      this.setState({ validate })
+  }
+
+  validatenomefantasiaChange(e){
+    const { validate } = this.state
+    
+      if (e.target.value.length == 0) {
+        validate.nome_fantasiaState = ''
+        this.setState({ 
+          inicio:1,
+          mensagem_nome_fantasia: '' 
+        })  
+      } else {
+        validate.nome_fantasiaState = ''       
+        this.setState({           
+          inicio: 2
+        })
+       // this.verifica_botao(this.state.inicio)
+      }  
+      this.setState({ validate })
+  } 
+  validaterazaosocialChange(e){
+    const { validate } = this.state
+    
+      if (e.target.value.length == 0) {
+        validate.razao_socialState = 'has-danger'
+        this.setState({ 
+          erro_razaosocial: true,
+          validacao_razaosocial: false,
+          mensagem_razao_social: 'O campo Razão Social é obrigatório.' 
+        })  
+      } else if (e.target.value.length > 0) {
+        validate.razao_socialState = 'has-success'        
+        this.setState({ 
+          erro_razaosocial: false,
+          validacao_razaosocial: true,
+          mensagem_razao_social: '' 
+        })  
+      }  
+      this.setState({ validate })
+  }
    carrega_status(){ 
    
-    api.get('/status/list')
+    api.get('/status/listafiltro')
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -220,32 +543,262 @@ class listComponent extends React.Component  {
       campgerencia_eventos: event.target.checked
     });
   };
-  handlegerenciatodosChange = (event) => {
+  handlemonitorar_eventosChange = (event) => {    
+    
     this.setState({ 
-      campgerencia_todos_eventos: event.target.checked
+      campMonitorar_eventos: event.target.checked
     });
   };
-  handleincluiCartaoChange = (event) => {
+  handlerepresentantelegalChange = (event) => {
+
+   // console.log('evento - '+JSON.stringify(event.target.value, null, "    "));     
     this.setState({ 
-      campinclui_cartao: event.target.checked
-    });
+      camprepresentante_legal: event.target.checked
+    }); 
   };
+  /*
   handleincluiOperadoresChange = (event) => {
     this.setState({ 
-      campinclui_operadores: event.target.checked
+      campincluir_operadores: event.target.checked
     });
   };
-  handleefetuaPagamentoChange = (event) => {
+  
+  handleincluiOperadoresEventosChange = (event) => {
     this.setState({ 
-      campefetua_pagamentos: event.target.checked
+      campincluir_operadores_eventos: event.target.checked
     });
   };
+
   handlevisualizaEventosChange = (event) => {
     this.setState({ 
-      campvisualiza_eventos: event.target.checked
+      campvisualizar_eventos_servicos: event.target.checked
     });
   };
-    
+  handleincluiEventoServicoChange = (event) => {
+    this.setState({ 
+      campincluir_eventos_servicos: event.target.checked
+    });
+  };
+  handlealteraEventoServicoChange = (event) => {
+    this.setState({ 
+      campalterar_eventos_servicos: event.target.checked
+    });
+  };
+  handleexcluiEventoServicoChange = (event) => {
+    this.setState({ 
+      campexcluir_eventos_servicos: event.target.checked
+    });
+  };
+  handleemiterelatorioChange = (event) => {
+    this.setState({ 
+      campemitir_relatorio: event.target.checked
+    });
+  };
+  handlealterarEnderecoEmpresaChange = (event) => {
+    this.setState({ 
+      campalterar_endereco_empresa: event.target.checked
+    });
+  };
+*/
+  verifica_cnpj(e) {
+    const { validate } = this.state
+    //console.log(`/empresa/getbuscaempresacnpj/${cnpjremoveMask(e.target.value)}`)         
+    //let userId = this.props.match.params.id;  
+   api.get(`/empresa/getbuscaempresacnpj/${cnpjremoveMask(e.target.value)}`)
+    .then(res=>{
+        console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.success) {  
+          
+          validate.cnpjState = 'has-has-success' 
+          this.setState({ 
+            campRazao_social: res.data.data[0].razao_social,              
+            inicio: 1,    
+            erro_cnpj: false,
+            validacao_cnpj: true,              
+          })           
+          
+        }
+         else {
+          //console.log('nao encontrou base '+JSON.stringify(res.data, null, "    ")); 
+          //this.loadcnpj(e)
+          this.setState({ 
+            validate,
+            erro_cnpj: true,
+            validacao_cnpj: false,          
+            mensagem_CNPJ: 'Empresa não cadastrada' 
+         })
+
+        } 
+      })        
+      .catch(error=>{
+        alert("Error de conexão cliente/get "+error)
+      })   
+    }
+   
+  verifica_base_cnpj(e) {
+    const { validate } = this.state
+   // console.log('verifica_base_cnpj cnpj - '+cnpjremoveMask(e.target.value))         
+    //let userId = this.props.match.params.id;  
+    api.get(`/empresa/getEmpresaCnpj/${cnpjremoveMask(e.target.value)}/${localStorage.getItem('logcpfrep')}`)
+    .then(res=>{
+        console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.success) {
+  
+          validate.cnpjState = 'has-danger' 
+          this.setState({ 
+            inicio: 1,    
+            erro_cnpj: true,
+            validacao_cnpj: false,     
+            mensagem_CNPJ: 'O campo CNPJ já cadastrado.' 
+          }) 
+          
+          this.setState({ 
+             validate,
+             erro_cnpj: false,
+             validacao_cnpj: true, 
+             encontrou_cnpj: true 
+          })
+        } else {
+          console.log('nao encontrou base '+JSON.stringify(res.data, null, "    ")); 
+          this.loadcnpj(e)
+        }
+      })        
+      .catch(error=>{
+        alert("Error de conexão cliente/get "+error)
+      })   
+    }
+
+  verificaSaidacnpj(e) {
+    const { validate } = this.state
+      
+      if (e.target.value.trim().length == 0) {      
+
+        this.setState({ 
+          validate,
+          inicio: 1,  
+          encontrou_cnpj: true, 
+          erro_cnpj: false,
+          validacao_cnpj: false,          
+          mensagem_CNPJ: ''  
+         })        
+         
+      } 
+   }
+
+   verificacnpjonfocus(e) {
+    const { validate } = this.state         
+       if (e.target.value.trim().length == 0){
+          this.limpar_cnpj_nao_encontrado()
+          validate.nome_fantasiaState = ''     
+          validate.razao_socialState = ''
+            validate.cnpjState = ''
+            this.setState({ 
+              validate,
+              erro_cnpj: false,
+              validacao_cnpj: false,    
+              encontrou_cnpj: true, 
+              campRazao_social: '',
+              campNome_fantasia:'',
+              campCnpj:'',
+              mensagem_CNPJ: '',
+              inicio: 1           
+              })                                         
+        } 
+   }
+   verificacnpj(e) {
+    const { validate } = this.state         
+        if (e.target.value.trim().length == 0) {
+          validate.nome_fantasiaState = ''     
+          validate.razao_socialState = ''
+          this.setState({ 
+            validate,
+            erro_cnpj: false,
+            validacao_cnpj: false,  
+            encontrou_cnpj: true, 
+            campRazao_social: '',
+            campNome_fantasia:'',
+            campCnpj:'',
+            mensagem_CNPJ: '',
+            inicio: 1           
+            })     
+        } else if (e.target.value.length == 18) {   
+              this.setState({ 
+                encontrou_cnpj: false 
+              })       
+                ///validate.cnpjState = ''
+                  this.setState({ 
+                  mensagem_CNPJ: '',
+                  inicio: 2,
+                  erro_cnpj: false,
+                  validacao_cnpj: true,        
+                  encontrou_cnpj: true, 
+                  progresso: 70           
+                  })  
+                  console.log(' verifica '+e.target.value)                 
+                  // verifica se é um número válido
+                  if (cnpj.isValid(e.target.value)) {
+                      //cnpj válido   
+                      console.log(' CNPJ VALIDO '+e.target.value)            
+                      this.verifica_cnpj(e)
+      
+                  } else {
+                    console.log(' CNPJ INVALIDO '+e.target.value)
+                    validate.cnpjState = 'has-danger'
+                    this.setState({ 
+                      erro_cnpj: true,
+                      validacao_cnpj: false,            
+                      mensagem_CNPJ: 'O campo CNPJ é inválido.',
+                      encontrou_cnpj: true, 
+                      inicio: 1           
+                      })                                         
+                  }                                 
+                  this.setState({ validate })    
+            }         
+   }
+  
+  verificarazaosocial(e) {
+    const { validate } = this.state      
+       
+       if (e.target.value.length == 0) {
+  
+        validate.razao_socialState = 'has-danger'
+        this.setState({ 
+          validate,
+          erro_razaosocial: true,
+          validacao_razaosocial: false,
+          inicio: 1,      
+          mensagem_razao_social: 'O campo Razão Social é obrigatório'  
+         })      
+       } else {
+        this.setState({ 
+          inicio: 2,      
+          erro_razaosocial: false,
+          validacao_razaosocial: true,
+       });  
+
+       }    
+   }
+  
+  verificanomefantasia(e) {
+    const { validate } = this.state
+      
+       if (e.target.value.length == 0) {  
+        this.setState({ 
+          inicio: 2,   
+       });  
+       } else if (e.target.value.length > 0)  {
+        validate.nome_fantasiaState = 'has-success'
+        this.setState({ 
+          validate,          
+          erro_cnpj: false,
+          validacao_cnpj: true,
+          inicio: 2,      
+          //mensagem_razao_social: 'wqqwqweqe'  
+          //mensagem_razao_social: 'O campo Razão Social é obrigatório'  
+         })                    
+
+       }    
+   }
 
    busca_cpf(e){
     const { validate } = this.state
@@ -294,88 +847,105 @@ class listComponent extends React.Component  {
      })   
    }
 
-   sendEnvioEmail(){        
-    const email_envio = this.state.campEmail;
-  
-    const operadordata = {  
-      email: this.state.campEmail,    
-      empresaId: localStorage.getItem('logid'),     
-      statusId: 6,
-      gerenciar_eventos: this.state.campgerencia_eventos, 
-      gerenciar_todos_eventos: this.state.campgerencia_todos_eventos, 
-      incluir_cartao: this.state.campinclui_cartao, 
-      visualizar_eventos: this.state.campvisualiza_eventos,
-      efetuar_pagamentos: this.state.campefetua_pagamentos, 
-      incluir_outors_operadores: this.state.campinclui_operadores,    
-    }    
+   sendteste(){        
+
+
+    this.setState({   
+        mensagem_usuario: 'Mensagem Enviada com sucesso'
+    });          
+
+    this.envia_mensagemClick();      
+
+   } 
+
+   sendEnvioEmail(){      
     
-    api.get(`/emailOperador/getemail/${this.state.campEmail}`)
-    .then(res1=>{             
-  
-      if (res1.data.data.length == 0) {    
-     
-        api.post(`/emailOperador/create`, operadordata)
-        .then(res=>{             
-         // console.log(' resultado - '+JSON.stringify(res.data, null, "    "));       
-           //   url: `http://localhost:3000/operadores/${res.data.data.id}`,   
-          //url: `http://www.oser.app.br:21497/operadores/${res.data.data.id}`,
-          if (res.data.success == true) {    
+    const { validate } = this.state;       
+    validate.cpfState= '';
+    console.log(`busca operador CNPJ - ${cnpjremoveMask(this.state.campCnpj)}`);
+    
+    this.setState({ 
+       validacao_email: false,
+       mensagem_aguarde: 'Aguarde, enviando email  ssdasadd...',       
+       validate 
+    }); 
+    
+    const email_envio = this.state.campEmail; 
+
+        console.log(`/empresa/getbuscaempresacnpj/${cnpjremoveMask(this.state.campCnpj)}`);
+        
+
+
+          api.get(`/empresa/getbuscaempresacnpj/${cnpjremoveMask(this.state.campCnpj)}`)
+          .then(respempresa=>{
+         // console.log(' resultado empresa 2 - '+JSON.stringify(respempresa.data, null, "    "));        
+            if (respempresa.data.success==true) {     
       
-            const params = {    
-              email: email_envio,                
-            }    
-            api.post("/login/create", params);       
-      
-            const params_email = {    
-              email: email_envio,         
-             // url: `http://localhost:3000/operadores_incluir/${res.data.data.id}/${res.data.data.email}`,     
-              url: `http://www.oser.app.br:21497/operadores_incluir/${res.data.data.id}/${res.data.data.email}`,     
-              texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
-            }      
-           // console.log(' resultado - '+JSON.stringify(params_email, null, "    "));    
+                  const operadordata = {  
+                    email: this.state.campEmail,    
+                    empresaId: respempresa.data.data[0].id,     
+                    perfilId: 1,
+                    statusId: 8,
+                    gerenciar_eventos: this.state.campgerencia_eventos, 
+                    monitorar_eventos: this.state.campMonitorar_eventos,   
+                    representante_legal: this.state.camprepresentante_legal,             
+                  }    
+                  
+                  api.get(`/emailOperador/getemail/${this.state.campEmail}`)
+                  .then(res1=>{             
+                
+                    if (res1.data.data.length == 0) {                
+
+                      api.post(`/emailOperador/create`, operadordata)
+                      .then(resemail=>{   
+
+                       if (resemail.data.success == true) {    
+                              const params_email = {    
+                                email: email_envio,            
+                                url: `http://www.oser.app.br:21497/operadores_incluir/${resemail.data.data.id}/${resemail.data.data.email}`,     
+                                //url: `http://localhost:3000/operadores_incluir/${res1.data.data.id}/${res1.data.data.email}`,     
+                                texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
+                              }      
+                                
+                              api.post("/email/send", params_email)       
+                                      
+                              this.setState({   
+                                emailState: '',
+                                mensagem_usuario: 'Mensagem para operador enviada com sucesso!'
+                              });          
+
               
-            api.post("/email/send", params_email)       
-                     
-            alert('Mensagem Enviada');
-  
-            this.handleCloseModalInclusao();
-  
-           /* if (localStorage.getItem('logperfil') == 7) {              
-              this.props.history.push(`/operador_lista_empresa/`+localStorage.getItem('logid'));               
-            } else if (localStorage.getItem('logperfil') == 1) {               
-              this.props.history.push(`/operador_lista`);               
-            }*/
-          }       
-        })        
-        .catch(error=>{
-          alert("Erro de conexão "+error)
-        })        
-  
-      } else {      
-  
-        const params_email = {    
-          email: email_envio,            
-          url: `http://www.oser.app.br:21497/operadores_incluir/${res1.data.data.id}/${res1.data.data.email}`,     
-          //url: `http://localhost:3000/operadores_incluir/${res1.data.data.id}/${res1.data.data.email}`,     
-          texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
-        }      
-          
-        api.post("/email/send", params_email)       
-                 
-        alert('Mensagem Enviada');
-  
-        if (localStorage.getItem('logperfil') == 7) {              
-          this.props.history.push(`/operador_lista_empresa/`+localStorage.getItem('logid'));               
-        } else if (localStorage.getItem('logperfil') == 1) {               
-          this.props.history.push(`/operador_lista`);               
-        }         
-  
+                              this.verifica_botao(1);
+
+                              this.envia_mensagemInclusaoClick();                       
+                         }   
+                       
+                      })        
+                      .catch(error=>{
+                        alert("Erro de conexão "+error)
+                      })  
+                
+                    }
+                  
+                  })        
+                  .catch(error=>{
+                    alert("Erro de conexão "+error)
+                  })  
+            }
+      
+          })        
+          .catch(error=>{
+            alert("Erro de conexão "+error)
+          })          
+/*
       }
-    
+
     })        
     .catch(error=>{
       alert("Erro de conexão "+error)
-    })        
+    })    */
+
+    
    
   }
 
@@ -415,7 +985,7 @@ class listComponent extends React.Component  {
 
   enviar_botao_modal(inicio) {
     const { validate } = this.state 
-     // console.log(JSON.stringify(this.state, null, "    "));
+     console.log(JSON.stringify(this.state, null, "    "));
      // console.log(JSON.stringify(inicio, null, "    "));
 
      if (inicio == 1) {
@@ -431,7 +1001,7 @@ class listComponent extends React.Component  {
        
       } else {
 
-        if (validate.emailState == 'has-success') { 
+        if (this.state.validacao_email == true && this.state.validacao_cnpj == true) { 
             return (
         
               <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendEnvioEmail()}>
@@ -458,8 +1028,13 @@ class listComponent extends React.Component  {
       showModal: true,            
       mensagem_aguarde: '',
       campEmail: '',
+      campCnpj: '',
+      Email: '',
       erro_email: false,
       validacao_email: false, 
+      campgerencia_eventos: false,
+      camprepresentante_legal: false,
+      campMonitorar_eventos: false,
     });     
 
     if (localStorage.getItem('logperfil') == 1) {
@@ -485,10 +1060,43 @@ class listComponent extends React.Component  {
     api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
-        if (res.data.data.length > 0) {
-           
+        if (res.data.data.length > 0) {     
+          
+          api.get(`/permissao/listaacesso/8/${localStorage.getItem('logoperadorId')}`)
+          .then(resacesso=>{
+              console.log(' acesso - '+JSON.stringify(resacesso.data, null, "    ")); 
+             
+              if (resacesso.data.data.length > 0) {                
+                
+                resacesso.data.data.map((data)=>{          
+
+                  if (data.funcionalidade.descricao == 'Gerenciar Eventos') {
+                    this.setState({ 
+                      campgerencia_eventos: true, 
+                    }) 
+  
+                   }
+                  if (data.funcionalidade.descricao == 'Monitorar Eventos') {
+                    this.setState({ 
+                      campMonitorar_eventos: true, 
+                    }) 
+
+                  }                
+                  if (data.funcionalidade.descricao == 'Representante Legal') {
+                    this.setState({ 
+                      camprepresentante_legal: true, 
+                    }) 
+  
+                  }          
+                  
+                })     
+                
+            }   
+
           this.setState({ 
             campCpf: res.data.data[0].cpf,
+            campCnpj: cnpjMask(res.data.data[0].empresa.cnpj),
+            campRazao_social: res.data.data[0].empresa.razao_social,
             campNome: res.data.data[0].nome,
             campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].email,      
@@ -505,7 +1113,7 @@ class listComponent extends React.Component  {
             validacao_telefone: true,
           })                        
          
-          console.log('Buscar operador - '+JSON.stringify(this.state, null, "    ")); 
+         // console.log('Buscar operador - '+JSON.stringify(this.state, null, "    ")); 
           localStorage.setItem('logid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
@@ -525,7 +1133,14 @@ class listComponent extends React.Component  {
           }            
   
           this.setState({ validate })
-        } 
+
+        })        
+        .catch(error=>{
+          alert("Error de conexão busca_acesso "+error)
+        })    
+
+      } 
+              
       })        
       .catch(error=>{
         alert("Error de conexão busca_operador "+error)
@@ -540,7 +1155,9 @@ class listComponent extends React.Component  {
     localStorage.setItem('logeditid', '');
     
     this.loadOperadores();
-    this.loadOperadoresExxcluidos();
+    this.loadConvites();
+    this.loadOperadoresExcluidos();
+    
     //this.loadMotorista();     
   //  this.carrega_status();  
     
@@ -571,6 +1188,8 @@ class listComponent extends React.Component  {
       validate.cpfState = ''
       this.setState({ 
         validate,               
+        erro_cpf: false,
+        validacao_cpf: false,
         mensagem_cpf: ''  
        })            
     }  
@@ -581,6 +1200,8 @@ class listComponent extends React.Component  {
       validate.nomeState = ''
       this.setState({ 
         validate,               
+        erro_nome: false,
+        validacao_nome: false,
         mensagem_nome: ''  
        })            
     }  
@@ -600,19 +1221,16 @@ class listComponent extends React.Component  {
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
-          mensagem_cpf: 'O campo CPF é obrigatório'  
+          erro_cpf: false,
+          validacao_cpf: false,
+          mensagem_cpf: ''  
          })            
        }  
    }  
 
    verificaCpfonblur(e) {
     const { validate } = this.state
-       if (e.target.value.length < 14) {
-        validate.cpfState = 'has-danger'
-        validate.datanascimentoState = ''
-        validate.emailState = ''
-        validate.nomeState = ''
-        validate.telefone1State = ''
+       if (e.target.value.length == 0) {        
         this.setState({ 
           validate,       
           campNome: '',
@@ -620,7 +1238,9 @@ class listComponent extends React.Component  {
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
-          mensagem_cpf: 'O campo CPF é obrigatório'  
+          erro_cpf: false,
+          validacao_cpf: false,
+          mensagem_cpf: ''  
          })            
        }  else if (e.target.value.length == 14){                
         console.log('é valido - '+e.target.value);
@@ -629,18 +1249,21 @@ class listComponent extends React.Component  {
    }  
   verificaTelefone1(e) {   
     const { validate } = this.state
-       if (e.target.value.length < 15) {          
-        validate.telefone1State = 'has-danger'
+       if (e.target.value.length == 0) {                  
         this.setState({ 
           validate,
           inicio: 1,
-          mensagem_telefone1: 'O campo Telefone é obrigatório.'
+          erro_telefone: false,
+          validacao_telefone: false,
+          mensagem_telefone1: ''
          })      
        } else {       
 
         if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success' ;                
             this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: true,
               mensagem_telefone1: ''
           });           
         }
@@ -653,6 +1276,8 @@ class listComponent extends React.Component  {
         validate.emailState = ''
         this.setState({ 
             validate,
+            erro_email: false,
+            validacao_email: false,
             mensagem_email: ''  
         })                   
       }  
@@ -662,20 +1287,26 @@ class listComponent extends React.Component  {
     validate.telefone1State = ''
        this.setState({ 
             validate,
+            erro_telefone: false,
+            validacao_telefone: false,
             mensagem_telefone1: ''  
         })                   
    }
    verificaEmail(e){   
     const { validate } = this.state
     if (e.target.value.length == 0) {
-      validate.emailState = 'has-danger'
+      validate.emailState = ''
       this.setState({ 
         validate,
-        mensagem_email: 'Email é obrigatório.'  
+        erro_email: false,
+        validacao_email: false,
+        mensagem_email: ''  
     })                          
     } else if (e.target.value.length > 0 && validate.emailState == 'has-danger') {
     this.setState({ 
       validate,
+      erro_email: true,
+      validacao_email: false,
       mensagem_email: 'Email é obrigatório.'  
      })     
     }
@@ -684,15 +1315,19 @@ class listComponent extends React.Component  {
   verificaNome() {
     const { validate } = this.state
        if (this.state.campNome.length == 0) {
-        validate.nomeState = 'has-danger'
+        validate.nomeState = ''
         this.setState({ 
           validate,
-          mensagem_nome: 'O campo nome é obrigatório.'  
+          erro_nome: false,
+          validacao_nome: false,
+          mensagem_nome: ''  
          })      
        } else {
-        validate.nomeState = 'has-success' ;        
+        validate.nomeState = 'has-success';        
 
         this.setState({ 
+          erro_nome: false,
+          validacao_nome: true,
           mensagem_nome: ''
        });  
 
@@ -700,16 +1335,19 @@ class listComponent extends React.Component  {
    }
   verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {
-        validate.datanascimentoState = 'has-danger'
+       if (this.state.campData_nascimento.length == 0) {        
         this.setState({ 
           validate,
-          mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
+          erro_datanascimento: false,
+          validacao_datanascimento: false,
+          mensagem_data_nascimento: ''  
          })      
        } else {
 
           validate.datanascimentoState = 'has-success' ;        
           this.setState({ 
+            erro_datanascimento: false,
+            validacao_datanascimento: true,
             mensagem_data_nascimento: ''
           });     
 
@@ -729,40 +1367,53 @@ class listComponent extends React.Component  {
       const { validate } = this.state
       api.get(`/login/getEmail/${email}`)
       .then(res=>{          
-        console.log(' resultado cliente - '+JSON.stringify(res.data, null, "    "));        
+       // console.log(' resultado motorista - '+JSON.stringify(res.data, null, "    "));        
         if (res.data.success) {
-
-            validate.emailState = 'has-danger'
-            this.setState({ 
-                validate,
-                mensagem_email: 'Email já cadastrado.'  
-            })                            
-        }      
+  
+                validate.emailState = 'has-danger'
+                  this.setState({ 
+                    validate,
+                    erro_email: true,   
+                    validacao_email: false,    
+                    mensagem_email: 'Email já cadastrado.'  
+                })                                           
+         } else {
+          validate.emailState = 'has-success'
+          this.setState({ 
+              validate,
+              erro_email: false,   
+              inicio: 2,
+              validacao_email: true,    
+              mensagem_email: ''  
+          })                   
+         }     
       })        
       .catch(error=>{
-        alert("Erro de conexão "+error)
+        alert("Erro de conexão 3"+error)
       })                   
     }
     
     validateEmail(e) {
       const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       const { validate } = this.state
-      
-        if (emailRex.test(e.target.value)) {                         
-            validate.emailState = 'has-success'     
-            //console.log(' valida email - '+e.target.value);   
-            //console.log(' valida email - '+this.state.campEmail);   
-            this.busca_email_ja_cadastrado(e.target.value)                
-                    
-            
-        } else {
-          validate.emailState = 'has-danger'
-          this.setState({ 
-            validate,
-            mensagem_email: '' })  
-        }
+       
+      if (emailRex.test(e.target.value)) {                         
+          validate.emailState = 'has-success'     
+         // console.log(' valida email - '+e.target.value);   
+          //console.log(' valida email - '+this.state.campEmail);   
+          this.busca_email_ja_cadastrado(e.target.value) 
+          
+      } else {
+        validate.emailState = 'has-danger'
+        this.setState({ 
+          validate,
+          erro_email: false,   
+          validacao_email: false,    
+          mensagem_email: '' })  
+      }
 
-        this.setState({ validate })
+      this.setState({ validate })
+
     }       
     
     validaCpfChange(e){
@@ -770,7 +1421,11 @@ class listComponent extends React.Component  {
       
         if (e.target.value.length == 0) {
           validate.cpfState = ''
-          this.setState({ mensagem_cpf: '' })  
+          this.setState({ 
+            erro_cpf: false,
+            validacao_cpf: false,
+            mensagem_cpf: '' 
+          })  
         } else if (e.target.value.length == 14) {          
           //valida o cpf 
            console.log('e.target.value - '+e.target.value);
@@ -781,7 +1436,11 @@ class listComponent extends React.Component  {
 
            } else {
             validate.cpfState = 'has-danger'       
-            this.setState({ mensagem_cpf: 'O campo CPF é inválido' })     
+            this.setState({ 
+              erro_cpf: true,
+              validacao_cpf: false,
+              mensagem_cpf: 'O campo CPF é inválido' 
+            })     
            } 
         //  this.busca_cpf(e) 
         //  validate.cpfState = 'has-success'       
@@ -793,16 +1452,25 @@ class listComponent extends React.Component  {
     validatelefone1Change(e){
       const { validate } = this.state
        
-        if (e.target.value.length == 0) {
-          validate.telefone1State = 'has-danger'
-          this.setState({ mensagem_telefone1: 'O campo Telefone é obrigatório.' })  
+        if (e.target.value.length == 0) {          
+          this.setState({ 
+            erro_telefone: false,
+            validacao_telefone: false,
+            mensagem_telefone1: '' 
+          })  
         } else {          
           
           if (e.target.value.length == 15) {
             validate.telefone1State = 'has-success'       
-            this.setState({ mensagem_telefone1: '' })  
+            this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: false,
+              mensagem_telefone1: '' 
+            })  
 
             this.setState({ 
+              erro_telefone: false,
+              validacao_telefone: false,
               inicio: 2,
               progresso: 25
             });             
@@ -816,112 +1484,32 @@ class listComponent extends React.Component  {
       
         if (e.target.value.length == 0) {
           validate.nomeState = ''
-          this.setState({ mensagem_nome: '' })  
+          this.setState({ 
+            erro_nome: false,
+            validacao_nome: false,
+            mensagem_nome: '' 
+          })  
         } else if (e.target.value.length > 0) {      
           validate.nomeState = ''       
-          this.setState({ mensagem_nome: '' })  
+          this.setState({ 
+            erro_nome: false,
+            validacao_nome: false,
+            mensagem_nome: '' 
+          })  
         }  
         this.setState({ validate })  
      }   
      validaDataNascimentoChange(e){
       const { validate } = this.state
   
-    if (e.target.value.length < 1) {
-      validate.datanascimentoState = 'has-danger'
-      this.setState({ mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' })  
+    if (e.target.value.length < 1) {      
+      this.setState({ 
+        mensagem_data_nascimento: '' 
+      })  
     }     
 
     this.setState({ validate })
 }
-
-sendEnvioEmail(){        
-  const email_envio = this.state.campEmail;
-
-  const operadordata = {  
-    email: this.state.campEmail,    
-    empresaId: localStorage.getItem('logid'),     
-    statusId: 6,
-    gerenciar_eventos: this.state.campgerencia_eventos, 
-    gerenciar_todos_eventos: this.state.campgerencia_todos_eventos, 
-    incluir_cartao: this.state.campinclui_cartao, 
-    visualizar_eventos: this.state.campvisualiza_eventos,
-    efetuar_pagamentos: this.state.campefetua_pagamentos, 
-    incluir_outors_operadores: this.state.campinclui_operadores,    
-  }    
-  
-  api.get(`/emailOperador/getemail/${this.state.campEmail}`)
-  .then(res1=>{             
-
-    if (res1.data.data.length == 0) {    
-   
-      api.post(`/emailOperador/create`, operadordata)
-      .then(res=>{             
-       // console.log(' resultado - '+JSON.stringify(res.data, null, "    "));       
-         //   url: `http://localhost:3000/operadores/${res.data.data.id}`,   
-        //url: `http://www.oser.app.br:21497/operadores/${res.data.data.id}`,
-        if (res.data.success == true) {    
-    
-          /*
-          const params = {    
-            email: email_envio,                
-          }    
-           api.post("/login/create", params);       */
-    
-          const params_email = {    
-            email: email_envio,         
-           // url: `http://localhost:3000/operadores_incluir/${res.data.data.id}/${res.data.data.email}`,     
-            url: `http://www.oser.app.br:21497/operadores_incluir/${res.data.data.id}/${res.data.data.email}`,     
-            texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
-          }      
-         // console.log(' resultado - '+JSON.stringify(params_email, null, "    "));    
-            
-          api.post("/email/send", params_email)       
-                   
-          //alert('Mensagem Enviada');
-
-
-
-          this.handleCloseModalInclusao();
-
-         /* if (localStorage.getItem('logperfil') == 7) {              
-            this.props.history.push(`/operador_lista_empresa/`+localStorage.getItem('logid'));               
-          } else if (localStorage.getItem('logperfil') == 1) {               
-            this.props.history.push(`/operador_lista`);               
-          }*/
-        }       
-      })        
-      .catch(error=>{
-        alert("Erro de conexão "+error)
-      })        
-
-    } else {      
-
-      const params_email = {    
-        email: email_envio,            
-        url: `http://www.oser.app.br:21497/operadores_incluir/${res1.data.data.id}/${res1.data.data.email}`,     
-        //url: `http://localhost:3000/operadores_incluir/${res1.data.data.id}/${res1.data.data.email}`,     
-        texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
-      }      
-        
-      api.post("/email/send", params_email)       
-               
-      alert('Mensagem Enviada');
-
-      if (localStorage.getItem('logperfil') == 7) {              
-        this.props.history.push(`/operador_lista_empresa/`+localStorage.getItem('logid'));               
-      } else if (localStorage.getItem('logperfil') == 1) {               
-        this.props.history.push(`/operador_lista`);               
-      }         
-
-    }
-  
-  })        
-  .catch(error=>{
-    alert("Erro de conexão "+error)
-  })        
- 
-}
-
 
 verifica_botao(inicio) {
   const { validate } = this.state    
@@ -972,6 +1560,8 @@ verifica_botao(inicio) {
 
         const data = res.data.data       
         this.setState({listOperadores:data})
+
+        //console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
       }
     })
     .catch(error=>{
@@ -979,7 +1569,7 @@ verifica_botao(inicio) {
     })
   }
 
-  loadOperadoresExxcluidos(){
+  loadOperadoresExcluidos(){
     // const url = baseUrl+"/cliente/list"
     api.get('/operador/listExcluidos')
      .then(res=>{
@@ -987,6 +1577,36 @@ verifica_botao(inicio) {
  
          const data = res.data.data       
          this.setState({listOperadoresExcluidos:data})
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
+
+   loadOperadoresCadIncompletos(){
+    // const url = baseUrl+"/cliente/list"
+    api.get('/operador/listarIncompletos')
+     .then(res=>{
+       if (res.data.success) {
+ 
+         const data = res.data.data       
+         this.setState({listOperadoresCadIncompletos:data})
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
+
+   loadConvites(){
+    // const url = baseUrl+"/cliente/list"
+    api.get(`/emailOperador/listAdministrador`)
+     .then(res=>{
+       if (res.data.success) {
+ 
+         const data = res.data.data       
+         this.setState({listOperadoresConvites:data})
        }
      })
      .catch(error=>{
@@ -1001,10 +1621,13 @@ verifica_botao(inicio) {
   }
 
   sendSave(){        
-  
-
-    console.log('clicou aqui ');
-
+    const { validate } = this.state    
+    this.setState({ 
+      validacao_email: false,
+      mensagem_aguarde: 'Aguarde, Incluindo os dados...',       
+      validate 
+   }); 
+//    console.log('clicou aqui ');
     //  const senhaAleatoria = Math.random().toString(36).slice(-8);
        
        const datapost_alterar = {
@@ -1017,24 +1640,97 @@ verifica_botao(inicio) {
          perfilId: 8,
         }  
  
-       console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
+      // console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
        console.log('logoperador - '+localStorage.getItem('logoperadorId'));
        api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost_alterar)
        .then(response=>{
          console.log('response - '+JSON.stringify(response.data, null, "    ")); 
 
-         if (response.data.success==true) {                        
-           
-           const logindata = {  
-             email: this.state.campEmail,  
-             perfilId: 8,
-             statusId: this.state.campStatusId
-           } 
-        
-           api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata);           
- 
+         if (response.data.success==true) {                          
 
-           this.handleCloseModalEdit(); 
+           if (this.state.campgerencia_eventos == false) {
+            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/3`)
+           } else {
+         
+            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/3`)
+            .then(verificarPermissao=>{
+
+             if (verificarPermissao.data.data.length == 0) {  
+                const permissao_acesso = {
+                  perfilId: 8,
+                  logid: localStorage.getItem('logoperadorId'),
+                  funcionalidadeId: 3
+                }  
+
+                api.post(`/permissao/create`, permissao_acesso);
+
+              }    
+
+            }).catch(error=>{
+                    alert("Erro verificar campgerencia_eventos  "+error)
+            })         
+           }
+
+           if (this.state.campMonitorar_eventos == false) {
+            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/4`)
+           } else {
+            
+            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/4`)
+            .then(verificarPermissao=>{
+
+              if (verificarPermissao.data.data.length == 0) {  
+                const permissao_acesso = {
+                  perfilId: 8,
+                  logid: localStorage.getItem('logoperadorId'),
+                  funcionalidadeId: 4
+                }  
+
+                api.post(`/permissao/create`, permissao_acesso);
+
+              }    
+
+            }).catch(error=>{
+                    alert("Erro verificar campMonitorar_eventos  "+error)
+            })         
+           }
+           if (this.state.camprepresentante_legal == false) {
+            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/5`)
+           } else {
+            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/5`)
+            .then(verificarPermissao=>{
+
+              if (verificarPermissao.data.data.length == 0) {  
+                const permissao_acesso = {
+                  perfilId: 8,
+                  logid: localStorage.getItem('logoperadorId'),
+                  funcionalidadeId: 5
+                }  
+
+                api.post(`/permissao/create`, permissao_acesso);
+
+              }    
+
+            }).catch(error=>{
+                    alert("Erro verificar camprepresentante_legal "+error)
+            })  
+           }
+
+           const logindata = {  
+            email: this.state.campEmail,  
+            perfilId: 8,
+            statusId: this.state.campStatusId
+          }     
+
+           api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata);          
+           validate.cpfState = ''
+           
+           this.setState({   
+            emailState: '',
+            mensagem_usuario: 'Operador alterado com sucesso!',
+            validate
+          });          
+
+           this.envia_mensagemClick(); 
 
          }
          else {
@@ -1046,44 +1742,110 @@ verifica_botao(inicio) {
        })           
  
  }  
+ cnpjchange(e) {
+  this.setState({ campCnpj: cnpjMask(e.target.value) })
+
+}
+razaosocialchange(e) {
+  this.setState({ campRazao_social: e.target.value })
+}
+nomefantasiachange(e) {
+  this.setState({ campNome_fantasia: e.target.value })
+}
+analisando_retorno() {
+
+  if (this.state.encontrou_cnpj !== true) {    
+    return (
+        <Spinner color="info" />                          
+    );
+  }
+}
+
+mostrar_razao_social() {
+
+  if (this.state.campRazao_social !== "") {
+  return (
+    <div>         
+        <div className="descricao_endereco_endereço">
+        <div className="cnpj_altura"> {this.state.campRazao_social} </div><br/>               
+        </div> 
+    </div>     
+  );
+
+  } else {
+    return (
+      ""
+    );
+  }
+}
+
+mostrar_endereco() {
+
+  if (this.state.campEndereco !== "") {
+  return (    
+     <div> 
+        <div className="titulo_modal_editar">Endereço</div>             
+        <div className="descricao_modal_endereço">
+          {this.state.campEndereco} <br/>
+          {this.state.campBairro+' , '+this.state.campCidade+' / '+this.state.estado_selecionado} 
+        </div> 
+    </div>            
+  );
+
+  } else {
+    return (
+      ""
+    );
+  }
+}
 
   render()
   {
+   // const iosStyles = useIosSwitchStyles();
     return (
       <div>    
           <div>
             <Menu_administrador />  
-            <div className="titulo_admministrador">
+            <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <h3><strong>Lista de Operadores</strong></h3>
+              <strong>Operadores</strong>
               </div>      
             </div>
 
           </div>
 
-     <div className="container_modal_list">      
+     <div className="container-fluid margem_left">      
      <br/>
     
     <Tabs 
        defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
       <Tab eventKey="ativos" title="Ativos">
-          <div style={{ maxWidth: '95%' }}>    
+      <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
+                        style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: '40px' },
-                          { title: 'Status', field: 'status.descricao', width: '155px' },
-                          { title: 'CPF', field: 'cpf', align: 'center', width: '150px' },
-                          { title: 'Nome', field: 'nome', width: '350px' },
-                          { title: 'Email', field: 'email', width: '400px' },
-                          { title: 'Telefone', field: 'celular', align: 'center', width: '150px'},       
-                          { title: '', field: '#', width: '50px' },
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '#', width: "18px" },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
+                          { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
+                          { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
+                          { title: 'Representante Legal', field: 'nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.nome.substr(0,30) },
+                          { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,30) }, 
+                          { title: 'Telefone', field: 'celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                        
                         ]}
                         data={this.state.listOperadores}   
                         localization={{
                           body: {
-                            emptyDataSourceMessage: 'Nenhum registro para exibir'
+                            emptyDataSourceMessage: 'Nenhum registro para exibir',
+                            addTooltip: 'Adicionar Valores Tarifários',
+                            deleteTooltip: 'Deletar',
+                            editTooltip: 'Editar',
+                            editRow: {
+                               deleteText: 'Deseja realmente deletar esta linha ?',
+                               cancelTooltip: 'Cancelar',
+                               saveTooltip: 'Salvar',
+                            }
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
@@ -1102,20 +1864,106 @@ verifica_botao(inicio) {
                           },
                         }}        
                         options={{
-                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              paginationPosition: 'bottom',  
+                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
                               searchFieldAlignment: 'left', 
-                              exportFileName: 'Relatorio_adm_empresa_excluidos',
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_empresas',
                               search: true,     
-                              exportAllData: true,                              
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
-                              /*exportButton: true, */            
-                              exportButton: { pdf: true },          
+                              paging: false,          
+                              maxBodyHeight: 430,
+                              minBodyHeight: 430, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',                             
+                              tableLayout: 'fixed',   
                               actionsColumnIndex: 7,
-                              pageSize: 7,
-                              pageSizeOptions: [7],       
+                              exportButton: { pdf: true },          
+                              //pageSize: 7,
+                              pageSizeOptions: [0],                 
+                        }}
+                        actions={[
+                         {             
+                            icon: 'edit',
+                            tooltip: 'Editar',
+                            onClick: (evt, data) => this.handleOpenModalEdit(data)
+                          }
+                          /*,
+                          {
+                            icon: 'add',                                                             
+                            tooltip: 'Adiciona Operadores',
+                            isFreeAction: true,
+                            //onClick: (event) => this.sendteste()
+                            onClick: (event) => this.handleOpenModalInclusao()
+                          } */
+                        ]}                       
+                      />      
+            </div>      
+      </Tab>       
+      <Tab eventKey="excluidos" title="Excluidos">
+      <div style={{ maxWidth: '100%' }}>
+                    <MaterialTable          
+                        title=""
+                        style={ {width: "96%"}}                                  
+                        columns={[
+                          { title: '', field: '#', width: "18px" },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
+                          { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
+                          { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
+                          { title: 'Representante Legal', field: 'nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.nome.substr(0,30) },
+                          { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,30) }, 
+                          { title: 'Telefone', field: 'celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },         
+                        ]}
+                        data={this.state.listOperadoresExcluidos}   
+                        localization={{
+                          body: {
+                            emptyDataSourceMessage: 'Nenhum registro para exibir',
+                            addTooltip: 'Adicionar Valores Tarifários',
+                            deleteTooltip: 'Deletar',
+                            editTooltip: 'Editar',
+                            editRow: {
+                               deleteText: 'Deseja realmente deletar esta linha ?',
+                               cancelTooltip: 'Cancelar',
+                               saveTooltip: 'Salvar',
+                            }
+                          },
+                          toolbar: {
+                            searchTooltip: 'Pesquisar',
+                            searchPlaceholder: 'Buscar operadores',        
+                          },
+                          pagination: {
+                            labelRowsSelect: 'linhas',
+                            labelDisplayedRows: '{count} de {from}-{to}',
+                            firstTooltip: 'Primeira página',
+                            previousTooltip: 'Página anterior',
+                            nextTooltip: 'Próxima página',
+                            lastTooltip: 'Última página'
+                          },
+                          header: {
+                            actions: 'Ação',
+                          },
+                        }}        
+                        options={{
+                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldAlignment: 'left', 
+                          exportAllData: true,
+                          exportFileName: 'Rel_adm_empresas',
+                          search: true,     
+                          searchFieldVariant: 'outlined', 
+                          toolbarButtonAlignment: 'right',           
+                          paging: false,          
+                          maxBodyHeight: 430,
+                          minBodyHeight: 430, 
+                          padding: 'dense',   
+                          overflowY: 'scroll',
+                          tableLayout: 'fixed',   
+                          actionsColumnIndex: 7,
+                          exportButton: { pdf: true },          
+                          //pageSize: 7,
+                          pageSizeOptions: [0],          
                         }}
                         actions={[
                           {             
@@ -1124,33 +1972,41 @@ verifica_botao(inicio) {
                             onClick: (evt, data) => this.handleOpenModalEdit(data)
                           },
                           {
-                            icon: 'add',                                                             
-                            tooltip: 'Adiciona Operadores',
-                            isFreeAction: true,
-                            onClick: (event) => this.handleOpenModalInclusao()
+                            icon: 'delete',                                                             
+                            tooltip: 'Deleta Operador',          
+                            onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
                           }
                         ]}
                       />      
             </div>      
-      </Tab>       
-      <Tab eventKey="excluidos" title="Excluidos">
-          <div style={{ maxWidth: '95%' }}>    
+      </Tab>  
+      <Tab eventKey="incompletos" title="Cadastro Incompleto">
+      <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
+                        style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: '40px' },
-                          { title: 'Status', field: 'status.descricao', width: '155px' },
-                          { title: 'CPF', field: 'cpf', align: 'center', width: '150px' },
-                          { title: 'Nome', field: 'nome', width: '350px' },
-                          { title: 'Email', field: 'email', width: '400px' },
-                          { title: 'Telefone', field: 'celular', align: 'center', width: '150px'},       
-                          { title: '', field: '#', width: '50px' },
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '#', width: "18px" },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
+                          { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
+                          { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
+                          { title: 'Representante Legal', field: 'nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.nome.substr(0,30) },
+                          { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,30) }, 
+                          { title: 'Telefone', field: 'celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                     
                         ]}
-                        data={this.state.listOperadoresExcluidos}   
+                        data={this.state.listOperadoresCadIncompletos}   
                         localization={{
                           body: {
-                            emptyDataSourceMessage: 'Nenhum registro para exibir'
+                            emptyDataSourceMessage: 'Nenhum registro para exibir',
+                            addTooltip: 'Adicionar Valores Tarifários',
+                            deleteTooltip: 'Deletar',
+                            editTooltip: 'Editar',
+                            editRow: {
+                               deleteText: 'Deseja realmente deletar esta linha ?',
+                               cancelTooltip: 'Cancelar',
+                               saveTooltip: 'Salvar',
+                            }
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
@@ -1169,32 +2025,201 @@ verifica_botao(inicio) {
                           },
                         }}        
                         options={{
-                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
+                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
                           searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                          paginationPosition: 'bottom',  
-                              searchFieldAlignment: 'left', 
-                              exportFileName: 'Relatorio_adm_empresa_excluidos',
-                              search: true,     
-                              exportAllData: true,                              
-                              searchFieldVariant: 'outlined', 
-                              toolbarButtonAlignment: 'right',           
-                              /*exportButton: true, */            
-                              exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
-                              pageSize: 7,
-                              pageSizeOptions: [7],       
+                          searchFieldAlignment: 'left', 
+                          exportAllData: true,
+                          exportFileName: 'Rel_adm_empresas',
+                          search: true,     
+                          searchFieldVariant: 'outlined', 
+                          toolbarButtonAlignment: 'right',           
+                          paging: false,          
+                          maxBodyHeight: 430,
+                          minBodyHeight: 430, 
+                          padding: 'dense',   
+                          overflowY: 'scroll',
+                          tableLayout: 'fixed',   
+                          actionsColumnIndex: 7,
+                          exportButton: { pdf: true },          
+                          //pageSize: 7,
+                          pageSizeOptions: [0],          
                         }}
                         actions={[
                           {             
                             icon: 'edit',
                             tooltip: 'Editar',
                             onClick: (evt, data) => this.handleOpenModalEdit(data)
+                          },
+                          {             
+                            icon: 'mail',
+                            tooltip: 'Enviar',
+                            onClick: (evt, data) => this.onEnvioSenhaEmail(data)
+                          },
+                          {
+                            icon: 'delete',                                                             
+                            tooltip: 'Deleta Operador',          
+                            onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
                           }
                         ]}
                       />      
             </div>      
-      </Tab>          
+      </Tab>  
+      <Tab eventKey="convites" title="Convites">
+      <div style={{ maxWidth: '100%' }}>
+                    <MaterialTable          
+                        title=""
+                        style={ {width: "96%"}}                                  
+                        columns={[
+                          { title: '', field: '#', width: '20px' },
+                          { title: 'Status', field: 'status.descricao', width: '220px' },               
+                          { title: 'Email', field: 'email', width: '420px' },                 
+                          { title: '', field: '#', width: '50px' },
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                        ]}
+                        data={this.state.listOperadoresConvites}   
+                        localization={{
+                          body: {
+                            emptyDataSourceMessage: 'Nenhum registro para exibir',
+                            addTooltip: 'Adicionar Valores Tarifários',
+                            deleteTooltip: 'Deletar',
+                            editTooltip: 'Editar',
+                            editRow: {
+                               deleteText: 'Deseja realmente deletar esta linha ?',
+                               cancelTooltip: 'Cancelar',
+                               saveTooltip: 'Salvar',
+                            }
+                          },
+                          toolbar: {
+                            searchTooltip: 'Pesquisar',
+                            searchPlaceholder: 'buscar operador',        
+                          },
+                          pagination: {
+                            labelRowsSelect: 'linhas',
+                            labelDisplayedRows: '{count} de {from}-{to}',
+                            firstTooltip: 'Primeira página',
+                            previousTooltip: 'Página anterior',
+                            nextTooltip: 'Próxima página',
+                            lastTooltip: 'Última página'
+                          },
+                          header: {
+                            actions: 'Ação',
+                          },
+                        }}        
+                        options={{
+                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          //paginationPosition: 'bottom',  
+                          searchFieldAlignment: 'left', 
+                          exportAllData: true,
+                          exportFileName: 'Rel_adm_operadores_excluidos',
+                          search: true,     
+                          searchFieldVariant: 'outlined', 
+                          toolbarButtonAlignment: 'right',           
+                          paging: false,          
+                          maxBodyHeight: 530,                    
+                          exportButton: { pdf: true },           
+                          actionsColumnIndex: 3,
+                          //pageSize: 7,
+                          pageSizeOptions: [0],       
+                        }}
+                        actions={[
+                          {             
+                            icon: 'mail',
+                            tooltip: 'Enviar',
+                            onClick: (evt, data) => this.onEnvioEmail(data)
+                          },
+                          {
+                            icon: 'delete',                                                             
+                            tooltip: 'Deleta Convite',          
+                            onClick: (evt, data) => this.handleOpenModalConviteDelete(data)                                     
+                          }
+                        ]}
+                        /* editable={{                          
+                          onRowDelete: oldData =>
+                            new Promise((resolve, reject) => {
+                              setTimeout(() => {
+                               // const dataDelete = [...this.state.campId];
+                                const index = oldData.id;   
+                                console.log(' id - '+ oldData.id);
+                               // dataDelete.splice(index, 1);                              
+                                resolve()                                
+                                this.sendDelete(index)
+                              }, 1000)
+                            }),
+                        }}*/
+                      />      
+            </div>      
+      </Tab>                  
     </Tabs>   
+    <div className="botao_lista_incluir">
+                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                            <AddIcon/> <div className="botao_incluir"> Adicionar Operador  </div>
+                        </Fab>
+                      </div>    
+
+                      <ReactModal 
+              isOpen={this.state.showMensagemDelete}
+              style={ConfirmacaodelStyles}
+              contentLabel="Inline Styles Modal Example"                                  
+              ><div> 
+                  <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
+                    <CloseOutlinedIcon />
+                  </IconButton></div>       
+                  <center><img src="/exclamation.png" /> </center>
+                  <div className="container_alterado">              
+                    
+                  <div className="moldura_modal_delecao">
+                          <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Operador? </div>
+                    <div>Ao confirmar a exclusão o registro será apagado.  </div>
+                  </div>     
+                     <div className="retorno">{this.state.retorno}</div>
+                  <Box 
+                    className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
+                    <div className="d-flex justify-content-center">
+                    <label> Cancelar </label>
+                    </div>     
+                  </Box>      
+                  <Box 
+                    className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId, this.state.campDeletarEmail)}>
+                    <div className="d-flex justify-content-center">
+                    <label> Excluir </label>
+                    </div>     
+                  </Box>      
+
+                  </div>
+          </ReactModal>  
+
+          <ReactModal 
+              isOpen={this.state.showConviteDelete}
+              style={ConfirmacaodelStyles}
+              contentLabel="Inline Styles Modal Example"                                  
+              ><div> 
+                  <IconButton aria-label="editar" onClick={()=>this.handleCloseModalConviteDelete()} className="botao_close_modal_deletar">
+                    <CloseOutlinedIcon />
+                  </IconButton></div>       
+                  <center><img src="/exclamation.png" /> </center>
+                  <div className="container_alterado">              
+                    
+                  <div className="moldura_modal_delecao">
+                          <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Convite? </div>
+                    <div>Ao confirmar a exclusão o registro será apagado.  </div>
+                  </div>     
+                     <div className="retorno">{this.state.retorno}</div>
+                  <Box 
+                    className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalConviteDelete()}>
+                    <div className="d-flex justify-content-center">
+                    <label> Cancelar </label>
+                    </div>     
+                  </Box>      
+                  <Box 
+                    className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDeleteConvite(this.state.campDeletarId)}>
+                    <div className="d-flex justify-content-center">
+                    <label> Excluir </label>
+                    </div>     
+                  </Box>      
+
+                  </div>
+          </ReactModal>  
     <ReactModal 
         isOpen={this.state.showModal}
         style={customStyles}
@@ -1202,205 +2227,187 @@ verifica_botao(inicio) {
         ><div className="editar_titulo">  Editar Operador 
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalEdit()} className="botao_close_modal">
               <CloseOutlinedIcon />
-            </IconButton></div>        
+            </IconButton></div>                    
 
              <div className="container_alterado">
                <div className="d-flex justify-content">        
                  <div>  
                  <div class="d-flex flex-column espacamento_caixa_modal">
-              <div class="p-2">  
-              <div class="d-flex justify-content-start">
-                 <div>             
-                  <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel className="label_modal" htmlFor="filled-adornment-password">CPF</InputLabel>
-                     <OutlinedInput
-                       autoComplete="off"   
-                        readOnly={this.state.camp_cpf_disabled}                        
-                        error={this.state.erro_cpf}
-                        helperText={this.state.mensagem_cpf}
-                        className="cpf_text"                       
-                        id="outlined-basic"                      
-                        variant="outlined"
-                        value={this.state.campCpf}
-                        onKeyUp={this.verificaCpf}
-                        onFocus={this.verificaCpfonfocus}
-                        onBlur={this.verificaCpfonblur}
-                        onChange={ (e) => {
-                         this.cpfchange(e)                       
-                         this.validaCpfChange(e)
-                        }}                         
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_cpf? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={50}
-                    />
-                   <FormHelperText error={this.state.erro_cpf}>
-                         {this.state.mensagem_cpf}
-                   </FormHelperText>
-                  </FormControl>     
-               </div>   
-               <div>
-               <FormControl variant="outlined" className="buscar_status_modal">
+               <div class="p-2">                
+                <div className="descricao_modal_editar">{this.state.campRazao_social}</div>
+
+                <div className="descricao_modal_editar title_modal_editar">{this.state.campCnpj}</div>
+                <br/>
+                <FormControl variant="outlined" className="buscar_status_modal">
                             <InputLabel className="buscar_label_status_modal" id="demo-simple-select-outlined-label">Status </InputLabel>
                             <Select                                                 
                               autoComplete="off"                     
-                              className="select_modal_text"                                                
+                              className="data_modal_text"                                                
                               labelId="demo-simple-select-outlined-label"
                               id="busca"
                               value={this.state.campStatusId}                                    
                               onChange={ (e) => {
                                 this.statusChange(e)
                               }}                  
-                              labelWidth={50}          
+                              labelWidth={60}          
                              >                                            
                               {this.loadStatus()}                    
                               </Select>
-                          </FormControl>                         
-               </div>
-              </div> 
-              </div>
-              <div class="p-2"> 
-                 <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel  className="label_modal" htmlFor="filled-adornment-password">Nome</InputLabel>
-                     <OutlinedInput  
-                        autoComplete="off"       
-                        readOnly={this.state.camp_nome_disabled}                     
-                        error={this.state.erro_nome}
-                        helperText={this.state.mensagem_cpf}
-                        className="nome_text"                       
-                        id="outlined-basic"                   
-                        variant="outlined"
-                        value={this.state.campNome}
-                        onBlur={this.verificaNome}
-                        onFocus={this.verificaNomeonfocus}
-                      onChange={ (e) => {
-                        this.nomeChange(e)                       
-                        this.validaNomeChange(e)
-                      }}        
-                      inputProps={{
-                        maxLength: 50,
-                      }}              
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_nome? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={50}
-                    />
-                   <FormHelperText error={this.state.erro_nome}>
-                         {this.state.mensagem_nome}
-                   </FormHelperText>
-                  </FormControl>      
-              </div> 
+                          </FormControl>                           
+            </div>             
               <div class="p-2">   
-                <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel className="label_modal" htmlFor="filled-adornment-password">Data de nascimento</InputLabel>
-                     <OutlinedInput      
-                        autoComplete="off"                    
-                        readOnly={this.state.camp_datanasc_disabled}                     
-                        error={this.state.erro_datanascimento}
-                        helperText={this.state.mensagem_data_nascimento}
-                        className="data_text"                       
-                        id="outlined-basic"                   
-                        variant="outlined"
-                        value={this.state.campData_nascimento}
-                        onBlur={this.verificaDataNascimento}
-                        onChange={ (e) => {
-                          this.data_nascimentochange(e)                       
-                          this.validaDataNascimentoChange(e)
-                        }}                                    
-                        inputProps={{
-                          maxLength: 10,
-                        }}     
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_datanascimento? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={180}                      
-                    />
-                   <FormHelperText error={this.state.erro_datanascimento}>
-                         {this.state.mensagem_data_nascimento}
-                   </FormHelperText>
-                </FormControl>  
-              </div>
-              <div class="p-2">
-              <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel className="label_modal" htmlFor="filled-adornment-password">Email</InputLabel>
-                     <OutlinedInput    
-                        autoComplete="off"      
-                        readOnly={this.state.camp_email_disabled}                                   
-                        type="email"
-                        error={this.state.erro_email}
-                        helperText={this.state.mensagem_email}
-                        className="data_text"                       
-                        id="outlined-basic"                   
-                        variant="outlined"
-                        value={this.state.campEmail}
-                        onBlur={this.verificaEmail}                     
-                        onFocus={this.verificaEmailonfocus}
-                        onChange={ (e) => {
-                                    this.emailchange(e) 
-                                    this.validateEmail(e)
-                                    this.validaEmailChange(e)                                
-                                  } }    
-                        inputProps={{
-                            maxLength: 50,
-                        }}                                                      
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_email? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={50}                      
-                    />
-                   <FormHelperText error={this.state.erro_email}>
-                         {this.state.mensagem_email}
-                   </FormHelperText>
-                </FormControl>                       
-              </div>
-              <div class="p-2">
-              <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel className="label_modal" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                     <OutlinedInput   
-                        autoComplete="off"           
-                        readOnly={this.state.camp_telefone_disabled}            
-                        error={this.state.erro_telefone}
-                        helperText={this.state.mensagem_telefone1}
-                        className="data_text"                       
-                        id="outlined-basic"                   
-                        variant="outlined"
-                        value={this.state.campTelefone1}                
-                        onBlur={this.verificaTelefone1}            
-                      //  onFocus={this.verificaTelefone1onfocus}
-                        onChange={ (e) => {
-                          this.telefone1change(e)                       
-                          this.validatelefone1Change(e)
-                        }}                                      
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_telefone? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={80}                      
-                    />
-                   <FormHelperText error={this.state.erro_telefone}>
-                         {this.state.mensagem_telefone1}
-                   </FormHelperText>
-                </FormControl>                            
-               </div>               
+                <div class="d-flex justify-content-start">
+                  <div>     
+                      <div className="titulo_modal_editar">CPF</div>             
+                      <div className="descricao_modal_editar">{this.state.campCpf}</div> 
+                  </div>
+                  <div>
+                     <div className="titulo_modal_editar">Nome</div>             
+                    <div className="descricao_modal_editar">{this.state.campNome}</div> 
+                  </div>
+                </div>      
+              </div>                  
+              <div class="p-2">   
+                 <div className="titulo_modal_editar">Email</div>             
+                 <div className="descricao_modal_editar">{this.state.campEmail}</div> 
+              </div>               
+                                                   
+           
+              <div class="p-2">  
+                   <div class="d-flex justify-content-start">
+                       <div>   
+                          <FormControl variant="outlined" className="posicao_caixa_texto">
+                              <InputLabel className="buscar_label_status_modal" 
+                                    htmlFor="filled-adornment-password">Data de Nascimento</InputLabel>
+                              <OutlinedInput      
+                                  autoComplete="off"                    
+                                  readOnly={this.state.camp_datanasc_disabled}                     
+                                  error={this.state.erro_datanascimento}
+                                  helperText={this.state.mensagem_data_nascimento}
+                                  className="data_modal_text"                          
+                                  id="outlined-basic"                   
+                                  variant="outlined"
+                                  value={this.state.campData_nascimento}
+                                  onBlur={this.verificaDataNascimento}
+                                  onChange={ (e) => {
+                                    this.data_nascimentochange(e)                       
+                                    this.validaDataNascimentoChange(e)
+                                  }}                                    
+                                  inputProps={{
+                                    maxLength: 10,
+                                  }}     
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_datanascimento? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={180}                      
+                              />
+                            <FormHelperText error={this.state.erro_datanascimento}>
+                                  {this.state.mensagem_data_nascimento}
+                            </FormHelperText>
+                          </FormControl>  
+                      </div>
+                      <div>
+                      <FormControl variant="outlined" className="posicao_caixa_texto">
+                          <InputLabel className="label_telefone_modal_operador" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                          <OutlinedInput   
+                              autoComplete="off"           
+                              readOnly={this.state.camp_telefone_disabled}            
+                              error={this.state.erro_telefone}
+                              helperText={this.state.mensagem_telefone1}
+                              className="input_data_text"                       
+                              id="outlined-basic"                   
+                              variant="outlined"
+                              value={this.state.campTelefone1}                
+                              onBlur={this.verificaTelefone1}                            
+                              onChange={ (e) => {
+                                this.telefone1change(e)                       
+                                this.validatelefone1Change(e)
+                              }}                                      
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_telefone? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={80}                      
+                          />
+                        <FormHelperText error={this.state.erro_telefone}>
+                              {this.state.mensagem_telefone1}
+                        </FormHelperText>
+                      </FormControl>        
+                      </div>
+                  </div>        
+              </div>        
+              <div className="posicao_1">               
+                <div class="p-2">                        
+                    <div className="checkbox_titulo">Permissões de Acesso </div>
+                </div>
+              </div>  
+               <div className="posicao_1">
+                      <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Permissão de Representante Legal</div> 
+                               <div className="checkbox_descricao">É permitido realizar todas as funcionalidades disponiveis na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e">                                                  
+
+                           <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.camprepresentante_legal}
+                                    control={<Switch color="primary" checked={this.state.camprepresentante_legal} 
+                                        onChange={this.handlerepresentantelegalChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                           </FormGroup>
+                               
+                           </div>
+                        </div>     
+                      </div>
+                      <div class="p-2">                        
+                        <div className="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Gerenciar Eventos</div> 
+                               <div className="checkbox_descricao">É permitido criar, alterar, excluir e gerenciar eventos na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.campgerencia_eventos}
+                                    control={<Switch color="primary" checked={this.state.campgerencia_eventos} 
+                                        onChange={this.handlegerenciaChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>     
+                      </div>
+                      <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Monitorar Eventos</div> 
+                               <div className="checkbox_descricao">É permitido Listar e Monitorar eventos na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                </div>
+              </div>                                   
                <FormHelperText>
                    {this.state.mensagem_salvo}
-               </FormHelperText>                 
-                  
+               </FormHelperText>                                   
             </div>     
-                  <div className="mensagem_aguarde">
-                    <FormHelperText>
-                        {this.state.mensagem_aguarde}
-                    </FormHelperText>       
-                  </div>                   
+                            
                   {this.verifica_botao(this.state.inicio)}   
                  </div>
                </div>
@@ -1411,14 +2418,54 @@ verifica_botao(inicio) {
         isOpen={this.state.showModalInclusao}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Enviar Email para o Operador 
+        ><div className="editar_titulo_inclusao">Solicitar Inclusão do operador 
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_operador">
               <CloseOutlinedIcon />
             </IconButton></div>       
             <div className="container_alterado">
                <div className="d-flex justify-content">        
                  <div>  
-                 <div class="d-flex flex-column espacamento_caixa_texto">              
+                 <div class="d-flex flex-column espacamento_modal_motorista">      
+                 <div class="p-2">
+              <FormControl variant="outlined">
+                    <InputLabel className="label_text" htmlFor="filled-adornment-password">CNPJ</InputLabel>
+                     <OutlinedInput 
+                        autoComplete="off"                                   
+                        type="text"                                           
+                        error={this.state.erro_cnpj}
+                        helperText={this.state.mensagem_CNPJ}
+                        className="data_text"                  
+                        id="cnpj"                      
+                        variant="outlined"
+                        value={this.state.campCnpj}
+                        onKeyUp={this.verificacnpj}                
+                        onFocus={this.verificacnpjonfocus}
+                        onBlur={this.verificaSaidacnpj}
+                        onChange={ (e) => {
+                          this.cnpjchange(e)                                        
+                          this.validatecnpjChange(e)
+                        }}                        
+                        inputProps={{
+                          maxLength: 18,
+                        }}                            
+                      endAdornment={
+                        <InputAdornment position="end">
+                             {this.state.validacao_cnpj? <CheckIcon />: ''}
+                        </InputAdornment>
+                      }
+                      labelWidth={50}
+                    />             
+                  { this.analisando_retorno() }    
+                   <FormHelperText error={this.state.erro_cnpj}>
+                         {this.state.mensagem_CNPJ}
+                   </FormHelperText>
+                  </FormControl>   
+              </div>     
+              <div class="p-2">                                
+                  <div>
+                      {this.mostrar_razao_social()}                      
+                  </div>               
+              </div> 
                       <div class="p-2">   
                       <FormControl variant="outlined">
                           <InputLabel className="label_text" htmlFor="filled-adornment-password">Email</InputLabel>
@@ -1447,64 +2494,71 @@ verifica_botao(inicio) {
                         </FormHelperText>
                       </FormControl>                         
                       </div>
-                      <div class="p-2">
-                          <FormControl component="fieldset">
-                              <FormGroup aria-label="position" row>
-                                <FormControlLabel
-                                  value={this.state.campgerencia_eventos}
-                                  control={<Switch color="primary" checked={this.state.campgerencia_eventos} 
-                                      onChange={this.handlegerenciaChange}/>}
-                                  label="Gerenciar Eventos"
-                                  labelPlacement="end"                           
-                                />                       
-                              </FormGroup>
-                              <FormGroup aria-label="position" row>
-                                <FormControlLabel
-                                  value={this.state.campefetua_pagamentos}
-                                  control={<Switch color="primary" checked={this.state.campefetua_pagamentos} 
-                                      onChange={this.handleefetuaPagamentoChange}/>}
-                                  label="Efetuar Pagamentos"
-                                  labelPlacement="end"
-                                />                       
-                              </FormGroup>
-                              <FormGroup aria-label="position" row>
-                                <FormControlLabel
-                                  value={this.state.campinclui_cartao}
-                                  control={<Switch color="primary" checked={this.state.campinclui_cartao} 
-                                      onChange={this.handleincluiCartaoChange}/>}
-                                  label="Incluir cartão de Crédito"
-                                  labelPlacement="end"
-                                />                       
-                              </FormGroup>
-                              <FormGroup aria-label="position" row>
-                                <FormControlLabel
-                                  value={this.state.campinclui_operadores}
-                                  control={<Switch color="primary" checked={this.state.campinclui_operadores} 
-                                      onChange={this.handleincluiOperadoresChange}/>}
-                                  label="Incluir Outros Operadores"
-                                  labelPlacement="end"
-                                />                       
-                              </FormGroup>
-                              <FormGroup aria-label="position" row>
-                                <FormControlLabel
-                                  value={this.state.campgerencia_todos_eventos}
-                                  control={<Switch color="primary" checked={this.state.campgerencia_todos_eventos} 
-                                      onChange={this.handlegerenciatodosChange}/>}
-                                  label="Gerenciar Todos os Eventos"
-                                  labelPlacement="end"
-                                />                       
-                              </FormGroup>
-                              <FormGroup aria-label="position" row>
-                                <FormControlLabel
-                                  value={this.state.campvisualiza_eventos}
-                                  control={<Switch color="primary" checked={this.state.campvisualiza_eventos} 
-                                    onChange={this.handlevisualizaEventosChange}/>}
-                                  label="Somente Visualizar Evento"
-                                  labelPlacement="end"
-                                />                       
-                              </FormGroup>
-                            </FormControl>                   
+              <div className="posicao_2">               
+                <div class="p-2">                        
+                    <div className="checkbox_titulo">Permisões de Acesso </div>
+                </div>
+              </div>  
+               <div className="posicao_2">
+                      <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Pemissão de Representante Legal</div> 
+                               <div className="checkbox_descricao">É permitido realizar todas as funcionalidades disponiveis na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e">                                                  
+
+                           <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.camprepresentante_legal}
+                                    control={<Switch color="primary" checked={this.state.camprepresentante_legal} 
+                                        onChange={this.handlerepresentantelegalChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                           </FormGroup>
+                               
+                           </div>
+                        </div>     
                       </div>
+                      <div class="p-2">                        
+                        <div className="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Gerenciar Eventos</div> 
+                               <div className="checkbox_descricao">É permitido criar, alterar, excluir e gerenciar eventos na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.campgerencia_eventos}
+                                    control={<Switch color="primary" checked={this.state.campgerencia_eventos} 
+                                        onChange={this.handlegerenciaChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>     
+                      </div>
+                      <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Monitorar Eventos</div> 
+                               <div className="checkbox_descricao">É permitido Listar e Monitorar eventos na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                      </div>
+                    </div>      
+                                         
                     </div>       
                     {this.enviar_botao_modal(this.state.inicio)}          
 
@@ -1512,11 +2566,156 @@ verifica_botao(inicio) {
                </div>    
             </div>
      </ReactModal>       
+       <Snackbar 
+       anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}       
+       open={this.state.mensagem_alert}      
+       autoHideDuration={2000} onClose={this.envia_mensagemInclusaoClose}>
+        <Alert onClose={this.envia_mensagemInclusaoClose} severity="success">
+               {this.state.mensagem_usuario}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar 
+       anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}       
+       open={this.state.mensagem_alert_edicao}      
+       autoHideDuration={2000} onClose={this.envia_mensagemClose}>
+        <Alert onClose={this.envia_mensagemClose} severity="success">
+               {this.state.mensagem_usuario}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar 
+        anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}       
+        open={this.state.mensagem_alert_exclusao} 
+        autoHideDuration={2000} onClose={this.envia_mensagemExclusaoClose}>
+        <Alert onClose={this.envia_mensagemExclusaoClose} severity="error">
+               {this.state.mensagem_usuario}
+        </Alert>
+      </Snackbar>   
      
       </div>
      </div>    
     );
   }
+
+  envia_mensagemInclusaoClick = () => {
+    this.setState({ 
+      mensagem_alert: true      
+    });
+
+  }      
+
+  envia_mensagemInclusaoClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_alert: false,
+      listOperadores: [],      
+      listOperadoresCadIncompletos: [],
+      listOperadoresExcluidos: [],
+      listOperadoresConvites: [],
+    });   
+  
+    this.loadOperadores();
+    this.loadConvites();
+    this.loadOperadoresExcluidos();
+    this.loadOperadoresCadIncompletos();
+
+    this.handleCloseModalInclusao();      
+  };
+
+
+  envia_mensagemClick = () => {
+    this.setState({ 
+      mensagem_alert_edicao: true      
+    });
+
+  }      
+
+  envia_mensagemClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_alert_edicao: false,
+      listOperadores: [],      
+      listOperadoresCadIncompletos: [],
+      listOperadoresExcluidos: [],
+      listOperadoresConvites: [],
+    });   
+  
+    this.loadOperadores();
+    this.loadConvites();
+    this.loadOperadoresExcluidos();
+    this.loadOperadoresCadIncompletos();
+
+    this.handleCloseModalEdit();      
+  };
+
+
+  handleOpenModalDelete(data) { 
+    this.setState({ 
+      showMensagemDelete: true,
+      campDeletarId: data.id,      
+      campDeletarEmail: data.email,      
+      retorno: '',
+      campDescricao: '',
+      validacao_descricao: false,
+    });  
+    
+    console.log('delete OPERADOR - '+JSON.stringify(data, null, "    ")); 
+
+  }
+  
+  handleCloseModalDelete() {
+    this.setState({ 
+      showMensagemDelete: false
+    });   
+
+
+  }
+  handleOpenModalConviteDelete(data) { 
+    this.setState({ 
+      showConviteDelete: true,
+      campDeletarId: data.id,      
+      retorno: '',
+      campDescricao: '',
+      validacao_descricao: false,
+    });     
+    
+  }  
+  handleCloseModalConviteDelete() {
+    this.setState({ 
+      showConviteDelete: false
+    });   
+
+
+  }
+  envia_mensagemExclusaoClick = () => {
+    this.setState({ 
+      mensagem_alert_exclusao: true      
+    });
+
+  }      
+  envia_mensagemExclusaoClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_alert_exclusao: false,
+      listOperadores: [],      
+      listOperadoresCadIncompletos: [],
+      listOperadoresExcluidos: [],
+      listOperadoresConvites: [],
+    });   
+  
+    this.loadOperadores();
+    this.loadConvites();
+    this.loadOperadoresExcluidos();
+    this.loadOperadoresCadIncompletos();
+  };
+
 
   onIncluir() {      
     this.props.history.push(`/incluir_operador/`+localStorage.getItem('logid'));   
@@ -1527,22 +2726,91 @@ verifica_botao(inicio) {
       showModalInclusao: true,
       erro_email: false,
       validacao_email: false,
+      validacao_cnpj: false,
+      campgerencia_eventos: false, 
+      campMonitorar_eventos: false, 
+      camprepresentante_legal: false, 
       campEmail: '',    
+      campRazao_social: '',
+      campCnpj: '',      
     });  
-     
-    
+     this.limpar_campos();    
   }
   
   handleCloseModalInclusao () {
     this.setState({ 
       showModalInclusao: false,
-      incluir: false 
+      incluir: false,
+      listOperadores: [],      
+      listOperadoresCadIncompletos: [],
+      listOperadoresExcluidos: [],
+      listOperadoresConvites: [], 
     });
 
     this.loadOperadores();
-    this.loadOperadoresExxcluidos();
+    this.loadConvites();
+    this.loadOperadoresExcluidos();
+    this.loadOperadoresCadIncompletos();
     
-  }
+  }  
+
+  onEnvioSenhaEmail(data) {
+    const senhaAleatoria = Math.random().toString(36).slice(-8);
+   
+    const datapost = {
+      logid: data.id, 
+      perfilId: 8,
+      senha: senhaAleatoria
+    }        
+   //console.log('cliente id - '+data.id);
+
+   api.put(`/login/update/${data.id}`, datapost)
+
+   const params_email = {    
+     email: data.email,                      
+     url: `http://www.oser.app.br:21497/login`,        
+     texto: `Sr(a) ${data.nome}, termine o seu cadastro acessando o link abaixo \n Sua senha provisória é: ${senhaAleatoria} `, 
+   }      
+
+   api.post("/email/send", params_email)    
+
+   this.setState({   
+     emailState: '',
+     mensagem_usuario: 'Mensagem para operador enviada com sucesso!'
+   });               
+
+   this.envia_mensagemClick();          
+}
+
+  onEnvioEmail(data) {
+    
+    api.get(`/emailOperador/getemail/${data.email}`)
+    .then(res1=>{   
+
+      const params_email = {    
+        email: data.email,                      
+        //url: `http://www.oser.app.br:21497/operadores_incluir/${data.id}/${data.email}`,        
+        url: `http://localhost:3000/operadores_incluir/${data.id}/${data.email}`,        
+        texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
+      }
+
+      api.post("/email/send", params_email)    
+
+      this.setState({   
+        emailState: '',
+        mensagem_usuario: 'Mensagem Enviada com sucesso'
+      });               
+
+      this.envia_mensagemInclusaoClick();         
+
+
+    })
+    .catch ( error => {
+      alert("Error 325 ")
+    })
+
+}
+
 
   onSenha(data) {
     
@@ -1554,7 +2822,7 @@ verifica_botao(inicio) {
     
     api.post("/email/send", params_email)       
 
-    alert('Mensagem Enviada');
+  //  alert('Mensagem Enviada');
 
   }
 
@@ -1577,20 +2845,88 @@ verifica_botao(inicio) {
     })
   }
 
-  sendDelete(data, userId){  
-    
-    api.delete(`/login/delete/${data.email}`)    
 
-    api.delete(`/operador/delete/${userId}`)
+  handleOpenModalConviteDelete(data) { 
+    this.setState({ 
+      showConviteDelete: true,
+      campDeletarId: data.id,      
+      retorno: '',
+      campDescricao: '',
+      validacao_descricao: false,
+    });      
+    
+  }
+  
+  handleCloseModalConviteDelete() {
+    this.setState({ 
+      showConviteDelete: false,
+      listOperadores: [],      
+      listOperadoresCadIncompletos: [],
+      listOperadoresExcluidos: [],
+      listOperadoresConvites: [],
+    });   
+  
+    this.loadOperadores();
+    this.loadConvites();
+    this.loadOperadoresExcluidos();
+    this.loadOperadoresCadIncompletos();
+
+
+  }
+
+  sendDelete(id, email){
+    // url de backend    
+   // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
+    // network
+    api.delete(`/login/delete/${email}`)    
+
+    api.delete(`/operador/delete/${id}`)
+    .then(response =>{
+      if (response.data.success) {       
+
+        this.setState({       
+          mensagem_usuario: 'Operador excluído com sucesso!'
+         });  
+
+         this.loadOperadores();
+         this.loadOperadoresExcluidos();
+         this.loadOperadoresCadIncompletos();
+         this.loadConvites();  
+
+         this.handleCloseModalDelete();
+         this.envia_mensagemExclusaoClick();
+
+      }
+    })
+    .catch ( error => {
+      alert("Error operador delete ")
+    })
+  }
+
+  sendDeleteConvite(userId){     
+
+    console.log(`/emailOperador/delete/${userId}`);
+    api.delete(`/emailOperador/delete/${userId}`)
     .then(response =>{
 
       if (response.data.success) {       
-        this.loadOperadores()
+
+        this.setState({       
+          mensagem_usuario: 'Convite operador excluído com sucesso!'
+         });
+
+         this.loadOperadores();
+         this.loadOperadoresExcluidos();
+         this.loadOperadoresCadIncompletos();
+         this.loadConvites();  
+
+        this.handleCloseModalConviteDelete();
+        this.envia_mensagemExclusaoClick();
 
       } 
     })
     .catch ( error => {
-      alert("Error 325 ")
+      alert("Error emailOperador/delete ")
     })
   }
 

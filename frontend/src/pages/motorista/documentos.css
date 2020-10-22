@@ -21,12 +21,12 @@ background-color: antiquewhite !important;
 }
 
 .documento_motorista_cnh {
-  padding: 2px !important;
-  text-align: center !important;
-  width: 500px !important;
-  margin-left: 100px !important;
+  padding: 10px !important;
+  text-align: left !important;
+  width: 521px !important;
+  margin-left: 0px !important;
   border: 1px;
-  height: 272px !important;
+  height: 273px !important;
 }
 
 .documento_motorista_cnh_2 {
@@ -67,12 +67,20 @@ height: 170px !important;
   margin-left: 100px !important;
 }
 
-.grid4 {
-  margin-top: 143px !important; 
-  padding: 11px !important; 
+.grid_alteracao_doc {
+  margin-top: 30px;  
+  padding: 2px !important; 
   text-align: center !important;   
+  width: 480px !important; 
+  margin-left: 20px !important;
+}
+
+.grid4 {
+  margin-top: 0px !important;
+  padding: 11px !important;
+  text-align: center !important;
   width: 480px !important;
-  margin-left: 100px !important;
+  margin-left: 15px !important;
 }
 
 .grid4_alteracao {
@@ -149,15 +157,15 @@ height: 170px !important;
 }
 
 .mensagem_foto1 {
-  background: bisque 0% 0% no-repeat padding-box !important;
-  color: chocolate !important;  
+  background: white 0% 0% no-repeat padding-box !important;
+  color: white !important;  
   text-align: center !important;  
   font-size: 10px;
-  margin-top: 17px;
+  margin-top: -15px;
 }
 .mensagem_foto2 {
-  background: bisque 0% 0% no-repeat padding-box !important;
-  color: chocolate !important;  
+  background: white 0% 0% no-repeat padding-box !important;
+  color: white !important;  
   font-size: 10px;
 }
 

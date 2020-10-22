@@ -49,6 +49,7 @@ class operadoresComponent extends React.Component{
       campRazao_social: "",
       empresaId: 0,
       campCpf:"",       
+      campCpfanterior:"",       
       camp_cpf_disabled: false,
       camp_nome_disabled: false,
       campStatusId:'',          
@@ -107,7 +108,7 @@ class operadoresComponent extends React.Component{
 
     this.verifica_botao = this.verifica_botao.bind(this);  
     this.busca_cpf = this.busca_cpf.bind(this);  
-    this.busca_email = this.busca_email.bind(this);
+  //  this.busca_email = this.busca_email.bind(this);
    // this.busca_cliente = this.busca_cliente.bind(this);
     this.verificar_menu = this.verificar_menu.bind(this);
 
@@ -119,26 +120,22 @@ class operadoresComponent extends React.Component{
   componentDidMount(){ 
    
     let userId = this.props.match.params.id;         
-    let email = this.props.match.params.email;         
+   // let email = this.props.match.params.email;         
 
-    console.log('Email '+email);
-    localStorage.setItem('logid',  userId);
+   // console.log('Email '+email);
+    localStorage.setItem('logoperadorId',  userId);
     //localStorage.setItem('logperfil', 0);
     
-    if (email !== "0") {
-      localStorage.setItem('logemailId', userId);
-      localStorage.setItem('logemail', email);
-      this.busca_email(); 
-    } else {
-      localStorage.setItem('logoperadorId', userId);  
-      //localStorage.setItem('logid', userId);  
-      this.busca_operador();
-    }    
-
-    this.busca_empresa();
+    this.busca_operador();    
+    this.busca_empresa();    
 
     console.log('operador ID alterar'+localStorage.getItem('logoperadorId'));
     console.log('operador perfil - '+localStorage.getItem('logperfil'));   
+
+    this.setState({      
+      camp_cpf_disabled: true,    
+    });   
+
   }  
 
   verificaTelefone1onfocus(e){   
@@ -178,39 +175,7 @@ class operadoresComponent extends React.Component{
   
   } 
 
-  busca_email() {
-    const { validate } = this.state
-    //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
-    api.get(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`)
-    .then(res=>{       
-        if (res.data.data.length > 0) {
-           
-          this.setState({           
-            campEmail: res.data.data[0].email,     
-            empresaId: res.data.data[0].empresaId,                                  
-            inicio: 2,
-            incluir: true
-          })                 
-   
-          validate.emailState = 'has-success'
-          this.setState({ validate })
-          localStorage.setItem('logid', res.data.data[0].empresaId);
-          if (localStorage.getItem('logperfil') == 8) {
-             localStorage.setItem('lograzao_social', this.state.campRazao_social)      
-          }   
-
-        //  this.setState({ validate })
-        } else {
-          console.log('busca operador ID '+localStorage.getItem('logemailId'));
-          localStorage.setItem('logoperadorId', localStorage.getItem('logemailId'));  
-          this.busca_operador();
-        }
-      })        
-      .catch(error=>{
-        alert("Error de conexão busca_email "+error)
-      })       
   
-  } 
 
   verificaNomeonfocus(e) {
     const { validate } = this.state
@@ -236,9 +201,8 @@ class operadoresComponent extends React.Component{
         mensagem_cpf: ''  
        })            
     } else if (e.target.value.length == 14)  {
-      console.log('é valido asasas - '+e.target.value);
-      this.busca_cpf(e);// se existir não deixa cadastrar 
-      
+      console.log('é valido asasas - '+e.target.value);     
+          this.busca_cpf(e);// se existir não deixa cadastrar 
     }
   } 
   busca_operador() {
@@ -252,6 +216,7 @@ class operadoresComponent extends React.Component{
            
           this.setState({ 
             campCpf: res.data.data[0].cpf,
+            campCpfanterior: res.data.data[0].cpf,
             campNome: res.data.data[0].nome,
             campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].email,    
@@ -526,7 +491,7 @@ class operadoresComponent extends React.Component{
           validate.emailState = 'has-success'     
          // console.log(' valida email - '+e.target.value);   
           //console.log(' valida email - '+this.state.campEmail);   
-          if (this.state.campEmailAnterior !== e.target.value) {
+         if (this.state.campEmailAnterior !== e.target.value) {
             this.busca_email_ja_cadastrado(e.target.value)                
          } else {
            this.setState({ 
@@ -659,9 +624,9 @@ verifica_botao(inicio) {
         </Box>           
     );   
   } else {
-  if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
-      && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
-      && validate.telefone1State == 'has-success') {
+    if (this.state.validacao_cpf == true && this.state.validacao_datanascimento == true  
+      && this.state.validacao_email == true && this.state.validacao_nome == true
+      && this.state.validacao_telefone == true) {
         return (           
           <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendSave()}>
           <div className="d-flex justify-content-center">
@@ -799,11 +764,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -814,44 +779,46 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 
 
 render(){  
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
    {this.verificar_menu_lateral()}
-   <div className="d-flex justify-content"> 
+   <div> 
     <div>     
-    <div className="titulo_admministrador">        
-           <div className="unnamed-character-style-4 descricao_alteracao">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+    <div className="container-fluid titulo_lista margem_left">                   
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
+              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
+            </div>               
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -864,7 +831,7 @@ return (
 
             <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2">              
-                  <FormControl variant="outlined">
+                  <FormControl variant="outlined" disabled={this.state.camp_cpf_disabled}>
                     <InputLabel className="label_text" htmlFor="filled-adornment-password">CPF</InputLabel>
                      <OutlinedInput
                         autoComplete="off"         
@@ -910,13 +877,16 @@ return (
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)
-                      }}                      
+                      }}    
+                      inputProps={{
+                        maxLength: 40,
+                      }}                                              
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_nome? <CheckIcon />: ''}
                         </InputAdornment>
                       }
-                      labelWidth={50}
+                      labelWidth={40}
                     />
                    <FormHelperText error={this.state.erro_nome}>
                          {this.state.mensagem_nome}
@@ -967,12 +937,15 @@ return (
                         variant="outlined"
                         value={this.state.campEmail}
                         onBlur={this.verificaEmail}                     
-                        onFocus={this.verificaEmailonfocus}
+                        onFocus={this.verificaEmailonfocus}                        
                         onChange={ (e) => {
                                     this.emailchange(e) 
                                     this.validateEmail(e)
                                     this.validaEmailChange(e)                                
-                                  } }                        
+                                  } }                      
+                        inputProps={{
+                           maxLength: 50,
+                        }}                                     
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_email? <CheckIcon />: ''}

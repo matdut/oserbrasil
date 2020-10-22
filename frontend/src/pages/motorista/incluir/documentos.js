@@ -73,12 +73,16 @@ class empresarialComponent extends React.Component{
 
     if (userId !== 0) {
       localStorage.setItem('logid', userId);
+    }      
+    this.carrega_motorista();  
+    
+    if (localStorage.getItem('logVeiculo') > 0) {
+      this.carrega_doc_veiculo();  
+    } else {
+
+      this.load_veiculo();
     }
     
-  
-    this.carrega_motorista()    
-    this.carrega_doc_veiculo()
-  
   }
 
   carrega_motorista() {   
@@ -120,6 +124,40 @@ class empresarialComponent extends React.Component{
       })            
 
   }
+
+  load_veiculo() {   
+    const { validate } = this.state;
+    api.get(`/veiculo/getMotoristaVeiculos/${localStorage.getItem('logid')}`)
+    .then(res=>{
+       // console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.data.length > 0) {       
+
+          const uploadedCRVL = res.data.data.map(file => ({         
+            file: ({
+              path: file.foto_CRVL_name
+            }),  
+            id: file.id,
+            name: file.foto_CRVL_name,
+            readableSize: filesize(file.foto_CRVL_size),
+            progress: 0,
+            preview: file.foto_CRVL_url,
+            uploaded: false,
+            url: file.foto_CRVL_url,
+            error: false
+          }));        
+  
+          this.setState({                   
+            uploadedCRVL: uploadedCRVL,
+            foto2State: 'has-success'
+          });         
+         
+
+        } 
+      })        
+      .catch(error=>{
+        alert("Error de conexão carrega_veiculo "+error)
+      })   
+    }
  
  carrega_doc_veiculo() { 
   api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
@@ -306,7 +344,7 @@ handleUploadCNH = files => {
     uploadedCNH: [],
   });  
   console.log(JSON.stringify(' uploadedCNH - '+this.state.uploadedCNH[0], null, "    "));   
-  if (files[0].size <= 2047335) {
+  //if (files[0].size <= 2047335) {
   //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));   
       const uploadedCNH = files.map(file => ({
         file,
@@ -329,14 +367,14 @@ handleUploadCNH = files => {
       });              
 
       this.verifica_botao(2);
- } else {  
+/* } else {  
     this.setState({        
       incluir_foto_1: false,
       foto1State: '', 
       mensagem_foto1: 'Foto muito grande, favor adicionar outra '
     });  
     this.verifica_botao(2);
- }   
+ } */   
 
  // uploadedFiles.forEach(this.processUpload);
 }
@@ -350,7 +388,7 @@ handleUploadCRVL = files => {
   });  
   console.log(JSON.stringify(' uploadedCRVL - '+this.state.uploadedCRVL[0], null, "    "));   
 
-  if (files[0].size <= 2047335) {
+ // if (files[0].size <= 2047335) {
     const uploadedCRVL = files.map(file => ({
       file,
       //id: uniqueId(),
@@ -375,14 +413,14 @@ handleUploadCRVL = files => {
      
     this.verifica_botao(2)
 
-  } else {
+  /*} else {
     this.setState({    
       foto2State: '',
       incluir_foto_2: false,
       mensagem_foto2: 'Foto muito grande, favor adicionar outra '
     });
     this.verifica_botao(2)
-  } 
+  }  */
  
 }
 
@@ -529,7 +567,7 @@ return (
                 <Grid item xs>
                     <Paper className="documento_motorista_cnh_2">
                       <div>                       
-                        <div className="titulocrvl"><stronger>CRVL</stronger></div>
+                        <div className="titulocrvl"><stronger>CRLV</stronger></div>
                         <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
                         <Container>   
             
@@ -554,21 +592,7 @@ return (
                         </div>     
                     </Paper>
                   </Grid>                   
-               </div>              
-               <div className="d-flex flex-column">               
-                  <div className="p-2 titulocnh"> 
-                    <Grid container spacing={2}>
-                      <Grid item xs>
-                           <Paper className="grid_documento">
-                          <strong> Requisitos de formato: </strong><br/>
-                                tamanho mínimo da imagem: 300x100 pixeis;
-                                formatos aceitáveis: JPG, JPEG, PNG;
-                                tamanho do arquivo não deve exceder 2 MB. 
-                           </Paper> 
-                      </Grid>
-                    </Grid>                  
-                  </div>
-              </div>
+               </div>                           
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 

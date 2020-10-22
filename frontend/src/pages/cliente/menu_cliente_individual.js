@@ -134,8 +134,8 @@ class menu_clienteComponent extends React.Component  {
     </div>
     <div className="item teste">    
        <LightTooltip title="Eventos" placement="top">
-            <a href={"/listaeventocliente/"+this.state.id+"/"+localStorage.getItem('logperfil')}>           
-            <i class="fas fa-bell"></i>
+            <a href={"/lista_evento/list"}>                 
+            <i class="fas fa-calendar-alt"></i>                  
             </a>  
         </LightTooltip>    
     </div>  
@@ -147,10 +147,17 @@ class menu_clienteComponent extends React.Component  {
     </LightTooltip>    
     </div>   
     <div className="item teste">
+      <LightTooltip title="Cartão Crédito" placement="top">
+        <a href={`/cartao_credito/list`}>                 
+        <i class="fas fa-credit-card"></i>
+        </a>  
+      </LightTooltip>    
+    </div>
+    <div className="item teste">
       <LightTooltip title="#" placement="top">
-        <a href="#">
-            <i className="fas fa-fw fa-th"></i> 
-        </a>   
+        <a href='#'>                 
+         <i class="fas fa-cog"></i>
+        </a>  
       </LightTooltip>    
     </div>
     <div className="item teste">
@@ -162,7 +169,7 @@ class menu_clienteComponent extends React.Component  {
     
      <div className="item_sem_borda versao_sistema"> 
         <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-       <div className="data_versao"> 07/09/20 v1.8.0 </div>
+       <div className="data_versao"> 30/09/20 v2.0.0 </div>
      </div>  
    </div>                                       
                             

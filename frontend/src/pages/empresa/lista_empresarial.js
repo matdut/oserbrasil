@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import axios from 'axios';
 import api from '../../services/api';
-import { Alert, Input, CardBody } from 'reactstrap';
+import { Input, CardBody } from 'reactstrap';
 import { celularMask } from '../formatacao/celularmask';
 import { cpfMask } from '../formatacao/cpfmask';
 import { cnpjMask } from '../formatacao/cnpjmask';
@@ -19,13 +19,19 @@ import Box from '@material-ui/core/Box';
 import { Link } from "react-router-dom";
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import 'sweetalert2/src/sweetalert2.scss';
+//import 'sweetalert2/src/sweetalert2.scss';
 import Menu_administrador from '../administrador/menu_administrador';
 
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+
+import { createGlobalStyle } from "styled-components";
+import px2vw from "../utils/px2vw";
 
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -48,6 +54,9 @@ import CheckIcon from '@material-ui/icons/Check';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
 import { Data } from '@react-google-maps/api';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
 
 import MaterialTable from 'material-table';
 import { Tabs, Tab } from 'react-bootstrap';
@@ -63,14 +72,24 @@ const nome = localStorage.getItem('lognome');
 const perfil = localStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
 
+/*
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650,
+  },
+});
+
+*/
+
 const customStyles = {
   overlay: {    
-    /* position: 'fixed', */
+    position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   content : {
     top                    : '0px',
@@ -78,15 +97,40 @@ const customStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-    width                  : '560px',    
+    width                  : '44%',    
     padding                : '0px !important',      
-    /* overflow               : 'unset', */
-   /* WebkitOverflowScrolling: 'touch', 
-    position               : 'absolute', */
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
     border: '1px solid #ccc',   
   }
 };
 
+const ConfirmacaodelStyles = {
+  overlay: {
+    backgroundColor: 'papayawhip',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    top                    : '50%',
+    left                   : '66%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '50%',    
+    width                  : '560px',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
 /*
 let columns = [
   { id: '1', label: '', minWidth: 80, align: 'left' },
@@ -98,6 +142,9 @@ let columns = [
   { id: 'acao', label: '', minWidth: 100, align: 'left' },
 ];
 */
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 class listComponent extends React.Component  {
 
@@ -117,6 +164,8 @@ class listComponent extends React.Component  {
       campCpf:"",       
       campRazao_social: "",
       campNome_fantasia:"",
+      campDeletarId: '',
+      campDeletarEmail: '',
       campCep: '',
       campNome: '',
       campEndereco: '',
@@ -141,6 +190,19 @@ class listComponent extends React.Component  {
       mensagem_estado: '',  
       mensagem_cidade: '',  
       mensagem_bairro: '',      
+      campgerencia_eventos: false, 
+      campMonitorar_eventos: false, 
+      camprepresentante_legal: false, 
+      erro_cpf: false,
+      erro_nome: false,
+      erro_datanascimento: false,
+      erro_email: false,
+      erro_telefone: false,
+      validacao_cpf: false,
+      validacao_nome: false,
+      validacao_datanascimento: false,
+      validacao_email: false,
+      validacao_telefone: false,        
       erro_cep: false,
       erro_numero: false,
       erro_complemento: false,
@@ -149,6 +211,7 @@ class listComponent extends React.Component  {
       validacao_complemento: false,
       listEmpresas:[],
       listEmpresasExcluidos:[],
+      listEmpresasCadIncompletos:[],
       listaStatus:[],
       validate: {
         nomeState: '',      
@@ -197,6 +260,10 @@ class listComponent extends React.Component  {
     this.validaNomeChange = this.validaNomeChange.bind(this);  
     this.validaDataNascimentoChange = this.validaDataNascimentoChange.bind(this);  
 
+    this.handlegerenciaChange = this.handlegerenciaChange.bind(this);
+    this.handlegerenciarotasChange = this.handlemonitorar_eventosChange.bind(this);
+    this.handleeditaoperadoresChange = this.handlerepresentantelegalChange.bind(this);
+
     this.buscar_cepClick = this.buscar_cepClick.bind(this);  
     this.verifica_botao = this.verifica_botao.bind(this);  
     this.busca_cpf = this.busca_cpf.bind(this);  
@@ -218,6 +285,7 @@ class listComponent extends React.Component  {
 
       this.loadEmpresas();   
       this.loadEmpresasExcluidos();   
+      this.loadEmpresasCadIncompletos();
       this.carrega_status();        
          
     }
@@ -229,9 +297,6 @@ class listComponent extends React.Component  {
       if (res.data.success) {
         const data = res.data.data
         this.setState({ estado_selecionado:data[0].nome})
-      }
-      else {
-        alert('Lista vazia')
       }
     })
     .catch(error=>{
@@ -249,6 +314,9 @@ class listComponent extends React.Component  {
       //  const dataF = new Data(res.data.data[0].data_nascimento);     
         if (res.data.success) {
           localStorage.setItem('logclienteId', res.data.data[0].cliente.id)  
+          localStorage.setItem('logempresaid', res.data.data[0].id)          
+              
+
           this.setState({ 
             campCnpj: cnpjMask(res.data.data[0].cnpj),          
             campRazao_social: res.data.data[0].razao_social,
@@ -263,11 +331,11 @@ class listComponent extends React.Component  {
             campCep: res.data.data[0].cep,      
             campCpf: res.data.data[0].cliente.cpf,
             campNome: res.data.data[0].cliente.nome,
-            campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
+            campData_nascimento: dateFormat(res.data.data[0].cliente.data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].cliente.email,      
             campEmailAnterior: res.data.data[0].cliente.email,      
             campTelefone1: res.data.data[0].cliente.celular,           
-            campStatusId: res.data.data[0].cliente.statusId, 
+            campStatusId: res.data.data[0].cliente.statusId,       
             incluir: false,           
             inicio: 2,
             validacao_cpf: true,
@@ -279,6 +347,8 @@ class listComponent extends React.Component  {
             validacao_razaosocial: true,
             validacao_cep: true,
           })       
+
+
           
           this.setState({                  
             progresso: 25
@@ -323,7 +393,9 @@ class listComponent extends React.Component  {
             this.carrega_estado()
           }
   
-          this.setState({ validate })
+          this.setState({ validate })   
+
+
         } 
       })        
       .catch(error=>{
@@ -468,14 +540,13 @@ class listComponent extends React.Component  {
    }
    verificaNumero(e) {
     const { validate } = this.state
-       if (e.target.value.trim().length == 0) {
-        validate.numeroState = 'has-danger'
+       if (e.target.value.trim().length == 0) {       
         this.setState({ 
           validate,
           inicio: 1,        
           erro_cep: true,       
           validacao_cep: false,       
-          mensagem_numero: 'O campo Numero é obrigatório.'  
+          mensagem_numero: ''  
          })            
        }      
    }
@@ -555,15 +626,18 @@ class listComponent extends React.Component  {
   validaNumeroChange(e){
     const { validate } = this.state
     
-      if (e.target.value.trim().length == 0) {
-        validate.numeroState = 'has-danger'
+      if (e.target.value.trim().length == 0) {        
         this.setState({ 
+            erro_numero: false,
+            validacao_numero: false, 
             inicio: 1,
-            mensagem_numero: 'O campo Número é obrigatório.' 
+            mensagem_numero: '' 
         })  
       } else if (e.target.value.trim().length > 0) {
         validate.numeroState = 'has-success'  
         this.setState({           
+          erro_numero: false,
+          validacao_numero: true, 
           inicio: 2
         })
        
@@ -574,18 +648,18 @@ class listComponent extends React.Component  {
   validaComplementoChange(e){
     const { validate } = this.state
     
-      if (e.target.value.trim().length == 0) {
-        validate.complementoState = 'has-danger'
-        this.setState({ 
-          inicio: 1,
-          mensagem_complemento: 'O campo Complemento é obrigatório.' 
+      if (e.target.value.trim().length == 0) {    
+        this.setState({          
+          erro_complemento: false,
+          validacao_complemento: false, 
+          mensagem_complemento: '' 
         })  
       } else if (e.target.value.trim().length > 0) {
         validate.complementoState = 'has-success'       
         this.setState({           
-          inicio: 2
-        })     
-        this.verifica_botao(this.state.inicio) 
+          erro_complemento: false,
+          validacao_complemento: true, 
+        })           
       }  
       this.setState({ validate })
       
@@ -593,9 +667,8 @@ class listComponent extends React.Component  {
   validaCepChange(e){
     const { validate } = this.state
     //console.log('teste cep '+e.target.value);
-      if (e.target.value.length < 9) {
-        this.limpar_endereco()
-        validate.cepState = 'has-danger'
+      if (e.target.value.length == 0) {
+        this.limpar_endereco()     
         validate.numeroState = ''
         validate.complementoState = ''
         validate.enderecoState = ''
@@ -606,7 +679,7 @@ class listComponent extends React.Component  {
            inicio: 1,
            erro_cep: true,
            validacao_cep: false,
-           mensagem_cep: 'CEP inválido' 
+           mensagem_cep: '' 
         })  
       } else if (e.target.value.length == 9) {      
               validate.cepState = 'has-success'                  
@@ -742,15 +815,14 @@ class listComponent extends React.Component  {
    }
    verificaEmail(e){   
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.emailState = 'has-danger'
+    if (e.target.value.length == 0) {      
       this.setState({ 
         validate,
-        erro_email: true,
+        erro_email: false,
         validacao_email: false, 
-        mensagem_email: 'Email é obrigatório.'  
+        mensagem_email: ''  
     })                          
-    } else if (e.target.value.length > 0 && validate.emailState == 'has-danger') {
+    } else if (e.target.value.length > 0 && this.state.validacao_email == true) {
     this.setState({ 
       validate,
       erro_email: true,
@@ -762,13 +834,12 @@ class listComponent extends React.Component  {
   } 
   verificaNome() {
     const { validate } = this.state
-       if (this.state.campNome.length == 0) {
-        validate.nomeState = 'has-danger'
+       if (this.state.campNome.length == 0) {    
         this.setState({ 
           validate,
-          erro_nome: true,
+          erro_nome: false,
           validacao_nome: false, 
-          mensagem_nome: 'O campo nome é obrigatório.'  
+          mensagem_nome: ''  
          })      
        } else {
         validate.nomeState = 'has-success' ;        
@@ -781,13 +852,12 @@ class listComponent extends React.Component  {
    }
   verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {
-        validate.datanascimentoState = 'has-danger'
+       if (this.state.campData_nascimento.length == 0) {    
         this.setState({ 
           validate,
           erro_datanascimento: true,
           validacao_datanascimento: false,
-          mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
+          mensagem_data_nascimento: ''  
          })      
        } else if (this.state.campData_nascimento.length == 10) {
 
@@ -938,6 +1008,47 @@ class listComponent extends React.Component  {
     this.setState({ validate })
 }
 
+handlegerenciaChange = (event) => {
+  this.setState({ 
+    campgerencia_eventos: event.target.checked
+  });
+};
+handlemonitorar_eventosChange = (event) => {    
+  
+  this.setState({ 
+    campMonitorar_eventos: event.target.checked
+  });
+};
+handlerepresentantelegalChange = (event) => {
+
+ // console.log('evento - '+JSON.stringify(event.target.value, null, "    "));     
+  this.setState({ 
+    camprepresentante_legal: event.target.checked
+  }); 
+};
+
+
+envia_mensagemClick = () => {
+  this.setState({ 
+    mensagem_alert: true      
+  });
+
+}      
+
+envia_mensagemClose = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+  this.setState({ 
+    mensagem_alert: false      
+  });    
+
+  this.loadEmpresas();   
+  this.loadEmpresasExcluidos();   
+  this.handleCloseModal();      
+};       
+
+
 busca_cpf(e){
   const { validate } = this.state
  api.get(`/cliente/getClienteCpf/${e.target.value}`)
@@ -983,9 +1094,9 @@ busca_cpf(e){
        </div>     
        );   
      } else {
-     if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
-         && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
-         && validate.telefone1State == 'has-success') {
+      if (this.state.validacao_cpf == true && this.state.validacao_datanascimento == true  
+        && this.state.validacao_email == true && this.state.validacao_nome == true
+        && this.state.validacao_telefone == true) {
            return (    
              <div>                                          
                    <Box  bgcolor="error.main" color="error.contrastText" className="botoes_habilitados_modal_scroll"  p={2} onClick={()=>this.sendSave()}>
@@ -1027,14 +1138,11 @@ busca_cpf(e){
    // const url = baseUrl+"/cliente/list"
    api.get('/empresa/list')
     .then(res=>{
-      if (res.data.success) {
+      if (res.data.success == true) {
         const data = res.data.data               
         this.setState({             
             listEmpresas: data          
         })                        
-      }
-      else {
-        alert("Error conexao")
       }
     })
     .catch(error=>{
@@ -1056,20 +1164,39 @@ busca_cpf(e){
      })
    }
 
+   loadEmpresasCadIncompletos(){
+    // const url = baseUrl+"/cliente/list"
+    api.get('/empresa/listarIncompletos')
+     .then(res=>{
+       if (res.data.success) {
+         const data = res.data.data       
+         this.setState({listEmpresasCadIncompletos:data})
+       }  
+     })
+     .catch(error=>{
+       alert("Error server lista excluido "+error)
+     })
+   }
+
   handleOpenModal(data) {
     this.setState({ 
       showModal: true,        
       incluir: false,  
       mensagem_aguarde: '',
+      campgerencia_eventos: false, 
+      campMonitorar_eventos: false, 
+      camprepresentante_legal: false, 
     });    
-    localStorage.setItem('logeditid', data.id);         
+
+    localStorage.setItem('logeditid', data.id);             
+    console.log(' logeditid - '+data.id);
     this.busca_cliente();   
 
     if (localStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
-        camp_datanasc_disabled: false,
+        camp_datanasc_disabled: true,
         camp_email_disabled: true,
         camp_telefone_disabled: false,
       });
@@ -1080,11 +1207,15 @@ busca_cpf(e){
     this.setState({ 
       showModal: false,  
       campStatusId: 0,  
+      listEmpresas: [],
+      listEmpresasExcluidos: [],
     });
+   
     localStorage.setItem('logeditid', '');
     
     this.loadEmpresas();  
     this.loadEmpresasExcluidos();  
+    this.loadEmpresasCadIncompletos();  
   //  this.carrega_status();  
     
   }
@@ -1173,30 +1304,30 @@ busca_cpf(e){
       <div>    
           <div>
             <Menu_administrador />  
-            <div className="titulo_admministrador">
-              <div className="unnamed-character-style-4 descricao_admministrador">                                 
-                 <h3><strong>Lista de Clientes Empresarial</strong></h3>
+            <div className="titulo_lista">
+               <div className="unnamed-character-style-4 descricao_admministrador">                       
+                 <strong>Clientes Empresarial</strong>
               </div>      
             </div>
           </div>
-          <div className="container_modal_list">                    
-          <br/>        
+          <div className="container-fluid margem_left">                    
+            <br/>           
           <Tabs 
-              defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">          
-             <Tab eventKey="ativos" title="Ativos">
-          <div style={{ maxWidth: '95%' }}>        
-                    <MaterialTable          
-                        title=""
+           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
+          <Tab eventKey="ativos" title="Ativos">          
+          <div style={{ maxWidth: '100%' }}>
+                 <MaterialTable       
+                       title=""     
+                        style={ {width: "96%" }}                                                                   
                         columns={[
-                          { title: '', field: '#', width: '40px' },
-                          { title: 'Status', field: 'cliente.status.descricao', width: '90px' },
-                          { title: 'CNPJ', field: 'cnpj', width: '130px' },
-                          { title: 'Razão Social', field: 'razao_social', width: '460px' },
-                          { title: 'Representante Legal', field: 'cliente.nome', width: '350px' },
-                          { title: 'Email', field: 'cliente.email', width: '400px'},    
-                          { title: 'Telefone', field: 'cliente.celular', align: 'center', width: '150px'},             
-                          { title: '', field: '#', width: '50px' },                       
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '#', width: "18px" },
+                          { title: 'Status', field: 'cliente.status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                          { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
+                          { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
+                          { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
+                          { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
+                          { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                                                                                                                                        
                         ]}
                         data={this.state.listEmpresas}     
                         localization={{
@@ -1226,22 +1357,26 @@ busca_cpf(e){
                           header: {
                             actions: 'Ação',
                           },
-                        }}        
+                        }}                               
                         options={{
-                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "10px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              paginationPosition: 'bottom',  
-                              searchFieldAlignment: 'left', 
-                              exportFileName: 'Relatorio_adm_empresa',
-                              search: true,     
-                              exportAllData: true,                              
-                              searchFieldVariant: 'outlined', 
-                              toolbarButtonAlignment: 'right',           
-                              /*exportButton: true, */            
-                              exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
-                              pageSize: 7,
-                              pageSizeOptions: [7],         
+                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldAlignment: 'left', 
+                          exportAllData: true,
+                          exportFileName: 'Rel_adm_empresas',
+                          search: true,     
+                          searchFieldVariant: 'outlined', 
+                          toolbarButtonAlignment: 'right',           
+                          paging: false,          
+                          maxBodyHeight: 430,
+                          minBodyHeight: 430, 
+                          padding: 'dense',   
+                          overflowY: 'scroll',
+                          tableLayout: 'fixed',   
+                          exportButton: { pdf: true },          
+                          actionsColumnIndex: 7,
+                         // pageSize: 9,
+                          pageSizeOptions: [0]                                                                                          
                         }}
                         actions={[
                           {             
@@ -1254,19 +1389,19 @@ busca_cpf(e){
              </div>      
           </Tab>
           <Tab eventKey="excluidos" title="Excluidos">
-              <div style={{ maxWidth: '95%' }}>    
+          <div style={{ maxWidth: '100%' }}>
                         <MaterialTable          
                             title=""
+                            style={ {width: "96%" }}      
                             columns={[
-                              { title: '', field: '#', width: '40px' },
-                              { title: 'Status', field: 'cliente.status.descricao', width: '90px' },
-                              { title: 'CNPJ', field: 'cnpj', width: '150px' },
-                              { title: 'Razão Social', field: 'razao_social', width: '460px' },
-                              { title: 'Representante Legal', field: 'cliente.nome', width: '350px' },
-                              { title: 'Email', field: 'cliente.email', width: '400px'}, 
-                              { title: 'Telefone', field: 'cliente.celular', align: 'center', width: '150px'},           
-                              { title: '', field: '#', width: '50px' },                   
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                
+                              { title: '', field: '#', width: "18px" },
+                              { title: 'Status', field: 'cliente.status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
+                              { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
+                              { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
+                              { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
+                              { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                      
                             ]}
                             data={this.state.listEmpresasExcluidos}        
                             localization={{
@@ -1297,41 +1432,154 @@ busca_cpf(e){
                                 actions: 'Ação',
                               },
                             }}        
-                            options={{
-                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
+                            options={{                                                        
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
                               searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
-                              exportFileName: 'Relatorio_adm_empresa_excluidos',
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_empresas',
                               search: true,     
-                              exportAllData: true,                              
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
-                              /*exportButton: true, */            
-                              exportButton: { pdf: true },          
+                              paging: false,          
+                              maxBodyHeight: 430,
+                              minBodyHeight: 430, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                              tableLayout: 'fixed',   
+
+                              exportButton: { pdf: true },     
                               actionsColumnIndex: 7,
-                              pageSize: 7,
-                              pageSizeOptions: [7],         
+                              //pageSize: 7,
+                              pageSizeOptions: [0],                                  
                             }}
                             actions={[
                               {             
                                 icon: 'edit',
                                 onClick: (evt, data) => this.handleOpenModal(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Empresa',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                              }
+                            ]}
+                          />      
+                </div>      
+          </Tab>  
+          <Tab eventKey="incompletos" title="Cadastro Incompleto">
+          <div style={{ maxWidth: '100%' }}>
+                        <MaterialTable          
+                            title=""
+                            style={ {width: "96%" }}     
+                            columns={[
+                              { title: '', field: '#', width: "18px" },
+                              { title: 'Status', field: 'cliente.status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
+                              { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
+                              { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
+                              { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
+                              { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                         
+                            ]}
+                            data={this.state.listEmpresasCadIncompletos}        
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Add',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                  deleteText: 'Deseja realmente deletar esta linha ?',
+                                  cancelTooltip: 'Cancelar',
+                                  saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar empresa',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{                                                        
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_empresas',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,          
+                              maxBodyHeight: 430,
+                              minBodyHeight: 430, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                              tableLayout: 'fixed',   
+                              actionsColumnIndex: 7,
+                              exportButton: { pdf: true },          
+                              //pageSize: 7,
+                              pageSizeOptions: [0],                                  
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                onClick: (evt, data) => this.handleOpenModal(data)
+                              },
+                              {             
+                                icon: 'mail',
+                                tooltip: 'Enviar',
+                                onClick: (evt, data) => this.onEnvioEmail(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Empresa',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
                               }
                             ]}
                           />      
                 </div>      
           </Tab>          
         </Tabs>  
-
-         
+        
        <br/>
+       <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+                open={this.state.mensagem_alert}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemClose}                
+                >
+            <Alert onClose={this.envia_mensagemClose} severity="success">
+                  {this.state.mensagem_usuario}
+            </Alert>
+        </Snackbar>
+        <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+                open={this.state.mensagem_exclusao}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemExclusaoClose}                
+                >
+            <Alert onClose={this.envia_mensagemExclusaoClose} severity="error">
+                  {this.state.mensagem_usuario}
+            </Alert>
+          </Snackbar>
+
        <ReactModal 
             scrollable={true}
             isOpen={this.state.showModal}
             style={customStyles}
             contentLabel="Inline Styles Modal Example"          
-            > <div className="editar_titulo">Editar Representante 
+            > <div className="editar_titulo">Editar Empresa 
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModal()} className="botao_close_modal_empresa">
               <CloseOutlinedIcon />
             </IconButton>     </div>           
@@ -1348,18 +1596,18 @@ busca_cpf(e){
                             <InputLabel className="buscar_label_status_modal" id="demo-simple-select-outlined-label">Status </InputLabel>
                             <Select                                                 
                               autoComplete="off"                     
-                              className="data_modal_text"                                                
+                              className="select_modal_text"                                                
                               labelId="demo-simple-select-outlined-label"
                               id="busca"
                               value={this.state.campStatusId}                                    
                               onChange={ (e) => {
                                 this.statusChange(e)
                               }}                  
-                              labelWidth={60}          
+                              labelWidth={50}          
                              >                                            
                               {this.loadStatus()}                    
                               </Select>
-                          </FormControl>                           
+                          </FormControl>                                                                        
             </div>
               <div class="p-2">  
                  <div className="sub_titulo_modal_editor"> Representante Legal </div>                
@@ -1382,66 +1630,71 @@ busca_cpf(e){
                                                    
               </div>              
               <div class="p-2">   
-                <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel className="select_status_modal" htmlFor="filled-adornment-password">Data de Nascimento</InputLabel>
-                     <OutlinedInput      
-                        autoComplete="off"                    
-                        readOnly={this.state.camp_datanasc_disabled}                     
-                        error={this.state.erro_datanascimento}
-                        helperText={this.state.mensagem_data_nascimento}
-                        className="data_text"                          
-                        id="outlined-basic"                   
-                        variant="outlined"
-                        value={this.state.campData_nascimento}
-                        onBlur={this.verificaDataNascimento}
-                        onChange={ (e) => {
-                          this.data_nascimentochange(e)                       
-                          this.validaDataNascimentoChange(e)
-                        }}                                    
-                        inputProps={{
-                          maxLength: 10,
-                        }}     
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_datanascimento? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={180}                      
-                    />
-                   <FormHelperText error={this.state.erro_datanascimento}>
-                         {this.state.mensagem_data_nascimento}
-                   </FormHelperText>
-                </FormControl>  
-              </div>            
-              <div class="p-2">
-              <FormControl variant="outlined" className="posicao_caixa_texto">
-                    <InputLabel className="label_modal" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                     <OutlinedInput   
-                        autoComplete="off"           
-                        readOnly={this.state.camp_telefone_disabled}            
-                        error={this.state.erro_telefone}
-                        helperText={this.state.mensagem_telefone1}
-                        className="data_text"                       
-                        id="outlined-basic"                   
-                        variant="outlined"
-                        value={this.state.campTelefone1}                
-                        onBlur={this.verificaTelefone1}                            
-                        onChange={ (e) => {
-                          this.telefone1change(e)                       
-                          this.validatelefone1Change(e)
-                        }}                                      
-                      endAdornment={
-                        <InputAdornment position="end">
-                             {this.state.validacao_telefone? <CheckIcon />: ''}
-                        </InputAdornment>
-                      }
-                      labelWidth={80}                      
-                    />
-                   <FormHelperText error={this.state.erro_telefone}>
-                         {this.state.mensagem_telefone1}
-                   </FormHelperText>
-                </FormControl>                            
-               </div> 
+                 <div class="d-flex justify-content-start">
+                       <div>   
+                          <FormControl variant="outlined" className="posicao_caixa_texto">
+                              <InputLabel className="buscar_label_status_modal" 
+                                    htmlFor="filled-adornment-password">Data de Nascimento</InputLabel>
+                              <OutlinedInput      
+                                  autoComplete="off"                    
+                                  readOnly={this.state.camp_datanasc_disabled}                     
+                                  error={this.state.erro_datanascimento}
+                                  helperText={this.state.mensagem_data_nascimento}
+                                  className="data_modal_text"                          
+                                  id="outlined-basic"                   
+                                  variant="outlined"
+                                  value={this.state.campData_nascimento}
+                                  onBlur={this.verificaDataNascimento}
+                                  onChange={ (e) => {
+                                    this.data_nascimentochange(e)                       
+                                    this.validaDataNascimentoChange(e)
+                                  }}                                    
+                                  inputProps={{
+                                    maxLength: 10,
+                                  }}     
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_datanascimento? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={180}                      
+                              />
+                            <FormHelperText error={this.state.erro_datanascimento}>
+                                  {this.state.mensagem_data_nascimento}
+                            </FormHelperText>
+                          </FormControl>  
+                      </div>
+                      <div>
+                      <FormControl variant="outlined" className="posicao_caixa_texto">
+                          <InputLabel  className="label_modal" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                          <OutlinedInput   
+                              autoComplete="off"           
+                              readOnly={this.state.camp_telefone_disabled}            
+                              error={this.state.erro_telefone}
+                              helperText={this.state.mensagem_telefone1}
+                              className="data_modal_empresa"                       
+                              id="outlined-basic"                   
+                              variant="outlined"
+                              value={this.state.campTelefone1}                
+                              onBlur={this.verificaTelefone1}                            
+                              onChange={ (e) => {
+                                this.telefone1change(e)                       
+                                this.validatelefone1Change(e)
+                              }}                                      
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_telefone? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={80}                      
+                          />
+                        <FormHelperText error={this.state.erro_telefone}>
+                              {this.state.mensagem_telefone1}
+                        </FormHelperText>
+                      </FormControl>        
+                      </div>
+                  </div>    
+              </div>                       
 
               <div class="p-2">  
                    <div className="sub_titulo_modal_editor"> Endereço </div>                
@@ -1530,7 +1783,7 @@ busca_cpf(e){
                             error={this.state.erro_complemento}
                             helperText={this.state.mensagem_complemento}                                    
                             id="complemento_incluir"   
-                            className="data_modal_text"                                    
+                            className="data_modal_empresa"                                    
                             variant="outlined"
                             value={this.state.campComplemento}
                             onblur={this.verificaComplemento}
@@ -1553,21 +1806,45 @@ busca_cpf(e){
                       </FormControl>    
                     </div>
                   </div> 
-                </div>                          
+                </div>                    
             </div>       
-            <div className="mensagem_aguarde">
-              <FormHelperText>
-                  {this.state.mensagem_aguarde}
-              </FormHelperText>       
-            </div>                   
+                 
             {this.verifica_botao(this.state.inicio)}             
          </div>   
     </div>
     </div>
-         </ReactModal>  
-       <Alert color={this.state.color}>
-         {this.state.mensagem}
-       </Alert>    
+         </ReactModal>
+         <ReactModal 
+        isOpen={this.state.showMensagemDelete}
+        style={ConfirmacaodelStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div> 
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
+              <CloseOutlinedIcon />
+            </IconButton></div>       
+            <center><img src="/exclamation.png" /> </center>
+            <div className="container_alterado">              
+              
+             <div className="moldura_modal_delecao">
+               <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir esta Empresa? </div>
+               <div>Ao confirmar a exclusão o registro será apagado.  </div>
+             </div>     
+                              <div className="retorno">{this.state.retorno}</div>
+            <Box 
+               className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
+              <div className="d-flex justify-content-center">
+              <label> Cancelar </label>
+              </div>     
+            </Box>      
+            <Box 
+               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId, this.state.campDeletarEmail)}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir </label>
+              </div>     
+            </Box>      
+
+            </div>
+     </ReactModal>         
           <br/>
           <br/>       
        
@@ -1575,6 +1852,53 @@ busca_cpf(e){
     </div>      
     );
   }
+
+  handleOpenModalDelete(data) { 
+    this.setState({ 
+      showMensagemDelete: true,
+      campDeletarId: data.id,
+      campDeletarEmail: data.cliente.email,
+      retorno: '',
+      campDescricao: '',
+      validacao_descricao: false,
+    });  
+
+    console.log('delete - '+JSON.stringify(data, null, "    ")); 
+    console.log('Email '+ this.state.campDeletarEmail);
+    
+  }
+  
+  handleCloseModalDelete() {
+    this.setState({ 
+      showMensagemDelete: false
+    });   
+  
+  }
+
+  envia_mensagemExclusaoClick = () => {
+    this.setState({ 
+      mensagem_exclusao: true      
+    });
+
+  }      
+
+  envia_mensagemExclusaoClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_exclusao: false,   
+      listEmpresas: [],
+      listEmpresasExcluidos: [],
+      listEmpresasCadIncompletos: [], 
+    }); 
+    
+    this.loadEmpresas();
+    this.loadEmpresasExcluidos();
+    this.loadEmpresasCadIncompletos();    
+  
+  }; 
+  
 
   onIncluir() {
     this.props.history.push(`/empresa_incluir/0`);   
@@ -1584,7 +1908,7 @@ busca_cpf(e){
   
     //const baseUrl = "http://34.210.56.22:3333"
     //const url = baseUrl+"/seguradora/list"
-    api.get('/status/list')
+    api.get('/status/listafiltro')
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -1600,6 +1924,7 @@ busca_cpf(e){
   
    }  
   
+   /*
 
   validar_delete(data, id) {     
     console.log('validar_delete - '+JSON.stringify(data, null, "    ")); 
@@ -1636,7 +1961,8 @@ busca_cpf(e){
     })
   
   }
-
+  */
+/*
   onDelete(data, id){
     Swal.fire({
       title: 'Você está certo?',
@@ -1656,15 +1982,17 @@ busca_cpf(e){
       }
     })
   }
-
+*/
   sendSave(){            
     const { validate } = this.state;       
     validate.cpfState= '';
     this.setState({ 
+       validacao_cpf: false,
+       validacao_cnpj: false,
        mensagem_aguarde: 'Aguarde, alterando os dados...',
        validate 
     }); 
-  
+ 
    const dataempresaData = {    
     razao_social: this.state.campRazao_social,              
     cnpj: cnpjremoveMask(this.state.campCnpj),
@@ -1678,7 +2006,7 @@ busca_cpf(e){
     cep: this.state.campCep,  
   }       
   
-  api.put(`/empresa/update/${localStorage.getItem('logeditid')}`, dataempresaData)
+  api.put(`/empresa/update/${localStorage.getItem('logempresaid')}`, dataempresaData)
   .then(respempresa=>{
     if (respempresa.data.success==true) {        
   
@@ -1691,15 +2019,15 @@ busca_cpf(e){
               perfilId: 7,
               statusId: this.state.campStatusId,
               situacaoId: 1
-        } 
-              console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
-            // console.log(' this.state.incluir - '+JSON.stringify(this.state.incluir, null, "    ")); 
+        }       
         
-            if (this.state.incluir == false) {                
+              console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
+            // console.log(' this.state.incluir - '+JSON.stringify(this.state.incluir, null, "    "));         
+           
           //   console.log(`/cliente/update/${localStorage.getItem('logeditid')}`); 
               api.put(`/cliente/update/${localStorage.getItem('logclienteId')}`, datapost)
               .then(response=>{
-                if (response.data.success==true) {        
+                if (response.data.success==true) {                         
                   
                   const logindata = {  
                     email: this.state.campEmail,  
@@ -1711,23 +2039,115 @@ busca_cpf(e){
                   //console.log(`/login/update/${localStorage.getItem('logid')}`); 
                   api.put(`/login/update/${localStorage.getItem('logclienteId')}`,logindata)
                   
-                  localStorage.setItem('lognome', this.state.campNome);      
-
+                  localStorage.setItem('lognome', this.state.campNome);              
+                  
+                  this.setState({                   
+                    mensagem_usuario: 'Empresa alterada com sucesso!',          
+                  });  
         
-                  this.handleCloseModal(); 
+        
+                  this.envia_mensagemClick();    
+                  //this.handleCloseModal(); 
           
         
                 }
               }).catch(error=>{
                 alert("Error save cliente - "+error)
-              })
-        
-            }      
+              })        
+           
           }     
         }).catch(error=>{
           alert("Error save cliente - "+error)
         })     
   }  
+
+  onEnvioEmail(data) {
+    const senhaAleatoria = Math.random().toString(36).slice(-8);
+   
+    const datapost = {
+      logid: data.cliente.id, 
+      perfilId: 7,
+      senha: senhaAleatoria
+    }        
+ //  console.log('cliente id - '+data.cliente.id);
+
+ //  console.log(`/login/update/${data.cliente.id}`);
+   
+   api.put(`/login/update/${data.cliente.id}`, datapost)
+
+   const params_email = {    
+     email: data.email,                           
+     url: `http://www.oser.app.br:21497/empresa_incluir/${data.id}`,
+     //url: `http://www.oser.app.br:21497/login`,        
+     texto: `Sr(a) ${data.cliente.nome}, termine o seu cadastro acessando o link abaixo` // \n Sua senha provisória é: ${senhaAleatoria} `,           
+   }      
+
+   api.post("/email/send", params_email)    
+
+   this.setState({   
+     emailState: '',
+     mensagem_usuario: 'Mensagem para empresa enviada com sucesso!'
+   });               
+
+   this.envia_mensagemClick();          
+}
+
+sendDelete(data, email){  
+  let clienteId = '';
+
+  api.delete(`/login/delete/${email}`)     
+
+  console.log(`/empresa/getEmpresaCliente/${data}`)
+  api.get(`/empresa/getEmpresaCliente/${data}`)
+  .then(res=>{
+    if (res.data.success) {
+      
+      clienteId = res.data.data[0].cliente.id;
+      console.log(`/empresa/delete/${res.data.data[0].id}`)
+      api.delete(`/empresa/delete/${res.data.data[0].id}`)
+      .then(response =>{
+       
+        if (response.data.success) {   
+              console.log(`/cliente/delete/${clienteId}`)
+              api.delete(`/cliente/delete/${clienteId}`)
+              .then(response =>{
+            
+                if (response.data.success) {             
+                  
+                  this.setState({   
+                    emailState: '',
+                    mensagem_usuario: 'Empresa deletada com sucesso!',
+                    listEmpresas: [],
+                    listEmpresasExcluidos: [],
+                    listEmpresasCadIncompletos: [], 
+                  }); 
+                  
+                  this.loadEmpresas();
+                  this.loadEmpresasExcluidos();
+                  this.loadEmpresasCadIncompletos();
+
+                  this.handleCloseModalDelete();
+                  this.envia_mensagemExclusaoClick();          
+
+                } 
+              })
+              .catch ( error => {
+                alert("Error "+error)
+              })
+            }
+          })
+          .catch ( error => {
+            alert("Error "+error)
+          })         
+     }      
+    })
+    .catch ( error => {
+      alert("Error "+error)
+    })   
+}
+
+
+/*
   sendDelete(data, userId){
     // url de backend
     console.log('deletar o id - '+userId);
@@ -1742,10 +2162,10 @@ busca_cpf(e){
     const datapost = {  
       perfilId: data.cliente.perfilId,      
     }   
-     
+     */
     /* tem que excluir os serviços */
      
-    api.delete(`/eventos/deleteEmpresa/${userId}`,datapost)        
+ /*   api.delete(`/eventos/deleteEmpresa/${userId}`,datapost)        
 
     api.delete(`/operador/deleteEmpresa/${userId}`)        
 
@@ -1801,7 +2221,10 @@ busca_cpf(e){
     })        
    
   }
-
+*/
 }
+
+
+
 
 export default listComponent;

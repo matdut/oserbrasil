@@ -2,7 +2,14 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
-import { Input, Button } from 'reactstrap';
+import withWidth from '@material-ui/core/withWidth';
+import { createMuiTheme, ThemeProvider, useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
+//import { makeStyles } from '@material-ui/core/styles';
+//import Snackbar from 'node-snackbar';
+
+import { Input, Button, Container } from 'reactstrap';
 //import axios from 'axios';
 import api from '../../services/api';
 import Fab from '@material-ui/core/Fab';
@@ -25,9 +32,17 @@ import CheckIcon from '@material-ui/icons/Check';
 import { Data } from '@react-google-maps/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MaterialTable from 'material-table';
+import TabContext from '@material-ui/lab/TabContext';
+//import TabList from '@material-ui/lab/TabList';
+//import TabPanel from '@material-ui/lab/TabPanel';
+import AppBar from '@material-ui/core/AppBar';
+//import Tab from '@material-ui/core/Tab';
+//import Tabs from '@material-ui/core/Tabs';
+import { Tabs, Tab } from 'react-bootstrap';
+//import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+//import 'react-tabs/style/react-tabs.css';
 
-import { Alert, Tabs, Tab } from 'react-bootstrap';
-
+//import { Tabs, Tab } from 'react-bootstrap';
 import TesteAlteracao from '../cliente/modal/representante';
 import { Link } from "react-router-dom";
 import Menu_administrador from '../administrador/menu_administrador';
@@ -41,6 +56,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
 import SearchIcon from '@material-ui/icons/Search';
+import Paper from '@material-ui/core/Paper';
+
+import { createGlobalStyle } from "styled-components";
+import px2vw from "../utils/px2vw";
 
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -53,6 +72,14 @@ const nome = localStorage.getItem('lognome');
 const perfil = localStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
 
+/*
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
+*/
 const customStyles = {
   overlay: {    
     position: 'fixed',
@@ -60,7 +87,8 @@ const customStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   content : {
     top                    : '0px',
@@ -68,6 +96,32 @@ const customStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
+    width                  : '40%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
+
+const ConfirmacaodelStyles = {
+  overlay: {
+    backgroundColor: 'papayawhip',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    top                    : '50%',
+    left                   : '66%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '50%',    
     width                  : '560px',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -76,6 +130,14 @@ const customStyles = {
     border: '1px solid #ccc',   
   }
 };
+
+function MyComponent(props) {
+  return <div>{`Largura atual: ${props.width}`}</div>;
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 /*
 let columns = [
@@ -100,8 +162,8 @@ let columns = [
   { id: 'acao', label: '', minWidth: 100 },
 ];
 */
-
-class listComponent extends React.Component  {
+const theme = createMuiTheme();
+class listaClienteComponent extends React.Component  {
 
   constructor(props){
     super(props);
@@ -111,14 +173,24 @@ class listComponent extends React.Component  {
       inicio: 0,
       mensagem: '',
       teste: '',
+      value: 0,
       campNome: "",
       campStatusId: 0,
+      vertical: 'top',
+      horizontal: 'right',
       campData_nascimento:"",
       campbuscacliente: "",
       campEmail:"",      
       campEmailAnterior: "",
+      lista_height: '',
       campTelefone1:"",
+      valor_selecionado: 'Ativo',
       campCpf:"",       
+      campDeletarId:'',
+      campDeletarEmail:'',
+      tipo: 1,
+      mensagem_usuario: '',
+      mensagem_alert: false,
       cpf_selecionado: '',
       incluir: false,
       showModal: false,
@@ -129,9 +201,12 @@ class listComponent extends React.Component  {
       mensagem_data_nascimento: '',        
       mensagem_aguarde: '',
       color: 'light',
+      listVazia:[],
       listCliente:[],
       listClienteExcluidos:[],
-      listaStatus:[],    
+      listClienteCadIncompletos:[],
+      listaStatus:[],   
+      listatipo:[], 
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -143,6 +218,8 @@ class listComponent extends React.Component  {
     this.buscachange = this.buscachange.bind(this);
     this.statusChange = this.statusChange.bind(this);
 
+    this.carrega_ativos = this.carrega_ativos.bind(this);
+    this.carrega_excluidos = this.carrega_excluidos.bind(this);
 
     this.handleOpenModal = this.handleOpenModal.bind(this);    
 
@@ -182,8 +259,11 @@ class listComponent extends React.Component  {
     moment.locale('pt-br');
     this.setState({
       mensagem_aguarde: '',
-      perfil: localStorage.getItem('logperfil')    
+      perfil: localStorage.getItem('logperfil'),
+      lista_height: px2vw(createGlobalStyle.height),
     });
+
+    console.log('lista_height - '+this.state.lista_height);
 
     if (localStorage.getItem('logperfil') == 0) {
       
@@ -192,8 +272,10 @@ class listComponent extends React.Component  {
     } else {
         this.loadCliente();  
         this.loadClienteExcluidos();  
+        this.loadClienteCadIncompletos();  
         this.carrega_status();        
     }
+    this.carrega_ativos();
   }
 
   buscachange(e) {
@@ -552,9 +634,11 @@ sendSave(){
   const { validate } = this.state;       
   validate.cpfState= '';
   this.setState({ 
+     inicio: 1,
      mensagem_aguarde: 'Aguarde, alterando os dados...',
      validate 
   }); 
+  this.verifica_botao(this.state.inicio);
   //const conversaodate = Moment("04/12/1974").format('YYYY/MM/DD');
   //console.log('data 1 - '+JSON.stringify(dateFormat("23/08/2020", 'YYYY/MM/DD'), null, "    "));  
  // console.log('data 3 - '+JSON.stringify(Moment("1994-07-01").format('DD-MM-YYYY'), null, "    ")); 
@@ -572,8 +656,7 @@ sendSave(){
  } 
       console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
      // console.log(' this.state.incluir - '+JSON.stringify(this.state.incluir, null, "    ")); 
-
-     if (this.state.incluir == false) {                
+  
       console.log(`/cliente/update/${localStorage.getItem('logeditid')}`); 
       api.put(`/cliente/update/${localStorage.getItem('logeditid')}`, datapost)
       .then(response=>{
@@ -589,12 +672,28 @@ sendSave(){
           //console.log(`/login/update/${localStorage.getItem('logid')}`); 
           api.put(`/login/update/${localStorage.getItem('logeditid')}`,logindata)
           
-          localStorage.setItem('lognome', this.state.campNome);      
+          localStorage.setItem('lognome', this.state.campNome);               
+        
+          this.setState({           
+            mensagem_usuario: 'Cliente alterado com sucesso!',          
+          });  
 
-          
-          
+          this.loadCliente();  
+          this.loadClienteExcluidos();  
+          this.loadClienteCadIncompletos();  
+          this.envia_mensagemClick();    
+          //this.loadClienteExcluidos();
+       
+          //this.handleCloseModal();
 
-          this.handleCloseModal();
+          /*
+          this.setState({   
+            emailState: '',
+            mensagem_usuario: 'Alteração realizada com sucesso...'
+          });                   
+
+          this.envia_mensagemClick();        
+*/
 
           //this.props.history.push('/lista_individual');           
           //this.handleCloseModal();   
@@ -612,17 +711,10 @@ sendSave(){
              this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
          }             
          */  
-
-        }
-        else {
-         // console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
-          alert("Error na Criação verificar log")              
         }
       }).catch(error=>{
         alert("Error save cliente - "+error)
-      })
-
-    }      
+      })          
 }  
 busca_cliente() {
   const { validate } = this.state 
@@ -774,15 +866,15 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
    // this.prepareSave();
   }  
   
-  handleCloseModal () {
+  handleCloseModal() {
     this.setState({ 
       showModal: false,  
       campStatusId: 0,  
-    });
-    localStorage.setItem('logeditid', '');
+    });  
     
-    this.loadClienteExcluidos();
     this.loadCliente();     
+    this.loadClienteExcluidos();
+    this.loadClienteCadIncompletos();
   //  this.carrega_status();  
     
   }
@@ -802,7 +894,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
   
     //const baseUrl = "http://34.210.56.22:3333"
     //const url = baseUrl+"/seguradora/list"
-    api.get('/status/list')
+    api.get('/status/listafiltro')
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -846,6 +938,25 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
          this.setState({
            listClienteExcluidos:data,           
          })    
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
+
+   loadClienteCadIncompletos(){
+    // const url = baseUrl+"/cliente/list"
+    api.get('/cliente/listarIncompletos')
+     .then(res=>{
+      console.log('res - '+JSON.stringify(res.data, null, "    "));  
+       if (res.data.success) {
+ 
+         const data = res.data.data       
+         this.setState({
+           listClienteCadIncompletos:data,           
+         })    
+
        }
      })
      .catch(error=>{
@@ -921,125 +1032,94 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
 
 
   }
-  
+
+  carrega_lista(tipo) {
+     if (tipo === 1) {
+      return( 
+      this.setState({
+        listCliente: this.state.listCliente,           
+        })    
+      );  
+     } 
+  }
+  carrega_ativos() {
+   //this.loadCliente();
+
+    this.setState({
+      listatipo: this.state.listCliente,           
+    });   
+
+     
+
+  }  
+  carrega_excluidos() {
+    console.log('entrou aqui excluidos ');
+ //   this.loadClienteExcluidos();
+    this.setState({
+      listatipo: this.state.listClienteExcluidos,           
+    });   
+  }    
+
+  handleChange = (newValue) => {
+    this.setState({
+      value: newValue,           
+    });
+
+    console.log('value '+ this.state.value);
+
+    if (this.state.value == 0) {
+      this.setState({
+        listVazia: this.state.listCliente,           
+      });
+    } else if (this.state.value == 1) {
+      this.setState({
+        listVazia: this.state.listClienteExcluidos,           
+      });
+    } 
+
+    
+  };
+
+
+
   render()
-  {   
+  {       
   
     return (
-      <div>
+      <div className="ajuste_tela">
 
       <Menu_administrador />  
-      <div className="titulo_admministrador">     
+      <div className="container-fluid titulo_lista margem_left">     
         <div className="unnamed-character-style-4 descricao_admministrador">          
-           <h3><strong>Lista de Clientes</strong></h3>
+           <strong>Clientes</strong>
          </div>      
-      </div>
-      <div className="container_modal_list"> 
-       <br/>   
-
-       <Tabs 
-           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">          
-          <Tab eventKey="ativos" title="Ativos">
-          <div style={{ maxWidth: '95%' }}>    
-                        <MaterialTable          
+      </div>     
+      <div className="container-fluid margem_left">   
+       <br/>            
+          <Tabs 
+           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
+        <Tab eventKey="ativos" title="Ativos">                    
+          <div>
+          <MaterialTable           
+                       style={ {width: "96%"}}                                  
                             title=""
                             columns={[
-                              { title: '', field: '#', width: '40px' },
-                              { title: 'Status', field: 'status.descricao', width: '155px' },
-                              { title: 'CPF', field: 'cpf', align: 'center', width: '150px' },
-                              { title: 'Nome', field: 'nome', width: '350px' },
-                              { title: 'Email', field: 'email', width: '400px' },
-                              { title: 'Telefone', field: 'celular', align: 'center', width: '150px'},                                 
-                              { title: '', field: '#', width: '50px' },
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
-                             },            
+                              { title: '', field: '#', width: "18px" },
+                              { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
+                              { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
+                              { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
+                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                  
                             ]}
                             data={this.state.listCliente}   
                             localization={{
                               body: {
-                                emptyDataSourceMessage: 'Nenhum registro para exibir',
-                                addTooltip: 'Add',
-                                deleteTooltip: 'Deletar',
-                                editTooltip: 'Editar',
-                                editRow: {
-                                   deleteText: 'Deseja realmente deletar esta linha ?',
-                                   cancelTooltip: 'Cancelar',
-                                   saveTooltip: 'Salvar',
-                                }
+                                emptyDataSourceMessage: 'Nenhum registro para exibir'
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar cliente',        
-                              },
-                              pagination: {
-                                labelRowsSelect: 'linhas',
-                                labelDisplayedRows: '{count} de {from}-{to}',
-                                firstTooltip: 'Primeira página',
-                                previousTooltip: 'Página anterior',
-                                nextTooltip: 'Próxima página',
-                                lastTooltip: 'Última página'
-                              },
-                              header: {
-                                actions: 'Ação',
-                              },
-                            }}        
-                            options={{                             
-                              paginationPosition: 'bottom',  
-                              searchFieldAlignment: 'left', 
-                              /* searchFieldStyle: '.teste_css', */
-                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              exportFileName: 'Relatorio_adm_cliente',
-                              search: true,     
-                              exportAllData: true,                              
-                              searchFieldVariant: 'outlined', 
-                              toolbarButtonAlignment: 'right',           
-                              /*exportButton: true, */            
-                              exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
-                              pageSize: 7,
-                              pageSizeOptions: [7],                     
-                            }}
-                            actions={[
-                              {             
-                                icon: 'edit',
-                                tooltip: 'editar',                                
-                                onClick: (evt, data) => this.handleOpenModal(data)
-                              }
-                            ]}
-                          />      
-                </div>    
-          </Tab>        
-          <Tab eventKey="excluidos" title="Excluidos">
-              <div style={{ maxWidth: '95%'}}>    
-                        <MaterialTable          
-                            title=""
-                            columns={[
-                              { title: '', field: '#', width: '40px' },
-                              { title: 'Status', field: 'status.descricao', width: '155px' },
-                              { title: 'CPF', field: 'cpf', align: 'center', width: '150px' },
-                              { title: 'Nome', field: 'nome', width: '350px' },
-                              { title: 'Email', field: 'email', width: '400px' },
-                              { title: 'Telefone', field: 'celular', align: 'center', width: '150px'},                                              
-                              { title: '', field: '#', width: '50px' },
-                              { title: '', field: '', align: 'left', lookup: { 1: 'sadas', 2: 'asdas' }, },            
-                            ]}
-                            data={this.state.listClienteExcluidos}   
-                            localization={{
-                              body: {
-                                emptyDataSourceMessage: 'Nenhum registro para exibir',
-                                addTooltip: 'Add',
-                                deleteTooltip: 'Deletar',
-                                editTooltip: 'Editar',
-                                editRow: {
-                                   deleteText: 'Deseja realmente deletar esta linha ?',
-                                   cancelTooltip: 'Cancelar',
-                                   saveTooltip: 'Salvar',
-                                }
-                              },
-                              toolbar: {
-                                searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar cliente',        
+                                searchPlaceholder: 'Buscar motorista',        
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -1054,40 +1134,191 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               },
                             }}        
                             options={{
-                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
                               searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
-                              exportFileName: 'Rel_adm_cliente_excluidos',
+                              exportFileName: 'Rel_adm_clientes',
                               search: true,     
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
-                              /*exportButton: true, */            
+                              paging: false,   
+                            //  minBodyHeight: 450,       
+                             // maxBodyHeight: 600,   
+                             maxBodyHeight: 400,
+                             minBodyHeight: 400, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                              tableLayout: 'fixed',                               
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
-                              pageSize: 7,
-                              pageSizeOptions: [7],                       
+                              actionsColumnIndex: 6,                              
+                              pageSizeOptions: [0],      
                             }}
                             actions={[
                               {             
                                 icon: 'edit',
-                                tooltip: 'Editar',
                                 onClick: (evt, data) => this.handleOpenModal(data)
                               }
                             ]}
-                          />      
-                </div>      
-          </Tab>          
-        </Tabs>  
-           
-      
+                          />     
+          </div> 
+          </Tab>       
+            <Tab eventKey="excluidos" title="Excluidos">
+               <div style={{ maxWidth: '100%' }}>
+                <MaterialTable        
+                           style={ {width: "96%"}}                                  
+                         //   className="resize_table"
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: "18px" },
+                              { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
+                              { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
+                              { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
+                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                 
+                            ]}
+                            data={this.state.listClienteExcluidos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir'
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar motorista',         
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              //paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_clientes_excluidos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,   
+                              maxBodyHeight: 430,
+                              minBodyHeight: 430, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                              tableLayout: 'fixed',
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 6,
+                              //pageSize: 7,
+                              pageSizeOptions: [0],    
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                onClick: (evt, data) => this.handleOpenModal(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Cliente',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                              }
+                            ]}
+                          />         
+                </div>     
+            </Tab>          
+            <Tab eventKey="incompletos" title="Cadastro Incompleto">
+               <div style={{ maxWidth: '100%' }}>
+                <MaterialTable               
+                           style={ {width: "96%"}}                                                          
+                         //   className="resize_table"
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: "18px" },
+                              { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
+                              { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
+                              { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
+                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                   
+                            ]}
+                            data={this.state.listClienteCadIncompletos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir'
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar motorista',         
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              //paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_clientes_excluidos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,   
+                              maxBodyHeight: 430,
+                              minBodyHeight: 430, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                              tableLayout: 'fixed',             
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 6,
+                              //pageSize: 7,
+                              pageSizeOptions: [0],    
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                onClick: (evt, data) => this.handleOpenModal(data)
+                              },
+                              {             
+                                icon: 'mail',
+                                tooltip: 'Enviar',
+                                onClick: (evt, data) => this.onEnvioEmail(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Cliente',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                              }
+                            ]}
+                          />         
+                </div>     
+            </Tab>                          
+          </Tabs>   
+              
+            
        <br/>
        <ReactModal 
             isOpen={this.state.showModal}
             style={customStyles}
             contentLabel="Inline Styles Modal Example"                                  
-            ><div className="editar_titulo">  Editar Cliente 
+            ><div className="editar_titulo">  Editar Cliente
                 <IconButton aria-label="editar" onClick={()=>this.handleCloseModal()} className="botao_close_modal">
                   <CloseOutlinedIcon />
                 </IconButton>     </div>         
@@ -1097,7 +1328,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
             <div class="d-flex flex-column espacamento_caixa_modal">
               <div class="p-2">  
               <div class="d-flex justify-content-start">
-                 <div>             
+                 <div>                       
                   <FormControl variant="outlined" className="posicao_caixa_texto">
                     <InputLabel className="label_modal" htmlFor="filled-adornment-password">CPF</InputLabel>
                      <OutlinedInput
@@ -1273,26 +1504,66 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                    </FormHelperText>
                 </FormControl>                            
                </div>               
-               <FormHelperText>
-                   {this.state.mensagem_salvo}
-               </FormHelperText>                 
                   
-            </div>   
-            <div className="mensagem_aguarde">
-              <FormHelperText>
-                  {this.state.mensagem_aguarde}
-              </FormHelperText>       
             </div>                       
             {this.verifica_botao(this.state.inicio)}             
          </div>   
     </div>
     </div>
          </ReactModal>  
-       <Alert color={this.state.color}>
-         {this.state.mensagem}
-       </Alert>     
-       <br/>
-          <br/>  
+         <ReactModal 
+        isOpen={this.state.showMensagemDelete}
+        style={ConfirmacaodelStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div> 
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
+              <CloseOutlinedIcon />
+            </IconButton></div>       
+            <center><img src="/exclamation.png" /> </center>
+            <div className="container_alterado">              
+              
+             <div className="moldura_modal_delecao">
+               <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Cliente? </div>
+               <div>Ao confirmar a exclusão o registro será apagado.  </div>
+             </div>     
+                              <div className="retorno">{this.state.retorno}</div>
+            <Box 
+               className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
+              <div className="d-flex justify-content-center">
+              <label> Cancelar </label>
+              </div>     
+            </Box>      
+            <Box 
+               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId, this.state.campEmail)}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir </label>
+              </div>     
+            </Box>      
+
+            </div>
+     </ReactModal>     
+
+           <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+                open={this.state.mensagem_alert}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemClose}                
+                >
+            <Alert onClose={this.envia_mensagemClose} severity="success">
+                  {this.state.mensagem_usuario}
+            </Alert>
+          </Snackbar>
+
+          <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+                open={this.state.mensagem_exclusao}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemExclusaoClose}                
+                >
+            <Alert onClose={this.envia_mensagemExclusaoClose} severity="success">
+                  {this.state.mensagem_usuario}
+            </Alert>
+          </Snackbar>
                  
      </div>       
  
@@ -1300,6 +1571,56 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
     );
   }
   
+  envia_mensagemClick = () => {
+    this.setState({ 
+      mensagem_alert: true      
+    });
+
+  }      
+
+  envia_mensagemClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_alert: false,
+      listCliente: [],
+      listClienteExcluidos: [],
+      listClienteCadIncompletos: [], 
+    });        
+
+    this.loadCliente();  
+    this.loadClienteExcluidos();      
+    this.loadClienteCadIncompletos();
+    this.handleCloseModal();      
+  };       
+
+
+  envia_mensagemExclusaoClick = () => {
+    this.setState({ 
+      mensagem_exclusao: true      
+    });
+
+  }      
+
+  envia_mensagemExclusaoClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_exclusao: false,   
+      listCliente: [],
+      listClienteExcluidos: [],
+      listClienteCadIncompletos: [],    
+    });    
+
+    this.loadCliente();  
+    this.loadClienteExcluidos();      
+    this.loadClienteCadIncompletos();
+  
+  };       
+
+
   validar_delete(email, id) {
      
     api.get(`/eventos/listaeventocliente/${id}/${localStorage.getItem('logperfil')}`)
@@ -1324,6 +1645,55 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
   
   }
 
+  onEnvioEmail(data) {
+       const senhaAleatoria = Math.random().toString(36).slice(-8);
+      
+       const datapost = {
+         logid: data.id, 
+         perfilId: 2,
+         senha: senhaAleatoria
+       }        
+      //console.log('cliente id - '+data.id);
+
+      api.put(`/login/update/${data.id}`, datapost)
+
+      const params_email = {    
+        email: data.email,                      
+       // url: `http://www.oser.app.br:21497/login`,        
+       url: `http://www.oser.app.br:21497/cliente_incluir/${data.id}`,
+        texto: `Sr(a) ${data.nome}, termine o seu cadastro acessando o link abaixo` // \n Sua senha provisória é: ${senhaAleatoria} `,      
+      }      
+      
+      api.post("/email/send", params_email)    
+
+      this.setState({   
+        emailState: '',
+        mensagem_usuario: 'Mensagem para cliente enviada com sucesso!'
+      });               
+
+      this.envia_mensagemClick();          
+}
+
+handleOpenModalDelete(data) { 
+  this.setState({ 
+    showMensagemDelete: true,
+    campDeletarId: data.id,
+    campDeletarEmail: data.email,
+    retorno: '',
+    campDescricao: '',
+    validacao_descricao: false,
+  });  
+  
+}
+
+handleCloseModalDelete() {
+  this.setState({ 
+    showMensagemDelete: false
+  });   
+
+}
+
+  
   onEditar(data){
     this.props.history.push(`/cliente_alterar/${data.id}`);   
   }
@@ -1331,6 +1701,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
   onIncluir() {
     this.props.history.push(`/cliente_incluir/0`);   
   }
+
   onDelete(email, id){
     Swal.fire({
       title: 'Você está certo?',
@@ -1346,19 +1717,29 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
     })
   }
 
-  sendDelete(){  
-   
-    const datapost = {
-      statusId: 7
-    }    
+  
 
-    api.put(`/login/update/${localStorage.getItem('logid')}`, datapost)
-    
-    api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+  sendDelete(id, email){  
+
+    api.delete(`/login/delete/${email}`)    
+  //  console.log(`/cliente/delete/${data}`)
+    api.delete(`/cliente/delete/${id}`)
     .then(response =>{
   
       if (response.data.success) {             
-          
+        
+        this.setState({   
+          emailState: '',
+          mensagem_usuario: 'cliente deletado com sucesso!'
+        });               
+
+
+        this.loadCliente();  
+        this.loadClienteExcluidos();      
+        this.loadClienteCadIncompletos();
+        this.handleCloseModalDelete();
+        this.envia_mensagemExclusaoClick();          
+
       } 
     })
     .catch ( error => {
@@ -1366,4 +1747,4 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
     })
   }
 }
-export default listComponent;
+export default listaClienteComponent;

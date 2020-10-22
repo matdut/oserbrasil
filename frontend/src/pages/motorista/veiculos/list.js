@@ -73,7 +73,7 @@ class listComponent extends React.Component  {
           <Menu_motorista />  
           <div className="titulo_admministrador">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <h3><strong>Lista de Motorista</strong></h3>
+              <div className="sub_titulo_empresa">Eventos</div>
               </div>      
             </div>
 

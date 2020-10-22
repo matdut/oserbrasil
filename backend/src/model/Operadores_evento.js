@@ -46,4 +46,4 @@ Operador_evento.belongsTo(Operador);
 Operador_evento.belongsTo(Evento);
 Operador_evento.belongsTo(Status);
 
-module.exports = Eventos
+module.exports = Operador_evento

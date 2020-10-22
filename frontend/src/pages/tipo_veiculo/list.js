@@ -7,7 +7,9 @@ import { Link } from "react-router-dom";
 import api from '../../services/api';
 import Box from '@material-ui/core/Box';
 
-import { Input, Alert } from 'reactstrap';
+import { makeStyles } from '@material-ui/core/styles';
+
+//import { Input, Alert } from 'reactstrap';
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -23,6 +25,13 @@ import FilledInput from '@material-ui/core/FilledInput';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import CheckIcon from '@material-ui/icons/Check';
 
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+//import Alert from '@material-ui/lab/Alert';
+import Collapse from '@material-ui/core/Collapse';
+import CloseIcon from '@material-ui/icons/Close';
+
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
@@ -31,14 +40,14 @@ const perfil = localStorage.getItem('logperfil');
 const nome = localStorage.getItem('lognome');  
 
 const customStyles = {
-  overlay: {
-    backgroundColor: 'papayawhip',
+  overlay: {    
     position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   content : {
     top                    : '0px',
@@ -46,6 +55,32 @@ const customStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
+    width                  : '40%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
+
+const ConfirmacaodelStyles = {
+  overlay: {
+    backgroundColor: 'papayawhip',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    top                    : '50%',
+    left                   : '66%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '50%',    
     width                  : '560px',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -54,6 +89,21 @@ const customStyles = {
     border: '1px solid #ccc',   
   }
 };
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
+  },
+}));
+
+
 class listComponent extends React.Component  {
 
   constructor(props){
@@ -61,8 +111,16 @@ class listComponent extends React.Component  {
     this.state = {
       perfil: perfil,
       mensagem: '',
+      campId: '',
       campDescricao: "",   
       mensagem_descricao: '',
+      campDeletarId: '',
+      mensagem_alert: false,
+      retorno: '',
+      vertical: 'top',
+      horizontal: 'left',
+      open: false,
+      mensagem_usuario: '',
       erro_descricao: false,
       validacao_descricao: false,
       incluir: true, 
@@ -154,17 +212,20 @@ class listComponent extends React.Component  {
           validate.descricaoState = 'has-success'                 
 
           this.setState({ 
+            validate,
             mensagem_descricao: '',
             inicio: 2,
             erro_descricao:false,
             validacao_descricao: true,               
           });                               
-      }  
-      this.setState({ validate })
+      }        
       this.botao_modal(this.state.inicio)
   }
 
-  sendSave(){        
+  sendSave(){       
+    const { validate } = this.state;  
+    validate.descricaoState = '';
+    this.setState({ validate });
 
     const datapost = {
       descricao: this.state.campDescricao,
@@ -174,8 +235,14 @@ class listComponent extends React.Component  {
           .then(response=>{
             if (response.data.success) {          
             
-             this.handleCloseModalInclusao();
+             //this.handleCloseModalInclusao();
              this.loadTipoVeicculo();  
+             this.setState({                
+                mensagem_usuario: 'Tipo de veículo incluído com sucesso!'
+               });
+
+            //this.handleCloseModalInclusao();
+             this.envia_mensagemClick();    
             
           }
     
@@ -185,16 +252,18 @@ class listComponent extends React.Component  {
     
   }  
 
-  botao_modal(inicio) {
-    const { validate } = this.state   
+  botao_modal(inicio) {    
+    
+    const { validate } = this.state;
+    //console.log('dsa as '+ validate.validacao_descricao);           
 
      if (inicio == 1) {
   
       return (
   
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
                 <div className="d-flex justify-content-center">
-                <label> Salvar Alterações </label>
+                <label> Incluir </label>
                 </div>     
           </Box>           
       );   
@@ -206,18 +275,18 @@ class listComponent extends React.Component  {
         
               <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
                       <div className="d-flex justify-content-center">
-                      <label> Salvar Alterações </label>
+                      <label> Incluir </label>
                       </div>     
-                </Box>           
+              </Box>           
             );   
         } else {
           return (
         
             <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
                     <div className="d-flex justify-content-center">
-                    <label> Salvar Alterações </label>
+                    <label> Incluir </label>
                     </div>     
-              </Box>           
+            </Box>           
           );   
         }   
 
@@ -226,32 +295,47 @@ class listComponent extends React.Component  {
 
   render()
   {
+  //  const classes = useStyles();
     return (
       <div>    
 
           <Menu_administrador />  
 
-          <div className="titulo_admministrador">
+          <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <h3><strong>Tipo de Veículos</strong></h3>
+                  <strong>Tipo de Veículos</strong>
               </div>      
             </div>
+            <div>   
+            <div>                              
+                
+                </div>                    
+            </div>
 
-            <div className="container_modal_list">                                         
-            <br/>                       
-            <div style={{ maxWidth: '95%'}}>    
+            <div className="container-fluid margem_left">                                                            
+            <br/>            
+            <div style={{ maxWidth: '100%' }}>
+               
                     <MaterialTable          
                         title=""
-                        columns={[
+                        style={ {width: "96%"}}                                  
+                        columns={[                          
                           { title: '', field: '#', width: '40px' },
-                          { title: 'Descrição', field: 'descricao' },                            
-                          { title: '', field: '#', width: '50px' },                       
+                          { title: 'Descrição', field: 'descricao', width: '600px' },                                                     
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listaTipoVeiculo}     
                         localization={{
                           body: {
-                            emptyDataSourceMessage: 'Nenhum registro para exibir'
+                            emptyDataSourceMessage: 'Nenhum registro para exibir',
+                            addTooltip: 'Adicionar Valores Tarifários',
+                            deleteTooltip: 'Deletar',
+                            editTooltip: 'Editar',
+                            editRow: {
+                               deleteText: 'Deseja realmente deletar esta linha ?',
+                               cancelTooltip: 'Cancelar',
+                               saveTooltip: 'Salvar',
+                            }
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
@@ -274,32 +358,60 @@ class listComponent extends React.Component  {
                               searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
                               paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
-                              exportFileName: 'Relatorio_empresa_convites',
+                              exportFileName: 'Relatorio_tipo_veiculo',
                               search: true,     
                               exportAllData: true,                              
                               searchFieldVariant: 'outlined', 
-                              toolbarButtonAlignment: 'right',           
+                              toolbarButtonAlignment: 'right',                                    
                               /*exportButton: true, */            
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 3,
-                              pageSize: 7,
-                              pageSizeOptions: [7],   
+                              actionsColumnIndex: 2,
+                              paging: false,       
+                              maxBodyHeight: 430,
+                              minBodyHeight: 430, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                             // tableLayout: 'fixed', 
+                            //  maxBodyHeight: 400,
+                              //headerStyle: { position: 'sticky', top: 0 },    
+                              //pageSize: 7,
+                              pageSizeOptions: [0],   
                         }}                        
-                        actions={[
-                          {             
-                            icon: 'delete',
-                            onClick: (evt, data) => this.onDelete(data.id)
-                          },
-                          {
+                        actions={[                        
+                         /* {
                             icon: 'add',                                                             
                             tooltip: 'Adiciona Tipos Veiculos',
                             isFreeAction: true,
                             onClick: (event) => this.handleOpenModalInclusao()
+                          }, */
+                          {
+                            icon: 'delete',                                                             
+                            tooltip: 'Deleta Veiculo',          
+                            onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
                           }
-                        ]}
+                        ]} 
+                        /*
+                        editable={{                          
+                          onRowDelete: oldData =>
+                            new Promise((resolve, reject) => {
+                              setTimeout(() => {
+                                const dataDelete = [...this.state.campId];
+                                const index = oldData.id;   
+                                dataDelete.splice(index, 1);                              
+                                resolve()                                
+                                this.sendDelete(index)
+                              }, 1000)
+                            }),
+                        }} */
                       />      
+                       <div className="botao_lista_incluir">
+                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                            <AddIcon/> <div className="botao_incluir"> Adicionar Tipo Veiculos  </div>
+                        </Fab>
+                      </div>                        
              </div>                
-        <br/>
+        <br/> 
+        
 
         <ReactModal 
         isOpen={this.state.showModalInclusao}
@@ -352,6 +464,57 @@ class listComponent extends React.Component  {
                     </div>        
                  </div>
      </ReactModal>       
+     <ReactModal 
+        isOpen={this.state.showMensagemDelete}
+        style={ConfirmacaodelStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div> 
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
+              <CloseOutlinedIcon />
+            </IconButton></div>       
+            <center><img src="/exclamation.png" /> </center>
+            <div className="container_alterado">              
+              
+             <div className="moldura_modal_delecao">
+               <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Tipo de Veículo? </div>
+               <div>Ao confirmar a exclusão o registro será apagado.  </div>
+             </div>     
+                              <div className="retorno">{this.state.retorno}</div>
+            <Box 
+               className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
+              <div className="d-flex justify-content-center">
+              <label> Cancelar </label>
+              </div>     
+            </Box>      
+            <Box 
+               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId)}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir </label>
+              </div>     
+            </Box>      
+
+            </div>
+     </ReactModal>     
+           <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+                open={this.state.mensagem_alert}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemClose}                
+                >
+            <Alert onClose={this.envia_mensagemClose} severity="success">
+                  {this.state.mensagem_usuario}
+            </Alert>
+          </Snackbar>
+          <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+                open={this.state.mensagem_alert_exclusao}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemExclusaoClose}                
+                >
+            <Alert onClose={this.envia_mensagemExclusaoClose} severity="error">
+                  {this.state.mensagem_usuario}
+            </Alert>
+          </Snackbar>
        { 
        // <div className="botao_lista_incluir">
        //   <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
@@ -366,7 +529,9 @@ class listComponent extends React.Component  {
 
   handleOpenModalInclusao () { 
     this.setState({ 
-      showModalInclusao: true
+      showModalInclusao: true,
+      campDescricao: '',
+      validacao_descricao: false,
     });  
      
     
@@ -380,29 +545,69 @@ class listComponent extends React.Component  {
    
   }
 
+  handleOpenModalDelete(data) { 
+    this.setState({ 
+      showMensagemDelete: true,
+      campDeletarId: data.id,
+      retorno: '',
+      campDescricao: '',
+      validacao_descricao: false,
+    });  
+
+    console.log('resultado '+JSON.stringify(data.id, null, "    ")); 
+    //console.log('modal id - '+data.id)  
+     
+    
+  }
+  
+  handleCloseModalDelete() {
+    this.setState({ 
+      showMensagemDelete: false
+    });   
+  }
+
+
+  envia_mensagemClick = () => {
+    this.setState({ 
+      mensagem_alert: true      
+    });
+
+  }      
+
+  envia_mensagemClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_alert: false      
+    });   
+    
+    this.handleCloseModalInclusao();
+  
+  };
+
+
+  envia_mensagemExclusaoClick = () => {
+    this.setState({ 
+      mensagem_alert_exclusao: true      
+    });
+
+  }      
+
+  envia_mensagemExclusaoClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_alert_exclusao: false      
+    });   
+  
+  };
+
   onIncluir() {
     this.props.history.push(`/tipo_transporte`);   
   }
-  loadFillData(){
-
-    return this.state.listaTipoVeiculo.map((data, index)=>{
-      return(
-        <tr>
-          <th>{index + 1}</th>          
-          <td>{data.descricao}</td>         
-          <td>
-            <div style={{width:"150px"}}>              
-              {'   '}
-              <IconButton aria-label="delete" onClick={()=>this.onDelete(data.id)}>
-                <DeleteIcon />
-              </IconButton>    
-            </div>            
-          </td>          
-        </tr>
-      )
-    })
-  }  
-
+  
   onDelete(id){
     Swal.fire({
       title: 'Você está certo?',
@@ -426,15 +631,28 @@ class listComponent extends React.Component  {
 
   sendDelete(userId){  
 
+    console.log('id - '+userId);
     api.delete(`/tipoTransporte/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {
 
-        this.loadTipoVeicculo()        
+        this.loadTipoVeicculo();        
+
+        this.setState({       
+          mensagem_usuario: 'Tipo de veículo excluído com sucesso!'
+         });
+
+        this.handleCloseModalDelete();
+        this.envia_mensagemExclusaoClick();
+
+      } else {
+        this.setState({       
+          retorno: 'Não pode ser deletado, está sendo utilizado em outra tabela',          
+        });  
       }
     })
     .catch ( error => {
-      alert("Error 325 ")
+      alert("Error tipoTransporte/delete - "+error)
     })
   }
 

@@ -60,11 +60,7 @@ class loginComponent extends React.Component  {
   toggleSenhaShow() {     
      this.setState({ hiddenSenha: !this.state.hiddenSenha });
   } 
-  
-  
-  componentDidMount(){ 
-    
-  }
+   
  
   verifica_emailonblur(){
     const { validate } = this.state
@@ -146,11 +142,11 @@ class loginComponent extends React.Component  {
             
             api.get(`/login/getLogin/${this.state.email}/${this.state.senha}`)
             .then(res=>{          
-              //console.log( JSON.stringify(res.data, null, "    ") );
+             console.log( JSON.stringify(res.data, null, "    ") );
               //console.log( JSON.stringify(res.data.data, null, "") );
               if (res.data.success) {
                 
-                if (res.data.data[0].statusId == 1 || res.data.data[0].statusId == 7) {               
+                if (res.data.data[0].statusId == 1 || res.data.data[0].statusId == 6 || res.data.data[0].statusId == 16) {               
 
                     if (res.data.data[0].perfilId == 1) {
 
@@ -167,13 +163,15 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('lognome',  rescliente.data.data[0].nome);        
                           
                           this.props.history.push('/area_cliente_individual');    
-
                         } 
                       })
                       .catch(error=>{
                         alert("Error server "+error)
                       }) 
                     } else if (res.data.data[0].perfilId == 7) { //Empresa
+                      
+                      console.log(`/empresa/getloginEmpresa/${res.data.data[0].logid}`)
+
                       api.get(`/empresa/getloginEmpresa/${res.data.data[0].logid}`)
                       .then(resempresa=>{   
                     
@@ -287,6 +285,9 @@ class loginComponent extends React.Component  {
       <div>
         <Cabecalho />     
 
+        <br/>                
+        <br/>
+        
         <Container className="App">           
         <br/>
         <div className="d-flex justify-content-center">           
@@ -308,13 +309,12 @@ class loginComponent extends React.Component  {
               <InputLabel htmlFor="outlined-adornment-password">Email</InputLabel>
               <OutlinedInput
                 className="texto_senha"
-                autoComplete="off"
+                autoComplete='off'
+                autoCorrect='off'    
                 id="outlined-adornment-password"
                 error={this.state.validateEmail}        
                 value={ this.state.email } 
-                onBlur={this.verifica_emailonblur}                   
-                autoComplete='off'
-                autoCorrect='off'
+                onBlur={this.verifica_emailonblur}                                   
                 onChange={(e, newValue) => { 
                   this.setState({ email: e.target.value})
                   this.validateEmail(e,newValue)                    
@@ -329,13 +329,12 @@ class loginComponent extends React.Component  {
               <InputLabel htmlFor="outlined-adornment-password">Senha</InputLabel>
               <OutlinedInput
                 className="texto_senha"
-                autoComplete="off"
+                autoComplete='off'
+                autoCorrect='off'   
                 id="outlined-adornment-password"
                 type={this.state.hiddenSenha ? "password" : "text"}  
                 error={this.state.validaSenha}
-                value={this.state.senha}                 
-                autoComplete='off'
-                autoCorrect='off'
+                value={this.state.senha}                                 
                 onChange={ (e) => {
                          this.senhachange(e) 
                         }}                     

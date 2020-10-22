@@ -93,7 +93,7 @@ import Inicio from './pages/inicio';
 
 /*ADMINISTRADOR */
 import Area_administrador from './pages/administrador/area_administrador';
-import Cartao_creedito_cadastrar from './pages/cartao/cartao_credito';
+//import Cartao_creedito_cadastrar from './pages/cartao/cartao_credito';
 import Lista_cad_Incompleto from './pages/administrador/lista_cad_incompleto';
 
 /* MATRIZ */
@@ -106,14 +106,19 @@ import Faixa_tarifaria_listar from './pages/faixa_tarifarias/list';
 import Faixa_tarifaria_criar from './pages/faixa_tarifarias/form';
 import Faixa_tarifaria_editar from './pages/faixa_tarifarias/edit';
 
-
 import Tipo_Transporte_create from './pages/tipo_veiculo/tipo_veiculo';
+
+import Cartao_credito from './pages/cartao_credito/list';
+
+import Configuracao from './pages/configuracao/list';
 
 import Esqueceu_Senha from './pages/esqueceu_senha';
 /* MAPS */
 
 /* EMAIL */ 
 
+//import Sobre from './pages/maps4';
+ import Menu_bootstrap from './pages/teste_menu';
  import Sobre from './pages/sobre';
  import Login from './pages/login'; 
  import Rodape from './pages/rodape';
@@ -144,9 +149,12 @@ export default function Routes() {
         <Switch>
          <div className="App">                
             <Route path="/" exact component={Inicio} />
-            <Route path="/sobre" component={Sobre} />
+          
             <Route path="/login" component={Login} />
+            <Route path="/sobre" component={Sobre} />
 
+            <Route path="/configuracao" component={Configuracao} />
+            
             <Route path="/area_cliente_individual" component={Area_cliente_individual} />
             <Route path="/area_cliente_empresarial" component={Area_cliente_empresarial} />
             <Route path="/area_motorista" component={Area_motorista} />
@@ -162,8 +170,7 @@ export default function Routes() {
              <Route path="/alterar_senha_motorista" component={Alterar_senha_Motorista} />                            
 
              <Route path="/criar_eventos/:id" component={Eventos_novo_cadastro} />              
-
-             <Route path="/listaeventocliente/:id" component={Listar_evento_cliente} />           
+            
              <Route path="/lista_evento_servico/:id" component={Listar_evento_servico} />                                         
 
              <Route path="/matriz_criar" component={Matriz_tarifaria_criar} />
@@ -193,6 +200,8 @@ export default function Routes() {
              <Route path="/funcionalidade/list" component={Funcionalidades_list} />          
              <Route path="/funcionalidade/cadastrar" component={Funcionalidades_cadastrar} />          
              
+             <Route path="/lista_evento/list" component={Listar_evento_cliente} />           
+             <Route path="/cartao_credito/list" component={Cartao_credito} />                             
              
              <Route path="/cliente_incluir/:id" component={Cliente_incluir} />             
              <Route path="/cliente_alterar/:id" component={Cliente_alterar} />             
@@ -201,6 +210,7 @@ export default function Routes() {
 
              <Route path="/cliente_endereco/:id" component={cliente_endereco} />                     
 
+             <Route path="/motorista_incluir_convite/:email" component={Motorista_cadastro_incluir} />
              <Route path="/motorista_incluir/:id" component={Motorista_cadastro_incluir} />             
              <Route path="/veiculo_motorista_incluir/:id" component={Motorista_veiculo_incluir} />      
              <Route path="/senha_motorista_incluir/:id" component={Motorista_senha_incluir} />      
@@ -235,8 +245,6 @@ export default function Routes() {
              <Route path="/operador_lista_empresa/:id" component={Operador_lista_empresa} />
 
              <Route path="/tipo_transporte" component={Tipo_Transporte_create} />
-             
-             <Route path="/cartao_credito" component={Cartao_creedito_cadastrar} />
              
              <Route path="/area_operador" component={Area_operador} />
 

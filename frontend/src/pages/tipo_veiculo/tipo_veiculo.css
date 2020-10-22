@@ -245,3 +245,16 @@
 .status_select{
   width: 248px !important;
 }
+.tamanho_mensagem {
+  width: 100% !important;
+}
+
+.MuiAlert-standardSuccess {  
+  background-color: #F7154D !important;
+  color: white !important;
+}
+
+.MuiSvgIcon-fontSizeInherit {
+  font-size: inherit !important;
+  color: beige !important;
+}

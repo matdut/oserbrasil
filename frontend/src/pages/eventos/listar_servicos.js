@@ -3,6 +3,8 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import {Alert, Input } from 'reactstrap';
+import { Tabs, Tab } from 'react-bootstrap';
+import MaterialTable from 'material-table';
 
 //import axios from 'axios';
 import api from '../../services/api';
@@ -61,7 +63,7 @@ class listaeventosComponent extends React.Component  {
    // const url = baseUrl+"/cliente/list"
    let userId = this.props.match.params.id;  
 
-   api.get(`/eventos/get/${localStorage.getItem('logeventoId')}`)
+   api.get(`/eventos/get/${userId}`)
     .then(res=>{
       if (res.data.success == true) {
         
@@ -122,20 +124,77 @@ class listaeventosComponent extends React.Component  {
   
     }          
   }     
+
+  verifica_titulo() {
+    if ( this.state.perfil == 1) {
+      return (            
+        'ADMINISTRADOR' 
+       ); 
+    } else {
+      return (      
+        localStorage.getItem('lognome')
+       ); 
+    }            
+  }
+  
+  verifica_horario(){
+    const d = new Date();
+    const hour = d.getHours();
+  
+    if (hour < 5) {
+      return (
+        'boa noite'
+        );        
+    } else if (hour < 5) { 
+      return (
+        'bom dia' 
+        );        
+    } else if (hour < 8) { 
+      return (
+        'bom dia'          
+        );        
+    } else if (hour < 12) { 
+      return (
+        'bom dia'          
+        );        
+    } else if (hour < 18) { 
+      return (
+        'boa tarde'          
+        );        
+    } else { 
+      return (
+         'boa noite'          
+        );        
+    }
+  }
   render()
   {
     return (
       <div>   
 
           {this.verifica_menu()}
+          <div className="titulo_lista">     
+            <div className="unnamed-character-style-4 descricao_admministrador">      
+            <table>
+             <tr>
+            <td colSpan="2" className="espaco_voltar">
+                <a href={"/lista_evento/list"}><img src="/voltar@2x.png" width="22" height="32"/></a>
+                </td> 
+              <td> <div className="titulo_bemvindo">  {this.state.campnome_evento} </div>
+              <div className="perfil">
+              <a href="#">           
+                  Editar Evento  
+             </a>  
+             </div>
+            </td> </tr>
+            </table>                      
+              
+            </div>      
+           </div>
+
           <div className="titulo_admministrador">
-         <div className="unnamed-character-style-4 descricao_admministrador">          
-               {this.state.campnome_evento}
-               <div className="editar_servico">
-                  <a href='#'>           
-                    Editar Perfil  
-                  </a>  
-               </div>  
+          <div className="unnamed-character-style-4 descricao_admministrador">          
+              
                <div class="p-2">    
                  <div class="d-flex justify-content-start">
                     <div class="p-2">                       
@@ -151,7 +210,7 @@ class listaeventosComponent extends React.Component  {
                     </div>
 
                     <div className="p-2 icone_servico">                       
-                       <i class='fas fa-route fa-3x'></i>
+                    <img src='/tour.png' style={{ width: '32px', height: '32px', marginTop: '10px' }}/>   
                     </div>                   
                     
                     <div class="p-2">
@@ -170,40 +229,105 @@ class listaeventosComponent extends React.Component  {
               </div>               
           </div> 
         </div>
-      <div className="container_alterado_1">               
-          <div>  
-              <div>
-                      
-         </div>
-        <br/>
-        </div>  
-        <table className="table table-hover danger">
-          <thead>
-            <tr>
-              <th scope="col">#</th>            
-              <th scope="col">Ordem de Serviço</th>
-              <th scope="col">Nome do Evento</th>
-              <th scope="col">Data do Evento</th>              
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>         
-            {this.loadFillData()}
-          </tbody>         
-        </table>        
+        <div className="container_modal_list">       
+      <br/>         
+       <Tabs 
+           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">          
+          <Tab eventKey="ativos" title="Serviços do Eventos">
+          <div style={{ maxWidth: '100%',  maxHeight: '100%' }}>
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: '40px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
+                              { title: 'Data do Evento', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },            
+                            ]}
+                            data={this.state.listEventos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Adicionar Valores Tarifários',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{                             
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_eventos_Ativos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,     
+                              maxBodyHeight: 530,    
+                             // maxBodyHeight: 400,
+                             // resizable: false,
+                              //headerStyle: { position: 'sticky', top: 0 },
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 4,
+                             // pageSize: 7,
+                              pageSizeOptions: [0],                 
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                tooltip: 'editar',                                
+                                onClick: (evt, data) => this.onEditar(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Evento',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                              }
+                              /*,
+                              {
+                                icon: 'add',                                                             
+                                tooltip: 'Adiciona Eventos',
+                                isFreeAction: true,
+                                onClick: (event) => this.handleOpenModalInclusao()
+                              } */
+                            ]}
+                            
+                          />      
+                </div>    
+          </Tab>        
+           
+        </Tabs>       
 
-        <Alert color={this.state.color}>
-                  {this.state.mensagem}
-                </Alert>     
-
-                <div className="botao_lista_incluir">             
-                    <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}> 
-                        <AddIcon/> Adicionar Serviços 
-                    </Fab>
-                  
-                </div>         
-       </div>  
-      </div>   
+        </div>
+             <div className="botao_lista_incluir">
+                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                            <AddIcon/> <div className="botao_incluir"> Adicionar Serviços </div>
+                        </Fab>
+                      </div>    
+     </div>   
     );
   }
 

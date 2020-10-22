@@ -45,6 +45,10 @@ var Eventos = sequelize.define(nametable,{
     type: Sequelize.DATEONLY,
     allowNull: false,     
   },
+  viagens_total: {
+    type: Sequelize.INTEGER,  
+    allowNull: true,     
+  },
   valor_total: {
     type: Sequelize.DECIMAL(20,2),  
     allowNull: true,     

@@ -321,12 +321,56 @@ controllers.get = async (req, res) => {
   })
   
 }
+
+controllers.getMotVeiculo = async (req, res) => {
+  const { id } = req.params;
+  await Motorista.findAll({
+    include: [{ model: Veiculo, where: {motoristaId: id} }],
+    where: { id: id}
+    //,
+    //include: [ Role ]
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+/*controllers.getMotVeiculo = async (req, res) => {
+  const { id } = req.params;
+  await Motorista.findAll({
+    include: [{ model: Veiculo }],
+    include: [{ model: Status  }],    
+    where: { id: id}
+    //,
+    //include: [ Role ]
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+*/
 controllers.list = async (req,res) => {
  await Motorista.findAll({
      include: [{ model: Status  }],
      where: { 
       statusId: {
-        [Op.notIn]: [7]             
+        [Op.notIn]: [6,7]             
       }
    } 
   })
@@ -344,6 +388,22 @@ controllers.listExcluidos = async (req,res) => {
     include: [{ model: Status  }],
     where: { 
      statusId: 7
+    }
+   })
+   .then( function (data){
+     return res.json({success:true, data:data});    
+   })
+   .catch(error => {
+     return res.json({success:false, message: error});
+   })
+  
+ }
+
+ controllers.listarIncompletos = async (req,res) => {
+  await Motorista.findAll({
+    include: [{ model: Status  }],
+    where: { 
+     statusId: 6
     }
    })
    .then( function (data){

@@ -163,8 +163,8 @@ class menu_clienteComponent extends React.Component  {
     </div>
     <div className="item teste">    
        <LightTooltip title="Eventos" placement="top">
-            <a href={"/listaeventocliente/"+this.state.id+"/"+localStorage.getItem('logperfil')}>           
-            <i class="fas fa-bell"></i>
+            <a href={"/lista_evento/list"}>       
+            <i class="fas fa-calendar-alt"></i>                  
             </a>  
         </LightTooltip>    
     </div>  
@@ -174,7 +174,14 @@ class menu_clienteComponent extends React.Component  {
             <i className="fas fa-fw fa-columns"></i>
             </a>  
         </LightTooltip>    
-    </div>  
+    </div> 
+    <div className="item teste">
+      <LightTooltip title="Cartão Crédito" placement="top">
+        <a href={`/cartao_credito/list`}>                 
+        <i class="fas fa-credit-card"></i>
+        </a>  
+      </LightTooltip>    
+    </div> 
     <div className="item teste">
     <LightTooltip title="Endereço" placement="top">
         <a href={`/empresa_endereco/`+localStorage.getItem('logid')}>
@@ -196,13 +203,13 @@ class menu_clienteComponent extends React.Component  {
         </a>   
       </LightTooltip>    
     </div>
-    <div class="item teste">
-    <LightTooltip title="Cadastro Icompleto" placement="top">
-       <a href={`/lista_operador_email/`+localStorage.getItem('logid')}>
-           <i class="fas fa-info"></i>
-       </a>  
-    </LightTooltip>   
-    </div>  
+    <div className="item teste">
+      <LightTooltip title="Configuração" placement="top">
+        <a href={"/configuracao"}>
+        <i class="fas fa-cog"></i>
+        </a>   
+      </LightTooltip>    
+    </div>
     <div className="item teste">
        <LightTooltip title="Sair" placement="top">
         <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
@@ -212,7 +219,7 @@ class menu_clienteComponent extends React.Component  {
       
     <div className="item_sem_borda versao_sistema"> 
         <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-        28/08/20 v1.7.0
+        30/09/20 v2.0.0
      </div>  
    </div>                                       
                             

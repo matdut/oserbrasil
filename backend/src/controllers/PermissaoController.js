@@ -3,6 +3,7 @@ const controllers = {}
 // import model and sequelize
 var sequelize = require('../model/database');
 var Permissao = require('../model/Permissoes');
+var Funcionalidade = require('../model/Funcionalidade');
 //var Role = require('../model/Role');
 
 // para migrar por si no tiene tablas
@@ -28,11 +29,46 @@ controllers.delete = async (req,res) => {
 
 }
 
+controllers.deletaFuncionalidade = async (req,res) => {  
+  // parameter post  
+  const { perfilId, id, funcId } = req.params; 
+ 
+  await Permissao.destroy({
+    where: { perfilId: perfilId, logid: id, funcionalidadeId: funcId }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  }) 
+
+}
+
 controllers.listPerfil = async (req,res) => {
   const { perfilId } = req.params;  
 
   await Permissao.findAll({
     where: { perfilId: perfilId }
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
+controllers.lista_acesso = async (req,res) => {
+  const { perfilId, id } = req.params;  
+
+  await Permissao.findAll({
+    include: [{
+      model: Funcionalidade    
+     }],    
+    where: { perfilId: perfilId, logid: id }
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -96,6 +132,26 @@ controllers.get = async (req, res) => {
     where: { logid: logid, perfilId: perfilId }
     //,
     //include: [ Role ]
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getFuncionalidade = async (req, res) => {
+
+  const { perfilId, id, funcId } = req.params; 
+
+  console.log('id - '+id)
+  console.log('perfilId - '+perfilId)
+  console.log('funcId - '+funcId)
+
+  await Permissao.findAll({
+    where: { logid: id, perfilId: perfilId, funcionalidadeId: funcId }   
   })
   .then( function (data){
     return res.json({success:true, data: data});

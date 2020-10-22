@@ -21,41 +21,41 @@ class Area_motorista extends React.Component  {
   componentDidMount(){
      //this.loadCliente()
   }
-  verifica_menu() {    
+
+verifica_menu() {    
 
     return (      
-       <strong>{localStorage.getItem('lognome')}</strong>
+       localStorage.getItem('lognome')
      ); 
   
 }
-
 verifica_horario(){
   const d = new Date();
   const hour = d.getHours();
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
@@ -68,7 +68,7 @@ verifica_horario(){
          <Menu_motorista />
          <div className="titulo_admministrador">    
             <div className="unnamed-character-style-4 descricao_admministrador">                                                             
-               {this.verifica_menu()}, {this.verifica_horario()} !
+            <div className="titulo_bemvindo"> {this.verifica_menu()}, {this.verifica_horario()} ! </div>      
             </div>          
 
               <Container maxWidth="sm">

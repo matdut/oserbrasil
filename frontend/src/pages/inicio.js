@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Card, Button, CardTitle, CardText, Row, Col, NavItem, NavLink  } from 'reactstrap';
 import {Link} from 'react-router-dom';
+import Box from '@material-ui/core/Box';
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,10 +11,16 @@ import Cabecalho from './cabecalho';
 import './inicio.css';
 
 
-const Inicio = props => { 
+class inicioComponent extends React.Component  {  
 
-    localStorage.setItem('logperfil', 0)
-    localStorage.setItem('logVeiculo', 0)    
+  sendEntrar() {
+    this.props.history.push(`/login`);
+  }
+    render()
+    {
+
+      localStorage.setItem('logperfil', 0)
+      localStorage.setItem('logVeiculo', 0)    
 
     return (             
       <div>
@@ -39,15 +46,22 @@ const Inicio = props => {
           </div>      
         </div>  
         <br/>
-        <br/>        
+        <br/>
+        <div className="d-flex justify-content-center">                  
+           <Box bgcolor="error.main" color="error.contrastText" className="botao_entrar_inicio" p={2} onClick={()=>this.sendEntrar()}>
+              <div className="d-flex justify-content-center">
+                  <label> Entrar </label>
+              </div>     
+          </Box>      
+        </div>
         <br/>
         <br/>
         <br/>
         <br/>
       </div>  
     );
-    
+    }    
   
 }
 
-export default Inicio;
+export default inicioComponent;

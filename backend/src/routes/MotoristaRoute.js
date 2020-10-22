@@ -9,8 +9,10 @@ const MotoristaController = require('../controllers/MotoristaController');
 
 router.get('/list',MotoristaController.list);
 router.get('/listExcluidos',MotoristaController.listExcluidos);
+router.get('/listarIncompletos',MotoristaController.listarIncompletos);
 router.post('/create', MotoristaController.create);
 router.get('/get/:id', MotoristaController.get);
+router.get('/getMotVeiculo/:id', MotoristaController.getMotVeiculo);
 router.put('/update/:id', MotoristaController.update);
 router.get('/getEmail/:email', MotoristaController.getEmail);
 router.delete('/delete/:id',MotoristaController.delete);

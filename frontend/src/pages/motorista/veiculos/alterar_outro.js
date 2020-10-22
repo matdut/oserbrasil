@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Select, Button, Alert } from 'reactstrap';
+import {Form, Progress, Input, FormFeedback, Button, Alert } from 'reactstrap';
 import Autocomplete1 from 'react-autocomplete';
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -10,6 +10,15 @@ import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
 import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_Motorista from '../../motorista/menu_motorista';
 import Menu_operador from '../../operadores/menu_operador';
+import Select from '@material-ui/core/Select';
+
+import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import CheckIcon from '@material-ui/icons/Check';
 
 import api from '../../../services/api';
 import './veiculo.css';
@@ -1050,222 +1059,236 @@ return (
   
    <div className="area_esquerda">     
          {this.verificar_menu()}        
-          <div class="d-flex flex-column espacamento_caixa_texto">              
+         <div class="d-flex flex-column espacamento_caixa_texto">              
               <div class="p-2">               
                   <div class="d-flex justify-content-start">
                        <div> 
-                       <label for="inputAddress">Marca *</label>
-                          <Input 
-                              disabled = {this.state.dado_cadastral_disabled}   
-                              type="select" 
-                              name="select"                               
-                              id="exampleSelect" 
-                              className="autocomplete_marca"                              
-                              value={this.state.campCarroId}
-                              valid={ this.state.validate.carroState === 'has-success' }
-                              invalid={ this.state.validate.carroState === 'has-danger' }
+                       <FormControl variant="outlined">
+                            <InputLabel className="label_marca_autocomplete_motorista" id="demo-simple-select-outlined-label">Marca </InputLabel>
+                            <Select                                                 
+                              autoComplete="off"                     
+                              className="text_marca_autocomplete_motorista"                                                
+                              labelId="demo-simple-select-outlined-label"
+                              id="busca"
+                              value={this.state.campCarroId}  
                               onBlur={this.verificaCarro}
                               //onFocus={this.verificaCarro}
                               onChange={ (e) => {
                                 this.carroChange(e)                       
                                 this.validaCarroChange(e)
-                              }}                                                          >
-                              <option selected>Selecione a marca</option>               
-                              {this.loadMarcaData()}      
-                          </Input>                         
-                          <FormFeedback 
-                            invalid={this.state.validate.carroState}>
-                                {this.state.mensagem_carro}
-                          </FormFeedback>                                            
-                       </div> 
-                       
-                       <div>         
-                       <label className="texto_modelo" for="inputAddress">Modelo *</label>
-                          <Input 
-                              disabled = {this.state.dado_cadastral_disabled}   
-                              type="select" 
-                              className="autocomplete_modelo"
-                              name="select"                               
-                              id="exampleSelect" 
-                              value={this.state.campModeloId}
-                              valid={ this.state.validate.modeloState === 'has-success' }
-                              invalid={ this.state.validate.modeloState === 'has-danger' }
+                              }}                                                                               
+                              labelWidth={60}   
+                             >          
+                             <MenuItem value={0}>Selecione a marca</MenuItem>                                         
+                              {this.loadMarcaData()}                    
+                              </Select>
+                          </FormControl>                                                                                                           
+                       </div>                        
+                       <div>   
+                       <FormControl variant="outlined">
+                            <InputLabel className="label_modelo_autocomplete_motorista" id="demo-simple-select-outlined-label">Modelo </InputLabel>
+                            <Select                                                 
+                              autoComplete="off"                     
+                              className="text_modelo_autocomplete_motorista"                                                
+                              labelId="demo-simple-select-outlined-label"
+                              id="busca"
+                              value={this.state.campModeloId}                             
                               onBlur={this.verificaModelo}
                               onChange={ (e) => {
                                 this.modeloChange(e)                       
                                 this.validaModeloChange(e)
-                              }}                                                          >
-                              <option selected>Selecione o modelo</option>               
-                              { this.loadModelosData() }      
-                          </Input>
-                          <FormFeedback 
-                            invalid={this.state.validate.modeloState}>
-                                {this.state.mensagem_modelo}
-                          </FormFeedback>                             
+                              }}                                                                               
+                              labelWidth={60}   
+                             >          
+                             <MenuItem value={0}>Selecione o modelo</MenuItem>                                         
+                              {this.loadModelosData()}                    
+                              </Select>
+                          </FormControl>                                                                              
                        </div>                        
                   </div>
               </div> 
-              <div class="p-2">               
+              <div class="p-2">   
                   <div className="d-flex justify-content-start">
                        <div>
-                       <label for="inputAddress" className="titulo_placa">Placa *</label>
-                      <Input                    
-                        type="text"
-                        name="nome"
-                        className="texto_placa"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campPlaca}
-                        valid={ this.state.validate.placaState === 'has-success' }
-                        invalid={ this.state.validate.placaState === 'has-danger' }
-                        onBlur={this.verificaPlaca}
-                       // onFocus={this.verificaPlaca}
-                        onChange={ (e) => {
-                          this.placaChange(e)                       
-                          this.validaPlacaChange(e)
-                        }}    
-                        maxlength="8"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.placaState}>
-                          {this.state.mensagem_placa}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_placa_text_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_placa_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campPlaca}
+                              onBlur={this.verificaPlaca}                    
+                              onChange={ (e) => {
+                                this.placaChange(e)                       
+                                this.validaPlacaChange(e)
+                              }}                         
+                              maxlength="9"     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={50}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                      
                        </div> 
                        
                        <div>
-                       <label for="inputAddress" className="titulo_ano">Ano *</label>
-                      <Input              
-                        type="text"
-                        name="nome"
-                        className="texto_ano"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campAno}
-                        valid={ this.state.validate.anoState === 'has-success' }
-                        invalid={ this.state.validate.anoState === 'has-danger' }
-                        onBlur={this.verificaAno}
-                        onChange={ (e) => {
-                          this.anoChange(e)                       
-                          this.validaAnoChange(e)
-                        }}    
-                        maxlength="4"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.anoState}>
-                          {this.state.mensagem_ano}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_ano_text_motorista" htmlFor="filled-adornment-password">Ano</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_ano_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campAno}                        
+                              onBlur={this.verificaAno}
+                              onChange={ (e) => {
+                                this.anoChange(e)                       
+                                this.validaAnoChange(e)
+                              }}                         
+                              maxlength="9"     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={30}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                             
                        </div>                        
                   </div>
               </div> 
               <div class="p-2">    
                 <div class="d-flex justify-content-start">
                        <div>
-                       <label for="inputAddress">Cor *</label>
-                      <Input                    
-                        type="text"
-                        className="texto_cor"
-                        name="nome"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campCor}
-                        valid={ this.state.validate.corState === 'has-success' }
-                        invalid={ this.state.validate.corState === 'has-danger' }
-                        onBlur={this.verificaCor}
-                        onChange={ (e) => {
-                          this.corChange(e)                       
-                          this.validaCorChange(e)
-                        }}    
-                        maxlength="20"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.corState}>
-                          {this.state.mensagem_cor}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Cor</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_cor_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campCor}                            
+                              onBlur={this.verificaCor}
+                              onChange={ (e) => {
+                                this.corChange(e)                       
+                                this.validaCorChange(e)
+                              }}                          
+                              maxlength="9"     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={30}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                          
                        </div>
                        <div>
-                       <label for="inputAddress" className="titulo_ano">Ano do DUT *</label>
-                      <Input           
-                        className="texto_ano"         
-                        type="text"
-                        name="nome"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campAnodut}
-                        valid={ this.state.validate.anoDUTState === 'has-success' }
-                        invalid={ this.state.validate.anoDUTState === 'has-danger' }
-                        onBlur={this.verificaAnoDUT}
-                        onChange={ (e) => {
-                          this.anoDUTChange(e)                       
-                          this.validaAnoDUTChange(e)
-                        }}    
-                        maxlength="20"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.anoDUTState}>
-                          {this.state.mensagem_anoDUT}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Ano do DUT</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_anodut_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campAnodut}                        
+                              onBlur={this.verificaAnoDUT}
+                              onChange={ (e) => {
+                                this.anoDUTChange(e)                       
+                                this.validaAnoDUTChange(e)
+                              }}                        
+                              maxlength="9"     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={80}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                           
                        </div>                                                       
                 </div>    
             </div>      
             <div class="p-2">     
-            <label for="inputAddress">Seguradora *</label>
-                <Input 
-                    disabled = {this.state.dado_cadastral_disabled}   
-                    type="select" 
-                    name="select" 
-                    className="seguro_select"
-                    id="exampleSelect" 
-                    value={this.state.campSeguradoraId}
-                    valid={ this.state.validate.seguroState === 'has-success' }
-                    invalid={ this.state.validate.seguroState === 'has-danger' }
-                    onBlur={this.verificaSeguro}
-                    onChange={ (e) => {
-                      this.seguradoraChange(e)                       
-                      this.validaSeguroChange(e)
-                    }}                                                          >
-                     <option selected>Selecione a seguradora</option>               
-                     {this.loadSeguradorasData()}      
-                </Input>
-                <FormFeedback 
-                  invalid={this.state.validate.seguroState}>
-                       {this.state.mensagem_seguro}
-                </FormFeedback>                                        
+            <FormControl variant="outlined">
+                            <InputLabel className="label_seguradora_autocomplete_motorista" id="demo-simple-select-outlined-label">Seguradora </InputLabel>
+                            <Select                                                 
+                              autoComplete="off"                     
+                              className="text_seguradora_autocomplete_motorista"                                                
+                              labelId="demo-simple-select-outlined-label"
+                              id="busca"
+                              value={this.state.campSeguradoraId}                          
+                              onBlur={this.verificaSeguro}
+                              onChange={ (e) => {
+                                this.seguradoraChange(e)                       
+                                this.validaSeguroChange(e)
+                              }}                                                                                 
+                              labelWidth={110}   
+                             >          
+                             <MenuItem value={0}>Selecione a seguradora</MenuItem>                                         
+                              {this.loadSeguradorasData()}                    
+                              </Select>
+                          </FormControl>                                         
             </div> 
             <div class="p-2">    
-            <label for="inputAddress" className="texto_apolice">Número Apólice *</label>
-                        <Input                            
-                            type="text"
-                            className="texto_apolice"
-                            name="nome"
-                            id="examplnome"
-                            placeholder=""
-                            autoComplete='off'
-                            autoCorrect='off'
-                            value={this.state.campApolice}
-                            valid={ this.state.validate.apoliceState === 'has-success' }
-                            invalid={ this.state.validate.apoliceState === 'has-danger' }
-                            onBlur={this.verificaApolice}
-                            onChange={ (e) => {
-                              this.apoliceChange(e)                       
-                              this.validaApoliceChange(e)
-                            }}    
-                            maxlength="10"                                                                      
-                          />                                
-                          <FormFeedback 
-                          invalid={this.state.validate.apoliceState}>
-                              {this.state.mensagem_apolice}
-                          </FormFeedback> 
-
+            <FormControl variant="outlined">
+                          <InputLabel className="label_apolice_text_motorista" htmlFor="filled-adornment-password">Número Apólice</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_apolice_motorista"                
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campApolice}                           
+                              onBlur={this.verificaApolice}
+                              onChange={ (e) => {
+                                this.apoliceChange(e)                       
+                                this.validaApoliceChange(e)
+                              }}                   
+                              maxlength="9"     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={130}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>    
+           
             </div>                    
-            </div>       
+            </div>           
             {this.verifica_botao(this.state.inicio)}                                       
           </div>  
     </div>                 

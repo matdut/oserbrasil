@@ -111,8 +111,9 @@ controllers.create = async (req,res) => {
 
   // DATA parametros desde post
   const { marcaId, marca, placa, modeloId, modelo, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
-    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId } = req.body;
-  //console.log("ROle es ==>"+role)
+    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId, engate, cadeirinha_pequena, 
+    cadeirinha_grande, cadeira_rodas, foto_url } = req.body;
+  console.log("Foto url  ==>"+foto_url)
   //create
   await Veiculo.create({   
     marcaId: marcaId, 
@@ -127,10 +128,14 @@ controllers.create = async (req,res) => {
     seguradoraId: seguradoraId,
     foto_CRVL_name: foto_CRVL_name, 
     foto_CRVL_size: foto_CRVL_size, 
-    foto_CRVL_key: foto_CRVL_key,
+    foto_CRVL_key: foto_url,
     foto_CRVL_mimetype: foto_CRVL_mimetype, 
-    foto_CRVL_url: foto_CRVL_url, 
-    motoristaId: motoristaId
+    foto_CRVL_url: foto_url, 
+    motoristaId: motoristaId,
+    engate: engate, 
+    cadeirinha_pequena: cadeirinha_pequena, 
+    cadeirinha_grande: cadeirinha_grande, 
+    cadeira_rodas: cadeira_rodas,
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -145,11 +150,10 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  //console.log('entrou aqui = '+id);
-
   // parameter post
   const { marcaId, marca, placa, modeloId, modelo, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
-    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId } = req.body;
+    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId, engate, cadeirinha_pequena, 
+    cadeirinha_grande, cadeira_rodas, foto_url } = req.body;
   // update data
   
   await Veiculo.update({
@@ -163,12 +167,16 @@ controllers.update = async (req, res) => {
     cor: cor, 
     foto_CRVL_name: foto_CRVL_name, 
     foto_CRVL_size: foto_CRVL_size, 
-    foto_CRVL_key: foto_CRVL_key,
+    foto_CRVL_key: foto_url,
     foto_CRVL_mimetype: foto_CRVL_mimetype, 
-    foto_CRVL_url: foto_CRVL_url, 
+    foto_CRVL_url: foto_url, 
     apolice: apolice, 
     seguradoraId: seguradoraId,
-    motoristaId: motoristaId
+    motoristaId: motoristaId,
+    engate: engate, 
+    cadeirinha_pequena: cadeirinha_pequena, 
+    cadeirinha_grande: cadeirinha_grande, 
+    cadeira_rodas: cadeira_rodas,
   },{
     where: { id: id}
   })
@@ -207,10 +215,7 @@ controllers.getMotoristaVeiculos = async (req, res) => {
   const { id } = req.params;
   
   await Veiculo.findAll({
-    include: [{
-      model: Motorista,      
-      where: { id: id }      
-     }]     
+    where: { motoristaId: id}  
   })
   .then( function (data){
     if (data.length > 0) {

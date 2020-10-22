@@ -62,7 +62,7 @@ class Area_administrador extends React.Component  {
     return ( 
      <div> 
         <Menu_administrador />  
-          <div className="titulo_admministrador">   
+          <div className="titulo_lista">   
             <div>
               <div className="unnamed-character-style-4 descricao_admministrador">                                
                 {this.verifica_menu()}, {this.verifica_horario()} !

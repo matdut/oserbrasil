@@ -119,6 +119,8 @@ class empresarialComponent extends React.Component{
     });      
  
     let userId = this.props.match.params.id;
+
+    localStorage.setItem('logoperadorId',  userId);
    
     this.setState({      
       perfil: localStorage.getItem('logperfil'),
@@ -829,11 +831,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -844,44 +846,46 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 
 render(){  
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
 {this.verificar_menu_lateral()}  
 
-<div className="d-flex justify-content"> 
+<div> 
    <div>               
-   <div className="titulo_admministrador">        
+   <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
+              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
+            </div>      
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />

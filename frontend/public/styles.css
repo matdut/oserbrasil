@@ -7,7 +7,7 @@
     .left {
         background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
         width: 80px;     
-        height: 100vh;
+        height: 100vh; 
     }    
 
     .right {
@@ -584,16 +584,48 @@
 
   .titulo_admministrador {       
     margin-left: 0px !important; 
-    height: 174px !important; 
-    padding-left: 80px;
+    height: 120px !important; 
+    padding-left: 80px;   
+    /* width: 100% !important; */
+    width: 224% !important;
+    /*border-bottom: 1px dotted #707070;      */    
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .titulo_admministrador_editar {       
+    margin-left: 0px !important; 
+    height: 120px !important; 
+    padding-left: 80px; 
     width: 100% !important;
+    font: normal normal Effra !important;
+    /* font-size: 22px;*/
+    /*border-bottom: 1px dotted #707070;      */    
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .titulo_admministrador_alteracao {       
+    margin-left: 0px !important; 
+    height: 120px !important; 
+    width: 259% !important;
+    /*border-bottom: 1px dotted #707070;      */    
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .titulo_lista {       
+    margin-left: 0px !important; 
+    height: 120px !important; 
+    padding-left: 80px; 
+    width: 100% !important;
+    font: normal normal Effra !important;
+    /* font-size: 22px;*/
     /*border-bottom: 1px dotted #707070;      */    
     border-bottom: 1px solid #dee2e6;
   }
 
   .descricao_admministrador {         
-    padding-top: 50px !important;  
+    padding-top: 15px !important;  
     margin-left: 80px !important;       
+    height: 52px !important;      
    /* font-size: 44px !important;   */
   }
 
@@ -624,8 +656,44 @@
     color: #0F93D9;
     opacity: 1;
   }    
-   
+ 
+  .container_modal_alterado {
+    width: 100% !important;
+    margin-left: -104px !important;
+    text-align: left !important;
+    font: normal normal Effra !important;
+    letter-spacing: 0px !important;
+    color: #0F074E !important;
+    opacity: 1 !important;
+    font-size: 14px !important;    
+    font-weight: bold !important;
+   /* padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto; 
+    max-width: 85%;    
+    position: static;     */
+  }
 
+  .font_modal_padrao {
+    font: normal normal normal Effra !important;
+    color: #707070 !important;
+    font-size: 14px !important;
+  }
+
+  .foto_modal_motorista {
+    text-align: left !important;
+    font: normal normal bold 14px Effra !important;
+    letter-spacing: 0px !important;
+    color: #0F074E !important;
+    opacity: 1 !important;   
+    margin-top: 30px !important;
+    margin-bottom: 0px !important;
+    width: 240px !important;  
+    height: 150px !important;  
+    padding-left: 0px !important;
+    margin-left: -261px !important;
+  }
   .container_alterado {
     width: 100% !important;
     margin-left: -104px !important;
@@ -633,7 +701,23 @@
     font: normal normal bold Effra !important;
     letter-spacing: 0px !important;
     color: #0F074E !important;
-    opacity: 1 !important;
+    opacity: 1 !important;    
+   /* padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto; 
+    max-width: 85%;    
+    position: static;     */
+  }
+
+  .container_matriz {
+    width: 100% !important;
+    margin-left: -104px !important;
+    text-align: left !important;
+    font: normal normal normal 14px Effra !important;
+    letter-spacing: 0px !important;
+    color: #0F074E !important;
+    opacity: 1 !important;    
    /* padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
@@ -672,12 +756,42 @@
     background-color: orange;
   }
   
-  .botao_lista_incluir {          
+  .botao_veiculo_lista_incluir {          
+    font: normal normal bold Effra !important;
+    color: #0F074E !important;
+    font-size: 12px;
     position: absolute;
-    left: 80%;
-    top: 80%;
-    bottom: 20px;
-    width: 90%;
+    left: 80% !important; 
+    top: 28% !important;  
+    line-height: 10% !important;
+   /* bottom: 500px; 
+      height: 50px;*/
+    width: 80% !important;
+  }
+
+  .botao_lista_incluir {          
+    font: normal normal bold Effra !important;
+    color: #0F074E !important;
+    font-size: 12px;
+    position: absolute;
+    left: 75% !important; 
+    top: 16% !important;  
+    line-height: 10% !important;   
+   /* bottom: 500px; 
+      height: 50px;*/
+    /* width: 217px !important; */
+  }
+
+  .botao_incluir {          
+    font: normal normal bold Effra !important;
+    color: white !important; 
+    font-size: 12px !important;       
+    font-weight: bold !important;
+  }
+
+  .MuiFab-secondary {
+    color: white !important; 
+    background-color: #FF840A !important;
   }
 
   .botoes_desabilitado {
@@ -694,7 +808,7 @@
   }
   
   .botoes_habilitados {
-    margin-top: 48px !important; 
+    margin-top: 28px !important; 
     width: 480px !important;  
     height: 64px !important;
     background: #FF840A 0% 0% no-repeat padding-box !important;
@@ -705,7 +819,7 @@
   }
 
   .botoes_desabilitado_modal {
-    margin-top: 48px !important;
+    margin-top: 28px !important;
     width: 244px !important;
     /*line-height: 26px !important; */   
     height: 64px !important; 
@@ -716,9 +830,22 @@
     position: absolute !important;    
     bottom: 0px !important;  
   }
+
+  .botoes_desabilitado_evento_modal {
+    margin-top: 28px !important;
+    width: 244px !important;
+    /*line-height: 26px !important; */   
+    height: 64px !important; 
+    border: 2px solid #C9C9C9 !important; 
+    background: #C9C9C9 0% 0% no-repeat padding-box !important;
+    opacity: 1 !important;
+    margin-left: 140px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
   
   .botoes_habilitados_modal {
-    margin-top: 48px !important;
+    margin-top: 28px !important;
     width: 244px !important;  
     height: 64px !important; 
     border: 2px solid #FF840A !important;
@@ -729,8 +856,20 @@
     bottom: 0px !important;  
   }
 
+  .botoes_habilitados_evento_modal {
+    margin-top: 28px !important;
+    width: 244px !important;  
+    height: 64px !important; 
+    border: 2px solid #FF840A !important;
+    background: #FF840A 0% 0% no-repeat padding-box !important;
+    opacity: 1 !important;
+    margin-left: 140px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
   .botoes_desabilitado_modal_scroll {
-    margin-top: 48px !important;
+    margin-top: 28px !important;
     width: 244px !important;
     /*line-height: 26px !important; */   
     height: 64px !important; 
@@ -743,7 +882,7 @@
   }
 
   .botoes_habilitados_modal_scroll {
-    margin-top: 48px !important;
+    margin-top: 28px !important;
     width: 244px !important;  
     height: 64px !important; 
     border: 2px solid #FF840A !important;
@@ -754,16 +893,83 @@
     margin-bottom: 0px !important;  
   }
 
+  .botoes_delete_cancelar_modal {
+    margin-top: 48px !important;
+    width: 244px !important;
+    /*line-height: 26px !important; */   
+    height: 64px !important; 
+    border: 1px solid #0F074E !important;  
+    background: #FFFFFF 0% 0% no-repeat padding-box !important;    
+    opacity: 1 !important;
+    margin-left: 128px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
+  .botoes_delete_excluir_modal {
+    margin-top: 48px !important;
+    width: 244px !important;
+    /*line-height: 26px !important; */   
+    height: 64px !important; 
+    /*  border: 2px solid #0F074E !important;  */
+    background: #FF840A 0% 0% no-repeat padding-box !important;
+    color: white !important;
+    opacity: 1 !important;
+    margin-left: 373px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
   .botao_close_modal_empresa {
-    left: 50%;
+    left: 45%;
   }
 
   .botao_close_modal_operador {
+    left: 30%;
+  }
+
+  .botao_close_modal_tarifarios_esp {
+    margin-left: 25% !important; 
+  }
+
+  .botao_close_modal_tarifarios_esp {
+    margin-left: 25% !important; 
+  }
+  
+  .botao_close_modal_tarifarios {
+    left: 38%;
+  }
+
+  .botao_close_modal_editar_tarifarios {
+    left: 50%;
+  }
+
+  .botao_close_modal_tipo_veiculo {    
+    left: 250px !important;
+  }
+
+  .botao_close_incluir_evento_modal {
+    left: 55%;
+  }
+
+  .botao_close_modal_cartao {
     left: 35%;
   }
 
-  .botao_close_modal_tipo_veiculo {
-    left: 55%;
+  .botao_close_modal_deletar {  
+    left: 80%;
+  }
+
+  .botao_close_modal_motorista {
+    left: 35%;
+  }
+
+  .botao_close_modal_foto_doc {
+    left: 100px;
+  }
+
+  .botao_close_modal_veiculo {
+    left: 40%;
   }
 
   .teste_css {
@@ -771,7 +977,57 @@
   }
 
   .botao_close_modal {
-    left: 60%;
+    left: 50%;
+  }
+
+  .resize_table {
+    position: fixed !important;
+  }
+
+  .tabela_material_layout{      
+   /* min-width: 95vw !important; */    
+    min-width: 95vw !important;      
+    max-width: 95vw !important;     
+    max-height: 90% !important;  
+   /* position: static !important;  */
+  }     
+  .moldura_modal_delecao {
+    margin-top: 48px !important;
+    width: 450px !important;
+    margin-left: 150px !important;
+  }
+
+  .titulo_moldura_modal_delecao {
+    font: normal normal Effra !important;
+    font-size: 22px !important;
+    font-weight: bold !important;
+    letter-spacing: 0px !important;
+    width: 500px !important;
+
+  }
+
+  .titulo_moldura_modal_delecao_2 {
+    font: normal normal Effra !important;
+    font-size: 12px !important;   
+    letter-spacing: 0px !important;
+    width: 500px !important;
+  }
+
+  .tamanho_botao {
+    height: 55px !important;
+    width: 270px !important;
+  }
+
+  .MuiSwitch-colorPrimary.Mui-checked {
+   /*  color: #6DD300 !important; 
+    background-color: white !important;
+    */
+  }
+  .retorno {
+    font: normal normal Effra !important;
+    font-size: 16px !important;
+    color: red !important;
+    margin-left: 158px !important;
   }
 
   .botoes_desabilitado_excluir {
@@ -840,12 +1096,21 @@
   
   .barra_incluir {
     border-bottom: 1px solid #dee2e6;    
+    /* height: 174px !important; */
   }
 
   .barra_editar {
     border-bottom: 1px solid #dee2e6;    
   }
 
+  /*
+  .MuiSwitch-colorPrimary {
+    font: normal normal bold 14px Effra !important;
+    letter-spacing: 0px !important;
+    color: #6DD300 !important;
+    background-color: #6DD300;
+  }
+*/
 /*  padding-right: 15px;    
     margin-right: auto;
     margin-left: auto; 
@@ -854,9 +1119,9 @@
     */
 
 .container_modal_list {
-  width: 100%;
-  padding-right: 0px;      
-  margin-left: 80px;     
+ /* width: 100%; */
+  padding-right: 0px !important;      
+  margin-left: 80px !important;      
 }
 
 .linha {
@@ -876,12 +1141,12 @@
 .editar_titulo {
   margin-top: 15px;
   font: normal normal normal 22px Effra !important;
-  height: 71px !important;
+  height: 70px !important;
   border-bottom: 1px solid #dee2e6 !important;     
   padding-left: 20px !important; 
   text-align: left !important;  
   letter-spacing: 0px !important;
-  color: #0F074E !important;
+  color: #0F074E !important;  
   opacity: 1 !important;  
 }
 
@@ -890,7 +1155,7 @@
   font: normal normal normal 22px Effra !important;
   height: 71px !important;
   border-bottom: 1px solid #dee2e6 !important;     
-  padding-left: 20px !important; 
+  padding-left: 33px !important; 
   text-align: left !important;  
   letter-spacing: 0px !important;
   color: #0F074E !important;
@@ -919,8 +1184,15 @@
 
 .espacamento_caixa_modal {
   margin-top: 15px !important;
-  margin-left: 100px !important;
+  margin-left: 100px !important;  
 }
+
+.espacamento_caixa_modal_cartao {
+  font: normal normal medium 14px Effra !important;
+  margin-top: 15px !important;
+  margin-left: 120px !important;  
+}
+
 .modal_borda {
  /* font: Regular Effra !important;
   padding: 0px !important;  */
@@ -939,7 +1211,8 @@
 .buscar_label_status_modal { 
   padding-left: 25px !important;   
   text-align: left !important;
-  font: normal normal medium 10px Effra !important;
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important;   
@@ -956,25 +1229,28 @@
 
 
 .label_modal {  
-  font: normal normal medium 10px Effra !important;
+  font: normal normal medium Effra !important;
+  font-size: 14px !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important;     
-  padding-left: 25px !important;
+  padding-left: 20px !important;
+  width: 250px !important;
 }
 
 .select_status_modal {  
   width: 220px !important;   
-  font: normal normal medium 10px Effra !important;
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important;     
-  padding-left: 25px !important;
+ padding-left: 25px !important;
 }
 
 .posicao_caixa_texto{
   font: normal normal medium 10px Effra !important;
-  padding-left: 20px !important;
+  padding-left: 17px !important;
   color: #464646 !important;
 }
 
@@ -1024,7 +1300,19 @@
 }
 
 .tabs_titulo_lista {
-  font: normal normal bold 16px Effra !important;
+  text-align: left;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  /* font-weight: var(--unnamed-font-weight-medium)  !important; 
+  font-weight: bolder !important;*/
+  letter-spacing: 0px !important;
+  color: #4F4F4F !important;
+  opacity: 1 !important;  
+  margin-left: 20px !important;
+}
+
+.lista_padroes_layout {
+  font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
@@ -1050,9 +1338,15 @@
   margin-bottom: 5px !important;
 }
 
+.endereco_empresa {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+}
+
 .descricao_endereco_endereço {
   text-align: left !important;
-  font: normal normal bold 16px Effra !important;
+  font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
@@ -1066,7 +1360,9 @@
 
 .descricao_modal_editar {
   text-align: left !important;
-  font: normal normal bold 16px Effra !important;
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
@@ -1110,10 +1406,12 @@
 
 
 .label_text {
-  font: normal normal medium 14px Effra !important;
+  font: normal normal medium Effra !important;
   letter-spacing: 0px !important;
   color: #4F4F4F !important;
   opacity: 1 !important;   
+  font-size: 14px !important;
+  font-weight: medium;
 }
 
 
@@ -1166,3 +1464,33 @@
   text-indent: 10000px;
 }
 */
+
+.titulo_bemvindo{
+  text-align: left !important;
+  font-family: Effra !important;  
+  font-weight: normal !important;
+  font-size: 44px !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+}
+
+.titulo_empresa{
+  text-align: left !important;
+  font-family: Effra !important;    
+  font-weight: normal !important;
+  font-size: 16px !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+}
+
+.sub_titulo_empresa{
+  text-align: left !important;
+  font-family: Effra !important;    
+  font-weight: normal !important;
+  font-size: 22px !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+}

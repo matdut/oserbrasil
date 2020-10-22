@@ -18,6 +18,18 @@ controllers.list = async (req,res) => {
   })
 }
 
+controllers.listafiltro = async (req,res) => {
+  await Status.findAll({
+    where: { id: [1,2,3,4,5,6,7]}
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post

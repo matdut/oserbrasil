@@ -71,4 +71,18 @@ controllers.get = async (req, res) => {
   
 }
 
+controllers.getModelo = async (req, res) => {
+  const { id } = req.params;
+  await Modelos.findAll({    
+    where: { id: id}  
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
 module.exports = controllers;

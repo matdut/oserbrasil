@@ -125,12 +125,8 @@
   margin-left: 1px !important;
 }
 .foto_motorista {  
-  padding: 5px !important;
-  text-align: center !important;
-  width: 500px !important;
-  height: 366px !important;
-  margin-left: -20px !important;
-  margin-top: 48px;
+  padding: 5px !important; 
+  width: 70% !important;  
 }
 .grid1 {
   padding: 2px;
@@ -140,11 +136,11 @@
 }
 
 .mensagem_foto {
-  background: bisque 0% 0% no-repeat padding-box !important;
-  color: chocolate  !important;
-  text-align: center !important;
-  margin-left: -22px;
-  width: 500px;
+  background: white 0% 0% no-repeat padding-box !important;
+  color: white  !important;
+  text-align: center !important;  
+  width: 70%;
+  margin-top: 5px;
 }
 .grid_foto {
   margin-top: 5px;      

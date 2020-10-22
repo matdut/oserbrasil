@@ -50,6 +50,7 @@ class empresarialComponent extends React.Component{
       campEmailAnterior:"",    
       campTelefone1:"",
       campCpf:"",
+      campcpfanterior: '',
       campStatusId: '',
       mensagem_nome: '',      
       camprazao_social: '',
@@ -172,6 +173,7 @@ class empresarialComponent extends React.Component{
             logrepresentante: res.data.data[0].cliente.id,
             camprazao_social: res.data.data[0].razao_social,
             campCpf: res.data.data[0].cliente.cpf,
+            campcpfanterior: res.data.data[0].cliente.cpf,
             campNome: res.data.data[0].cliente.nome,
             campData_nascimento: dateFormat(res.data.data[0].cliente.data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].cliente.email,                         
@@ -227,24 +229,19 @@ class empresarialComponent extends React.Component{
 
   verificaCpfonfocus(e) {
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.cpfState = ''
+    if (e.target.value.length == 0) {   
       this.setState({ 
         validate,               
         erro_cpf: false,   
         validacao_cpf: false,    
         mensagem_cpf: ''  
        })            
-    } else if (e.target.value.length == 14)  {
-      console.log('é valido - '+e.target.value);
-      this.busca_cpf(e);// se existir não deixa cadastrar 
-      
-    }
+    } 
   } 
+
   verificaNomeonfocus(e) {
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.nomeState = ''
+    if (e.target.value.length == 0) {   
       this.setState({ 
         validate,     
         erro_nome: false,   
@@ -257,8 +254,7 @@ class empresarialComponent extends React.Component{
   
   verificaEmailonfocus(e){   
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.emailState = ''
+    if (e.target.value.length == 0) {     
       this.setState({ 
           validate,
           erro_email: false,   
@@ -272,15 +268,14 @@ class empresarialComponent extends React.Component{
     }            
    } 
 
-   verificaTelefone1onfocus(e){   
-    const { validate } = this.state
-    validate.telefone1State = ''
-       this.setState({ 
-            validate,
+   verificaTelefone1onfocus(e){ 
+    if (e.target.value.length > 0) {      
+       this.setState({        
             erro_telefone: false,   
             validacao_telefone: true,    
             mensagem_telefone1: ''  
         })                   
+    }   
    } 
 
   busca_cpf(e){
@@ -334,12 +329,7 @@ class empresarialComponent extends React.Component{
 
   verificaCpf(e) {
     const { validate } = this.state
-       if (e.target.value.length == 0) {
-        validate.cpfState = 'has-danger'
-        validate.datanascimentoState = ''
-        validate.emailState = ''
-        validate.nomeState = ''
-        validate.telefone1State = ''
+       if (e.target.value.length == 0) {    
         this.setState({ 
           validate,       
           campNome: '',
@@ -347,15 +337,16 @@ class empresarialComponent extends React.Component{
           campEmail: '',
           campTelefone1: '',
           inicio: 1,
-          erro_cpf: true,   
+          erro_cpf: false,   
           validacao_cpf: false,    
-          mensagem_cpf: 'O campo CPF é obrigatório'  
+          mensagem_cpf: ''  
          })            
        } else if (e.target.value.length == 14) {
         if (cpf.isValid(e.target.value)) {
           //cpf válido 
-          console.log('é valido - '+e.target.value);
-          this.busca_cpf(e);// se existir não deixa cadastrar
+          if (this.state.campCpfanterior !== this.state.campCpf) {           
+            this.busca_cpf(e);// se existir não deixa cadastrar 
+          }  
 
         } else {
         validate.cpfState = 'has-danger'       
@@ -370,24 +361,31 @@ class empresarialComponent extends React.Component{
 
    verificaCpfonblur(e) {
     const { validate } = this.state
-      if (e.target.value.length < 14) {
-      validate.cpfState = 'has-danger'
-      validate.datanascimentoState = ''
-      validate.emailState = ''
-      validate.nomeState = ''
-      validate.telefone1State = ''
-      this.setState({ 
-        validate,       
-        campNome: '',
-        campData_nascimento: '',
-        campEmail: '',
-        campTelefone1: '',
-        inicio: 1,
-        erro_cpf: true,   
-        validacao_cpf: false,    
-        mensagem_cpf: 'O campo CPF é obrigatório'  
-        })            
-      }  
+       if (e.target.value.length < 14) {
+        validate.cpfState = 'has-danger'
+        validate.datanascimentoState = ''
+        validate.emailState = ''
+        validate.nomeState = ''
+        validate.telefone1State = ''
+        this.setState({ 
+          validate,       
+          campNome: '',
+          campData_nascimento: '',
+          campEmail: '',
+          campTelefone1: '',
+          inicio: 1,
+          erro_cpf: true, 
+          validacao_cpf: false,    
+          mensagem_cpf: 'O campo CPF é obrigatório'  
+         })            
+       } else if (e.target.value.length == 14){                
+       
+        if (this.state.campCpfanterior !== e.target.value) {
+              console.log('é valido - '+e.target.value);
+              console.log('campCpfanterior - '+this.state.campCpfanterior);
+              this.busca_cpf(e);// se existir não deixa cadastrar 
+         }  
+       }  
    }
   
   verificaTelefone1(e) {   
@@ -651,9 +649,9 @@ verifica_botao(inicio) {
     );   
   } else {
   
-    if (validate.cpfState == 'has-success' && validate.datanascimentoState == 'has-success'  
-      && validate.emailState == 'has-success' && validate.nomeState == 'has-success' 
-      && validate.telefone1State == 'has-success') {
+    if (this.state.validacao_cpf == true && this.state.validacao_datanascimento == true  
+      && this.state.validacao_email == true && this.state.validacao_nome == true
+      && this.state.validacao_telefone == true) {
         return (
           <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendSave()}>
           <div className="d-flex justify-content-center">
@@ -767,11 +765,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -782,27 +780,27 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
@@ -810,14 +808,14 @@ render(){
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
    {this.verificar_menu_lateral()}
-   <div className="d-flex justify-content"> 
+   <div> 
     <div>     
-    <div className="titulo_admministrador">                   
-           <div className="unnamed-character-style-4 descricao_alteracao">                                
-               <h5> {localStorage.getItem('lograzao_social')} </h5>               
-               {this.verifica_titulo()}, {this.verifica_horario()} !
+    <div className="container-fluid titulo_lista margem_left">                   
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
+              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
             </div>             
             
               <Container maxWidth="sm">
@@ -831,7 +829,7 @@ return (
 
             <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2">              
-                  <FormControl variant="outlined">
+                  <FormControl variant="outlined" disabled={this.state.camp_cpf_disabled}>
                     <InputLabel className="label_text" htmlFor="filled-adornment-password">CPF</InputLabel>
                      <OutlinedInput
                         autoComplete="off"         
@@ -995,12 +993,7 @@ return (
               </FormHelperText>       
             </div>                         
             {this.verifica_botao(this.state.inicio)}             
-         </div>    
-         <div className="area_neutra">
-               <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
-              </Container>         
-        </div>             
+         </div>                 
       </div>   
    </div>  
 </div> 

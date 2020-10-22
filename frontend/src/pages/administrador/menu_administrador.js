@@ -152,16 +152,16 @@ class menu_administradorComponent extends React.Component  {
       </LightTooltip>    
     </div>
     <div className="item teste">
-      <LightTooltip title="Valores Tarifários" placement="top">
+      <LightTooltip title="Tarifas" placement="top">
         <a href={"/matriz_listar"}>
         <i class="fas fa-money-bill-wave"></i>
         </a>   
       </LightTooltip>    
     </div>
     <div className="item teste">
-      <LightTooltip title="Funcionalidade" placement="top">
-        <a href={"/funcionalidade/list"}>
-        <i class="fas fa-shield-alt"></i>
+      <LightTooltip title="Configuração" placement="top">
+        <a href={"/configuracao"}>
+        <i class="fas fa-cog"></i>
         </a>   
       </LightTooltip>    
     </div>

@@ -10,6 +10,9 @@ import Menu_motorista from './menu_motorista';
 import Menu_administrador from '../administrador/menu_administrador';
 import Resizer from 'react-image-file-resizer';
 import Typography from '@material-ui/core/Typography';
+import ReactModal from 'react-modal';
+import IconButton from '@material-ui/core/IconButton';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 
 import api from '../../services/api';
 import './documentos.css';
@@ -34,6 +37,33 @@ const resizeFile = (file) => new Promise(resolve => {
   'base64'
   );
 });
+
+const FotoStyles = {
+  overlay: {    
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: '85%',
+    //backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+  },
+  content : {
+    top                    : '10px',
+    left                   : '36%',    
+    right                  : '50%',
+    bottom                 : '80px',  
+    height                 : '60%',    
+    width                  : '350px',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',   
+    border: '1px solid #ccc',   
+  }
+};
+
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
 
@@ -42,7 +72,9 @@ class empresarialComponent extends React.Component{
     this.state = {      
       uploadedCNH: [],
       uploadedCRVL: [],
+      foto: '',
       perfillog: null,
+      camp_foto_CNH_url: '',
       foto_incluida_1: false,     
       incluir_foto_1: false,          
       mensagem_foto1: '',     
@@ -85,6 +117,7 @@ class empresarialComponent extends React.Component{
            
           this.setState({             
             campNome: res.data.data[0].nome, 
+            camp_foto_CNH_url: res.data.data[0].foto_CNH_url,
             inicio: 2
           })                      
        
@@ -137,7 +170,7 @@ verifica_botao(inicio) {
 
       <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
               <div className="d-flex justify-content-center">
-              <label> Próximo </label>
+              <label> Salvar Alterações </label>
               </div>     
         </Box>           
     );   
@@ -149,7 +182,7 @@ verifica_botao(inicio) {
           return (
             <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
             <div className="d-flex justify-content-center">
-            <label> Próximo </label>
+            <label> Salvar Alterações </label>
             </div>     
             </Box>           
           );         
@@ -158,7 +191,7 @@ verifica_botao(inicio) {
 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
                   <div className="d-flex justify-content-center">
-                  <label> Próximo </label>
+                  <label> Salvar Alterações </label>
                   </div>     
             </Box>           
         );   
@@ -246,7 +279,7 @@ verifica_botao(inicio) {
 handleUploadCNH = files => {  
   console.log(JSON.stringify(' files - '+files[0].size, null, "    "));   
 
-  if (files[0].size <= 2047335) {
+ // if (files[0].size <= 2047335) {
   //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));   
       const uploadedCNH = files.map(file => ({
         file,
@@ -263,19 +296,22 @@ handleUploadCNH = files => {
       
       this.setState({    
         uploadedCNH: uploadedCNH,
+        camp_foto_CNH_url: uploadedCNH[0].preview,
         incluir_foto_1: true,
         foto1State: 'has-success',
         mensagem_foto1: ''
       });  
       this.verifica_botao(2);
- } else {  
+ //}
+ 
+ /*else {  
     this.setState({        
       incluir_foto_1: false,
       foto1State: '', 
       mensagem_foto1: 'Foto muito grande, favor adicionar outra '
     });  
     this.verifica_botao(2);
- }   
+ } */  
 
  // uploadedFiles.forEach(this.processUpload);
 }
@@ -310,11 +346,11 @@ verificar_menu(){
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -325,29 +361,47 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
+}
+
+handleOpenModalFoto(data) { 
+  this.setState({      
+    showModalFoto: true,    
+    foto: data,  
+  });      
+
+  //  console.log('url '+data);
+    
+}
+
+handleCloseModalFoto  () {
+  this.setState({       
+    showModalFoto: false,
+    foto: ''
+  });    
+ 
 }
 
 render(){  
@@ -355,14 +409,14 @@ render(){
   
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+            </div>                
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -373,22 +427,20 @@ return (
               <br/>
           </div> 
 
-            <div class="d-flex flex-column espacamento_caixa_texto">          
-              <div class="p-2">    
-              <div class="d-flex justify-content-start">
-                 <div>
-                 <Grid item xs>
-                    <Paper className="documento_motorista_cnh">
+            <div class="d-flex flex-column espacamento_caixa_texto">                       
+                <div class="p-2">           
+                <Grid item xs>
+                <Paper className="documento_motorista_cnh">
                        <div>
                         <div className="titulocnh"><stronger>CNH </stronger></div>                      
-                        <div className="descricaocnh">Carteira Nacional de Habilitação</div>                        
-                        <Container>                      
+                        <div className="descricaocnh">Carteira Nacional de Habilitação</div>                      
+                        <Container>   
+                   
                                 <div class="d-flex justify-content-start">
                                    <div>
                                    <Content>
-                                      {!!uploadedCNH.length && (
-                                          <FileList files={uploadedCNH} />
-                                       )}
+                                      <img src={this.state.camp_foto_CNH_url} variant="circle" 
+                                         className="foto_modal_motorista" onClick={()=>this.handleOpenModalFoto(this.state.camp_foto_CNH_url)} />                                                        
                                     </Content>   
                                    </div>
                                    <div>
@@ -397,41 +449,41 @@ return (
                                     </Content>                                            
                                    </div>
                                  </div>    
-                           </Container>   
-                          <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
+                           </Container>                                
+                            <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
                             <div className="d-flex justify-content-center">
                             <label> {this.state.mensagem_foto1} </label>
                             </div>     
-                          </Box>       
+                          </Box>                          
                         </div> 
                     </Paper>
-                  </Grid>
+                  </Grid>   
 
-                 </div>                                          
-               </div>   
-             </div>  
-               <div className="d-flex flex-column">               
-                  <div className="p-2 titulocnh"> 
-                    <Grid container spacing={2}>
-                      <Grid item xs>
-                           <Paper className="grid4">
-                          <strong> Requisitos de formato: </strong><br/>
-                                tamanho mínimo da imagem: 300x100 pixeis;
-                                formatos aceitáveis: JPG, JPEG, PNG;
-                                tamanho do arquivo não deve exceder 2 MB. 
-                           </Paper> 
-                      </Grid>
-                    </Grid>                  
-                  </div>
-              </div>
+                    <ReactModal 
+                        isOpen={this.state.showModalFoto}
+                        style={FotoStyles}
+                        contentLabel="Inline Styles Modal Example"                                  
+                        ><div className="editar_titulo_inclusao"> Foto / Documentos
+                            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalFoto()} className="botao_close_modal_foto_doc">
+                              <CloseOutlinedIcon />
+                            </IconButton></div>       
+                            <div className="container_alterado">
+                              <div className="d-flex justify-content">        
+                                <div>  
+                                <div class="d-flex flex-column espacamento_caixa_texto">              
+                                      <div class="p-2">  
+                                            <img src={this.state.foto} variant="circle" className="foto_size_modal"/>
+                                      </div>
+                                    </div>        
+                                </div>
+                              </div>
+                            </div>     
+                    </ReactModal>                     
+               </div>                             
+              
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>   
-    <div className="area_neutra">
-               <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
-              </Container>         
-        </div>                  
+    </div>           
    </div>  
   </div> 
 </div> 

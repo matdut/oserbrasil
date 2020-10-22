@@ -120,8 +120,7 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
     localStorage.setItem('logoperadorId', userId);      
 
-    console.log('perfil - '+localStorage.getItem('logperfil'))
-    console.log('logoperadorId - '+localStorage.getItem('logoperadorId'))
+    console.log('perfil - '+localStorage.getItem('logperfil'))    
 
     this.setState({      
       perfil: localStorage.getItem('logperfil'),
@@ -165,7 +164,7 @@ class empresarialComponent extends React.Component{
       } 
     })        
     .catch(error=>{
-      alert("Error de conexão  "+error)
+      alert("Error de conexão login/getSenha/ "+error)
     })     
   }
 
@@ -193,7 +192,7 @@ class empresarialComponent extends React.Component{
         }  
       })        
       .catch(error=>{
-        alert("Error de conexão  "+error)
+        alert("Error de conexão /operador/get/ "+error)
       })   
     }
 
@@ -629,36 +628,12 @@ sendUpdate(){
             api.get(`/emailOperador/getemail/${this.state.campEmail}`)
             .then(respemail=>{
               console.log(JSON.stringify(respemail.data, null, "    "));  
-              if (respemail.data.success==true) {                 
-
-                 if (respemail.data.data[0].efetuar_pagamentos == true) {
-
-                    let descricao = 'Efetua Pagamento';
-                    api.get(`/funcionalidade/get/${localStorage.getItem('logperfil')}/${descricao}`)
-                    .then(resp1=>{
-
-                     // const data = resp.data.data;
-                      if (resp1.data.success==true) {                           
-                        
-                        const funcionalidadesdata = {   
-                          funcionalidadeId: resp1.data.data[0].id, 
-                          logid: this.state.camplogid,
-                          perfilId: localStorage.getItem('logperfil'),
-                        } 
-                        console.log('funcionalidadesdata - '+JSON.stringify(funcionalidadesdata, null, "    "));
-                        
-                        api.post(`/permissao/create`,funcionalidadesdata);
-                      }  
-
-                    }).catch(error=>{
-                      alert("Erro verificar log  ")
-                    })                      
-
-                 } 
+              if (respemail.data.success==true) {   
+                 
                  if (respemail.data.data[0].gerenciar_eventos == true) {
-
-                  let descricao = 'Gerencia Eventos';
-                  api.get(`/funcionalidade/get/${localStorage.getItem('logperfil')}/${descricao}`)
+                 
+                  let descricao = 'Gerenciar Eventos';
+                  api.get(`/funcionalidade/get/8/${descricao}`)
                   .then(resp=>{
 
                     const data = resp.data.data;
@@ -667,21 +642,21 @@ sendUpdate(){
                       const funcionalidadesdata = {   
                         funcionalidadeId: resp.data.data[0].id, 
                         logid: this.state.camplogid,
-                        perfilId: localStorage.getItem('logperfil'),
+                        perfilId: resp.data.data[0].perfilId,
                       } 
                       api.post(`/permissao/create`,funcionalidadesdata);
                     }  
 
                   }).catch(error=>{
-                    alert("Erro verificar log  ")
+                    alert("Erro gerenciar_eventos  ")
                   })            
                
         
                 }
-                if (respemail.data.data[0].gerenciar_todos_eventos == true) {
+                if (respemail.data.data[0].monitorar_eventos == true) {
 
-                  let descricao = 'Gerencia Todos Eventos';
-                  api.get(`/funcionalidade/get/${localStorage.getItem('logperfil')}/${descricao}`)
+                  let descricao = 'Monitorar Eventos';
+                  api.get(`/funcionalidade/get/8}/${descricao}`)
                   .then(resp=>{
 
                     const data = resp.data.data;
@@ -690,21 +665,21 @@ sendUpdate(){
                       const funcionalidadesdata = {   
                         funcionalidadeId: resp.data.data[0].id, 
                         logid: this.state.camplogid,
-                        perfilId: localStorage.getItem('logperfil'),
+                        perfilId: resp.data.data[0].perfilId,
                       } 
                       api.post(`/permissao/create`,funcionalidadesdata);
                     }  
 
                   }).catch(error=>{
-                    alert("Erro verificar log  ")
+                    alert("Erro Gerencia Todos Eventos ")
                   })            
                
         
                 }
-                if (respemail.data.data[0].incluir_cartao == true) {
+                if (respemail.data.data[0].representante_legal == true) {
 
-                  let descricao = 'Inclui Cartão';
-                  api.get(`/funcionalidade/get/${localStorage.getItem('logperfil')}/${descricao}`)
+                  let descricao = 'Representante Legal';
+                  api.get(`/funcionalidade/get/8/${descricao}`)
                   .then(resp=>{
 
                     const data = resp.data.data;
@@ -713,66 +688,20 @@ sendUpdate(){
                       const funcionalidadesdata = {   
                         funcionalidadeId: resp.data.data[0].id, 
                         logid: this.state.camplogid,
-                        perfilId: localStorage.getItem('logperfil'),
+                        perfilId: resp.data.data[0].perfilId,
                       } 
                       api.post(`/permissao/create`,funcionalidadesdata);
                     }  
 
                   }).catch(error=>{
-                    alert("Erro verificar log  ")
-                  })            
-               
-        
-                } 
-                if (respemail.data.data[0].incluir_outors_operadores == true) {
-
-                  let descricao = 'Inclui Operadores';
-                  api.get(`/funcionalidade/get/${localStorage.getItem('logperfil')}/${descricao}`)
-                  .then(resp=>{
-
-                    const data = resp.data.data;
-                    if (data.length > 0) {
-                      
-                      const funcionalidadesdata = {   
-                        funcionalidadeId: resp.data.data[0].id, 
-                        logid: this.state.camplogid,
-                        perfilId: localStorage.getItem('logperfil'),
-                      } 
-                      api.post(`/permissao/create`,funcionalidadesdata);
-                    }  
-
-                  }).catch(error=>{
-                    alert("Erro verificar log  ")
-                  })            
-               
-        
-                } 
-                if (respemail.data.data[0].visualizar_eventos == true) {
-
-                  let descricao = 'Visualiza Eventos';
-                  api.get(`/funcionalidade/get/${localStorage.getItem('logperfil')}/${descricao}`)
-                  .then(resp=>{
-
-                    const data = resp.data.data;
-                    if (data.length > 0) {
-                      
-                      const funcionalidadesdata = {   
-                        funcionalidadeId: resp.data.data[0].id, 
-                        logid: this.state.camplogid,
-                        perfilId: localStorage.getItem('logperfil'),
-                      } 
-                      api.post(`/permissao/create`,funcionalidadesdata);
-                    }  
-
-                  }).catch(error=>{
-                    alert("Erro verificar log  "+error)
+                    alert("Erro Incluir / Alterar Cartão de Crédito ")
                   })            
                
         
                 }  
           //       api.post(`/emailOperador/delete/${resp.data.data[0].email}`, funcionalidadesdata);
                 console.log('delete - '+JSON.stringify(respemail.data.data[0].email, null, "    "));
-                api.delete(`/emailOperador/delete/${respemail.data.data[0].email}`)                
+                api.delete(`/emailOperador/deleteEmail/${respemail.data.data[0].email}`)                
 
               }
               }).catch(error=>{
@@ -783,9 +712,11 @@ sendUpdate(){
               this.props.history.push(`/listar`);
             } else if (localStorage.getItem('logperfil') == 0) {          
               localStorage.setItem('logperfil', 8);  
+              localStorage.setItem('logid', localStorage.getItem('logoperadorId'));                
               this.props.history.push('/area_operador');  
             } else if (localStorage.getItem('logperfil') == 8) {          
               localStorage.setItem('logperfil', 8);  
+              localStorage.setItem('logid', localStorage.getItem('logoperadorId'));                
               this.props.history.push('/area_operador');  
             }                    
 }  

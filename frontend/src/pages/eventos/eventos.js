@@ -40,13 +40,27 @@ const andamento_cadastro = localStorage.getItem('logprogress');
 //var sendmail = require('../sendmail')({silent: true})
 
 const customStyles = {
+  overlay: {    
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
   content : {
-    top                   : '40%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    top                    : '0px',
+    left                   : '60%',    
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '100%',    
+    width                  : '40%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
   }
 };
 

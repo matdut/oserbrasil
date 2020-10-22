@@ -188,21 +188,21 @@ class menu_motoristaComponent extends React.Component  {
      <i class="fas fa-car-alt"></i>
      </a>  
   </LightTooltip>   
-  </div>    
+  </div>  
+  <div className="item teste">
+      <LightTooltip title="Cartão Crédito" placement="top">
+        <a href={`/cartao_credito/list`}>                 
+        <i class="fas fa-credit-card"></i>
+        </a>  
+      </LightTooltip>    
+    </div>  
   <div class="item teste">
   <LightTooltip title="Meus Ganhos" placement="top">
      <a href="#">
        <i className="fas fa-fw fa-th"></i>
      </a>  
   </LightTooltip>   
-  </div>  
-  <div class="item teste">
-  <LightTooltip title="Ajuda" placement="top">
-     <a href="#">
-       <i className="fas fa-fw fa-th"></i>
-     </a>  
-  </LightTooltip>   
-  </div>    
+  </div>      
   <div className="item teste">
      <LightTooltip title="Sair" placement="top">
       <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
@@ -212,7 +212,7 @@ class menu_motoristaComponent extends React.Component  {
     
   <div className="item_sem_borda versao_sistema"> 
         <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-       <div className="data_versao"> 07/09/20 v1.8.0 </div>
+       <div className="data_versao"> 30/09/20 v2.0.0 </div>
      </div>  
  </div>                                       
                           

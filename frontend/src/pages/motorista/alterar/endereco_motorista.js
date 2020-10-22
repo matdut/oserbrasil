@@ -30,6 +30,7 @@ const cep_empresa = localStorage.getItem('logcep');
 //const userId = localStorage.getItem('logid');
 const dataendereco = localStorage.getItem('logdataCliente');
 const buscadorcep = require('buscadorcep');
+var dateFormat = require('dateformat');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -44,6 +45,18 @@ class empresarialComponent extends React.Component{
       campComplemento:'',
       campNumero:'',
       campCidade:'',
+      campCarro: '',
+      campModelo: '',
+      campCarroId: '',
+      campModeloId: '',            
+      camp_foto_CRVL_url: '',
+      camp_foto_CNH_url: '',
+      camp_foto_url: '',
+      campSeguradoraId: '',
+      campPlaca: '',
+      campAnodut: '',            
+      campAno: '',
+      campCor: '',    
       campEstadoId:0,
       campNome: '',
       perfillog: null,
@@ -51,6 +64,12 @@ class empresarialComponent extends React.Component{
       inicio: 1,
       estado_selecionado: '',
       progresso: '',    
+      erro_cep: false,
+      erro_numero: false,
+      erro_complemento: false,
+      validacao_cep: false,
+      validacao_numero: false,
+      validacao_complemento: false,
       mensagem_cep: '',  
       mensagem_endereco: '',  
       mensagem_numero: '',  
@@ -125,6 +144,8 @@ class empresarialComponent extends React.Component{
     if (localStorage.getItem('logid') !== 0) { 
       this.busca_cep_banco();    
     }
+
+  //  this.valida_motorista();
   }
 
   
@@ -156,10 +177,8 @@ class empresarialComponent extends React.Component{
             campNome: res.data.data[0].nome,  
             campCep: res.data.data[0].cep,   
             campCnpj: res.data.data[0].cnpj,   
-            inicio: 2
-          })            
-               
-          
+            inicio: 2,            
+          })    
 
           if (this.state.campCnpj == ''){
             this.setState({ 
@@ -209,12 +228,18 @@ class empresarialComponent extends React.Component{
 
          if (this.state.campCep !== "" ) {
             validate.cepState = 'has-success'      
+            this.setState({ 
+              validacao_cep: true
+            })  
           } 
           if (this.state.campEndereco !== "") {
             validate.enderecoState = 'has-success'      
           } 
           if (this.state.campNumero !== "") {
             validate.numeroState = 'has-success'      
+            this.setState({ 
+              validacao_numero: true
+            }) 
           }        
           if (this.state.campBairro !== "") {
             validate.bairroState = 'has-success'      
@@ -224,6 +249,9 @@ class empresarialComponent extends React.Component{
           }        
           if (this.state.campComplemento !== "")  {
             validate.complementoState = 'has-success'      
+            this.setState({ 
+              validacao_complemento: true
+            })  
           }
           if (this.state.campEstadoId !== 0) {
             validate.estadoState = 'has-success'      
@@ -321,6 +349,7 @@ cidadechange(e) {
 
 limpar_endereco() {
   this.setState({ 
+    campCep: '',
     campEndereco: "",
     campNumero: "",
     campComplemento:"",
@@ -329,6 +358,18 @@ limpar_endereco() {
     campEstadoId:0,
     estadoSelecionado: "",   
     campBairro:"", 
+    campCarro: '',
+      campModelo: '',
+      campCarroId: '',
+      campModeloId: '',            
+      camp_foto_CRVL_url: '',
+      camp_foto_CNH_url: '',
+      camp_foto_url: '',
+      campSeguradoraId: '',
+      campPlaca: '',
+      campAnodut: '',            
+      campAno: '',
+      campCor: '', 
     mensagem_cep: '',  
     mensagem_endereco: '',  
     mensagem_numero: '',  
@@ -367,7 +408,8 @@ limpar_endereco() {
             validate.bairroState = ''  
             validate.estadoState = ''  
             validate.numeroState = ''  
-            validate.complementoState = ''  
+            validate.complementoState = ''            
+
 
             if (res.data.data.length !== 0) {
               //console.log(JSON.stringify(res.data.data.length, null, "    "));          
@@ -400,7 +442,9 @@ limpar_endereco() {
                     campBairro: endereco.bairro,
                     campEstadoId: res.data.data[0].id, // endereco.uf,           
                     estado_selecionado: endereco.uf,
-                    campComplemento: endereco.complemento
+                    campComplemento: endereco.complemento,
+                    validacao_numero: false,
+                    validacao_complemento: false,
                   }); 
 
                   //console.log(JSON.stringify(this.state, null, "    "));
@@ -409,6 +453,8 @@ limpar_endereco() {
                   validate.cepState = 'has-danger'
                   this.setState({             
                       validate,
+                      erro_cep: true,
+                      validacao_cep: false,
                       cep_encontrado: '',
                       mensagem_cep: 'O cep não encontrado', 
                       campCep: "",
@@ -426,6 +472,8 @@ limpar_endereco() {
                     this.setState({             
                         validate,
                         cep_encontrado: '',
+                        erro_cep: true,
+                        validacao_cep: false,
                         mensagem_cep: 'O cep não encontrado', 
                        // campCep: "",
                         campEndereco: "",
@@ -451,6 +499,97 @@ limpar_endereco() {
 
 };
 
+valida_motorista() {
+  const { validate } = this.state;  
+  localStorage.setItem('logPendencia', 0);
+  api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+  .then(res=>{
+      console.log(JSON.stringify(res.data, null, "    ")); 
+      if (res.data.data.length > 0) {          
+
+        this.setState({            
+          campCarroId: res.data.data[0].marcaId,
+          campModeloId: res.data.data[0].modeloId,            
+          camp_foto_CRVL_url: res.data.data[0].foto_CRVL_url,
+          campSeguradoraId: res.data.data[0].seguradoraId,
+          campPlaca: res.data.data[0].placa,
+          campAnodut: res.data.data[0].anodut,            
+          campAno: res.data.data[0].ano,
+          campCor: res.data.data[0].cor,            
+        })            
+        api.get(`/motorista/get/${res.data.data[0].motoristaId}`)
+        .then(res=>{
+        //  console.log(JSON.stringify(res.data, null, "    ")); 
+          if (res.data.success) {
+             
+            this.setState({               
+              campStatusId: res.data.data[0].statusId,
+              campCNH: res.data.data[0].numero_carteira,   
+              campData_CNH: dateFormat(res.data.data[0].data_validade, "UTC:dd/mm/yyyy"),  
+              camp_foto_CNH_url: res.data.data[0].foto_CNH_url,
+              camp_foto_url: res.data.data[0].foto_url,                 
+            })                   
+            
+            if (this.state.campCarroId == null || this.state.campCarroId == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campModeloId == null || this.state.campModeloId == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.camp_foto_CRVL_url == null || this.state.camp_foto_CRVL_url == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campSeguradoraId == null || this.state.campSeguradoraId == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campPlaca == null || this.state.campPlaca == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campAnodut == null || this.state.campAnodut == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campAno == null || this.state.campAno == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campCor == null || this.state.campCor == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campCNH == null || this.state.campCNH == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campData_CNH == null || this.state.campData_CNH == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.camp_foto_CNH_url == null || this.state.camp_foto_CNH_url == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.camp_foto_url == null || this.state.camp_foto_url == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campCep == null || this.state.campCep == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campNumero == null || this.state.campNumero == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+            if (this.state.campComplemento == null || this.state.campComplemento == "") {
+              localStorage.setItem('logPendencia', 1)
+            }
+
+          } 
+
+        })        
+        .catch(error=>{
+          alert("Error de conexão motorista "+error)
+        })       
+
+      }  
+
+    })        
+    .catch(error=>{
+      alert("Error de conexão carrega_veiculo "+error)
+    })   
+  }
 
 cep_preenchido(cep) {    
   const base = cep;
@@ -550,8 +689,7 @@ verificaCep(e) {
         validate.bairroState = ''          
         validate.cidadeState = ''     
         validate.estadoState = ''
-        validate.enderecoState = ''
-        validate.cepState = 'has-danger'
+        validate.enderecoState = ''    
         this.setState({           
           inicio: 1,    
           erro_cep: false,
@@ -565,8 +703,7 @@ verificaCep(e) {
 
  verificaNumero(e) {
   const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.numeroState = 'has-danger'
+     if (e.target.value.trim().length == 0) {     
       this.setState({ 
         validate,
         inicio: 1,   
@@ -579,11 +716,9 @@ verificaCep(e) {
 
  verificaComplemento(e) {
   const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.complementoState = 'has-danger'
+     if (e.target.value.trim().length == 0) {      
       this.setState({ 
-        validate,
-        inicio: 1,  
+        validate,     
         erro_complemento: false,
         validacao_complemento: false,                
         mensagem_complemento: ''  
@@ -594,8 +729,7 @@ verificaCep(e) {
 validaNumeroChange(e){
   const { validate } = this.state
   
-    if (e.target.value.trim().length == 0) {
-      validate.numeroState = 'has-danger'
+    if (e.target.value.trim().length == 0) {     
       this.setState({ 
           inicio: 1,
           erro_numero: false,
@@ -608,8 +742,8 @@ validaNumeroChange(e){
         inicio: 2,
         erro_numero: false,
         validacao_numero: true,     
-      })
-     
+      })      
+      
     }  
     this.setState({ validate })   
    
@@ -617,22 +751,17 @@ validaNumeroChange(e){
 validaComplementoChange(e){
   const { validate } = this.state
   
-    if (e.target.value.trim().length == 0) {
-      validate.complementoState = 'has-danger'
-      this.setState({ 
-        inicio: 1,
+    if (e.target.value.trim().length == 0) {     
+      this.setState({         
         erro_complemento: false,
         validacao_complemento: false,     
         mensagem_complemento: '' 
       })  
-    } else if (e.target.value.trim().length > 0) {
-      validate.complementoState = 'has-success'       
+    } else if (e.target.value.trim().length > 0) {    
       this.setState({      
         erro_numero: false,
-        validacao_numero: true,          
-        inicio: 2
-      })     
-      this.verifica_botao(this.state.inicio) 
+        validacao_numero: true,                
+      })          
     }  
     this.setState({ validate })
     
@@ -640,9 +769,8 @@ validaComplementoChange(e){
 validaCepChange(e){
   const { validate } = this.state
   //console.log('teste cep '+e.target.value);
-    if (e.target.value.length < 9) {
-      this.limpar_endereco()
-      validate.cepState = 'has-danger'
+    if (e.target.value.length == 0) {
+      this.limpar_endereco()      
       validate.numeroState = ''
       validate.complementoState = ''
       validate.enderecoState = ''
@@ -651,16 +779,18 @@ validaCepChange(e){
       validate.cidadeState = ''
       this.setState({ 
          inicio: 1,
-         erro_cep: true,
+         erro_cep: false,
          validacao_cep: false,     
-         mensagem_cep: 'CEP inválido' 
+         validacao_numero: false,
+         validacao_complemento: false,
+         mensagem_cep: '' 
       })  
     } else if (e.target.value.length == 9) {      
             validate.cepState = 'has-success'                  
             this.setState({ 
               busca_cep: e.target.value,
-              erro_numero: false,
-              validacao_numero: true,     
+              erro_cep: false,
+              validacao_cep: true,     
               mensagem_cep: ''                                            
             })
             
@@ -682,6 +812,9 @@ loadFillData(){
 
 verifica_botao(inicio) {
   const { validate } = this.state
+
+  console.log('Botao verificar '+JSON.stringify(this.state, null, "    ")); 
+
   if (inicio == 1) {
     return (
 
@@ -694,10 +827,7 @@ verifica_botao(inicio) {
   } else {
   
    // console.log(JSON.stringify(this.state, null, "    "));
-    if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
-      && validate.cidadeState == 'has-success' && validate.complementoState == 'has-success'
-      && validate.enderecoState == 'has-success' && validate.estadoState == 'has-success'
-      && validate.numeroState == 'has-success') {
+   if (this.state.validacao_cep == true && this.state.validacao_numero == true) {
 
           return (
             <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
@@ -760,6 +890,17 @@ sendUpdate(){
     cep: this.state.campCep,    
   }          
 
+     if (localStorage.getItem('logPendencia') == 0) {
+      const data1 = {
+        email: this.state.campEmail,  
+        perfilId: 3,
+        statusId: 16
+      }          
+        api.put(`/motorista/update/${localStorage.getItem('logid')}`, data1)      
+
+        api.put(`/login/update/${localStorage.getItem('logid')}`,data1)
+     }
+
         console.log(JSON.stringify(datapost, null, "    ")); 
         api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
         .then(response=>{
@@ -788,11 +929,13 @@ mostrar_endereco() {
 
   if (this.state.campEndereco !== "") {
   return (
-    <CardBody className="endereco_motorista_left card_mot_endereco">
-        <div>Endereço</div>
-        {this.state.campEndereco} <br/>
-        {this.state.campBairro+' , '+this.state.campCidade+' / '+this.state.estado_selecionado}        
-    </CardBody> 
+    <div> 
+        <div className="titulo_endereceo_alterar">Endereço</div>             
+        <div className="descricao_endereco_endereço">
+          {this.state.campEndereco} <br/>
+          {this.state.campBairro+' , '+this.state.campCidade+' / '+this.state.estado_selecionado} 
+        </div> 
+    </div>     
   );
 
   } else {
@@ -805,11 +948,11 @@ mostrar_endereco() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -820,30 +963,31 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 verificar_menu_lateral() {
 
   if (localStorage.getItem('logperfil') == 1) {
@@ -861,14 +1005,14 @@ render(){
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+            </div>           
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -939,7 +1083,9 @@ return (
                               this.numerochange(e)                       
                               this.validaNumeroChange(e)
                             }}                          
-                            maxlength="9"     
+                            inputProps={{
+                              maxLength: 8,
+                            }}       
                           endAdornment={
                             <InputAdornment position="end">
                                 {this.state.validacao_numero? <CheckIcon />: ''}
@@ -970,7 +1116,9 @@ return (
                               this.complementochange(e)                       
                               this.validaComplementoChange(e)
                             }}                                  
-                            maxlength="9"     
+                            inputProps={{
+                              maxLength: 50,
+                            }}          
                           endAdornment={
                             <InputAdornment position="end">
                                 {this.state.validacao_complemento? <CheckIcon />: ''}
@@ -987,12 +1135,7 @@ return (
               </div>                                                    
             </div>      
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>   
-    <div className="area_neutra">
-               <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
-              </Container>         
-        </div>                   
+    </div>       
    </div>  
   </div>  
 </div> 

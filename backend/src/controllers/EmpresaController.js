@@ -129,9 +129,54 @@ controllers.get = async (req, res) => {
     include: [
       { 
         model: Cliente,       
-        required: true
+        required: false
       }],
    where: { id: id}
+  })
+  .then( function(data){
+     if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+    
+  })
+  .catch(error => {
+     return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getEmail = async (req, res) => {
+  const { email } = req.params;
+  await Empresa.findAll({    
+    include: [
+      { 
+        model: Cliente,       
+        required: true,
+        where: { email: email}
+      }]
+   //where: { id: id}
+  })
+  .then( function(data){
+     if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+    
+  })
+  .catch(error => {
+     return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getbuscaempresacnpj = async (req, res) => {
+  const { cnpj } = req.params;
+
+  await Empresa.findAll({       
+   where: { cnpj: cnpj }
   })
   .then( function(data){
      if (data.length > 0) {
@@ -203,6 +248,32 @@ controllers.listExcluidos = async (req,res) => {
     return res.json({success:false, message: error});
   }) 
 }
+
+controllers.listarIncompletos = async (req,res) => {
+  await Empresa.findAll({   
+   include: [
+     { 
+      model: Cliente,
+          where: { 
+            statusId: 6
+        },    
+       required: true,  
+       include: Status  
+     }]    
+  })
+  .then( function (data){
+
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }        
+      
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  }) 
+}
 controllers.list = async (req,res) => {
 /*
   await sequelize.query(
@@ -216,13 +287,13 @@ controllers.list = async (req,res) => {
   )
   */
   await Empresa.findAll({   
-   select: "",  
+   //select: "SUBSTRING(empresa.razao_social, 1, 10) razao_teste",  
    include: [
      { 
       model: Cliente,
           where: { 
             statusId: {
-              [Op.notIn]: [7]             
+              [Op.notIn]: [6,7]             
             }
         },    
        required: true,  

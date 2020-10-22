@@ -35,13 +35,13 @@ export const FileInfo = styled.div`
 `;
 
 export const Preview = styled.div`
-  width: 223px;
-  height: 115px;
-  margin-top: 5px;
+  width: 193px;
+  height: 103px;
+  margin-top: 15px;
   border-radius: 1px; 
   background-image: url(${props => props.src});
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 40% 40%;  
-  margin-left: -268px;
+  margin-left: -251px;
 `;

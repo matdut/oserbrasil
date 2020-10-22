@@ -5,6 +5,7 @@ const ClienteController = require('../controllers/ClienteController');
 
 router.get('/list',ClienteController.list);
 router.get('/listarExcluidos', ClienteController.listarExcluidos);
+router.get('/listarIncompletos', ClienteController.listarIncompletos);
 router.post('/create',ClienteController.create);
 router.get('/get/:id', ClienteController.get);
 router.get('/findstatus/:status/:perfil', ClienteController.findstatus);

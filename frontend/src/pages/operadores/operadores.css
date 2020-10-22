@@ -1,3 +1,12 @@
+body {
+  margin: 0px;
+  font: normal normal medium 22px Effra !important; 
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  overflow-x: hidden;  
+  overflow-y: hidden; 
+}
+
 .area_direita {
   background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
   width: 521px !important;  
@@ -23,6 +32,68 @@
   line-height: 52px;    
 }
 
+.input_data_text {
+  width: 240px !important;    
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
+
+.posicao_1 {
+  padding-left: 20px !important;
+}
+
+.posicao_2 {
+  padding-left: 0px !important;
+}
+
+.label_modal_operador {  
+  font: normal normal medium Effra !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;     
+  padding-left: 20px !important;
+  width: 250px !important;
+}
+
+.label_telefone_modal_operador {  
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;     
+  padding-left: 20px !important;
+  width: 250px !important;
+}
+
+.select_data_modal {   
+  margin-top: 0px !important;
+  font: normal normal medium Effra !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;      
+  width: 250px !important;
+}
+
+.label_data_text_modal { 
+  font: normal normal bold 10px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+  padding-left: 20px !important;
+}
+
+.data_text_modal {
+  width: 240px !important;    
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;   
+}
+
 .imagem {
   margin-top: 0px;
   width: 24px;
@@ -39,6 +110,10 @@
   width: 580px !important;
   font-size: 44px !important;   
 }  
+.espacamento_caixa_convite{
+  margin-top: 15px;
+  margin-left: 128px;
+}
 
 .espacamento_caixa_texto { 
   margin-top: 15px;
@@ -234,4 +309,106 @@
   text-align: left;
   letter-spacing: NaNpx;
   opacity: 1;
+}
+
+.checkbox_modal {
+  font: Bold 10px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+}
+
+.checkbox_direito_operador {
+  text-align: left !important;
+  font: Bold 10px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  width: 220px !important;
+  line-height: 6px;  
+}
+
+.MuiTypography-body1 {
+  font: Bold 14px Effra !important;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+.checkbox_direito_ultimo_operador {
+  text-align: left !important;
+  font: Bold 10px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  width: 280px !important;
+  line-height: 6px;  
+}
+
+.checkbox_esquerdo_operador {
+  text-align: left !important;
+  font: Bold 10px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  width: 280px !important;
+  line-height: 6px;  
+}
+
+.cnpj_altura {
+  line-height: 6px;  
+}
+
+.data_cnpj_lista_modal {
+  text-align: left !important;
+  font: normal normal medium 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;  
+  padding-left: 20px !important;   
+}
+
+
+.label_cnpj_lista_modal {  
+  font: normal normal medium 10px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;     
+  padding-left: 25px !important;
+}
+
+
+/* permissoes */
+
+.checkbox_titulo {
+  text-align: left !important;
+  font: normal normal Bold Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  width: 200px !important;
+  font-size: 14px !important;   
+  font-weight: bold;
+ /* line-height: 6px;   */
+}
+
+.checkbox_subtitulo {
+  text-align: left !important;  
+  font: normal normal normal Effra;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  width: 240px !important;
+  font-size: 14px !important;   
+ /* line-height: 6px;   */
+}
+
+.checkbox_descricao{
+  text-align: left !important;
+  font: normal normal medium Effra !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  font-size: 12px !important;   
+  width: 450px !important;
+}
+
+.coluna_modal_separacao_d{
+  width: 440px !important;
+}
+
+.coluna_modal_separacao_e{
+  width: 40px !important;
 }

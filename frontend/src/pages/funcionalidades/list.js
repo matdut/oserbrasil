@@ -47,22 +47,22 @@ const perfil = localStorage.getItem('logperfil');
 const nome = localStorage.getItem('lognome');  
 
 const customStyles = {
-  overlay: {
-    backgroundColor: 'papayawhip',
+  overlay: {    
     position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '60%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-    width                  : '560px',    
+    width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -228,7 +228,7 @@ class funcionalidadesComponent extends React.Component  {
         if (validate.descricaoState == 'has-success') { 
             return (
         
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
                       <div className="d-flex justify-content-center">
                       <label> Salvar Alterações </label>
                       </div>     
@@ -252,13 +252,13 @@ class funcionalidadesComponent extends React.Component  {
     return (
       <div>               
           <Menu_administrador />  
-          <div className="titulo_admministrador">
+          <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                 <h3><strong>Lista de Funcionalidades</strong></h3>
+                 <strong>Lista de Funcionalidades</strong>
               </div>      
             </div>
       <div className="container_modal_list">                                         
-          <div style={{ maxWidth: '95%' }}>    
+      <div style={{ maxWidth: '350px !important', maxHeight: '95% !important', height: '95% !important' }}>    
                <MaterialTable          
                             title=""
                             columns={[
@@ -292,18 +292,21 @@ class funcionalidadesComponent extends React.Component  {
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
                               searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              paginationPosition: 'bottom',  
+                              //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
-                              exportFileName: 'Rel_adm_valores_tarifarios',
+                              exportFileName: 'Rel_adm_funcionalidades',
                               search: true,     
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',    
+                              paging: false,          
+                              maxBodyHeight: 520,
+                          //    headerStyle: { position: 'sticky', top: 0 },
                                 /*exportButton: true, */            
                               exportButton: { pdf: true },      
                               actionsColumnIndex: 4,
-                              pageSize: 7,
-                              pageSizeOptions: [7]  
+                              //pageSize: 7,
+                              pageSizeOptions: [0]  
                             }}
                             actions={[
                               {             

@@ -380,19 +380,15 @@ class empresarialComponent extends React.Component{
        }          
    }
   
-  verificaTelefone1(e) {
-    console.log('Keypress - '+this.state.campTelefone1)
-    console.log('Keypress length - '+this.state.campTelefone1.length)
-    console.log('Keypress length - '+e.target.value.length)
+  verificaTelefone1(e) {   
     const { validate } = this.state
-       if (e.target.value.length < 15) {          
-        validate.telefone1State = 'has-danger'
+       if (e.target.value.length < 15) {              
         this.setState({ 
           validate,
           inicio: 1,
-          erro_telefone: true,          
+          erro_telefone: false,          
           validacao_telefone: false,
-          mensagem_telefone1: 'O campo Telefone é obrigatório.'
+          mensagem_telefone1: ''
          })      
        } else {       
 
@@ -430,12 +426,11 @@ class empresarialComponent extends React.Component{
    verificaDataNascimentoonblur() {
       const { validate } = this.state
          if (this.state.campData_nascimento.length == 0) {
-          validate.datanascimentoState = 'has-danger'
           this.setState({ 
             validate,
-            erro_datanascimento: true,   
+            erro_datanascimento: false,   
             validacao_datanascimento: false,    
-            mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.'  
+            mensagem_data_nascimento: ''  
            })      
          } else if (this.state.campData_nascimento.length == 10) { 
           validate.datanascimentoState = 'has-success' ;        
@@ -459,18 +454,19 @@ class empresarialComponent extends React.Component{
     
 
    verificaTelefone1onfocus(e){   
-    /*const { validate } = this.state
+    const { validate } = this.state
     validate.telefone1State = ''
        this.setState({ 
             validate,
+            erro_telefone: false,
+            validacao_telefone: false, 
             mensagem_telefone1: ''  
-        })                    */
+        })                    
    } 
 
   verificaEmail(e){   
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.emailState = 'has-danger'
+    if (e.target.value.length == 0) {      
       this.setState({ 
         validate,
         erro_email: false,
@@ -489,8 +485,7 @@ class empresarialComponent extends React.Component{
   } 
   verificaNome() {
     const { validate } = this.state
-       if (this.state.campNome.length == 0) {
-        validate.nomeState = 'has-danger'
+       if (this.state.campNome.length == 0) {      
         this.setState({ 
           validate,
           erro_nome: false,
@@ -510,8 +505,7 @@ class empresarialComponent extends React.Component{
    }
   verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {
-        validate.datanascimentoState = 'has-danger'
+       if (this.state.campData_nascimento.length == 0) {  
         this.setState({ 
           validate,
           erro_datanascimento: false,
@@ -963,7 +957,7 @@ return (
                         variant="outlined"
                         value={this.state.campNome}
                         onBlur={this.verificaNome}
-                        onFocus={this.verificaNomeonfocus}                       
+                        onFocus={this.verificaNomeonfocus}                                               
                       onChange={ (e) => {
                         this.nomeChange(e)                       
                         this.validaNomeChange(e)

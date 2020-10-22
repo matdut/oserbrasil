@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 const FileList = ({ files, onDelete }) => (
   
   <Container>       
@@ -29,8 +30,9 @@ const FileList = ({ files, onDelete }) => (
     <li key={uploadedFile.id}>
       <FileInfo>         
          <a
-            href={uploadedFile.url}
+            href={uploadedFile.url}            
             target="_blank"
+
             rel="noopener noreferrer"
           >
              <Preview src={uploadedFile.preview} className="foto_borda" />                    

@@ -48,6 +48,18 @@ class empresarialComponent extends React.Component{
       campStatusId: '',
       inicio: 1,   
       perfil: '',
+      campCarroId: 0,
+      campCarro: '',
+      campCarroNovo: '',
+      campModeloId: 0,
+      campModelo: '',
+      campModeloNovo: '',
+      campPlaca: "",
+      campAnodut: '',
+      campAno: "",
+      campCor: "",
+      campNome: "",
+      campApolice: "",
       validacao_inicial: 2, 
       showPassword: false,
       validaSenha: false,
@@ -182,7 +194,8 @@ class empresarialComponent extends React.Component{
         if (res.data.success) {
            
           this.setState({             
-            campNome: res.data.data[0].nome,           
+            campNome: res.data.data[0].nome,     
+            campStatusId: res.data.data[0].statusId,      
             inicio: 1       
           })  
           
@@ -203,6 +216,18 @@ class empresarialComponent extends React.Component{
     this.state = {       
       campSenha:"",      
       campSenhaTeste:"",    
+      campCarroId: 0,
+      campCarro: '',
+      campCarroNovo: '',
+      campModeloId: 0,
+      campModelo: '',
+      campModeloNovo: '',
+      campPlaca: "",
+      campAnodut: '',
+      campAno: "",
+      campCor: "",
+      campNome: "",
+      campApolice: "",
       inicio: 1,    
       mensagem_senha: '',  
       mensagem_confirm_senha: '',       
@@ -629,7 +654,7 @@ class empresarialComponent extends React.Component{
 sendUpdate(){        
  
   const datapost = {  
-    statusId: 1,  
+    statusId: this.state.statusId,  
   }       
 
   if (localStorage.getItem('logperfil') == 0) {
@@ -639,13 +664,13 @@ sendUpdate(){
   const logindata = {  
     perfilId: localStorage.getItem('logperfil'),
     senha: this.state.campSenha,     
-    statusId: 5
+    statusId: this.state.statusId
   }  
 
   api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
 
-  console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
-  console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
+  //console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
+  //console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
   
         api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
         
@@ -728,7 +753,7 @@ verifica_botao(inicio) {
   if (inicio == 1) {
     return (
 
-      <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
               <div className="d-flex justify-content-center">
               <label> Salvar Alterações </label>
               </div>     
@@ -743,7 +768,7 @@ verifica_botao(inicio) {
           if (this.state.campSenha !== '' && this.state.campSenhaTeste !== '' 
               && this.state.campSenha == this.state.campSenhaTeste) {
             return (
-              <Box bgcolor="error.main" color="error.contrastText" className="botao_cadastro_senha_motorista_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
+              <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
               <div className="d-flex justify-content-center">
               <label> Salvar Alterações </label>
               </div>     
@@ -752,7 +777,7 @@ verifica_botao(inicio) {
           } else {
             return (
 
-              <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_senha_motorista"  p={2} >
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
                       <div className="d-flex justify-content-center">
                       <label> Salvar Alterações </label>
                       </div>     
@@ -868,11 +893,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -883,43 +908,44 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 
 render(){  
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+            </div>                 
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />

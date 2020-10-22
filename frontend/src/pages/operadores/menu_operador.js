@@ -162,13 +162,13 @@ class menu_clienteComponent extends React.Component  {
       </a>  
   </LightTooltip>    
   </div>
-  <div class="item teste">
-  <LightTooltip title="#" placement="top">
-     <a href="#">
-       <i className="fas fa-fw fa-th"></i>
-     </a>  
-  </LightTooltip>   
-  </div>
+  <div className="item teste">    
+       <LightTooltip title="Eventos" placement="top">
+            <a href={"/lista_evento/list"}>           
+            <i class="fas fa-bell"></i>
+            </a>  
+        </LightTooltip>    
+    </div>  
   <div className="item teste">
      <LightTooltip title="Sair" placement="top">
       <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
@@ -178,7 +178,7 @@ class menu_clienteComponent extends React.Component  {
     
   <div className="item_sem_borda versao_sistema"> 
         <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-       <div className="data_versao"> 07/09/20 v1.8.0 </div>
+       <div className="data_versao"> 30/09/20 v2.0.0 </div>
      </div>  
  </div>                                       
                           

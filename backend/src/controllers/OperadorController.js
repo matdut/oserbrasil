@@ -8,6 +8,7 @@ var sequelize = require('../model/database');
 var Operador = require('../model/Operador');
 var Status = require('../model/Status');
 var Empresa = require('../model/Empresa');
+var Permissao = require('../model/Permissoes');
 //var Role = require('../model/Role');
 
 // para migrar por si no tiene tablas
@@ -126,7 +127,7 @@ controllers.getOperadorCpf = async (req, res) => {
       ],
       where: { 
         statusId: {
-          [Op.notIn]: [7]             
+          [Op.notIn]: [6,7]             
         }
        }    
     })
@@ -158,6 +159,25 @@ controllers.getOperadorCpf = async (req, res) => {
     })
   
   }
+
+  controllers.listarIncompletos = async (req,res) => {
+    await Operador.findAll({       
+      include: [
+        { model: Status }, 
+        { model: Empresa, required: true}
+      ],
+      where: { 
+       statusId: 6                    
+      }    
+    })
+    .then( function(data){
+      return res.json({success:true, data:data});
+    })
+    .catch(error => {
+       return res.json({success:false});
+    })
+  
+  }
 controllers.list = async (req,res) => {
   await Operador.findAll({       
     include: [
@@ -166,7 +186,7 @@ controllers.list = async (req,res) => {
     ],
     where: { 
      statusId: {
-       [Op.notIn]: [7]             
+       [Op.notIn]: [6,7]             
      }
     }    
   })

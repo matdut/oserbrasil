@@ -117,7 +117,7 @@ border-left: 10px !important;
 .MuiTableCell-body{  
   display: table-cell !important;
   padding: 0px !important;
-  font: normal normal bold 16px Effra !important;  
+  font: normal normal bold 14px Effra !important;  
   color: #0F074E !important;  
   line-height: 1.43 !important;
   border-bottom: 1px solid rgba(224, 224, 224, 1) !important;
@@ -138,4 +138,65 @@ border-left: 10px !important;
 
 .progresso_circular {
   
+}
+
+.titulo_area {
+  text-align: left !important;
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  font-weight: bold !important;
+  opacity: 1;
+  margin-left: 80px !important;
+}
+
+
+.titulo_area_descricao {
+   margin-top: 10px !important;
+   margin-left: 80px !important;
+   letter-spacing: 0px !important;
+}
+
+.area_evento {
+  width: 56px !important;
+  height: 35px !important;
+  font: normal normal normal Effra !important;
+  font-size: 16px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;
+  margin-left: 10px !important;
+}
+
+.area_evento_2 {
+  margin-left: 100px !important;
+  width: 50px !important;
+  height: 35px !important;
+  font: normal normal normal Effra !important;
+  font-size: 16px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;
+}
+
+.area_evento_3 {
+  margin-left: 100px !important;
+  width: 56px !important;
+  height: 35px !important;
+  font: normal normal normal Effra !important;
+  font-size: 16px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;
+}
+
+.posicao_mensagem {
+  margin-top: 100px !important;
+  margin-left: 100px !important;  
+  width: 356px !important;
+}
+
+.resolucao_tela {
+  max-width: '100%';   
 }

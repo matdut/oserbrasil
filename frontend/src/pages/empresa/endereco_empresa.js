@@ -140,7 +140,7 @@ class empresarialComponent extends React.Component{
 
     if (this.state.campEndereco !== "") {
     return (
-      <div> 
+      <div className="endereco_empresa"> 
           <div className="titulo_endereceo_alterar">Endereço</div>             
           <div className="descricao_endereco_endereço">
             {this.state.campEndereco} <br/>
@@ -651,11 +651,9 @@ verificaCep(e) {
 
  verificaComplemento(e) {
   const { validate } = this.state
-     if (e.target.value.trim().length == 0) {
-      validate.complementoState = ''
+     if (e.target.value.trim().length == 0) {   
       this.setState({ 
-        validate,
-        inicio: 1,            
+        validate,      
         erro_complemento: false,
         validacao_complemento: false, 
         mensagem_complemento: ''  
@@ -690,10 +688,8 @@ validaNumeroChange(e){
 validaComplementoChange(e){
   const { validate } = this.state
   
-    if (e.target.value.trim().length == 0) {
-      validate.complementoState = ''
-      this.setState({ 
-        inicio: 1,
+    if (e.target.value.trim().length == 0) {    
+      this.setState({         
         erro_complemento: false,
         validacao_complemento: false,
         mensagem_complemento: '' 
@@ -702,10 +698,8 @@ validaComplementoChange(e){
       validate.complementoState = 'has-success'       
       this.setState({           
         erro_complemento: false,
-        validacao_complemento: true,
-        inicio: 2
-      })     
-      this.verifica_botao(this.state.inicio) 
+        validacao_complemento: true
+      })          
     }  
     this.setState({ validate })
     
@@ -782,16 +776,14 @@ verifica_botao(inicio) {
 
       <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2} >
               <div className="d-flex justify-content-center">
-              <label> Salvar Alterações </label>
+              <label> Salvar Alterações</label>
               </div>     
         </Box>           
     );   
   } else {
   
   // console.log(JSON.stringify(this.state, null, "    "));
-    if ( validate.cepState == 'has-success' && validate.bairroState == 'has-success'  
-      && validate.cidadeState == 'has-success' && validate.enderecoState == 'has-success' 
-      && validate.estadoState == 'has-success' && validate.numeroState == 'has-success') {
+    if (this.state.validacao_cep == true && this.state.validacao_numero == true) {
 
           return (
             <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
@@ -894,11 +886,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -909,27 +901,27 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
@@ -938,15 +930,15 @@ render(){
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
   {this.verificar_menu_lateral()}
-<div className="d-flex justify-content">  
+<div>  
    <div>     
-   <div className="titulo_admministrador">        
-           <div className="unnamed-character-style-4 descricao_alteracao">         
-           <h5> {localStorage.getItem('lograzao_social')} </h5>                                                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+   <div className="container-fluid titulo_lista margem_left">                   
+           <div className="unnamed-character-style-4 descricao_admministrador">                                
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
+              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
+            </div>    
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -960,13 +952,13 @@ return (
           <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2"> 
               <FormControl variant="outlined">
-                    <InputLabel className="label_text" htmlFor="filled-adornment-password">Cep</InputLabel>
+                    <InputLabel className="label_cep_incluir_motorista" htmlFor="filled-adornment-password">Cep</InputLabel>
                      <OutlinedInput 
                         autoComplete="off"                                   
                         type="text"                       
                         error={this.state.erro_cep}
                         helperText={this.state.mensagem_cep}
-                        className="data_text"              
+                        className="cep_incluir_motorista"                       
                         id="cep_incluir"                      
                         variant="outlined"
                         value={this.state.campCep}
@@ -976,15 +968,17 @@ return (
                           this.cepchange(e)                       
                           this.validaCepChange(e)
                         }}                         
-                        maxlength="9"     
+                        inputProps={{
+                          maxLength: 9,
+                        }}     
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_cep? <CheckIcon />: ''}
                         </InputAdornment>
                       }
-                      labelWidth={50}
+                      labelWidth={30}
                     />
-                     <div className="naoseiocep_alterar">
+                     <div className="naoseiocep">
                         <a className="alink" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">Não sei meu CEP</a> 
                     </div> 
                    <FormHelperText error={this.state.erro_cep}>
@@ -998,14 +992,16 @@ return (
                   </div>               
               </div> 
               <div class="p-2">               
-                     <FormControl variant="outlined">
-                        <InputLabel className="label_text" htmlFor="filled-adornment-password">Número</InputLabel>
+                  <div class="d-flex justify-content-start">
+                       <div>
+                       <FormControl variant="outlined">
+                        <InputLabel className="label_numero_incluir_motorista" htmlFor="filled-adornment-password">Número</InputLabel>
                         <OutlinedInput 
                             autoComplete="off"                                   
                             type="text"                       
                             error={this.state.erro_numero}
                             helperText={this.state.mensagem_numero}
-                            className="data_text"                         
+                            className="numero_incluir_motorista"                       
                             id="numero_incluir"                      
                             variant="outlined"
                             value={this.state.campNumero}
@@ -1015,27 +1011,30 @@ return (
                               this.numerochange(e)                       
                               this.validaNumeroChange(e)
                             }}                          
-                            maxlength="9"     
+                            inputProps={{
+                              maxLength: 8,
+                            }}         
                           endAdornment={
                             <InputAdornment position="end">
                                 {this.state.validacao_numero? <CheckIcon />: ''}
                             </InputAdornment>
                           }
-                          labelWidth={90}
+                          labelWidth={80}
                         />                        
                       <FormHelperText error={this.state.erro_numero}>
                             {this.state.mensagem_numero}
                       </FormHelperText>
                       </FormControl>                             
-                </div>                        
-                <div class="p-2">               
+                       </div>                        
+                       <div>
                        <FormControl variant="outlined">
-                        <InputLabel className="label_text" htmlFor="filled-adornment-password">Complemento</InputLabel>
+                        <InputLabel className="label_complemento_incluir_motorista" htmlFor="filled-adornment-password">Complemento</InputLabel>
                         <OutlinedInput 
                             autoComplete="off"                                   
                             type="text"                       
                             error={this.state.erro_complemento}
-                            className="data_text"                  
+                            helperText={this.state.mensagem_complemento}
+                            className="complemento_incluir_motorista"                       
                             id="complemento_incluir"                      
                             variant="outlined"
                             value={this.state.campComplemento}
@@ -1044,22 +1043,25 @@ return (
                             onChange={ (e) => {
                               this.complementochange(e)                       
                               this.validaComplementoChange(e)
-                            }}                                                              
+                            }}                                  
+                            maxlength="9"     
                           endAdornment={
                             <InputAdornment position="end">
                                 {this.state.validacao_complemento? <CheckIcon />: ''}
                             </InputAdornment>
                           }
-                          labelWidth={130}
+                          labelWidth={110}
                         />                        
                       <FormHelperText error={this.state.erro_complemento}>
                             {this.state.mensagem_complemento}
                       </FormHelperText>
-                      </FormControl>                          
-                </div>                                                    
-            </div>     
+                      </FormControl>       
+                     </div>                        
+                  </div>
+              </div>                                                    
+            </div>  
           {this.verifica_botao(this.state.inicio)}                                       
-    </div>                 
+    </div>          
    </div> 
  </div>   
 </div> 

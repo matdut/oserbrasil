@@ -54,7 +54,7 @@ const perfil = localStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
 
 
-const customStyles = {
+const customStyles44 = {
   content : {
     top                   : '10px',
     left                  : '65%',    

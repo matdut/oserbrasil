@@ -73,6 +73,19 @@
   margin-left: 32px;
 }
 
+.botao_evento_operador_compartilha {
+  margin-top: 19px !important;
+  margin-left: 32px !important;
+  width: 200px !important;
+  height: 60px !important;
+  line-height: 9px !important;
+}
+
+.espacamento_modal { 
+  margin-top: 15px !important;
+  margin-left: 120px !important
+}  
+
 .titulo_representante {  
   text-align: left !important;  
   letter-spacing: 0px !important;
@@ -338,10 +351,26 @@
   font-size: 17px;
   vertical-align: middle !important;
   margin: -13px !important;
+  margin-left: 15px !important;
+  width: 70px !important;
 }
 .editar_servico{
   font-size: 12px;
   color: #0F93D9;
   text-decoration: underline;
 }
-
+.selecao_tabs {
+  flex-grow: 1;
+  margin: -5px !important;
+  padding: 0px !important;
+}
+.tirar_espaco{
+  margin-top: 15px !important;
+  padding: 0px !important;
+}
+.espaco_voltar {
+  width: 50px !important;
+}
+.tabs_padrao{
+ border: none !important; 
+}

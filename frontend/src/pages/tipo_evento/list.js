@@ -71,7 +71,7 @@ class listComponent extends React.Component  {
 
           <Menu_administrador />  
 
-          <div className="titulo_admministrador">
+          <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
                   <h3><strong>Lista de Tipo de Evento</strong></h3>
               </div>      
@@ -96,7 +96,7 @@ class listComponent extends React.Component  {
           </Alert>             
 
          <div className="botao_lista_incluir">
-          <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+          <Fab size="large" className="classe_orange" variant="extended" onClick={()=>this.onIncluir()}>
               <AddIcon/> Adicionar Tipo Veículo
           </Fab>
        </div>

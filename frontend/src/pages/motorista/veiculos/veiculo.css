@@ -16,6 +16,14 @@
   width: 108px !important;     
 }
 
+
+.borda_documento {
+  border: 1px solid #0F074E !important;      
+  margin-left: 18px !important;
+  margin-right: 8px !important;
+}
+
+
 .titulo_logo {
   margin-top: 213px;
   margin-left: 166px;

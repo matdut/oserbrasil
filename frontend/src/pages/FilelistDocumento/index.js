@@ -9,13 +9,9 @@ const FileList = ({ files, onDelete }) => (
   {files.map(uploadedFile => (
     <li key={uploadedFile.id}>
       <FileInfo className="">  
-      <a
-            href={uploadedFile.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Preview src={uploadedFile.preview} />               
-        </a>                   
+   
+       <Preview src={uploadedFile.preview} />               
+   
       </FileInfo>
       <div>       
 

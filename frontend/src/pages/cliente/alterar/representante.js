@@ -41,6 +41,7 @@ class cliente_alterarComponent extends React.Component{
       campEmailAnterior: '',  
       campTelefone1:"",
       campCpf:"",       
+      campCpfanterior:"",       
       camp_cpf_disabled: false,
       camp_nome_disabled: false,
       erro_cpf: false,
@@ -173,6 +174,7 @@ class cliente_alterarComponent extends React.Component{
           
           this.setState({ 
             campCpf: res.data.data[0].cpf,
+            campCpfanterior: res.data.data[0].cpf,
             campNome: res.data.data[0].nome,
             campData_nascimento: dateFormat(res.data.data[0].data_nascimento, "UTC:dd/mm/yyyy"),
             campEmail: res.data.data[0].email,      
@@ -265,21 +267,27 @@ class cliente_alterarComponent extends React.Component{
     if (e.target.value.length == 0) {
       validate.cpfState = ''
       this.setState({ 
-        validate,    
-        erro_cpf: false, 
-        validacao_cpf: true,               
+        validate,               
+        erro_cpf: false,   
+        validacao_cpf: false,    
         mensagem_cpf: ''  
        })            
-    }  
+    } else if (e.target.value.length == 14)  {
+     
+      if (this.state.campCpfanterior !== this.state.campCpf) {
+        console.log('é valido - '+e.target.value);
+        this.busca_cpf(e);// se existir não deixa cadastrar 
+      }  
+      
+    }
   } 
   verificaNomeonfocus(e) {
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.nomeState = ''
+    if (e.target.value.length == 0) {      
       this.setState({ 
         validate,  
         erro_nome: false, 
-        validacao_nome: true,                 
+        validacao_nome: false,                 
         mensagem_nome: ''  
        })            
     }  
@@ -309,38 +317,31 @@ class cliente_alterarComponent extends React.Component{
    verificaCpfonblur(e) {
     const { validate } = this.state
        if (e.target.value.length < 14) {
-        validate.cpfState = 'has-danger'
-        validate.datanascimentoState = ''
-        validate.emailState = ''
-        validate.nomeState = ''
-        validate.telefone1State = ''
+        validate.cpfState = ''       
         this.setState({ 
-          validate,       
-          campNome: '',
-          campData_nascimento: '',
-          campEmail: '',
-          campTelefone1: '',
+          validate,                 
           inicio: 1,
           erro_cpf: true, 
           validacao_cpf: false,    
           mensagem_cpf: 'O campo CPF é obrigatório'  
          })            
        } else if (e.target.value.length == 14){                
-        console.log('é valido - '+e.target.value);
-        this.busca_cpf(e);// se existir não deixa cadastrar 
+         if (this.state.campCpfanterior !== this.state.campCpf) {
+              console.log('é valido - '+e.target.value);
+              this.busca_cpf(e);// se existir não deixa cadastrar 
+         }  
        }  
    }
   
   verificaTelefone1(e) {  
     const { validate } = this.state
-       if (e.target.value.length < 15) {          
-        validate.telefone1State = 'has-danger'
+       if (e.target.value.length < 15) {                  
         this.setState({ 
           validate,
           inicio: 1,
-          erro_telefone: true, 
+          erro_telefone: false, 
           validacao_telefone: false,    
-          mensagem_telefone1: 'O campo Telefone é obrigatório.'
+          mensagem_telefone1: ''
          })      
        } else {       
 
@@ -358,8 +359,7 @@ class cliente_alterarComponent extends React.Component{
 
    verificaEmailonfocus(e){   
     const { validate } = this.state
-      if (e.target.value.length == 0) {
-        validate.emailState = ''
+      if (e.target.value.length == 0) {      
         this.setState({ 
             validate,
             erro_email: false, 
@@ -374,14 +374,16 @@ class cliente_alterarComponent extends React.Component{
      } 
 
    verificaTelefone1onfocus(e){   
-    /* const { validate } = this.state
+     const { validate } = this.state
     validate.telefone1State = ''
+      if (e.target.value.length == 0) {      
        this.setState({ 
             validate,
             erro_telefone: false, 
-            validacao_telefone: true,    
+            validacao_telefone: false,    
             mensagem_telefone1: ''  
-        })                    */
+        })               
+      }    
    } 
 
   verificaEmail(e){   
@@ -407,7 +409,7 @@ class cliente_alterarComponent extends React.Component{
   verificaNome() {
     const { validate } = this.state
        if (this.state.campNome.length == 0) {
-        validate.nomeState = 'has-danger'
+        validate.nomeState = ''
         this.setState({ 
           validate,
           erro_nome: false, 
@@ -418,6 +420,8 @@ class cliente_alterarComponent extends React.Component{
         validate.nomeState = 'has-success' ;        
 
         this.setState({ 
+          erro_nome: false, 
+          validacao_nome: true,    
           mensagem_nome: ''
        });  
 
@@ -425,8 +429,7 @@ class cliente_alterarComponent extends React.Component{
    }
   verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {
-        validate.datanascimentoState = 'has-danger'
+       if (this.state.campData_nascimento.length == 0) {       
         this.setState({ 
           validate,
           erro_datanascimento: false, 
@@ -546,11 +549,11 @@ class cliente_alterarComponent extends React.Component{
       const { validate } = this.state
        
         if (e.target.value.length == 0) {
-          validate.telefone1State = 'has-danger'
+          validate.telefone1State = ''
           this.setState({ 
-             erro_telefone: true, 
+             erro_telefone: false, 
              validacao_telefone: false,    
-             mensagem_telefone1: 'O campo Telefone é obrigatório.'
+             mensagem_telefone1: ''
           })  
         } else {          
           
@@ -572,11 +575,10 @@ class cliente_alterarComponent extends React.Component{
 validaNomeChange(e){
   const { validate } = this.state
   
-    if (e.target.value.length == 0) {
-      validate.nomeState = ''
+    if (e.target.value.length == 0) {   
       this.setState({ 
         erro_nome: false, 
-        validacao_telefone: true,    
+        validacao_telefone: false,    
         mensagem_nome: '' 
       })  
     } else if (e.target.value.length > 0) {      
@@ -594,11 +596,11 @@ validaDataNascimentoChange(e){
   const { validate } = this.state
   
     if (e.target.value.length < 1) {
-      validate.datanascimentoState = 'has-danger'
+      validate.datanascimentoState = ''
       this.setState({ 
-        erro_datanascimento: true, 
+        erro_datanascimento: false, 
         validacao_telefone: false,    
-        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
+        mensagem_data_nascimento: '' 
       })  
     }
     
@@ -771,11 +773,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -786,43 +788,42 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
-
 render(){  
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>              
+            </div>          
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -835,7 +836,7 @@ return (
 
             <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2">              
-                  <FormControl variant="outlined">
+                  <FormControl variant="outlined" disabled={this.state.camp_cpf_disabled}>
                     <InputLabel className="label_cliente_individual" htmlFor="filled-adornment-password">CPF</InputLabel>
                      <OutlinedInput
                         autoComplete="off"         
@@ -852,7 +853,7 @@ return (
                         onChange={ (e) => {
                          this.cpfchange(e)                       
                          this.validaCpfChange(e)
-                        }}                         
+                        }}                                                                  
                       endAdornment={
                         <InputAdornment position="end">
                              {this.state.validacao_cpf? <CheckIcon />: ''}
@@ -883,7 +884,7 @@ return (
                         this.validaNomeChange(e)
                       }}    
                       inputProps={{
-                        maxLength: 50,
+                        maxLength: 40,
                       }}                  
                       endAdornment={
                         <InputAdornment position="end">
@@ -999,12 +1000,7 @@ return (
               </FormHelperText>       
             </div>            
             {this.verifica_botao(this.state.inicio)}             
-         </div>                
-        <div className="area_neutra">
-               <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
-              </Container>         
-        </div>
+        </div>                        
    </div>  
    
  </div>

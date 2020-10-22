@@ -66,6 +66,11 @@
   font-size: 44px !important;   
 }  
 
+.espacamento_modal_motorista { 
+  margin-top: 15px;
+  margin-left: 128px;
+}  
+
 .espacamento_caixa_texto { 
   margin-top: 15px;
   margin-left: 108px;
@@ -178,6 +183,11 @@
 .espacamento_seta {
   margin-top: 30px;
   margin-right: 40px;  
+}
+
+.foto_size_modal {
+  width: 320px !important;  
+  height: 250px !important;
 }
 
 .botao_cadastro_empresa {
@@ -460,7 +470,7 @@
 
 .cep_incluir_motorista{
   width: 240px !important;     
-  font: normal normal bold 16px Effra !important;
+  font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important; 
@@ -557,15 +567,6 @@
   width: 310px !important;  
 }
 
-.label_text_motorista {
-  font: normal normal bold 14px Effra !important;
-  letter-spacing: 0px !important;
-  color: #868686 !important;
-  opacity: 1 !important;  
-  margin-top: 10px !important;   
-  width: 230px !important;  
-}
-
 .data_text_modal {
   font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
@@ -593,13 +594,23 @@
   width: 230px !important;  
 }
 
+.text_telefone_2_modal {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;  
+  margin-top: 10px !important;   
+  width: 170px !important;  
+}
+
 .label_data_nascimento_motorista {
   font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important; 
-  margin-left: 20px !important;
+  margin-left: 16px !important;
   margin-top: 10px !important;  
+  width: 200px !important;  
 }
 
 .text_data_nascimento_modal {
@@ -609,6 +620,23 @@
   opacity: 1 !important;  
   margin-top: 10px !important;   
   width: 230px !important;  
+}
+
+.email_convite {
+  width: 440px !important;    
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
+
+.text_data_nascimento_2_modal {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;  
+  margin-top: 10px !important;   
+  width: 180px !important;  
 }
 
 .label_email_motorista {
@@ -647,7 +675,26 @@
   width: 230px !important;  
 }
 
-.label_marca_autocomplete_motorista {
+.label_marca_direita_motorista {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important; 
+  margin-left: 0px !important;
+  margin-top: 10px !important;  
+}
+
+.text_marca_direita_motorista {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;  
+  margin-top: 10px !important;   
+  margin-left: 0px !important;
+  width: 230px !important;  
+}
+
+.label_marca_esquerda_motorista {
   font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
@@ -656,7 +703,7 @@
   margin-top: 10px !important;  
 }
 
-.text_marca_autocomplete_motorista  {
+.text_marca_esquerda_motorista {
   font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #0F074E !important;
@@ -666,12 +713,33 @@
   width: 230px !important;  
 }
 
+
+
+.label_marca_autocomplete_motorista {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important; 
+  margin-left: 14px !important;
+  margin-top: 10px !important;  
+}
+
+.text_marca_autocomplete_motorista  {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;  
+  margin-top: 10px !important;   
+  margin-left: 10px !important;
+  width: 230px !important;  
+}
+
 .label_modelo_autocomplete_motorista {
   font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important; 
-  margin-left: 20px !important;
+  margin-left: 10px !important;
   margin-top: 10px !important;  
 }
 
@@ -681,7 +749,7 @@
   color: #0F074E !important;
   opacity: 1 !important;  
   margin-top: 10px !important;   
-  margin-left: 20px !important;
+  margin-left: 10px !important;
   width: 230px !important;  
 }
 
@@ -700,6 +768,23 @@
   opacity: 1 !important;   
   margin-left: 20px !important;
   width: 480px !important;  
+}
+
+.label_seguradora_modal_motorista {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important; 
+  margin-left: 20px !important;  
+}
+
+.text_seguradora_modal_motorista  {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;   
+  margin-left: 20px !important;
+  width: 230px !important;  
 }
 
 .label_placa_text_motorista {
@@ -787,6 +872,35 @@
   width: 480px !important;  
 }
 
+.label_apolice_modal_motorista {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important; 
+  margin-left: 20px !important;  
+}
+
+.espacamento_div {
+  margin-left: 20px !important;
+}
+
+.text_apolice_mopdal_motorista  {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;   
+  margin-left: 20px !important;
+  width: 230px !important;  
+}
+
+.label_complemento_text_motorista {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important; 
+  margin-top: 10px !important;  
+  margin-left: 20px !important;  
+}
 
 .label_numero_motorista {
   font: normal normal bold 14px Effra !important;
@@ -807,20 +921,23 @@
 }
 
 .label_complemento_motorista {
-  font: normal normal bold 14px Effra !important;
+  font: normal normal bold Effra !important;
+  font-size: 14px !important;
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important; 
   margin-left: 20px !important;
-  margin-top: 10px !important;  
+  margin-top: 10px !important;    
+  width: 230px !important;  
 }
 
 .text_complemento_modal {
   font: normal normal bold 14px Effra !important;
   letter-spacing: 0px !important;
   color: #0F074E !important;
-  opacity: 1 !important;  
-  margin-top: 10px !important;   
+  opacity: 1 !important;    
+  margin-left: 16px !important;
+  margin-top: 10px !important;  
   width: 230px !important;  
 }
 
@@ -829,8 +946,8 @@
   letter-spacing: 0px !important;
   color: #868686 !important;
   opacity: 1 !important; 
-  margin-left: 20px !important;
-  margin-top: 10px !important;  
+  margin-left: 16px !important;
+  margin-top: 0px !important;  
 }
 
 .text_veiculo_motorista {
@@ -838,8 +955,9 @@
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;  
-  margin-top: 10px !important;   
-  width: 480px !important;  
+  margin-top: 0px !important;  
+  margin-left: 15px !important; 
+  width: 230px !important;  
 }
 
 .titulo_motorista_modal {
@@ -861,6 +979,15 @@
   padding-left: 20px !important;
   margin-bottom: 0px !important;
 }
+.sub_titulo_motorista_modal_crvl {
+  text-align: left !important;
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;  
+  padding-left: 20px !important;
+  margin-bottom: 6px !important;
+}
 
 .foto_cnh_motorista {
   text-align: left !important;
@@ -873,3 +1000,59 @@
   height: 150px !important;  
   padding-left: 20px !important;
 }
+
+/* ALTERACAO MOTORISTA  */
+
+.label_motorista_dividido_direito {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;   
+  width: 230px !important;  
+  margin-left: 0px;
+}
+
+.text_motorista_dividido_direito {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  width: 230px !important;  
+}
+
+.label_motorista_dividido_esquerdo {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;   
+  width: 230px !important;  
+  margin-left: 20px;
+}
+
+.text_motorista_dividido_esquerdo {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  width: 230px !important;  
+  margin-left: 20px;
+}
+
+.label_motorista_inteiro {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;   
+  width: 480px !important;  
+}
+
+.text_motorista_inteiro {
+  font: normal normal bold 14px Effra !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  width: 480px !important;  
+}
+
+
+

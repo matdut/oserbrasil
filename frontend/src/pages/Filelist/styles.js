@@ -36,13 +36,14 @@ export const FileInfo = styled.div`
 `;
 
 export const Preview = styled.div`
-  width: 253px;
-  height: 264px;
+  width: 190px;
+  height: 190px;
+  margin-top: 10px;
   border-radius: 13px;
   background-image: url(${props => props.src});
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 40% 40%;
-  margin-right: 10px;  
-  margin-left: 41px;
+  margin-right: 0px;  
+  margin-left: 0px;
 `;

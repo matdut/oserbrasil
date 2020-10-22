@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
+var Perfil = require('./Perfil');
+var Status = require('./Status');
 //var Cliente = require('./Cliente');
 // import Role for FK roleId
 //var Role = require('./Role');
@@ -14,20 +16,41 @@ var Cartao = sequelize.define(nametable,{
     autoIncrement:true
   },
   numero:  {  
-    type: Sequelize.STRING(15)
+    type: Sequelize.STRING(25)
   },
   nome:  {  
-    type: Sequelize.STRING
+    type: Sequelize.STRING(100)
   },
   data_vencimento:  {  
     type: Sequelize.DATE
   },
   codigo_seguranca:  {  
-    type: Sequelize.DATE
+    type: Sequelize.INTEGER(4)
   },
   bandeira:  {  
-    type: Sequelize.STRING
+    type: Sequelize.STRING(100)
+  },
+  logid: {
+    type: Sequelize.INTEGER,
+    allowNull: false,     
+  },
+  perfilId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Perfil,
+      key: 'id'
+    } 
+  },
+  statusId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Status,
+      key: 'id'
+    } 
   }
+
 })
 
 //Cartao.belongsTo(Cliente);

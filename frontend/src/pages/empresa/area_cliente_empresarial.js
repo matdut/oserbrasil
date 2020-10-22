@@ -15,53 +15,54 @@ class Area_cliente extends React.Component  {
      //this.loadCliente()
   }
     
-  verifica_menu() {    
+  verifica_titulo() {    
 
       return (      
          <strong>{localStorage.getItem('lognome')}</strong>
        ); 
     
-  }
-
+  }  
+  
   verifica_horario(){
     const d = new Date();
     const hour = d.getHours();
-
+  
     if (hour < 5) {
       return (
-        <strong> boa noite </strong>          
+        'boa noite'
         );        
     } else if (hour < 5) { 
       return (
-        <strong> bom dia </strong>          
+        'bom dia' 
         );        
     } else if (hour < 8) { 
       return (
-        <strong> bom dia </strong>          
+        'bom dia'          
         );        
     } else if (hour < 12) { 
       return (
-        <strong> bom dia </strong>          
+        'bom dia'          
         );        
     } else if (hour < 18) { 
       return (
-        <strong> boa tarde </strong>          
+        'boa tarde'          
         );        
     } else { 
       return (
-        <strong> boa noite </strong>          
+         'boa noite'          
         );        
     }
   }
+  
   render()
   {   
     return ( 
      <div> 
         <Menu_cliente_empresarial />  
-          <div className="titulo_admministrador">    
+          <div className="titulo_lista">    
           <div className="unnamed-character-style-4 descricao_admministrador">                                
-            <h5 className="titulo_area_empresarial"> {localStorage.getItem('lograzao_social')} </h5>   
-               {this.verifica_menu()}, {this.verifica_horario()} !
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
+              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
             </div>                    
             
               <Container maxWidth="sm">

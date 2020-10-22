@@ -626,7 +626,7 @@ class empresarialComponent extends React.Component{
 sendUpdate(){        
  
   const datapost = {  
-    statusId: 1,  
+    statusId: 16,  
   }       
 
   if (localStorage.getItem('logperfil') == 0) {
@@ -636,7 +636,7 @@ sendUpdate(){
   const logindata = {  
     perfilId: localStorage.getItem('logperfil'),
     senha: this.state.campSenha,     
-    statusId: 5
+    statusId: 16
   }  
 
   api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
@@ -647,8 +647,8 @@ sendUpdate(){
         api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
         
         .then(response=>{
-          if (response.data.success==true) {                        
-            
+          if (response.data.success==true) {        
+
             if (localStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
             } else if (localStorage.getItem('logperfil') == 3) {              

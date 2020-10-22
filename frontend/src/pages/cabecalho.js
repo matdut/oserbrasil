@@ -90,7 +90,7 @@ const Cabecalho = props => {
     </div>
     <div className="item teste">
       <LightTooltip title="Contato" placement="top">
-         <a href="/contato">
+         <a href="#">
             <i className="fas fa-fw fa-th"></i> 
          </a>   
       </LightTooltip>   

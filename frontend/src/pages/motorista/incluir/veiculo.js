@@ -12,6 +12,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -37,6 +40,10 @@ class empresarialComponent extends React.Component{
       campModeloId: 0,
       campModelo: '',
       campModeloNovo: '',
+      campEngate: false,
+      campCadeirinhaPequena: false,
+      campCadeirinhaGrande: false,
+      campCadeiraRodas: false,
       campPlaca: "",
       campAnodut: '',
       campAno: "",
@@ -54,6 +61,22 @@ class empresarialComponent extends React.Component{
       listaMarcas:[],
       listaModelos:[],
       listSeguradoras:[],      
+      erro_carro: false,
+      erro_modelo: false,
+      erro_cor: false,
+      erro_placa: false,
+      erro_ano: false,
+      erro_anodut: false,
+      erro_apolice: false,
+      erro_seguro: false,
+      validacao_carro: false,
+      validacao_modelo: false,
+      validacao_cor: false,
+      validacao_placa: false,
+      validacao_ano: false,
+      validacao_anodut: false,
+      validacao_apolice: false,
+      validacao_seguro: false,
         mensagem_carro: '',  
         mensagem_placa: '',  
         mensagem_cor: '',  
@@ -82,6 +105,10 @@ class empresarialComponent extends React.Component{
     this.anoDUTChange = this.anoDUTChange.bind(this);  
     this.apoliceChange = this.apoliceChange.bind(this);
     this.seguroChange = this.seguradoraChange.bind(this);  
+    this.engateChange = this.engateChange.bind(this);      
+    this.cadeirinhapequenaChange = this.cadeirinhapequenaChange.bind(this);  
+    this.cadeirinhagrandeChange = this.cadeirinhagrandeChange.bind(this);  
+    this.cadeirarodasChange = this.cadeirarodasChange.bind(this);  
     
     this.verificaCarro = this.verificaCarro.bind(this);  
     this.verificaModelo = this.verificaModelo.bind(this);  
@@ -122,6 +149,9 @@ class empresarialComponent extends React.Component{
     if (localStorage.getItem('logVeiculo') > 0) {
        this.carrega_veiculo();                       
     } else {
+      this.limpar_campos();
+      
+      this.load_veiculo();  
       this.setState({ 
         incluir: true
       })
@@ -137,9 +167,7 @@ class empresarialComponent extends React.Component{
     });  
 
     this.loadSeguradoras()
-   // this.loadmarcas();
-    
-    //if (this.state.listaMarcas.length == 0) {
+   
    this.carrega_marca_banco()
     //}
     //this.verifica_botao(2)
@@ -164,6 +192,29 @@ class empresarialComponent extends React.Component{
         })  
     })
 
+  }
+
+  limpar_campos(){
+    this.setState({           
+      campCarroId: 0,
+      campCarro: '',
+      campCarroNovo: '',
+      campModeloId: 0,
+      campModelo: '',
+      campModeloNovo: '',
+      campEngate: false,
+      campCadeirinhaPequena: false,
+      campCadeirinhaGrande: false,
+      campCadeiraRodas: false,
+      campPlaca: "",
+      campAnodut: '',
+      campAno: "",
+      campCor: "",
+      campNome: "",
+      campApolice: "",
+      campNomeSalvar: "",
+      campSeguradoraNome: "",
+    })    
   }
   load_modelo_banco(marca_id){
     const { validate } = this.state   
@@ -279,7 +330,129 @@ class empresarialComponent extends React.Component{
       alert("Error de conexão carrega_motorista "+error)
     })       
 
-  } 
+  }   
+
+  load_veiculo() {   
+    const { validate } = this.state;
+    api.get(`/veiculo/getMotoristaVeiculos/${localStorage.getItem('logid')}`)
+    .then(res=>{
+       // console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.data.length > 0) {          
+
+          this.setState({   
+            campCarro: res.data.data[0].marca,
+            campModelo: res.data.data[0].modelo,
+            campCarroId: res.data.data[0].marcaId,
+            campModeloId: res.data.data[0].modeloId,
+            campApolice: res.data.data[0].apolice,
+            campSeguradoraId: res.data.data[0].seguradoraId,
+            campPlaca: res.data.data[0].placa,
+            campAnodut: res.data.data[0].anodut,            
+            campAno: res.data.data[0].ano,
+            campCor: res.data.data[0].cor,       
+            campEngate: res.data.data[0].engate,       
+            campCadeirinhaPequena: res.data.data[0].cadeirinha_pequena,       
+            campCadeirinhaGrande: res.data.data[0].cadeirinha_grande,       
+            campCadeiraRodas: res.data.data[0].cadeira_rodas,                
+            inicio: 2,    
+            validacao_ano: true,
+            validacao_anodut: true,
+            validacao_apolice: true,
+            validacao_carro: true,
+            validacao_cor: true,
+            validacao_modelo: true, 
+            validacao_placa: true,
+            validacao_seguro: true,
+          })            
+
+           this.buscaSeguradora(res.data.data[0].seguradoraId)
+           this.load_modelo_banco(this.state.campCarroId)
+           localStorage.setItem('lognome', this.state.campNome);  
+
+
+          if (this.state.campCarro == null) {
+            this.setState({   
+              campCarro: ''
+            })
+          }  
+          if (this.state.campModelo == null) {
+            this.setState({   
+              campModelo: ''
+            })
+          }  
+          if (this.state.campPlaca == null) {
+            this.setState({   
+              campPlaca: ''
+            })
+          }  
+          if (this.state.campAno == null) {
+            this.setState({   
+              campAno: ''
+            })
+          }  
+          if (this.state.campAnodut == null) {
+            this.setState({   
+              campAnodut: ''
+            })
+          }  
+          if (this.state.campCor == null) {
+            this.setState({   
+              campCor: ''
+            })
+          }  
+          if (this.state.campApolice == null) {
+            this.setState({   
+              campApolice: ''
+            })
+          }  
+          if (this.state.campSeguradoraId == null) {
+            this.setState({   
+              campSeguradoraId: 0
+            })
+          }  
+
+          if (this.state.campCarro !== "") {
+            validate.carroState = 'has-success'      
+          }
+          if (this.state.campPlaca !== "") {
+            validate.placaState = 'has-success'      
+          }
+          if (this.state.campModelo !== "") {
+            validate.modeloState = 'has-success'      
+          }
+          if (this.state.campAno !== "") {
+            validate.anoState = 'has-success'      
+          }
+          if (this.state.campAnodut !== "") {
+            validate.anoDUTState = 'has-success'      
+          }
+          if (this.state.campCor !== "") {
+            validate.corState = 'has-success'      
+          }   
+          if (this.state.campApolice !== "") {
+            validate.apoliceState = 'has-success'      
+          }   
+          if (this.state.campSeguradoraId !== 0) {
+            validate.seguroState = 'has-success'      
+          }             
+
+          this.setState({ 
+            incluir: false
+          })
+
+          this.setState({ validate })
+         
+
+        } else {
+          this.setState({ 
+            incluir: true
+          })
+        } 
+      })        
+      .catch(error=>{
+        alert("Error de conexão carrega_veiculo "+error)
+      })   
+    }
 
    carrega_veiculo() {
     const { validate } = this.state;
@@ -298,8 +471,20 @@ class empresarialComponent extends React.Component{
             campPlaca: res.data.data[0].placa,
             campAnodut: res.data.data[0].anodut,            
             campAno: res.data.data[0].ano,
-            campCor: res.data.data[0].cor,                       
-            inicio: 2       
+            campCor: res.data.data[0].cor,       
+            campEngate: res.data.data[0].engate,       
+            campCadeirinhaPequena: res.data.data[0].cadeirinha_pequena,       
+            campCadeirinhaGrande: res.data.data[0].cadeirinha_grande,       
+            campCadeiraRodas: res.data.data[0].cadeira_rodas,                
+            inicio: 2,    
+            validacao_ano: true,
+            validacao_anodut: true,
+            validacao_apolice: true,
+            validacao_carro: true,
+            validacao_cor: true,
+            validacao_modelo: true, 
+            validacao_placa: true,
+            validacao_seguro: true,
           })            
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
@@ -392,11 +577,12 @@ class empresarialComponent extends React.Component{
     }
  
    carroChange(e) {             
-    const { validate } = this.state
-     console.log('carrochange value - '+e.target.value )          
+    const { validate } = this.state     
       validate.modeloState = ''    
       this.setState({ 
         validate,
+        erro_carro: false,
+        validacao_carro: false,
         campCarroId: e.target.value         
       })       
       
@@ -445,6 +631,18 @@ class empresarialComponent extends React.Component{
         campSeguradoraId: event.target.value
     });    
   }
+  engateChange(e) {
+    this.setState({ campEngate: e.target.checked })
+  }
+  cadeirinhapequenaChange(e) {
+    this.setState({ campCadeirinhaPequena: e.target.checked })
+  }
+  cadeirinhagrandeChange(e) {
+    this.setState({ campCadeirinhaGrande: e.target.checked })
+  }
+  cadeirarodasChange(e) {
+    this.setState({ campCadeiraRodas: e.target.checked })
+  }
   /* 
   seguroChange(e) {    
     if (e != null) {
@@ -464,77 +662,86 @@ class empresarialComponent extends React.Component{
      //  validate.carroState = ''    
         this.setState({ 
           validate,
+          erro_carro: false,
+          validacao_carro: false,
           mensagem_carro: ''
          })      
        }        
    }
    verificaModelo(e) {
     const { validate } = this.state
-       if (e.target.value.length == "") {
-        validate.modeloState = 'has-danger'
+       if (e.target.value.length == "") {        
         this.setState({ 
           validate,
-          mensagem_modelo: 'O campo Modelo é obrigatório.'  
+          erro_modelo: false,
+          validacao_modelo: false,
+          mensagem_modelo: ''  
          })      
        }      
    }
    verificaAno(e) {
     const { validate } = this.state
-       if (e.target.value.length == 0) {
-        validate.anoState = 'has-danger'
+       if (e.target.value.length == 0) {        
         this.setState({ 
           validate,
-          mensagem_ano: 'O campo Ano é obrigatório.'  
+          erro_ano: false,
+          validacao_ano: false,
+          mensagem_ano: ''  
          })      
        }      
    }
    verificaAnoDUT(e) {
     const { validate } = this.state
-       if (e.target.value.length == 0) {
-        validate.anoDUTState = 'has-danger'
+       if (e.target.value.length == 0) {        
         this.setState({ 
           validate,
-          mensagem_anoDUT: 'Ano do DUT é obrigatório.'  
+          erro_anodut: false,
+          validacao_anodut: false,
+          mensagem_anoDUT: ''  
          })      
        }      
    }
    verificaPlaca(e) {
     const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.placaState = 'has-danger'
+    if (e.target.value.length == 0) {      
       this.setState({ 
         validate,
-        mensagem_placa: 'O campo Placa é obrigatório.'  
+        erro_placa: false,
+        validacao_placa: false,
+        mensagem_placa: ''  
        })      
     }      
    }
    verificaCor() {
     const { validate } = this.state
-       if (this.state.campCor.length == 0) {
-        validate.corState = 'has-danger'
+       if (this.state.campCor.length == 0) {        
         this.setState({ 
           validate,
-          mensagem_cor: 'O campo Cor é obrigatório.'  
+          erro_cor: false,
+          validacao_cor: false,
+          mensagem_cor: ''  
          })      
        }      
    }
    verificaApolice(e) {
     const { validate } = this.state
-       if (e.target.value.length == 0) {
-        validate.apoliceState = 'has-danger'
+       if (e.target.value.length == 0) {        
         this.setState({ 
           validate,
-          mensagem_apolice: 'O campo Apolice é obrigatório.'  
+          erro_apolice: false,
+          validacao_apolice: false,
+          mensagem_apolice: ''  
          })      
        }      
    }
    verificaSeguro() {
     const { validate } = this.state
-       if (this.state.campSeguradoraId.length == 0) {
-        validate.seguroState = 'has-danger'
+       if (this.state.campSeguradoraId.length == 0) {        
         this.setState({ 
           validate,
-          mensagem_seguro: 'O campo Seguro é obrigatório.'  
+          erro_seguro: false,
+          validacao_seguro: false,
+          mensagem_seguro: ''  
          })      
        }      
    }
@@ -545,9 +752,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         //validate.seguroState = 'has-danger'
-        this.setState({ mensagem_carro: '' })  
+        this.setState({ 
+          erro_carro: false,
+          validacao_carro: false,
+          mensagem_carro: '' 
+        })  
       } else {
         validate.carroState = 'has-success'       
+        this.setState({ 
+          erro_carro: false,
+          validacao_carro: true,
+          mensagem_carro: '' 
+        })  
       }  
       this.setState({ validate })
 
@@ -557,9 +773,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         validate.modeloState = ''
-        //this.setState({ mensagem_modelo: 'O campo Modelo é obrigatório.' })  
+        this.setState({ 
+          erro_modelo: false,
+          validacao_modelo: false,
+          mensagem_carro: '' 
+        })          
       } else {
         validate.modeloState = 'has-success'       
+        this.setState({ 
+          erro_modelo: false,
+          validacao_modelo: true,
+          mensagem_carro: '' 
+        })  
       }  
       this.setState({ validate })
   }
@@ -568,9 +793,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         validate.corState = ''
-        this.setState({ mensagem_cor: '' })  
+        this.setState({ 
+          erro_cor: false,
+          validacao_cor: false,
+          mensagem_cor: '' 
+        })  
       } else {
         validate.corState = 'has-success'       
+        this.setState({ 
+          erro_cor: false,
+          validacao_cor: true,
+          mensagem_cor: '' 
+        })  
       }  
       this.setState({       
         validate })
@@ -580,9 +814,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         validate.placaState = ''
-        this.setState({ mensagem_placa: '' })  
+        this.setState({ 
+          erro_placa: false,
+          validacao_placa: false,
+          mensagem_placa: '' 
+        })  
       } else if (e.target.value.length == 7) {
         validate.placaState = 'has-success'       
+        this.setState({ 
+          erro_placa: false,
+          validacao_placa: true,
+          mensagem_placa: '' 
+        })  
       }  
       this.setState({ validate })
   }
@@ -591,9 +834,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         validate.anoState = ''
-        this.setState({ mensagem_ano: '' })  
+        this.setState({ 
+          erro_ano: false,
+          validacao_ano: false,
+          mensagem_ano: '' 
+        })  
       } else {
         validate.anoState = 'has-success'       
+        this.setState({ 
+          erro_ano: false,
+          validacao_ano: true,
+          mensagem_ano: '' 
+        })  
       }  
       this.setState({ validate })
   }
@@ -602,9 +854,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         validate.anoDUTState = ''
-        this.setState({ mensagem_anoDUT: '' })  
+        this.setState({ 
+          erro_anodut: false,
+          validacao_anodut: false,
+          mensagem_anoDUT: '' 
+        })  
       } else {
         validate.anoDUTState = 'has-success'       
+        this.setState({ 
+          erro_anodut: false,
+          validacao_anodut: true,
+          mensagem_anoDUT: '' 
+        })  
       }  
       this.setState({ validate })
   }
@@ -613,9 +874,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         validate.apoliceState = ''
-        this.setState({ mensagem_telefone1: '' })  
+        this.setState({ 
+          erro_apolice: false,
+          validacao_apolice: false,
+          mensagem_telefone1: '' 
+        })  
       } else {
         validate.apoliceState = 'has-success'       
+        this.setState({ 
+          erro_apolice: false,
+          validacao_apolice: true,
+          mensagem_telefone1: '' 
+        })  
       }  
       this.setState({ validate })
   }
@@ -624,9 +894,18 @@ class empresarialComponent extends React.Component{
     
       if (e.target.value.length == 0) {
         //validate.seguroState = 'has-danger'
-        this.setState({ mensagem_seguro: '' })  
+        this.setState({ 
+          erro_seguro: false,
+          validacao_seguro: false,
+          mensagem_seguro: '' 
+        })  
       } else {
         validate.seguroState = 'has-success'       
+        this.setState({ 
+          erro_seguro: false,
+          validacao_seguro: true,
+          mensagem_seguro: '' 
+        })  
       }  
       this.setState({ validate })
   }
@@ -740,10 +1019,12 @@ verifica_botao(inicio) {
     );   
   } else {
     
-    if (validate.carroState == 'has-success' && validate.modeloState  == 'has-success' 
-      && validate.anoState == 'has-success' && validate.apoliceState == 'has-success' 
-      && validate.seguroState == 'has-success' && validate.corState == 'has-success'
-      && validate.anoDUTState == 'has-success') {
+   /*  if (this.state.validacao_carro == true && this.state.validacao_modelo == true
+      && this.state.validacao_ano == true && this.state.validacao_apolice == true
+      && this.state.validacao_seguro == true && this.state.validacao_cor == true
+      && this.state.validacao_anodut == true) { */ 
+        if (this.state.validacao_ano == true && this.state.validacao_seguro == true 
+          && this.state.validacao_cor == true && this.state.validacao_anodut == true) {
         return ( 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
                   <div className="d-flex justify-content-center">
@@ -845,6 +1126,10 @@ sendUpdate(){
     ano: this.state.campAno,
     anodut: this.state.campAnodut,
     cor: this.state.campCor,    
+    engate: this.state.campEngate, 
+    cadeirinha_pequena: this.state.campCadeirinhaPequena, 
+    cadeirinha_grande: this.state.campCadeirinhaGrande, 
+    cadeira_rodas: this.state.campCadeiraRodas,
     motoristaId: localStorage.getItem('logid')
   }          
   console.log('state- '+ JSON.stringify(this.state.incluir, null, "    "));       
@@ -899,10 +1184,7 @@ sendUpdate(){
 }  
 
 verificar_menu() {   
-
-  if (localStorage.getItem('logperfil') == 0) {
-   
-   return(
+  return(
     <div>
      <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
@@ -926,57 +1208,6 @@ verificar_menu() {
           </div>
    </div>         
    );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div>
-      <div className="d-flex justify-content-around">
-                <div className="botao_navegacao">
-                  <Link to={`/endereco_motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-                </div>                  
-                <div>
-                  <div className="titulo_representante">                
-                  <div> {this.verifica_nome_motorista(this.state.campNome)}, cadastre o seu veículo.</div>       
-                  </div>
-                </div>   
-                
-                <div>
-                   <div className="botao_navegacao">
-                      <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                   </div>   
-                </div>   
-              
-           </div>              
-           <div>
-                 <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-           </div>
-    </div>    
-      );
-
-  } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
-
-    return(
-      <div>
-      <div className="d-flex justify-content-around">
-                <div className="botao_navegacao">              
-                </div>                  
-                <div>
-                  <div className="titulo_representante">                
-                  <div> {this.verifica_nome_motorista(this.state.campNome)}, altere o seu veículo.</div>      
-                  </div>
-                </div>   
-                
-                <div>
-                   <div className="botao_navegacao">                    
-                   </div>   
-                </div>   
-              
-           </div>                        
-    </div>    
-      );
-
-  }
-
 
 }
 verificar_menu_lateral() {
@@ -1013,10 +1244,10 @@ return (
                   <div class="d-flex justify-content-start">
                        <div> 
                        <FormControl variant="outlined">
-                            <InputLabel className="label_marca_autocomplete_motorista" id="demo-simple-select-outlined-label">Marca </InputLabel>
+                            <InputLabel className="label_marca_direita_motorista" id="demo-simple-select-outlined-label">Marca </InputLabel>
                             <Select                                                 
                               autoComplete="off"                     
-                              className="text_marca_autocomplete_motorista"                                                
+                              className="text_marca_direita_motorista"                                                
                               labelId="demo-simple-select-outlined-label"
                               id="busca"
                               value={this.state.campCarroId}  
@@ -1035,10 +1266,10 @@ return (
                        </div>                        
                        <div>   
                        <FormControl variant="outlined">
-                            <InputLabel className="label_modelo_autocomplete_motorista" id="demo-simple-select-outlined-label">Modelo </InputLabel>
+                            <InputLabel className="label_marca_esquerda_motorista" id="demo-simple-select-outlined-label">Modelo </InputLabel>
                             <Select                                                 
                               autoComplete="off"                     
-                              className="text_modelo_autocomplete_motorista"                                                
+                              className="text_marca_esquerda_motorista"                                                
                               labelId="demo-simple-select-outlined-label"
                               id="busca"
                               value={this.state.campModeloId}                             
@@ -1060,13 +1291,13 @@ return (
                   <div className="d-flex justify-content-start">
                        <div>
                        <FormControl variant="outlined">
-                          <InputLabel className="label_placa_text_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
+                          <InputLabel className="label_marca_direita_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
-                              error={this.state.erro_cep}
-                              helperText={this.state.mensagem_cep}
-                              className="text_placa_motorista"                       
+                              error={this.state.erro_placap}
+                              helperText={this.state.mensagem_placa}
+                              className="text_marca_direita_motorista"                       
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campPlaca}
@@ -1074,30 +1305,32 @@ return (
                               onChange={ (e) => {
                                 this.placaChange(e)                       
                                 this.validaPlacaChange(e)
-                              }}                         
-                              maxlength="9"     
+                              }}       
+                              inputProps={{
+                                maxLength: 9,
+                              }}                                                     
                             endAdornment={
                               <InputAdornment position="end">
-                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                                  {this.state.validacao_placa? <CheckIcon />: ''}
                               </InputAdornment>
                             }
                             labelWidth={50}
                           />                  
-                          <FormHelperText error={this.state.erro_cep}>
-                                {this.state.mensagem_cep}
+                          <FormHelperText error={this.state.erro_placa}>
+                                {this.state.mensagem_placa}
                           </FormHelperText>
                         </FormControl>                      
                        </div> 
                        
                        <div>
                        <FormControl variant="outlined">
-                          <InputLabel className="label_ano_text_motorista" htmlFor="filled-adornment-password">Ano</InputLabel>
+                          <InputLabel className="label_marca_esquerda_motorista" htmlFor="filled-adornment-password">Ano</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
-                              error={this.state.erro_cep}
-                              helperText={this.state.mensagem_cep}
-                              className="text_ano_motorista"                       
+                              error={this.state.erro_ano}
+                              helperText={this.state.mensagem_ano}
+                              className="text_marca_esquerda_motorista"                       
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campAno}                        
@@ -1105,17 +1338,19 @@ return (
                               onChange={ (e) => {
                                 this.anoChange(e)                       
                                 this.validaAnoChange(e)
-                              }}                         
-                              maxlength="9"     
+                              }}           
+                              inputProps={{
+                                maxLength: 4,
+                              }}
                             endAdornment={
                               <InputAdornment position="end">
-                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                                  {this.state.validacao_ano? <CheckIcon />: ''}
                               </InputAdornment>
                             }
                             labelWidth={30}
                           />                  
-                          <FormHelperText error={this.state.erro_cep}>
-                                {this.state.mensagem_cep}
+                          <FormHelperText error={this.state.erro_ano}>
+                                {this.state.mensagem_ano}
                           </FormHelperText>
                         </FormControl>                             
                        </div>                        
@@ -1125,13 +1360,13 @@ return (
                 <div class="d-flex justify-content-start">
                        <div>
                        <FormControl variant="outlined">
-                          <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Cor</InputLabel>
+                          <InputLabel className="label_marca_direita_motorista" htmlFor="filled-adornment-password">Cor</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
-                              error={this.state.erro_cep}
-                              helperText={this.state.mensagem_cep}
-                              className="text_cor_motorista"                       
+                              error={this.state.erro_cor}
+                              helperText={this.state.mensagem_cor}
+                              className="text_marca_direita_motorista"                       
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campCor}                            
@@ -1139,29 +1374,31 @@ return (
                               onChange={ (e) => {
                                 this.corChange(e)                       
                                 this.validaCorChange(e)
-                              }}                          
-                              maxlength="9"     
+                              }}
+                              inputProps={{
+                                maxLength: 20,
+                              }}                                                        
                             endAdornment={
                               <InputAdornment position="end">
-                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                                  {this.state.validacao_cor? <CheckIcon />: ''}
                               </InputAdornment>
                             }
                             labelWidth={30}
                           />                  
                           <FormHelperText error={this.state.erro_cep}>
-                                {this.state.mensagem_cep}
+                                {this.state.mensagem_cor}
                           </FormHelperText>
                         </FormControl>                          
                        </div>
                        <div>
                        <FormControl variant="outlined">
-                          <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Ano do DUT</InputLabel>
+                          <InputLabel className="label_marca_esquerda_motorista" htmlFor="filled-adornment-password">Ano do DUT</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
-                              error={this.state.erro_cep}
-                              helperText={this.state.mensagem_cep}
-                              className="text_anodut_motorista"                       
+                              error={this.state.erro_anodut}
+                              helperText={this.state.mensagem_anoDUT}
+                              className="text_marca_esquerda_motorista"                       
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campAnodut}                        
@@ -1170,51 +1407,55 @@ return (
                                 this.anoDUTChange(e)                       
                                 this.validaAnoDUTChange(e)
                               }}                        
-                              maxlength="9"     
+                              inputProps={{
+                                maxLength: 4,
+                              }}       
                             endAdornment={
                               <InputAdornment position="end">
-                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                                  {this.state.validacao_anodut? <CheckIcon />: ''}
                               </InputAdornment>
                             }
-                            labelWidth={80}
+                            labelWidth={100}
                           />                  
-                          <FormHelperText error={this.state.erro_cep}>
-                                {this.state.mensagem_cep}
+                          <FormHelperText error={this.state.erro_anodut}>
+                                {this.state.mensagem_anoDUT}
                           </FormHelperText>
                         </FormControl>                           
                        </div>                                                       
                 </div>    
             </div>      
-            <div class="p-2">     
-            <FormControl variant="outlined">
-                            <InputLabel className="label_seguradora_autocomplete_motorista" id="demo-simple-select-outlined-label">Seguradora </InputLabel>
-                            <Select                                                 
-                              autoComplete="off"                     
-                              className="text_seguradora_autocomplete_motorista"                                                
-                              labelId="demo-simple-select-outlined-label"
-                              id="busca"
-                              value={this.state.campSeguradoraId}                          
-                              onBlur={this.verificaSeguro}
-                              onChange={ (e) => {
-                                this.seguradoraChange(e)                       
-                                this.validaSeguroChange(e)
-                              }}                                                                                 
-                              labelWidth={110}   
-                             >          
-                             <MenuItem value={0}>Selecione a seguradora</MenuItem>                                         
-                              {this.loadSeguradorasData()}                    
-                              </Select>
-                          </FormControl>                                         
-            </div> 
-            <div class="p-2">    
-            <FormControl variant="outlined">
-                          <InputLabel className="label_apolice_text_motorista" htmlFor="filled-adornment-password">Número Apólice</InputLabel>
+            <div class="p-2">   
+            <div class="d-flex justify-content-start">
+                       <div>  
+                          <FormControl variant="outlined">
+                                          <InputLabel className="label_marca_direita_motorista" id="demo-simple-select-outlined-label">Seguradora </InputLabel>
+                                          <Select                                                 
+                                            autoComplete="off"                     
+                                            className="text_marca_direita_motorista"                                                
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="busca"
+                                            value={this.state.campSeguradoraId}                          
+                                            onBlur={this.verificaSeguro}
+                                            onChange={ (e) => {
+                                              this.seguradoraChange(e)                       
+                                              this.validaSeguroChange(e)
+                                            }}                                                                                 
+                                            labelWidth={110}   
+                                          >          
+                                          <MenuItem value={0}>Selecione a seguradora</MenuItem>                                         
+                                            {this.loadSeguradorasData()}                    
+                                            </Select>
+                                        </FormControl>
+                     </div>
+                     <div>
+                     <FormControl variant="outlined">
+                          <InputLabel className="label_marca_esquerda_motorista" htmlFor="filled-adornment-password">Número Apólice</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
-                              error={this.state.erro_cep}
-                              helperText={this.state.mensagem_cep}
-                              className="text_apolice_motorista"                
+                              error={this.state.erro_apolice}
+                              helperText={this.state.mensagem_apolice}
+                              className="text_marca_esquerda_motorista"                
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campApolice}                           
@@ -1223,20 +1464,89 @@ return (
                                 this.apoliceChange(e)                       
                                 this.validaApoliceChange(e)
                               }}                   
-                              maxlength="9"     
+                              inputProps={{
+                                maxLength: 12,
+                              }}      
                             endAdornment={
                               <InputAdornment position="end">
-                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                                  {this.state.validacao_apolice? <CheckIcon />: ''}
                               </InputAdornment>
                             }
                             labelWidth={130}
                           />                  
-                          <FormHelperText error={this.state.erro_cep}>
-                                {this.state.mensagem_cep}
+                          <FormHelperText error={this.state.erro_apolice}>
+                                {this.state.mensagem_apolice}
                           </FormHelperText>
                         </FormControl>    
-           
-            </div>                    
+                     </div>
+             </div>                                                                      
+            </div>           
+            <div class="p-2">    
+            <div class="d-flex justify-content-start">
+                       <div>  
+                       <FormControl component="fieldset">
+                          <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_direito_operador"
+                              value={this.state.campEngate}
+                              control={<Switch color="primary" checked={this.state.campEngate} 
+                                    onChange={this.engateChange}/>}
+                                    label="Engate"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                        </FormControl>  
+                       </div>
+                       <div>
+                       <FormControl component="fieldset">
+                       <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_esquerda_operador"
+                              value={this.state.campCadeirinhaPequena}
+                              control={<Switch color="primary" checked={this.state.campCadeirinhaPequena} 
+                                    onChange={this.cadeirinhapequenaChange}/>}
+                                    label="Cadeirinha até 2 anos"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                         </FormControl> 
+                       </div>
+              </div>   
+
+            </div>  
+            <div class="p-2">    
+                <div class="d-flex justify-content-start">
+                       <div>  
+                       <FormControl component="fieldset">
+                          <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_direito_operador"
+                              value={this.state.campCadeiraRodas}
+                              control={<Switch color="primary" checked={this.state.campCadeiraRodas} 
+                                    onChange={this.cadeirarodasChange}/>}
+                                    label="Cadeira de Rodas"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                         </FormControl> 
+                       </div>         
+                       <div>  
+                       <FormControl component="fieldset">
+                          <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_esquerda_operador"
+                              value={this.state.campCadeirinhaGrande}
+                              control={<Switch color="primary" checked={this.state.campCadeirinhaGrande} 
+                                    onChange={this.cadeirinhagrandeChange}/>}
+                                    label="Cadeirinha maoir de 2 anos"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                          </FormControl>                       
+                       </div>                       
+              </div>   
+                       
+            </div>                                      
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 

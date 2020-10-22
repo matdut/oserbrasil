@@ -10,6 +10,7 @@ import Resizer from 'react-image-file-resizer';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
 import api from '../../../services/api';
+import { dataMask } from '../../formatacao/datamask';
 import '../documentos.css';
 import Menu_motorista from '../menu_motorista';
 import Menu_administrador from '../../administrador/menu_administrador';
@@ -24,6 +25,7 @@ const andamento_cadastro = localStorage.getItem('logprogress');
 //const cep_empresa = localStorage.getItem('logcep');     
 //const userId = localStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
+var dateFormat = require('dateformat');
 const resizeFile = (file) => new Promise(resolve => {
   Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
   uri => {
@@ -41,7 +43,29 @@ class empresarialComponent extends React.Component{
     this.state = {      
       uploadedCNH: [],
       uploadedCRVL: [],
+      uploadedFilesFoto: [],     
       perfillog: null,
+      campCarro: '',
+      campModelo: '',
+      campCarroId: '',
+      campModeloId: '',            
+      camp_foto_CRVL_url: '',
+      camp_foto_CNH_url: '',
+      camp_foto_url: '',
+      campSeguradoraId: '',
+      campPlaca: '',
+      campAnodut: '',            
+      campAno: '',
+      campCor: '',    
+      campCep: '',
+      campEndereco: "",
+      campNumero: "",
+      campComplemento:"",
+      campCelular:"",
+      campCidade:"",
+      campEstadoId:0,
+      estadoSelecionado: "",   
+      campBairro:"",       
       foto_incluida_1: false,
       foto_incluida_2: false,
       incluir_foto_1: false,    
@@ -57,7 +81,6 @@ class empresarialComponent extends React.Component{
   componentDidMount(){      
 
     //console.log('ENTROU AQUI ')
-
     let userId = this.props.match.params.id;
 
     this.setState({      
@@ -75,11 +98,108 @@ class empresarialComponent extends React.Component{
     }
     
   
-    this.carrega_motorista()    
-    this.carrega_doc_veiculo()
+    this.carrega_motorista();   
+    this.carrega_doc_veiculo();
+
+    //this.valida_motorista();
   
   }
 
+  valida_motorista() {
+    const { validate } = this.state;  
+    localStorage.setItem('logPendencia', 0);
+    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    .then(res=>{
+        console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.data.length > 0) {          
+
+          this.setState({            
+            campCarroId: res.data.data[0].marcaId,
+            campModeloId: res.data.data[0].modeloId,            
+            camp_foto_CRVL_url: res.data.data[0].foto_CRVL_url,
+            campSeguradoraId: res.data.data[0].seguradoraId,
+            campPlaca: res.data.data[0].placa,
+            campAnodut: res.data.data[0].anodut,            
+            campAno: res.data.data[0].ano,
+            campCor: res.data.data[0].cor,            
+          })            
+          api.get(`/motorista/get/${res.data.data[0].motoristaId}`)
+          .then(res=>{
+            console.log(JSON.stringify(res.data, null, "    ")); 
+            if (res.data.success) {
+               
+              this.setState({               
+                campStatusId: res.data.data[0].statusId,
+                campCNH: res.data.data[0].numero_carteira,   
+                campData_CNH:  dateFormat(res.data.data[0].data_validade, "UTC:dd/mm/yyyy"),  
+                camp_foto_CNH_url: res.data.data[0].foto_CNH_url,
+                camp_foto_url: res.data.data[0].foto_url,                          
+                campNumero: res.data.data[0].numero,
+                campComplemento: res.data.data[0].complemento,                               
+                campCep: res.data.data[0].cep,                   
+              })       
+              
+              
+              if (this.state.campCarroId == null || this.state.campCarroId == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campModeloId == null || this.state.campModeloId == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.camp_foto_CRVL_url == null || this.state.camp_foto_CRVL_url == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campSeguradoraId == null || this.state.campSeguradoraId == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campPlaca == null || this.state.campPlaca == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campAnodut == null || this.state.campAnodut == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campAno == null || this.state.campAno == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campCor == null || this.state.campCor == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campCNH == null || this.state.campCNH == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campData_CNH == null || this.state.campData_CNH == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.camp_foto_CNH_url == null || this.state.camp_foto_CNH_url == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.camp_foto_url == null || this.state.camp_foto_url == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campCep == null || this.state.campCep == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campNumero == null || this.state.campNumero == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campComplemento == null || this.state.campComplemento == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+
+            } 
+
+          })        
+          .catch(error=>{
+            alert("Error de conexão motorista "+error)
+          })       
+
+        }  
+
+      })        
+      .catch(error=>{
+        alert("Error de conexão carrega_veiculo "+error)
+      })   
+    }
   carrega_motorista() {   
     
 
@@ -208,6 +328,38 @@ getBase64(file, success) {
 sendUpdate(){        
   console.log('sendupdate - '+JSON.stringify(this.state, null, "    ")); 
 
+  if (localStorage.getItem('logPendencia') == 0) {
+  
+    const datapost = {  
+        email: this.state.campEmail,  
+        perfilId: 3,
+        statusId: 16
+      }
+
+      api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+      .then(response=>{
+        if (response.data.success==true) {                        
+          
+          const logindata = {  
+            email: this.state.campEmail,  
+            perfilId: 3,
+            statusId: 16
+          }
+
+          api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+
+        }
+        else {
+          console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
+          alert("Error na Criação verificar log")              
+        }
+      }).catch(error=>{
+        alert("Error 34 ")
+      })
+    }
+
+
+
    if (this.state.incluir_foto_1 == true) {
     //console.log('FOTO UPLOAD 1');   
     const file = this.state.uploadedCNH[0].file;
@@ -325,7 +477,7 @@ handleUploadCNH = files => {
     uploadedCNH: [],
   });  
   console.log(JSON.stringify(' uploadedCNH - '+this.state.uploadedCNH[0], null, "    "));   
-  if (files[0].size <= 2047335) {
+ // if (files[0].size <= 2047335) {
   //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));   
       const uploadedCNH = files.map(file => ({
         file,
@@ -348,14 +500,14 @@ handleUploadCNH = files => {
       });         
 
       this.verifica_botao(2);
- } else {  
+/* } else {  
     this.setState({        
       incluir_foto_1: false,
       foto1State: '', 
       mensagem_foto1: 'Foto muito grande, favor adicionar outra '
     });  
     this.verifica_botao(2);
- }   
+ } */   
 
  // uploadedFiles.forEach(this.processUpload);
 }
@@ -369,7 +521,7 @@ handleUploadCRVL = files => {
   });  
   console.log(JSON.stringify(' uploadedCRVL - '+this.state.uploadedCRVL[0], null, "    "));   
 
-  if (files[0].size <= 2047335) {
+ // if (files[0].size <= 2047335) {
     const uploadedCRVL = files.map(file => ({
       file,
       //id: uniqueId(),
@@ -394,14 +546,14 @@ handleUploadCRVL = files => {
      
     this.verifica_botao(2)
 
-  } else {
+/*  } else {
     this.setState({    
       foto2State: '',
       incluir_foto_2: false,
       mensagem_foto2: 'Foto muito grande, favor adicionar outra '
     });
     this.verifica_botao(2)
-  } 
+  }  */
  
 }
 
@@ -447,11 +599,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -462,30 +614,31 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 
 render(){  
   const { uploadedCNH } = this.state;
@@ -493,14 +646,14 @@ render(){
   
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+            </div>         
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -549,7 +702,7 @@ return (
                 <Grid item xs>
                     <Paper className="documento_motorista_cnh_2">
                       <div>                       
-                        <div className="titulocrvl"><stronger>CRVL</stronger></div>
+                        <div className="titulocrvl"><stronger>CRLV</stronger></div>
                         <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
                         <Container>   
             
@@ -576,21 +729,7 @@ return (
                         </div>     
                     </Paper>
                   </Grid>                   
-               </div>              
-               <div className="d-flex flex-column">               
-                  <div className="p-2 titulocnh"> 
-                    <Grid container spacing={2}>
-                      <Grid item xs>
-                           <Paper className="grid_documento">
-                          <strong> Requisitos de formato: </strong><br/>
-                                tamanho mínimo da imagem: 300x100 pixeis;
-                                formatos aceitáveis: JPG, JPEG, PNG;
-                                tamanho do arquivo não deve exceder 2 MB. 
-                           </Paper> 
-                      </Grid>
-                    </Grid>                  
-                  </div>
-              </div>
+               </div>                            
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
     </div>       

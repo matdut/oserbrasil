@@ -11,6 +11,23 @@ sequelize.sync()
 
 controllers.delete = async (req,res) => {
 
+  const { id } = req.params;  
+
+  await EmailOperador.destroy({
+    where: { id: id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});   
+  })
+
+}
+
+controllers.deleteEmail = async (req,res) => {
+
   const { email } = req.params;  
 
   await EmailOperador.destroy({
@@ -31,6 +48,36 @@ controllers.list = async (req,res) => {
   await EmailOperador.findAll({
     include: [{ model: Status  }],
     where: { empresaId: id}    
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.listMotorista = async (req,res) => {
+  //const { id } = req.params;
+  await EmailOperador.findAll({
+    include: [{ model: Status  }],
+    where: { perfilId: 3}    
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+
+controllers.listAdministrador = async (req,res) => {
+  //const { id } = req.params;
+  await EmailOperador.findAll({
+    include: [{ model: Status  }]
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -90,21 +137,19 @@ controllers.getemail = async (req, res) => {
 controllers.create = async (req,res) => {  
   
   // DATA parametros desde post
-  const { email, empresaId, statusId, gerenciar_eventos, gerenciar_todos_eventos, 
-    incluir_cartao, visualizar_eventos, efetuar_pagamentos, incluir_outors_operadores, eventoId } = req.body;
+  const { email, empresaId, statusId, gerenciar_eventos, monitorar_eventos,
+    representante_legal, eventoId, perfilId } = req.body;
      
   //console.log('entrou aqui clienteId = '+clienteId);
   await EmailOperador.create({
     email: email,              
     empresaId: empresaId,          
+    perfilId: perfilId,
     eventoId: eventoId,    
-    statusId: statusId,
+    statusId: statusId,    
     gerenciar_eventos: gerenciar_eventos, 
-    gerenciar_todos_eventos: gerenciar_todos_eventos, 
-    incluir_cartao: incluir_cartao, 
-    visualizar_eventos: visualizar_eventos,
-    efetuar_pagamentos: efetuar_pagamentos, 
-    incluir_outors_operadores: incluir_outors_operadores,    
+    monitorar_eventos: monitorar_eventos,   
+    representante_legal: representante_legal,
   })
   .then( function (data){
     return res.json({success:true, data: data, message:"EmailOperador salvo com sucesso"});
@@ -117,21 +162,19 @@ controllers.create = async (req,res) => {
 
 controllers.update = async (req, res) => {
   // parameter id get  
-  const { email, empresaId, statusId, gerenciar_eventos, gerenciar_todos_eventos, 
-    incluir_cartao, visualizar_eventos, efetuar_pagamentos, incluir_outors_operadores, eventoId } = req.body;
+  const { email, empresaId, statusId, gerenciar_eventos, monitorar_eventos,
+    representante_legal, eventoId, perfilId } = req.body;
   // parameter post
   
   await Cartao.update({
     email: email,              
     empresaId: empresaId,          
+    perfilId: perfilId,
     eventoId: eventoId,    
-    statusId: statusId,
-    gerenciar_eventos: gerenciar_eventos, 
-    gerenciar_todos_eventos: gerenciar_todos_eventos, 
-    incluir_cartao: incluir_cartao, 
-    visualizar_eventos: visualizar_eventos,
-    efetuar_pagamentos: efetuar_pagamentos, 
-    incluir_outors_operadores: incluir_outors_operadores,    
+    statusId: statusId,    
+    gerenciar_eventos: gerenciar_eventos,     
+    monitorar_eventos: monitorar_eventos,   
+    representante_legal: representante_legal,
   },{
     where: { id: id }
   })

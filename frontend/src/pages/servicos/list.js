@@ -22,7 +22,10 @@ import Select from '@material-ui/core/Select';
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
-import Menu_evento from '../eventos/menu_evento';
+import Menu_cliente_individual from '../cliente/menu_cliente_individual';
+import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
+import Menu from '../../pages/cabecalho' ;
+import Menu_administrador from '../administrador/menu_administrador';
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
@@ -43,6 +46,7 @@ class listTransladosComponent extends React.Component  {
       campnome_evento: '', 
       campdata_evento: '', 
       camptipotransporteId: '', 
+      campDeletarId: '',
       campvalor_total: '',
       campTipo_cliente: '',
       listTranslados:[],
@@ -76,15 +80,15 @@ class listTransladosComponent extends React.Component  {
               //console.log(JSON.stringify(data, null, "    ")); 
               this.setState({          
                 dataEvento:data,                
-                campcliente_cnpj: data.cnpj || data.cpf, 
-                campcliente_nome: data.nome, 
+              //  campcliente_cnpj: data.cnpj || data.cpf, 
+               // campcliente_nome: data.nome, 
                 campordem_servico: data.ordem_servico, 
                 campnome_evento: data.nome_evento, 
-                campdata_evento: data.data_evento, 
-                camptipoTransporteId: data.tipoTransporteId, 
+                campdata_evento: dateFormat(data.data_evento, "UTC:dd/mm/yyyy"), 
+               // camptipoTransporteId: data.tipoTransporteId, 
                 campvalor_total: data.valor_total
               })                       
-              this.load_tipotransporte();
+            //  this.load_tipotransporte();
             }
             else {
               alert("Erro de conexão com o banco de dados")
@@ -158,87 +162,213 @@ class listTransladosComponent extends React.Component  {
     this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`); 
   
   }
+
+  verifica_menu() {
+
+    if (localStorage.getItem('logperfil') == 1) {
+      return ( 
+        <div>
+            <Menu_administrador />                
+         </div>   
+       ); 
+    } else if (localStorage.getItem('logperfil') == 2) {
+      return ( 
+        <div>
+            <Menu_cliente_individual />                
+         </div>   
+       ); 
+    } else if (localStorage.getItem('logperfil') == 7) {
+      return ( 
+        <div>
+            <Menu_cliente_empresarial />                
+         </div>   
+       ); 
+    }
+
+  }     
   render()
   {
     return (
       <div>    
-          <div>
-            <Menu_evento />  
-          </div>         
-        <div className="container">      
-           <br/>
-           <center><h3><strong>Evento</strong></h3></center>
-           <br/>
-              <div className="form-row">      
-                <div className="form-group col-md-4">
-                <Label for="exampleDate">Nome Evento *</Label>
-                <Input
-                  type="text"
-                  name="ordem"
-                  id="nome"
-                  placeholder=""
-                  value={this.state.campnome_evento} 
-                  readOnly = {this.props.readOnly}
-                />                 
-                </div>
-                <div className="form-group col-md-4">   
-                <Label for="exampleDatetime">Data do Evento *</Label>
-                    <Input
-                      type="text"
-                      name="date"
-                      id="exampleDatetime"
-                      placeholder=""
-                      value={dateFormat(this.state.campdata_evento,'dd/mm/yyyy')}   
-                      readOnly = {this.props.readOnly}     
-                    />                                                               
-                </div>                
-                <div className="form-group col-md-4">
-                <Label for="exampleDatetime">Tipo Transporte</Label>
-                    <Input
-                      type="text"
-                      name="text"
-                      id="exampleDatetime"
-                      placeholder=""
-                      value={this.state.campnometransporte}     
-                      readOnly = {this.props.readOnly}     
-                    />   
-                </div>              
-              </div>   
-            <br/>
-            <center><h3><strong>Lista de Translados</strong></h3></center>
-            <div>  
-            <Link className="btn btn-outline-info" to={"/transladoscriar"}> <span class="glyphicon glyphicon-plus"></span> Adicionar Translados</Link>                 
-          <br/>
-          </div>  
-          <table className="table table-hover danger">
-            <thead>
-              <tr>
-                <th scope="col">#</th>            
-                <th scope="col">Nome Passageiro</th>
-                <th scope="col">Local Embarque</th>
-                <th scope="col">Data Inicial</th>
-                <th scope="col">Hora Inicial</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody>         
-              {this.loadFillData()}
-            </tbody>
-          </table>         
-             <div className="form-row"> 
-                <div className="form-group col-md-2">
-                   <Link className="btn btn-outline-info" to={"/transladoscriar"}> 
-                          <span class="glyphicon glyphicon-plus"></span> Adicionar Translados
-                   </Link>
-                </div>  
-                <div className="form-group col-md-2">
-                  <Button color="secondary" variant="contained" onClick={this.voltarlistaClick}>
-                      voltar
-                  </Button>      
+        
+          {this.verifica_menu()}
+        
+          <div className="titulo_lista">     
+              <div className="unnamed-character-style-4 descricao_admministrador">      
+                <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
+                <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>                
+
+                <h3><strong>Lista de Serviços</strong></h3>
+              </div>      
+          </div>
+          <br/>        
+        <div className="container_modal_list">       
+         <br/>   
+         <Tabs 
+           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">          
+          <Tab eventKey="ativos" title="Eventos Ativos">
+          <div style={{ maxWidth: '100%',  maxHeight: '100%' }}>
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: '40px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
+                              { title: 'Data do Evento', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },            
+                            ]}
+                            data={this.state.listEventos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Adicionar Valores Tarifários',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{                             
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_eventos_Ativos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,     
+                              maxBodyHeight: 530,    
+                             // maxBodyHeight: 400,
+                             // resizable: false,
+                              //headerStyle: { position: 'sticky', top: 0 },
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 4,
+                             // pageSize: 7,
+                              pageSizeOptions: [0],                 
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                tooltip: 'editar',                                
+                                onClick: (evt, data) => this.onEditar(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Evento',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                              }
+                              /*,
+                              {
+                                icon: 'add',                                                             
+                                tooltip: 'Adiciona Eventos',
+                                isFreeAction: true,
+                                onClick: (event) => this.handleOpenModalInclusao()
+                              } */
+                            ]}
+                            
+                          />      
                 </div>    
-            </div>                 
-        </div>
-      </div>         
+          </Tab>        
+          <Tab eventKey="finalizados" title="Histórico de Eventos">
+          <div style={{ maxWidth: '100%',  maxHeight: '100%' }}>
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: '40px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
+                              { title: 'Data do Evento', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: '', field: '#', width: '50px' },
+                              { title: '', field: '', align: 'left', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                            ]}
+                            data={this.state.listClienteExcluidos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Add',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_eventos_finalizados',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,         
+                              maxBodyHeight: 530,
+                             // maxBodyHeight: 400,
+                             // resizable: false,
+                              //headerStyle: { position: 'sticky', top: 0 },
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 4,
+                             // pageSize: 7,
+                              pageSizeOptions: [0],                    
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                tooltip: 'Editar',
+                                onClick: (evt, data) => this.handleOpenModal(data)
+                              }
+                            ]}
+                          />      
+                </div>      
+          </Tab>          
+        </Tabs>   
+            
+                
+                   
+      </div>
+     </div>         
     );
   }
 
@@ -283,6 +413,27 @@ class listTransladosComponent extends React.Component  {
         )
       }
     })
+  }
+
+  handleOpenModalDelete(data) { 
+    this.setState({ 
+      showMensagemDelete: true,
+      campDeletarId: data.id,
+      retorno: '',
+      campDescricao: '',
+      validacao_descricao: false,
+    });  
+
+    console.log('resultado '+JSON.stringify(data.id, null, "    ")); 
+    //console.log('modal id - '+data.id)  
+     
+    
+  }
+  
+  handleCloseModalDelete() {
+    this.setState({ 
+      showMensagemDelete: false
+    });   
   }
 
   sendDelete(userId){

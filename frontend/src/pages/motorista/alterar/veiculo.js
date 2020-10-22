@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Select, Button, Alert } from 'reactstrap';
+import {Form, Progress, Input, FormFeedback, Button, Alert } from 'reactstrap';
 import Autocomplete1 from 'react-autocomplete';
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -9,6 +9,18 @@ import Menu_motorista from '../menu_motorista';
 import Menu_administrador from '../../administrador/menu_administrador';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
+import Select from '@material-ui/core/Select';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import CheckIcon from '@material-ui/icons/Check';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+
 
 import api from '../../../services/api';
 import '../motorista.css';
@@ -38,6 +50,14 @@ class empresarialComponent extends React.Component{
       campApolice: "",
       campNomeSalvar: "",
       campSeguradoraNome: "",
+      campCep: '',
+      campEndereco: "",
+      campNumero: "",
+      campComplemento:"",
+      campEngate: false,
+      campCadeirinhaPequena: false,
+      campCadeirinhaGrande: false,
+      campCadeiraRodas: false,
       perfillog: null,
       campSeguradoraId: 0,
       incluir: false,
@@ -75,6 +95,11 @@ class empresarialComponent extends React.Component{
     this.anoDUTChange = this.anoDUTChange.bind(this);  
     this.apoliceChange = this.apoliceChange.bind(this);
     this.seguroChange = this.seguradoraChange.bind(this);  
+
+    this.engateChange = this.engateChange.bind(this);      
+    this.cadeirinhapequenaChange = this.cadeirinhapequenaChange.bind(this);  
+    this.cadeirinhagrandeChange = this.cadeirinhagrandeChange.bind(this);  
+    this.cadeirarodasChange = this.cadeirarodasChange.bind(this);  
     
     this.verificaCarro = this.verificaCarro.bind(this);  
     this.verificaModelo = this.verificaModelo.bind(this);  
@@ -108,8 +133,7 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);     
-    
+      localStorage.setItem('logid', userId);         
     } 
 
     if (localStorage.getItem('logVeiculo') > 0) {
@@ -292,7 +316,11 @@ class empresarialComponent extends React.Component{
             campPlaca: res.data.data[0].placa,
             campAnodut: res.data.data[0].anodut,            
             campAno: res.data.data[0].ano,
-            campCor: res.data.data[0].cor,                       
+            campCor: res.data.data[0].cor,
+            campEngate: res.data.data[0].engate,    
+            campCadeirinhaPequena: res.data.data[0].cadeirinha_pequena,       
+            campCadeirinhaGrande: res.data.data[0].cadeirinha_grande,       
+            campCadeiraRodas: res.data.data[0].cadeira_rodas,                                    
             inicio: 2       
           })            
 
@@ -438,6 +466,18 @@ class empresarialComponent extends React.Component{
     this.setState({
         campSeguradoraId: event.target.value
     });    
+  }
+  engateChange(e) {
+    this.setState({ campEngate: e.target.checked })
+  }
+  cadeirinhapequenaChange(e) {
+    this.setState({ campCadeirinhaPequena: e.target.checked })
+  }
+  cadeirinhagrandeChange(e) {
+    this.setState({ campCadeirinhaGrande: e.target.checked })
+  }
+  cadeirarodasChange(e) {
+    this.setState({ campCadeiraRodas: e.target.checked })
   }
   /* 
   seguroChange(e) {    
@@ -735,10 +775,9 @@ verifica_botao(inicio) {
     );   
   } else {
     
-    if (validate.carroState == 'has-success' && validate.modeloState  == 'has-success' 
-      && validate.anoState == 'has-success' && validate.apoliceState == 'has-success' 
-      && validate.seguroState == 'has-success' && validate.corState == 'has-success'
-      && validate.anoDUTState == 'has-success') {
+    if (this.state.validacao_carro == true && this.state.validacao_modelo == true
+      && this.state.validacao_ano == true && this.state.validacao_seguro == true 
+      && this.state.validacao_cor == true && this.state.validacao_anodut == true) {
         return ( 
           <Box bgcolor="text.disabled" color="background.paper" className="botao_cadastro_veiculo_habilitado"  p={2} onClick={()=>this.sendUpdate()}>
                   <div className="d-flex justify-content-center">
@@ -840,10 +879,13 @@ sendUpdate(){
     ano: this.state.campAno,
     anodut: this.state.campAnodut,
     cor: this.state.campCor,    
+    engate: this.state.campEngate, 
+    cadeirinha_pequena: this.state.campCadeirinhaPequena, 
+    cadeirinha_grande: this.state.campCadeirinhaGrande, 
+    cadeira_rodas: this.state.campCadeiraRodas,
     motoristaId: localStorage.getItem('logid')
   }          
   
-
       if (this.state.incluir == true) {        
 
         api.post("/veiculo/create", datapost)
@@ -937,11 +979,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -952,42 +994,43 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 render(){  
 
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+            </div>               
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -998,220 +1041,313 @@ return (
               <br/>
           </div> 
 
-            <div class="d-flex flex-column espacamento_caixa_texto">    
+          <div class="d-flex flex-column espacamento_caixa_texto">              
               <div class="p-2">               
                   <div class="d-flex justify-content-start">
                        <div> 
-                       <label for="inputAddress">Marca *</label>
-                          <Input 
-                              disabled = {this.state.dado_cadastral_disabled}   
-                              type="select" 
-                              name="select"                               
-                              id="exampleSelect" 
-                              className="autocomplete_marca"                              
-                              value={this.state.campCarroId}
-                              valid={ this.state.validate.carroState === 'has-success' }
-                              invalid={ this.state.validate.carroState === 'has-danger' }
+                       <FormControl variant="outlined">
+                            <InputLabel className="label_marca_autocomplete_motorista" id="demo-simple-select-outlined-label">Marca </InputLabel>
+                            <Select                                                 
+                              autoComplete="off"                     
+                              className="text_marca_autocomplete_motorista"                                                
+                              labelId="demo-simple-select-outlined-label"
+                              id="busca"
+                              value={this.state.campCarroId}  
                               onBlur={this.verificaCarro}
                               //onFocus={this.verificaCarro}
                               onChange={ (e) => {
                                 this.carroChange(e)                       
                                 this.validaCarroChange(e)
-                              }}                                                          >
-                              <option selected>Selecione a marca</option>               
-                              {this.loadMarcaData()}      
-                          </Input>                         
-                          <FormFeedback 
-                            invalid={this.state.validate.carroState}>
-                                {this.state.mensagem_carro}
-                          </FormFeedback>                                            
-                       </div> 
-                       
-                       <div>         
-                       <label className="texto_modelo" for="inputAddress">Modelo *</label>
-                          <Input 
-                              disabled = {this.state.dado_cadastral_disabled}   
-                              type="select" 
-                              className="autocomplete_modelo"
-                              name="select"                               
-                              id="exampleSelect" 
-                              value={this.state.campModeloId}
-                              valid={ this.state.validate.modeloState === 'has-success' }
-                              invalid={ this.state.validate.modeloState === 'has-danger' }
+                              }}                                                                               
+                              labelWidth={60}   
+                             >          
+                             <MenuItem value={0}>Selecione a marca</MenuItem>                                         
+                              {this.loadMarcaData()}                    
+                              </Select>
+                          </FormControl>                                                                                                           
+                       </div>                        
+                       <div>   
+                       <FormControl variant="outlined">
+                            <InputLabel className="label_modelo_autocomplete_motorista" id="demo-simple-select-outlined-label">Modelo </InputLabel>
+                            <Select                                                 
+                              autoComplete="off"                     
+                              className="text_modelo_autocomplete_motorista"                                                
+                              labelId="demo-simple-select-outlined-label"
+                              id="busca"
+                              value={this.state.campModeloId}                             
                               onBlur={this.verificaModelo}
                               onChange={ (e) => {
                                 this.modeloChange(e)                       
                                 this.validaModeloChange(e)
-                              }}                                                          >
-                              <option selected>Selecione o modelo</option>               
-                              { this.loadModelosData() }      
-                          </Input>
-                          <FormFeedback 
-                            invalid={this.state.validate.modeloState}>
-                                {this.state.mensagem_modelo}
-                          </FormFeedback>                             
+                              }}                                                                               
+                              labelWidth={60}   
+                             >          
+                             <MenuItem value={0}>Selecione o modelo</MenuItem>                                         
+                              {this.loadModelosData()}                    
+                              </Select>
+                          </FormControl>                                                                              
                        </div>                        
                   </div>
               </div> 
-              <div class="p-2">               
+              <div class="p-2">   
                   <div className="d-flex justify-content-start">
                        <div>
-                       <label for="inputAddress" className="titulo_placa">Placa *</label>
-                      <Input                    
-                        type="text"
-                        name="nome"
-                        className="texto_placa"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campPlaca}
-                        valid={ this.state.validate.placaState === 'has-success' }
-                        invalid={ this.state.validate.placaState === 'has-danger' }
-                        onBlur={this.verificaPlaca}
-                       // onFocus={this.verificaPlaca}
-                        onChange={ (e) => {
-                          this.placaChange(e)                       
-                          this.validaPlacaChange(e)
-                        }}    
-                        maxlength="8"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.placaState}>
-                          {this.state.mensagem_placa}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_placa_text_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_placa_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campPlaca}
+                              onBlur={this.verificaPlaca}                    
+                              onChange={ (e) => {
+                                this.placaChange(e)                       
+                                this.validaPlacaChange(e)
+                              }}                         
+                              inputProps={{
+                                maxLength: 9,
+                              }}     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={50}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                      
                        </div> 
                        
                        <div>
-                       <label for="inputAddress" className="titulo_ano">Ano *</label>
-                      <Input              
-                        type="text"
-                        name="nome"
-                        className="texto_ano"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campAno}
-                        valid={ this.state.validate.anoState === 'has-success' }
-                        invalid={ this.state.validate.anoState === 'has-danger' }
-                        onBlur={this.verificaAno}
-                        onChange={ (e) => {
-                          this.anoChange(e)                       
-                          this.validaAnoChange(e)
-                        }}    
-                        maxlength="4"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.anoState}>
-                          {this.state.mensagem_ano}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_ano_text_motorista" htmlFor="filled-adornment-password">Ano</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_ano_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campAno}                        
+                              onBlur={this.verificaAno}
+                              onChange={ (e) => {
+                                this.anoChange(e)                       
+                                this.validaAnoChange(e)
+                              }}                         
+                              inputProps={{
+                                maxLength: 4,
+                              }}     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={30}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                             
                        </div>                        
                   </div>
               </div> 
               <div class="p-2">    
                 <div class="d-flex justify-content-start">
                        <div>
-                       <label for="inputAddress">Cor *</label>
-                      <Input                    
-                        type="text"
-                        className="texto_cor"
-                        name="nome"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campCor}
-                        valid={ this.state.validate.corState === 'has-success' }
-                        invalid={ this.state.validate.corState === 'has-danger' }
-                        onBlur={this.verificaCor}
-                        onChange={ (e) => {
-                          this.corChange(e)                       
-                          this.validaCorChange(e)
-                        }}    
-                        maxlength="20"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.corState}>
-                          {this.state.mensagem_cor}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Cor</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_cor_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campCor}                            
+                              onBlur={this.verificaCor}
+                              onChange={ (e) => {
+                                this.corChange(e)                       
+                                this.validaCorChange(e)
+                              }}                          
+                              inputProps={{
+                                maxLength: 20,
+                              }}     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={30}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                          
                        </div>
                        <div>
-                       <label for="inputAddress" className="titulo_ano">Ano do DUT *</label>
-                      <Input           
-                        className="texto_ano"         
-                        type="text"
-                        name="nome"
-                        id="examplnome"
-                        placeholder=""
-                        autoComplete='off'
-                        autoCorrect='off'
-                        value={this.state.campAnodut}
-                        valid={ this.state.validate.anoDUTState === 'has-success' }
-                        invalid={ this.state.validate.anoDUTState === 'has-danger' }
-                        onBlur={this.verificaAnoDUT}
-                        onChange={ (e) => {
-                          this.anoDUTChange(e)                       
-                          this.validaAnoDUTChange(e)
-                        }}    
-                        maxlength="4"                                                                      
-                      />                                
-                      <FormFeedback 
-                      invalid={this.state.validate.anoDUTState}>
-                          {this.state.mensagem_anoDUT}
-                      </FormFeedback>    
+                       <FormControl variant="outlined">
+                          <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Ano do DUT</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_anodut_motorista"                       
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campAnodut}                        
+                              onBlur={this.verificaAnoDUT}
+                              onChange={ (e) => {
+                                this.anoDUTChange(e)                       
+                                this.validaAnoDUTChange(e)
+                              }}                        
+                              inputProps={{
+                                maxLength: 4,
+                              }}     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={80}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>                           
                        </div>                                                       
                 </div>    
             </div>      
-            <div class="p-2">     
-            <label for="inputAddress">Seguradora *</label>
-                <Input 
-                    disabled = {this.state.dado_cadastral_disabled}   
-                    type="select" 
-                    name="select" 
-                    className="seguro_select"
-                    id="exampleSelect" 
-                    value={this.state.campSeguradoraId}
-                    valid={ this.state.validate.seguroState === 'has-success' }
-                    invalid={ this.state.validate.seguroState === 'has-danger' }
-                    onBlur={this.verificaSeguro}
-                    onChange={ (e) => {
-                      this.seguradoraChange(e)                       
-                      this.validaSeguroChange(e)
-                    }}                                                          >
-                     <option selected>Selecione a seguradora</option>               
-                     {this.loadSeguradorasData()}      
-                </Input>
-                <FormFeedback 
-                  invalid={this.state.validate.seguroState}>
-                       {this.state.mensagem_seguro}
-                </FormFeedback>                                        
-            </div> 
+            <div class="p-2">   
+            <div class="d-flex justify-content-start">
+                       <div>  
+                          <FormControl variant="outlined">
+                                          <InputLabel className="label_marca_direita_motorista" id="demo-simple-select-outlined-label">Seguradora </InputLabel>
+                                          <Select                                                 
+                                            autoComplete="off"                     
+                                            className="text_marca_direita_motorista"                                                
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="busca"
+                                            value={this.state.campSeguradoraId}                          
+                                            onBlur={this.verificaSeguro}
+                                            onChange={ (e) => {
+                                              this.seguradoraChange(e)                       
+                                              this.validaSeguroChange(e)
+                                            }}                                                                                 
+                                            labelWidth={110}   
+                                          >          
+                                          <MenuItem value={0}>Selecione a seguradora</MenuItem>                                         
+                                            {this.loadSeguradorasData()}                    
+                                            </Select>
+                                        </FormControl>
+                     </div>
+                     <div>
+                     <FormControl variant="outlined">
+                          <InputLabel className="label_marca_esquerda_motorista" htmlFor="filled-adornment-password">Número Apólice</InputLabel>
+                          <OutlinedInput 
+                              autoComplete="off"                                   
+                              type="text"                       
+                              error={this.state.erro_cep}
+                              helperText={this.state.mensagem_cep}
+                              className="text_marca_esquerda_motorista"                
+                              id="cep_incluir"                      
+                              variant="outlined"
+                              value={this.state.campApolice}                           
+                              onBlur={this.verificaApolice}
+                              onChange={ (e) => {
+                                this.apoliceChange(e)                       
+                                this.validaApoliceChange(e)
+                              }}                   
+                              inputProps={{
+                                maxLength: 12,
+                              }}     
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_cep? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={130}
+                          />                  
+                          <FormHelperText error={this.state.erro_cep}>
+                                {this.state.mensagem_cep}
+                          </FormHelperText>
+                        </FormControl>    
+                     </div>
+             </div>                                                                      
+            </div>
             <div class="p-2">    
-            <label for="inputAddress" className="texto_apolice">Número Apólice *</label>
-                        <Input                            
-                            type="text"
-                            className="texto_apolice"
-                            name="nome"
-                            id="examplnome"
-                            placeholder=""
-                            autoComplete='off'
-                            autoCorrect='off'
-                            value={this.state.campApolice}
-                            valid={ this.state.validate.apoliceState === 'has-success' }
-                            invalid={ this.state.validate.apoliceState === 'has-danger' }
-                            onBlur={this.verificaApolice}
-                            onChange={ (e) => {
-                              this.apoliceChange(e)                       
-                              this.validaApoliceChange(e)
-                            }}    
-                            maxlength="10"                                                                      
-                          />                                
-                          <FormFeedback 
-                          invalid={this.state.validate.apoliceState}>
-                              {this.state.mensagem_apolice}
-                          </FormFeedback> 
+            <div class="d-flex justify-content-start">
+                       <div>  
+                       <FormControl component="fieldset">
+                          <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_direito_operador"
+                              value={this.state.campEngate}
+                              control={<Switch color="primary" checked={this.state.campEngate} 
+                                    onChange={this.engateChange}/>}
+                                    label="Engate"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                        </FormControl>  
+                       </div>
+                       <div>
+                       <FormControl component="fieldset">
+                       <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_esquerda_operador"
+                              value={this.state.campCadeirinhaPequena}
+                              control={<Switch color="primary" checked={this.state.campCadeirinhaPequena} 
+                                    onChange={this.cadeirinhapequenaChange}/>}
+                                    label="Cadeirinha até 2 anos"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                         </FormControl> 
+                       </div>
+              </div>   
 
+            </div>  
+            <div class="p-2">    
+                <div class="d-flex justify-content-start">
+                       <div>  
+                       <FormControl component="fieldset">
+                          <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_direito_operador"
+                              value={this.state.campCadeiraRodas}
+                              control={<Switch color="primary" checked={this.state.campCadeiraRodas} 
+                                    onChange={this.cadeirarodasChange}/>}
+                                    label="Cadeira de Rodas"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                         </FormControl> 
+                       </div>         
+                       <div>  
+                       <FormControl component="fieldset">
+                          <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                              className="checkbox_esquerda_operador"
+                              value={this.state.campCadeirinhaGrande}
+                              control={<Switch color="primary" checked={this.state.campCadeirinhaGrande} 
+                                    onChange={this.cadeirinhagrandeChange}/>}
+                                    label="Cadeirinha maoir de 2 anos"
+                                    labelPlacement="end"                           
+                            />   
+                          </FormGroup>               
+                          </FormControl>                       
+                       </div>                       
+              </div>   
+                       
             </div>                    
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       

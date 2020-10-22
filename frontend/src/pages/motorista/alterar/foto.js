@@ -11,6 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
 
 //FOTO
+
+//import Upload from "../../UploadDocumentos";
+//import FileList from "../../FilelistDocumento";
+
 import filesize from "filesize";
 import Upload from "../../Upload";
 //import Upload from "../UploadDocumentos";
@@ -24,6 +28,7 @@ import Resizer from 'react-image-file-resizer';
 
 import api from '../../../services/api';
 import '../foto.css';
+var dateFormat = require('dateformat');
 
 const fs = require('fs');
 //const imageToBase64 = require('image-to-base64');
@@ -49,6 +54,24 @@ class empresarialComponent extends React.Component{
     this.state = {      
       campFoto: "",
       campNome: "",
+      campCep: '',    
+      campBairro: '',
+      campEndereco: '',
+      campComplemento:'',
+      campNumero:'',
+      campCidade:'',
+      campCarro: '',
+      campModelo: '',
+      campCarroId: '',
+      campModeloId: '',            
+      camp_foto_CRVL_url: '',
+      camp_foto_CNH_url: '',
+      camp_foto_url: '',
+      campSeguradoraId: '',
+      campPlaca: '',
+      campAnodut: '',            
+      campAno: '',
+      campCor: '',  
       uploadedFilesFoto: [],     
       foto_compress: '', 
       inicio: 1,
@@ -79,9 +102,105 @@ class empresarialComponent extends React.Component{
       progresso: 85
     });    
 
-    this.carrega_motorista()     
-    
+    this.carrega_motorista();     
+    this.valida_motorista();
   }
+
+  valida_motorista() {
+    const { validate } = this.state;  
+    localStorage.setItem('logPendencia', 0);
+    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    .then(res=>{
+        console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.data.length > 0) {          
+
+          this.setState({            
+            campCarroId: res.data.data[0].marcaId,
+            campModeloId: res.data.data[0].modeloId,            
+            camp_foto_CRVL_url: res.data.data[0].foto_CRVL_url,
+            campSeguradoraId: res.data.data[0].seguradoraId,
+            campPlaca: res.data.data[0].placa,
+            campAnodut: res.data.data[0].anodut,            
+            campAno: res.data.data[0].ano,
+            campCor: res.data.data[0].cor,            
+          })            
+          api.get(`/motorista/get/${res.data.data[0].motoristaId}`)
+          .then(res=>{
+            console.log(JSON.stringify(res.data, null, "    ")); 
+            if (res.data.success) {
+               
+              this.setState({               
+                campStatusId: res.data.data[0].statusId,
+                campCNH: res.data.data[0].numero_carteira,   
+                campData_CNH:  dateFormat(res.data.data[0].data_validade, "UTC:dd/mm/yyyy"),  
+                camp_foto_CNH_url: res.data.data[0].foto_CNH_url,
+                camp_foto_url: res.data.data[0].foto_url,                          
+                campNumero: res.data.data[0].numero,
+                campComplemento: res.data.data[0].complemento,                               
+                campCep: res.data.data[0].cep,                   
+              })       
+              
+              
+              if (this.state.campCarroId == null || this.state.campCarroId == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campModeloId == null || this.state.campModeloId == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.camp_foto_CRVL_url == null || this.state.camp_foto_CRVL_url == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campSeguradoraId == null || this.state.campSeguradoraId == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campPlaca == null || this.state.campPlaca == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campAnodut == null || this.state.campAnodut == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campAno == null || this.state.campAno == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campCor == null || this.state.campCor == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campCNH == null || this.state.campCNH == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campData_CNH == null || this.state.campData_CNH == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.camp_foto_CNH_url == null || this.state.camp_foto_CNH_url == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.camp_foto_url == null || this.state.camp_foto_url == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campCep == null || this.state.campCep == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campNumero == null || this.state.campNumero == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+              if (this.state.campComplemento == null || this.state.campComplemento == "") {
+                localStorage.setItem('logPendencia', 1)
+              }
+
+            } 
+
+          })        
+          .catch(error=>{
+            alert("Error de conexão motorista "+error)
+          })       
+
+        }  
+
+      })        
+      .catch(error=>{
+        alert("Error de conexão carrega_veiculo "+error)
+      })   
+    }
 
   preview_imagem(file) {
     //let data = 'c3RhY2thYnVzZS5jb20=';
@@ -199,9 +318,21 @@ getBase64(file, success) {
 }
 async sendUpdate(){         
 
+  
+  if (localStorage.getItem('logPendencia') == 0) {
+    const data1 = {
+      email: this.state.campEmail,  
+      perfilId: 3,
+      statusId: 16
+    }          
+      api.put(`/motorista/update/${localStorage.getItem('logid')}`, data1)      
+
+      api.put(`/login/update/${localStorage.getItem('logid')}`,data1)
+   }
+
+
   if (this.state.incluir_foto == true) {
   //  console.log(' passando o upload 2 '+JSON.stringify(this.state.uploadedFilesFoto[0], null, "    "));            
-
     const file = this.state.uploadedFilesFoto[0].file;            
     //var vm = this;
 
@@ -268,7 +399,7 @@ handleUpload = files => {
 
   //console.log(JSON.stringify(' uploadedFilesFoto - '+this.state.uploadedFilesFoto[0], null, "    "));   
 
-  if (files[0].size <= 2047335) {      
+ // if (files[0].size <= 2047335) {      
     //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));       
     const uploadedFilesFoto = files.map(file => ({
       file,
@@ -278,7 +409,7 @@ handleUpload = files => {
       readableSize: filesize(file.size),
       preview: URL.createObjectURL(file),
       progress: 0,
-      uploaded: true,
+      uploaded: false,
       error: false,
       url: file.url
     })); 
@@ -294,14 +425,14 @@ handleUpload = files => {
       mensagem_foto: ''
     });       
 
-  } else {
+ /* } else {
     this.setState({    
       fotoState: '',
       incluir_foto: false,
       inicio: 1,
       mensagem_foto: 'Foto muito grande, favor adicionar outra '
     });    
-  }  
+  } */  
 
  // uploadedFiles.forEach(this.processUpload);
 }
@@ -351,11 +482,11 @@ verificar_menu_lateral() {
 verifica_titulo() {
   if ( this.state.perfil == 1) {
     return (            
-         <strong> ADMINISTRADOR </strong>
+      'ADMINISTRADOR' 
      ); 
   } else {
     return (      
-       <strong>{this.state.campNome}</strong>
+      localStorage.getItem('lognome')
      ); 
   }            
 }
@@ -366,42 +497,43 @@ verifica_horario(){
 
   if (hour < 5) {
     return (
-      <strong> boa noite </strong>          
+      'boa noite'
       );        
   } else if (hour < 5) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia' 
       );        
   } else if (hour < 8) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 12) { 
     return (
-      <strong> bom dia </strong>          
+      'bom dia'          
       );        
   } else if (hour < 18) { 
     return (
-      <strong> boa tarde </strong>          
+      'boa tarde'          
       );        
   } else { 
     return (
-      <strong> boa noite </strong>          
+       'boa noite'          
       );        
   }
 }
+
 render(){  
   const { uploadedFilesFoto } = this.state;
 return (
 <div>    
-<div className="container_alteracao">
+<div>
  {this.verificar_menu_lateral()}
-<div className="d-flex justify-content"> 
+<div> 
     <div>     
-    <div className="titulo_admministrador">        
+    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
-            </div>             
+              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+            </div>           
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
@@ -412,55 +544,42 @@ return (
               <br/>
           </div> 
 
-            <div class="d-flex flex-column espacamento_caixa_texto">           
-              <div class="p-2">         
-              <Grid container spacing={1}>
-                  <Grid item xs>
-                    <Paper className="foto_motorista">
-                    <div>
+          <div class="d-flex flex-column espacamento_caixa_texto">              
+              <div class="p-2">       
+              <Grid item xs>
+                <Paper className="documento_motorista_cnh">
+                       <div>
                         <div className="titulocnh"><stronger>FOTO </stronger></div>                                              
-                        <Container>   
-                              <Content>
+                        <Container>  
+                   
+                                <div class="d-flex justify-content-start">
+                                   <div>
+                                   <Content>
                                       {!!uploadedFilesFoto.length && (
                                           <FileList files={uploadedFilesFoto} />
                                        )}
-                              </Content>   
-                              <Content>
-                                        <Upload onUpload={this.handleUpload} />                                       
-                              </Content>                                                                      
-                          </Container>    
-                     </div>     
+                                    </Content>   
+                                   </div>
+                                   <div>
+                                     <Content>
+                                         <Upload onUpload={this.handleUpload} />                                       
+                                    </Content>                                            
+                                   </div>
+                                 </div>    
+                           </Container>                                
+                            <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
+                            <div className="d-flex justify-content-center">
+                            <label> {this.state.mensagem_foto} </label>
+                            </div>     
+                          </Box>                          
+                        </div> 
                     </Paper>
-                    <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto"  p={2}>
-                              <div className="d-flex justify-content-left">
-                              <label> {this.state.mensagem_foto} </label>
-                             </div>     
-                    </Box>    
-                  </Grid>
-               </Grid>    
-               <div className="d-flex flex-column">               
-                  <div className="p-2 titulocnh"> 
-                    <Grid container spacing={2}>
-                      <Grid item xs>
-                           <Paper className="grid_foto">
-                          <strong> Requisitos de formato: </strong><br/>
-                                tamanho mínimo da imagem: 300x100 pixeis;<br/>
-                                formatos aceitáveis: JPG, JPEG, PNG;<br/>
-                                tamanho do arquivo não deve exceder 2 MB. 
-                           </Paper> 
-                      </Grid>
-                    </Grid>                  
-                  </div>
-              </div>                                                   
+                  </Grid>                 
+                                                              
               </div> 
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
-    </div>     
-    <div className="area_neutra">
-               <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '174px' }} />
-              </Container>         
-        </div>                 
+    </div>         
    </div>  
  </div>  
 </div> 

@@ -65,7 +65,7 @@ var Veiculo = sequelize.define(nametable,{
    allowNull: true,
   },
   apolice: { 
-   type: Sequelize.STRING(20), 
+   type: Sequelize.STRING(12), 
    allowNull: true,
   },
   seguradoraId: { 
@@ -83,6 +83,18 @@ var Veiculo = sequelize.define(nametable,{
       model: Motorista,
       key: 'id'
     } 
+  },
+  engate: {
+    type: Sequelize.BOOLEAN,  
+  },
+  cadeirinha_pequena: { /* ate 2 anos */
+    type: Sequelize.BOOLEAN, 
+  },
+  cadeirinha_grande: { /* maior de 2 anos */
+    type: Sequelize.BOOLEAN, 
+  },
+  cadeira_rodas: { /* cadeira de rodas */
+    type: Sequelize.BOOLEAN, 
   }    
 
 });

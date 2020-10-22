@@ -58,8 +58,9 @@ verifica_horario(){
     return ( 
      <div> 
         <Menu_operador />  
-        <div className="titulo_admministrador">    
-          <div className="unnamed-character-style-4 descricao_admministrador">                                                            
+        <div className="titulo_lista">    
+          <div className="unnamed-character-style-4 descricao_admministrador">               
+              <h5 className="titulo_area_empresarial"> {localStorage.getItem('lograzao_social')} </h5>                                                
                {this.verifica_menu()}, {this.verifica_horario()} !
             </div>             
             

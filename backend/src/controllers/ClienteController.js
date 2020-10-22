@@ -331,7 +331,7 @@ controllers.list = async (req,res) => {
      include: [{ model: Status  }],
      where: { 
         statusId: {
-          [Op.notIn]: [7]             
+          [Op.notIn]: [6,7]             
         },      
        perfilId: 2 
      } 
@@ -356,6 +356,27 @@ controllers.listarExcluidos = async (req,res) => {
     where: {       
       perfilId: 2, 
       statusId: 7
+    } 
+ })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }        
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  }) 
+}
+
+controllers.listarIncompletos = async (req,res) => {
+  const status = 2;
+  await Cliente.findAll({
+    include: [{ model: Status }],   
+    where: {       
+      perfilId: 2, 
+      statusId: 6
     } 
  })
   .then( function (data){

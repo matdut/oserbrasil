@@ -8,8 +8,8 @@ var transport = {
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: "mateus.dutra@oser.app.br",
-        pass: "uvlb4otd"
+        user: "adm@oser.app.br",
+        pass: "Jctj1710"
     },
     tls: { rejectUnauthorized: false }
 }
@@ -38,7 +38,7 @@ router.post('/send', (req, res, next) => {
 
   console.log(JSON.stringify(res.body, null, "    ")); 
   var mail = {
-    from: 'mateus.dutra@oser.app.br',
+    from: 'adm@oser.app.br',
     to: email,  //Change to email address that you want to receive messages on
     subject: 'Oser',
     text: content    

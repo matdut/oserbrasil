@@ -1,3 +1,12 @@
+body {
+  margin: 0px;
+  font: normal normal medium 16px Effra !important; 
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  overflow-x: hidden;  
+  overflow-y: hidden; 
+}
+
 .area_direita {
   background-color: #0F074E !important;  
   width: 521px !important;
@@ -89,26 +98,124 @@
   width: 160px !important;  
 }
 
-.select_matriz_tipo { 
-  line-height: 46px !important;  
-  width: 480px !important;  
+.font_modal {
+  font: normal normal medium 12px Effra !important;
+  letter-spacing: 0px !important;
 }
+
+
+.select_matriz_tipo { 
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;     
+  padding-left: 20px !important;  
+  width: 470px !important;  
+}
+
+.label_select_matriz_tipo {
+  font: normal normal medium Effra !important;
+  font-size: 14px !important;
+  padding-left: 25px !important;  
+}
+
+.text_select_matriz_tipo {
+  text-align: left !important;
+  font: normal normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  width: 470px !important;  
+}
+
+.input_matriz_direita { 
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  /* line-height: 6px !important;   */
+  width: 230px !important;  
+  margin-left: 10px !important;
+}
+
+.label_matriz_direita {  
+  font: normal normal medium Effra !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;    
+  width: 230px !important;  
+  margin-left: 10px !important;
+}
+
+.input_matriz_esquerda { 
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+ /*  line-height: 46px !important;    */
+  width: 230px !important;  
+  margin-left: 10px !important;
+}
+
+.label_matriz_esquerda {  
+  font: normal normal medium Effra !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;    
+  width: 230px !important;  
+  margin-left: 10px !important;
+}
+
 .input_matriz_faixa_ini { 
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
   line-height: 46px !important;  
   width: 230px !important;  
-  margin-left: 0px !important;
+  color: #0F074E !important;
+  margin-left: 10px !important;
+}
+
+.label_matriz_faixa_ini {  
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
+  width: 230px !important;  
+  margin-left: 10px !important;
 }
 
 .input_matriz_valor_km { 
-  line-height: 46px !important;  
-  width: 230px !important;  
-  margin-left: 0px !important;
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  margin-left: 20px !important;  
+  color: #0F074E !important;
+  width: 230px !important;   
 }
 
-.input_matriz_faixa_fim { 
-  line-height: 46px !important;  
+.input_matriz_faixa_fim {   
   margin-left: 20px !important;
   width: 230px !important;  
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+}
+.text_input_matriz_faixa_fim {   
+  width: 230px !important;  
+  font: normal normal medium Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
 }
 
 .label_complemento{

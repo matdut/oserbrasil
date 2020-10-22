@@ -3,6 +3,7 @@ var sequelize = require('./database');
 var Empresa = require('./Empresa');
 var Status = require('./Status');
 var Evento = require('./Eventos');
+var Perfil = require('./Perfil');
 
 var nametable = 'email_operador';
 
@@ -22,13 +23,6 @@ var Email_operador = sequelize.define(nametable,{
     type: Sequelize.INTEGER,
     allowNull: true,
   },
-  eventoId: {
-    type: Sequelize.INTEGER,
-    refences: {
-      model: Evento,
-      key: 'id'
-    }  
-  },
   statusId:{
     type: Sequelize.INTEGER,
     // this is a refence to another model
@@ -37,24 +31,19 @@ var Email_operador = sequelize.define(nametable,{
       key: 'id'
     } 
   },
+  perfilId: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
   gerenciar_eventos:{
     type: Sequelize.BOOLEAN,
   },
-  gerenciar_todos_eventos:{
+  monitorar_eventos:{
     type: Sequelize.BOOLEAN,
   },
-  incluir_cartao:{
+  representante_legal:{
     type: Sequelize.BOOLEAN,
   },
-  visualizar_eventos:{
-    type: Sequelize.BOOLEAN,
-  },
-  efetuar_pagamentos:{
-    type: Sequelize.BOOLEAN,
-  },
-  incluir_outors_operadores:{
-    type: Sequelize.BOOLEAN,
-  }
 },
 {
   // remove  createdAt y updated
@@ -64,5 +53,6 @@ var Email_operador = sequelize.define(nametable,{
 //Email_operador.belongsTo(Empresa);
 Email_operador.belongsTo(Status);
 Email_operador.belongsTo(Evento);
+Email_operador.belongsTo(Perfil);
 
 module.exports = Email_operador
