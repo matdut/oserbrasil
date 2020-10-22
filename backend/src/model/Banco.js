@@ -12,13 +12,33 @@ var Banco = sequelize.define(nametable,{
     primaryKey:true,
     autoIncrement:true
   },
-  codigo:  {  
-    type: Sequelize.STRING,
+  agencia:  {  
+    type: Sequelize.INTEGER,
     allowNull: false,     
   },
-  nome:  {  
+  conta:  {  
     type: Sequelize.STRING(40),
     allowNull: false,     
+  },
+  logid: {
+    type: Sequelize.INTEGER,
+    allowNull: false,     
+  },
+  perfilId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Perfil,
+      key: 'id'
+    } 
+  },
+  statusId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Status,
+      key: 'id'
+    } 
   }
 })
 

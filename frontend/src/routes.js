@@ -96,6 +96,10 @@ import Area_administrador from './pages/administrador/area_administrador';
 //import Cartao_creedito_cadastrar from './pages/cartao/cartao_credito';
 import Lista_cad_Incompleto from './pages/administrador/lista_cad_incompleto';
 
+/* ADMINISTRADOR AUXILIAR   */
+import Area_administrador_Auxiliar from './pages/administrador_auxiliar/area_adm_convidado';
+import Lista_administrador_Auxiliar from './pages/administrador_auxiliar/lista_adm_convidado';
+
 /* MATRIZ */
 import Matriz_tarifaria_editar from './pages/matriz_tarifaria/edit';
 import Matriz_tarifaria_criar from './pages/matriz_tarifaria/form';
@@ -162,7 +166,10 @@ export default function Routes() {
             <Route path="/servicos" component={Servicos} />
             <Route path="/contato" component={Contato} />
                         
-            <Route path="/listar" component={ListMotorista} />                  
+            <Route path="/listar" component={ListMotorista} />         
+
+            <Route path="/area_adm_convidado" component={Area_administrador_Auxiliar} />    
+            <Route path="/lista_adm_convidado" component={Lista_administrador_Auxiliar} />        
 
             <Route path="/lista_individual" component={Lista_Individual} />     
             <Route path="/lista_empresarial" component={Lista_Empresarial} />               

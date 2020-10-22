@@ -89,7 +89,6 @@ controllers.create = async (req,res) => {
 
   // DATA parametros desde post
   const { numero, nome, data_vencimento, codigo_seguranca, bandeira, logid, perfilId, statusId } = req.body;
-
   
   //console.log("ROle es ==>"+role)
   //create
@@ -105,7 +104,7 @@ controllers.create = async (req,res) => {
     statusId: statusId, 
   })
   .then( function (data){
-    return res.json({success:true, data: data, message:"Operador salvo com sucesso"});
+    return res.json({success:true, data: data, message:"Cartão salvo com sucesso"});
   })
   .catch(error => {
     return res.json({success:false, message: error});

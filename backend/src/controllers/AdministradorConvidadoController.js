@@ -2,13 +2,13 @@ const controllers = {}
 
 // import model and sequelize
 var sequelize = require('../model/database');
-var Banco = require('../model/Banco');
+var AdministradorConvidado = require('../model/Administrador_auxiliar');
 
 // para migrar por si no tiene tablas
 sequelize.sync()
 
 controllers.list = async (req,res) => {
-  await Banco.findAll({
+  await AdministradorConvidado.findAll({
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -21,13 +21,17 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { agencia, conta, logid, perfilId, statusId } = req.body;
+  const { nome, email, senha, celular, cpf, data_nascimento, statusId, perfilId } = req.body;
   //console.log("ROle es ==>"+role)
   //create
-  await Banco.create({ 
-    agencia: agencia,
-    conta: conta,  
-    logid: logid, 
+  await AdministradorConvidado.create({ 
+    nome: nome, 
+    email: email, 
+    senha: senha, 
+    celular: celular,
+    cpf: cpf,
+    data_nascimento: data_nascimento, 
+    situacaoId: statusId,
     perfilId: perfilId, 
     statusId: statusId, 
   })
@@ -44,15 +48,19 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { agencia, conta, logid, perfilId, statusId } = req.body;
+  const { nome, email, senha, celular, cpf, data_nascimento, statusId, perfilId } = req.body;
   //console.log('entrou aqui = '+id);
   // parameter post
   // update data
   
-  await Banco.update({
-    agencia: agencia,
-    conta: conta,  
-    logid: logid, 
+  await AdministradorConvidado.update({
+    nome: nome, 
+    email: email, 
+    senha: senha, 
+    celular: celular,
+    cpf: cpf,
+    data_nascimento: data_nascimento, 
+    situacaoId: statusId,
     perfilId: perfilId, 
     statusId: statusId, 
   },{
@@ -69,7 +77,7 @@ controllers.update = async (req, res) => {
 
 controllers.get = async (req, res) => {
   const { id } = req.params;
-  await Banco.findAll({
+  await AdministradorConvidado.findAll({
     where: { id: id}
     //,
     //include: [ Role ]

@@ -139,29 +139,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-/*
-let columns = [
-  { title: '', field: '#' },
-  { title: 'Status', field: 'status.descricao' },
-  { title: 'CPF', field: 'cpf' },
-  { title: 'Nome', field: 'nome' },
-  { title: 'Email', field: 'email' },
-  { title: 'telefone', field: 'celular'},   
-  { title: '', field: 'status.descricao', lookup: { 1: 'sadas', 2: 'asdas' }, },
-  { title: '', field: '#'},     
-]; 
 
-
-let columns = [
-  { id: '1', label: '', minWidth: 60 },
-  { id: 'status', label: 'Status', minWidth: 100 },
-  { id: 'cpf', label: 'CPF', minWidth: 100 },
-  { id: 'nome', label: 'Nome', minWidth: 200 },
-  { id: 'email', label: 'Email', minWidth: 90 },
-  { id: 'telefone', label: 'Telefone', minWidth: 60 },
-  { id: 'acao', label: '', minWidth: 100 },
-];
-*/
 const theme = createMuiTheme();
 class listaClienteComponent extends React.Component  {
 
@@ -1091,7 +1069,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
       <Menu_administrador />  
       <div className="container-fluid titulo_lista margem_left">     
         <div className="unnamed-character-style-4 descricao_admministrador">          
-           <strong>Clientes</strong>
+           <strong>Administrador Auxiliar</strong>
          </div>      
       </div>     
       <div className="container-fluid margem_left">   
