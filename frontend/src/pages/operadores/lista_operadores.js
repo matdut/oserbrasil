@@ -1970,12 +1970,14 @@ mostrar_endereco() {
                             icon: 'edit',
                             tooltip: 'Editar',
                             onClick: (evt, data) => this.handleOpenModalEdit(data)
-                          },
+                          }
+                          /*,
                           {
                             icon: 'delete',                                                             
                             tooltip: 'Deleta Operador',          
                             onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
                           }
+                          */
                         ]}
                       />      
             </div>      

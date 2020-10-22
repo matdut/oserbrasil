@@ -2,7 +2,7 @@ import React from 'react';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import {Alert, Input } from 'reactstrap';
+//import {Alert, Input } from 'reactstrap';
 //import { Tabs, Tab } from 'react-bootstrap';
 import MaterialTable from 'material-table';
 
@@ -50,6 +50,7 @@ const nome = localStorage.getItem('lognome');
 const perfil = localStorage.getItem('logperfil');
 //var dateFormat = require('dateformat');
 //const baseUrl = "http://34.210.56.22:3333";
+
 
 const customStyles = {
   overlay: {    
@@ -290,9 +291,101 @@ class listaeventosComponent extends React.Component  {
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
             <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>          
+            <Tab label="Finalizados" value="2" className="tabs_titulo_lista"/>          
           </TabList>
         </AppBar>
+        
         <TabPanel value="1" className="tirar_espaco">
+           <div style={{ maxWidth: '100%' }}>
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '#', width: '40px' },
+                              { title: 'Passageiros', field: 'ordem_servico', width: '255px' },
+                              { title: 'Data', field: 'nome_evento', width: '350px' },
+                              { title: 'Horário', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Qtd Passageiros', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Distância', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
+                              { title: 'Tempo', field: 'nome_evento', width: '350px' },
+                              { title: 'Valor', field: 'nome_evento', width: '350px' },
+                              { title: '', field: '', width: '100px' },
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },            
+                            ]}
+                            data={this.state.listServicos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Adicionar Valores Tarifários',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{                             
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_eventos_Ativos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,     
+                              maxBodyHeight: 530,    
+                             // maxBodyHeight: 400,
+                             // resizable: false,
+                              //headerStyle: { position: 'sticky', top: 0 },
+                              /*exportButton: true, */            
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 8,
+                             // pageSize: 7,
+                              pageSizeOptions: [0],                 
+                            }}
+                            actions={[
+                              {             
+                                icon: 'edit',
+                                tooltip: 'editar',                                
+                                onClick: (evt, data) => this.onEditar(data)
+                              },
+                              {
+                                icon: 'delete',                                                             
+                                tooltip: 'Deleta Evento',          
+                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                              }
+                              /*,
+                              {
+                                icon: 'add',                                                             
+                                tooltip: 'Adiciona Eventos',
+                                isFreeAction: true,
+                                onClick: (event) => this.handleOpenModalInclusao()
+                              } */
+                            ]}
+                            
+                          />      
+                </div>    
+        </TabPanel>      
+        <TabPanel value="2" className="tirar_espaco">
            <div style={{ maxWidth: '100%' }}>
                         <MaterialTable          
                             title=""
@@ -401,8 +494,12 @@ class listaeventosComponent extends React.Component  {
               <CloseOutlinedIcon />
             </IconButton></div>          
 
-             <div className="centraliza_opcao">
-              <Tabs            
+             <div >
+              <Tabs       
+                  indicatorColor="primary"
+                  textColor="primary"
+                  backgroundColor="secondary"  
+                  className="centraliza_opcao"
                   value={this.state.tabIndex}
                   onChange={(e, index) => this.setState({ tabIndex: index }) }
                 >

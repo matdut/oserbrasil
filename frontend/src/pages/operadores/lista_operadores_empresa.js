@@ -1455,12 +1455,13 @@ carrega_status(){
                             icon: 'edit',
                             tooltip: 'Editar',
                             onClick: (evt, data) => this.handleOpenModalEdit(data)
-                          },
+                          }
+                          /*,
                           {
                             icon: 'delete',                                                             
                             tooltip: 'Deleta Motorista',          
                             onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
-                          }
+                          } */
                         ]}
                       />      
             </div>      
