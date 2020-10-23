@@ -508,6 +508,33 @@ class listaeventosComponent extends React.Component  {
                 </Tabs>   
              </div>
 
+             <div class="p-2">  
+                      <FormControl className="select_matriz_tipo" variant="outlined">
+                        <InputLabel className="label_select_matriz_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                        <Select
+                          className="text_select_matriz_tipo"
+                          error={this.state.erro_tipo} 
+                          helperText={this.state.mensagem_tipoId}
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.camptipoId}
+                          onFocus={this.verificaTipo_veiculo}
+                          //onClick={this.verificaTipo_veiculo}
+                          onChange={ (e) => {
+                            this.tipoChange(e)
+                          }}   
+                          endAdornment={
+                            <InputAdornment position="end">
+                                 {this.state.validacao_tipo? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }     
+                          label="Tipo Transporte"
+                          labelWidth={200}
+                        >
+                          {this.loadFillData()}                    
+                        </Select>
+                      </FormControl>                                                                    
+            </div> 
 
 
        </ReactModal>                  
