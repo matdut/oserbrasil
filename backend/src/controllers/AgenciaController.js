@@ -2,13 +2,13 @@ const controllers = {}
 
 // import model and sequelize
 var sequelize = require('../model/database');
-var Banco = require('../model/Banco');
+var Agencia = require('../model/lista_banco');
 
 // para migrar por si no tiene tablas
 sequelize.sync()
 
 controllers.list = async (req,res) => {
-  await Banco.findAll({
+  await Agencia.findAll({
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -21,17 +21,12 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { codigo, banco, agencia, conta, logid, perfilId } = req.body;
-  
+  const { codigo, descricao } = req.body;
   //console.log("ROle es ==>"+role)
   //create
-  await Banco.create({ 
+  await Agencia.create({ 
     codigo: codigo,
-    banco: banco,     
-    agencia: agencia,
-    conta: conta,  
-    logid: logid, 
-    perfilId: perfilId,   
+    descricao: descricao,     
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -40,39 +35,20 @@ controllers.create = async (req,res) => {
     return res.json({success:false, message: error});
   })
 
-}
-
-controllers.list_banco_motorista = async (req,res) => {
-  const { logid, perfilId } = req.params;
-
-  await Banco.findAll({
-    where: { logid: logid, perfilId: perfilId  }   
-  })
-  .then( function (data){
-    return res.json({success:true, data: data});
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  })
-  
 }
 
 controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { codigo, banco, agencia, conta, logid, perfilId } = req.body;
+  const { codigo, descricao } = req.body;
   //console.log('entrou aqui = '+id);
   // parameter post
   // update data
   
-  await Banco.update({
+  await Agencia.update({
     codigo: codigo,
-    banco: banco,     
-    agencia: agencia,
-    conta: conta,  
-    logid: logid, 
-    perfilId: perfilId,     
+    descricao: descricao,  
   },{
     where: { id: id}
   })
@@ -84,10 +60,22 @@ controllers.update = async (req, res) => {
   })
 
 }
-
+controllers.getbusca = async (req, res) => {
+  const { descricao } = req.params;
+  await Agencia.findAll({
+    where: { descricao: descricao}  
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
 controllers.get = async (req, res) => {
   const { id } = req.params;
-  await Banco.findAll({
+  await Agencia.findAll({
     where: { id: id}
     //,
     //include: [ Role ]
@@ -100,22 +88,5 @@ controllers.get = async (req, res) => {
   })
   
 }
-controllers.delete = async (req,res) => {
-  
-  // parameter post  
-  const { id } = req.params;  
- 
-  await Banco.destroy({
-    where: { id: id }
-  }).then( function (data){
-    
-    return res.json({success:true, data:data});    
-    
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-    //return error;
-  }) 
 
-}
 module.exports = controllers;

@@ -8,6 +8,7 @@ var sequelize = require('../model/database');
 var OperadorEvento = require('../model/Operadores_evento');
 var Status = require('../model/Status');
 var Empresa = require('../model/Empresa');
+var Evento = require('../model/Eventos');
 ///var Permissao = require('../model/Permissoes');
 //var Role = require('../model/Role');
 
@@ -51,6 +52,7 @@ controllers.deleteOperadorEvento = async (req,res) => {
 controllers.list = async (req,res) => {
   await OperadorEvento.findAll({       
     include: [
+      { model: Eventos }, 
       { model: Status }, 
       { model: Empresa, required: true}
     ],

@@ -15,6 +15,14 @@ var Banco = sequelize.define(nametable,{
     primaryKey:true,
     autoIncrement:true
   },
+  codigo: {
+    type: Sequelize.INTEGER,
+    allowNull: true,     
+  },
+  banco: {
+    type: Sequelize.STRING(80),
+    allowNull: false,    
+  }, 
   agencia:  {  
     type: Sequelize.INTEGER,
     allowNull: false,     

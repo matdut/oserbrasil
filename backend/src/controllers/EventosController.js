@@ -1,9 +1,13 @@
 const controllers = {}
 
 // import model and sequelize
+//const Sequelize = require('sequelize');
+//const Op = Sequelize.Op;
+
 var sequelize = require('../model/database');
 var Eventos = require('../model/Eventos');
 var Tipo = require('../model/Tipo_transporte');
+var Servicos = require('../model/servicos');
 
 // para migrar por si no tiene tablas
 sequelize.sync()
@@ -64,11 +68,35 @@ controllers.list = async (req,res) => {
   })
 }
 
+controllers.listServicosBusca = async (req,res) => {
+  const { id, perfilId, eventoid } = req.params;
+  
+  await Eventos.findAll({
+    include: [
+      { 
+       model: Servicos,
+           where: { 
+             eventoId: eventoid,
+           },         
+      }],
+     where: { logid: id, perfilId: perfilId,  id: eventoid },
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
 controllers.listaevento = async (req,res) => {
   const { id, perfilId } = req.params;
   
   await Eventos.findAll({
-    where: { logid: id, perfilId: perfilId }  
+    where: { logid: id, perfilId: perfilId },  
+    order: [
+      ['createdAt', 'DESC']
+    ]
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -103,6 +131,35 @@ controllers.create = async (req,res) => {
 }
 
 controllers.update = async (req, res) => {
+  // parameter id get  
+  const { id } = req.params;  
+
+  // parameter post
+  const { logid, perfilId, ordem_servico, viagens_total, nome_evento, data_evento, valor_total } = req.body;
+  
+  // update data
+  
+  await Eventos.update({  
+    logid: logid,
+    perfilId: perfilId,    
+    ordem_servico: ordem_servico, 
+    nome_evento: nome_evento, 
+    data_evento: data_evento,     
+    valor_total: valor_total,
+    viagens_total: viagens_total,
+  },{
+    where: { id: id}
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+}
+
+controllers.updateevento = async (req, res) => {
   // parameter id get  
   const { id } = req.params;  
 
@@ -159,5 +216,38 @@ controllers.getcliente = async (req, res) => {
   })
   
 }
+
+controllers.totaleventos = async (req, res) => {
+  //const { id } = req.params;
+  const { id, perfilId } = req.params;
+
+  await Eventos.findAndCountAll({    
+    where: { logid: id, perfilId: perfilId }  
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+
+controllers.totaleventosADM = async (req, res) => {
+  //const { id } = req.params;
+  await Eventos.findAndCountAll({        
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+
+
 
 module.exports = controllers;

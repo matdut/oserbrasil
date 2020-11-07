@@ -34,7 +34,9 @@ app.use((req, res, next) => {
 });
 
 //importing route
-const AdministradorConvidadoRoutes = require('./routes/AdministradorConvidadoRoute');
+const AdminAuxiliarRoutes = require('./routes/AdministradorAuxiliarRoute');
+const AgenciaRoutes = require('./routes/AgenciaRoute');
+const BancoRoutes = require('./routes/BancoRoute');
 const clienteRouters = require('./routes/ClienteRoute');
 const empresaRouters = require('./routes/EmpresaRoute');
 const emailoperadorRoutes = require('./routes/EmailoperadorRoute');
@@ -69,7 +71,9 @@ app.use(
 ); 
 
 //Route
-app.use('/administradorAuxiliar', AdministradorConvidadoRoutes);
+app.use('/administradorAuxiliar', AdminAuxiliarRoutes);
+app.use('/agencia', AgenciaRoutes);
+app.use('/banco', BancoRoutes);
 app.use('/cliente', clienteRouters);
 app.use('/email', EmailRouters);
 app.use('/emailOperador', emailoperadorRoutes);

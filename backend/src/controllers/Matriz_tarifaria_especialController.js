@@ -1,5 +1,7 @@
 const controllers = {}
 
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 // import model and sequelize
 var sequelize = require('../model/database');
 var Matriz_tarifaria_especial = require('../model/Tarifa_especial');
@@ -114,6 +116,38 @@ controllers.get = async (req, res) => {
   // Find all projects with a least one task where task.state === project.task
  await Matriz_tarifaria_especial.findAll({ 
   where: { id: id }//.  id: id //,
+   //include: [Tipo]
+  })  
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.listbusca = async (req, res) => {
+ // const { id } = req.params;  
+
+  const { data_servico } = req.body;
+
+  // Find all projects with a least one task where task.state === project.task
+ await Matriz_tarifaria_especial.findAll({ 
+  where: {   
+    data_inicial: {      
+      [Op.and]: {
+        [Op.gte]: data_servico,
+        [Op.lte]: data_servico
+      }
+    },
+    data_final: {      
+      [Op.and]: {
+        [Op.gte]: data_servico,
+        [Op.lte]: data_servico
+      }
+    }   
+  }//.  id: id //,
    //include: [Tipo]
   })  
   .then( function (data){

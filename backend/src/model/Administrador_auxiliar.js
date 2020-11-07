@@ -6,7 +6,7 @@ var Status = require('./Status');
 
 var nametable = 'administrador_auxiliar';
 
-var Adm_convidado = sequelize.define(nametable,{
+var Adm_auxiliar = sequelize.define(nametable,{
 
   id:{
     type:Sequelize.INTEGER,
@@ -59,5 +59,7 @@ var Adm_convidado = sequelize.define(nametable,{
   }
 })
 
+Adm_auxiliar.belongsTo(Status);
+Adm_auxiliar.belongsTo(Perfil);
 
-module.exports = Adm_convidado
+module.exports = Adm_auxiliar

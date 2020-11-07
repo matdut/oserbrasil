@@ -3,11 +3,13 @@ var sequelize = require('./database');
 // import Role for FK roleId
 //var Role = require('./Role');
 // name table
+var Perfil = require('./Perfil');
 var Transporte = require('./Tipo_transporte');
 var Status = require('./Status');
 var Eventos = require('./Eventos');
 var Situacao = require('./Situacao');
 var Tipo_evento = require('./tipo_evento');
+var Cartao = require('./Cartao_credito');
 
 var nametable = 'servicos';
 
@@ -19,14 +21,13 @@ var Servicos = sequelize.define(nametable,{
     autoIncrement:true
   },  
   eventoId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
+    type: Sequelize.INTEGER,    
     refences: {
       model: Eventos,
       key: 'id'
     } 
   },
-  tipo_eventoId: {
+  tipoEventoId: {
     type: Sequelize.INTEGER,
     // this is a refence to another model
     refences: {
@@ -35,6 +36,10 @@ var Servicos = sequelize.define(nametable,{
     } 
   },  
   nome_passageiro: {
+    type:Sequelize.STRING(250),    
+    allowNull: true,
+  },  
+  telefone_passageiro: {
     type:Sequelize.STRING(250),    
     allowNull: true,
   },
@@ -46,24 +51,48 @@ var Servicos = sequelize.define(nametable,{
     type: Sequelize.DATEONLY,  
     allowNull: true,
   },  
-  hora_servico:  {  
+  hora_inicial:  {  
     type: Sequelize.TIME,
     allowNull: true,
   },
+  hora_final:  {  
+    type: Sequelize.TIME,
+    allowNull: true,
+  },  
+  quantidade_diarias:  {  
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
   numero_voo: {
-    type: Sequelize.DATEONLY,  
+    type: Sequelize.STRING(20),  
     allowNull: true,
   },
   companhia_aerea: {
-    type: Sequelize.DATEONLY,  
+    type: Sequelize.STRING(200),  
     allowNull: true,
   }, 
   local_embarque: {
     type: Sequelize.STRING(200), 
     allowNull: true,
   },
+  embarque_latitude: {
+    type: Sequelize.STRING(100), 
+    allowNull: true,
+  },
+  embarque_longitude: {
+    type: Sequelize.STRING(100), 
+    allowNull: true,
+  },
   local_desembarque: {
     type: Sequelize.STRING(200), 
+    allowNull: true,
+  },
+  desembarque_latitude: {
+    type: Sequelize.STRING(100), 
+    allowNull: true,
+  },
+  desembarque_longitude: {
+    type: Sequelize.STRING(100), 
     allowNull: true,
   },
   motorista_bilingue: {
@@ -74,8 +103,12 @@ var Servicos = sequelize.define(nametable,{
     type: Sequelize.BOOLEAN, 
     allowNull: true,
   },
-  motorista_preferencial: {
+  motorista_alocado: {
     type: Sequelize.BOOLEAN, 
+    allowNull: true,
+  },
+  nome_motorista: {
+    type: Sequelize.STRING(160), 
     allowNull: true,
   }, 
   telefone_motorista: {
@@ -91,17 +124,26 @@ var Servicos = sequelize.define(nametable,{
     allowNull: true,
   },
   valor_estimado: {
-    type: Sequelize.STRING(16), 
+    type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,
   },
-  tipoTransporteId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Transporte,
-      key: 'id'
-    } 
+  valor_oser: {
+    type: Sequelize.DECIMAL(20,2) ,    
+    allowNull: true,
   },
+  valor_motorista: {
+    type: Sequelize.DECIMAL(20,2) ,    
+    allowNull: true,
+  },
+  tipoTransporte:  {  
+    type: Sequelize.STRING(150) 
+  }, 
+  distancia_value:  {  
+    type: Sequelize.INTEGER
+  }, 
+  tempo_value:  {  
+    type: Sequelize.INTEGER
+  }, 
   statusId:{
     type: Sequelize.INTEGER,
     // this is a refence to another model
@@ -121,15 +163,35 @@ var Servicos = sequelize.define(nametable,{
   motivo_cancelamento: {
     type: Sequelize.STRING(250), 
     allowNull: true,
-  }
+  },
+  cartaoId: {
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Cartao,
+      key: 'id'
+    } 
+  },
+  logid: {
+    type: Sequelize.INTEGER,
+    allowNull: false,     
+  },
+  perfilId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Perfil,
+      key: 'id'
+    } 
+  },
 })
 
 
 Servicos.belongsTo(Situacao);
 Servicos.belongsTo(Status);
 Servicos.belongsTo(Eventos);
-Servicos.belongsTo(Transporte);
 Servicos.belongsTo(Tipo_evento);
+Servicos.belongsTo(Cartao);
 
 
 module.exports = Servicos

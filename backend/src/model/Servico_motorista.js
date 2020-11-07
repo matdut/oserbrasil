@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-var Servicos = require('./Eventos');
+var Servicos = require('./servicos');
 var Motorista = require('./Motorista');
 // import Role for FK roleId
 //var Role = require('./Role');

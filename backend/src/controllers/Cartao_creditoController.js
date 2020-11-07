@@ -88,12 +88,13 @@ controllers.getListaporCliente = async (req, res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { numero, nome, data_vencimento, codigo_seguranca, bandeira, logid, perfilId, statusId } = req.body;
+  const { foto_bandeira, numero, nome, data_vencimento, codigo_seguranca, bandeira, logid, perfilId, statusId } = req.body;
   
   //console.log("ROle es ==>"+role)
   //create
   //console.log('entrou aqui clienteId = '+clienteId);
   await Cartao.create({
+    foto_bandeira: foto_bandeira,
     numero: numero,              
     nome: nome,              
     data_vencimento: data_vencimento,
@@ -118,10 +119,11 @@ controllers.update = async (req, res) => {
   //console.log('entrou aqui = '+id);
 
   // parameter post
-  const { numero, nome, data_vencimento, codigo_seguranca, bandeira, logid, perfilId, statusId } = req.body;
+  const { foto_bandeira, numero, nome, data_vencimento, codigo_seguranca, bandeira, logid, perfilId, statusId } = req.body;
   // update data
   
   await Cartao.update({
+    foto_bandeira: foto_bandeira,
     numero: numero,              
     nome: nome,              
     data_vencimento: data_vencimento,
