@@ -32,6 +32,7 @@
     "google-distance-matrix": "^1.1.1",
     "google-map-react": "^1.1.7",
     "google-maps-react": "^2.0.6",
+    "hmh": "^2.0.4",
     "image-to-base64": "^2.1.1",
     "jquery": "^3.5.1",
     "lodash.throttle": "^4.1.1",

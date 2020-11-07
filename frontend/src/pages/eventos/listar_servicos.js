@@ -257,7 +257,8 @@ class listaservicosComponent extends React.Component  {
       mensagem: '',
       color: 'light',
       value: "1",
-      opcao: '',      
+      opcao: '',     
+      hora_formatada: '', 
       inicio: 0,
       tabIndex: "2",
       address: '',
@@ -333,6 +334,8 @@ class listaservicosComponent extends React.Component  {
       listTarifas:[],
       listTarifasEspeciais:[],
       origins: '',     
+      h: '',
+      min: '',
       destinations:'',
       validacao_tipo: false, 
       validacao_cartao: false,
@@ -385,8 +388,11 @@ class listaservicosComponent extends React.Component  {
     this.verificaNome = this.verificaNome.bind(this);  
     this.verificaNomeonfocus = this.verificaNomeonfocus.bind(this);      
     this.verificahora_inicial = this.verificahora_inicial.bind(this);
+    this.verificahora_final = this.verificahora_final.bind(this);
     this.nomemotoristaChange = this.nomemotoristaChange.bind(this);
     this.telefonemotoristaChange = this.telefonemotoristaChange.bind(this);
+    //this.data_format = this.data_format.bind(this);
+    
 
     this.verificaCartao = this.verificaCartao.bind(this);  
 
@@ -649,14 +655,16 @@ qtdpassageiroschange(e) {
 }
 
 verificahora_inicial(e) {  
+  debugger;
   if (e.target.value.trim().length == 0) {  
    this.setState({ 
      erro_hora_inicial: false,
      validacao_hora_inicial: false,     
      mensagem_data_inicio: ""  
     })            
-  } else {     
+  } else if (e.target.value.trim().length > 4) {     
   // validate.faixa_finalState = 'has-success'
+  debugger;
    this.setState({         
    //  validate,
      erro_hora_inicial: false,
@@ -664,7 +672,36 @@ verificahora_inicial(e) {
      inicio: 2,        
      mensagem_data_inicio: ""  
     })            
-    //this.verifica_botao(this.state.inicio)
+
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+       this.buscar_informacao();
+    }
+
+  }            
+}
+
+verificahora_final(e) {  
+  if (e.target.value.trim().length == 0) {  
+   this.setState({ 
+     erro_hora_final: false,
+     validacao_hora_final: false,     
+     mensagem_hora_final: ""  
+    })            
+  } else if (e.target.value.trim().length > 4) {     
+  // validate.faixa_finalState = 'has-success'
+  debugger;
+   this.setState({         
+   //  validate,
+    erro_hora_final: false,
+    validacao_hora_final: true,     
+     inicio: 2,        
+     mensagem_hora_final: ""  
+    })            
+
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+       this.buscar_informacao();
+    }
+
   }            
 }
 
@@ -810,7 +847,7 @@ verificaQtdPassageiros(e) {
 }
 
 verificaCartao(e) {
-  debugger;
+  //debugger;
   if (this.state.campcartaoid.length == 0) {
     //  validate.nomeState = ''
       this.setState({       
@@ -871,9 +908,7 @@ data_servicochange(e) {
 hora_inicialchange(e) {
   this.setState({ camphora_inicial: e.target.value })
 
-  if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-      this.buscar_informacao();
-  }
+ 
 }
 hora_finalchange(e) {
   this.setState({ camphora_final: e.target.value })
@@ -3033,7 +3068,7 @@ verifica_rota(inicio) {
                                         id="outlined-basic"                   
                                         variant="outlined"
                                         value={this.state.camphora_inicial}                                      
-                                        onKeyUp={this.verificahora_inicial} 
+                                        onKeyPress={this.verificahora_inicial} 
                                         onChange={ (e) => {
                                           this.hora_inicialchange(e)                                                                 
                                         }}                                    
@@ -3226,7 +3261,8 @@ verifica_rota(inicio) {
                                         className="input_modal_esquerda"
                                         id="outlined-basic"                   
                                         variant="outlined"
-                                        value={this.state.camphora_inicial}                                       
+                                        value={this.state.camphora_inicial}                    
+                                        onKeyUp={this.verificahora_inicial}                   
                                         onChange={ (e) => {
                                           this.hora_inicialchange(e)                                                                 
                                         }}                                    
@@ -3264,6 +3300,7 @@ verifica_rota(inicio) {
                                         className="input_modal_direita"                 
                                         id="outlined-basic"                   
                                         variant="outlined"
+                                        onKeyUp={this.verificahora_final}                 
                                         value={this.state.camphora_final}                                    
                                         onChange={ (e) => {
                                           this.hora_finalchange(e)                                                                 
@@ -3876,7 +3913,7 @@ verifica_rota(inicio) {
 
   mostrar_mapa_embarque() {
     //if (this.state.controle == 0) {
-      debugger;
+     // debugger;
       if (this.state.camplocalembarque !== "") {     
         if (this.state.embarque_latitude !== null && this.state.embarque_longitude !== null) {
     
@@ -3945,7 +3982,7 @@ verifica_rota(inicio) {
           return card.type
        });
     
-       debugger;
+    //   debugger;
         const datapost = {
           numero: this.state.number,              
           nome: this.state.name,              
@@ -4210,9 +4247,37 @@ verifica_rota(inicio) {
 
   }
   
+  separa_hora_minuto(separar) {
+
+    
+
+
+
+  }
+
+  calcula_hora() {
+    debugger;
+    function formatar_segundos(h,min) {
+      return (h*3600)+(min*60);
+     }
+     
+     var data = formatar_segundos(23,14);
+     var data2 = formatar_segundos(22,55);
+     
+     var diferenca = data_format(data-data2);
+    
+     function data_format(s) {
+      const h = Math.floor(s/3600);
+      const min = Math.floor((s - (h*3600))/60);
+     // this.s = s - (Math.floor(s/60)*60);
+
+      return h + "h "+ min + "min "; 
+
+     }
+  }
 
   buscar_informacao() {   
-  
+     
     debugger;
     this.setState({ 
       possui_tarifa: false,
@@ -4221,32 +4286,50 @@ verifica_rota(inicio) {
       campvalor_estimado: 0,
       valor_bilingue: 0,
       valor_receptivo: 0,          
-      mensagem_error: '',
+      mensagem_error: '',      
+      hora_formatada: '', 
     })  
 
+    //this.calcula_hora();
 
     if (this.state.tabIndex == 1) {
      debugger;
 
-     const tempo = parseFloat(this.state.camphora_final) - parseFloat(this.state.camphora_inicial);
+     function formatar_segundos(h,min) {
+      return (h*3600)+(min*60);
+     }
+
+    function data_format_texto(s) {
+      const h = Math.floor(s/3600);
+      const min = Math.floor((s - (h*3600))/60);   
+
+      return h + "h "+ min + "min " ; 
+      
+    }
+
+    function data_format(s) {
+      const h = Math.floor(s/3600);
+      const min = Math.floor((s - (h*3600))/60);     
+
+      return formatar_segundos(h,min);       
+     }     
+
+     const hora_inicial = formatar_segundos(parseInt(this.state.camphora_inicial.substring(0,2)),this.state.camphora_inicial.substring(3,5));
+     const hora_final = formatar_segundos(parseInt(this.state.camphora_final.substring(0,2)),this.state.camphora_final.substring(3,5));
+
+     const texto_diferenca = data_format_texto(hora_final-hora_inicial);
+     const diferenca = data_format(hora_final-hora_inicial) / parseInt(60);
+
+     console.log('tempo em segundos - '+ diferenca);
 
       this.setState({ 
         controle: 1,
         campdistancia: 50, 
-        camptempovalue: tempo,
-        camptempo: this.formatar_valor(this.state.camptempovalue),          
+        camptempovalue: diferenca,
+        camptempo: texto_diferenca,          
       });
 
     }
-
-
-   /* const datapost_alterar = {
-    } */
-  
-   /* aqui teste */
-   // api.get(`/eventos/update/${localStorage.getItem('logid')}`, datapost_alterar)
-   // .then(response=>{
-   //   if (response.data.success==true) {         
     
       this.state.listTarifasEspeciais.map((data)=>{   
       
@@ -4257,7 +4340,7 @@ verifica_rota(inicio) {
        const data_inicial_date = new Date(data.data_inicial);
        const data_final_date = new Date(data.data_final);      
        debugger;              
-// this.state.camptipoId == data.tipoTransporte &&  
+
             if (this.state.camptipoId == data.tipoTransporte &&  
                  data_servico_date.getTime() >= data_inicial_date.getTime() && 
                  data_servico_date.getTime() <= data_final_date.getTime() && 
@@ -4317,15 +4400,22 @@ verifica_rota(inicio) {
               if (this.state.camptipoId == data.tipoTransporte &&                
                   this.state.campdistancia >= Number(data.faixa_inicial) &&  
                   this.state.campdistancia <= Number(data.faixa_final)) {
-                    debugger;   
+
                   /*  X = (QTD Km * valor Km) + (tempo do Serviço * valor tempo) + valor Bandeirada  */         
                   const valor_distancia_1 = (this.state.campdistancia * data.valor_km).toFixed(1); 
-                  
+                  console.log('valor_distancia_1 - '+valor_distancia_1);
+
+                  console.log('this.state.camptempovalue - '+this.state.camptempovalue);
+                  console.log('data.valor_tempo - '+data.valor_tempo);
                   const valor_tempo_1 = (this.state.camptempovalue * data.valor_tempo).toFixed(1); 
-                  
+                  console.log('valor_tempo_1 - '+valor_tempo_1);
+
                   const valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(data.bandeira));                   
             
-                  debugger;
+                  console.log('valor_total - '+valor_total);
+
+                  console.log('valor_total_mask - '+ valorMask(valor_total.toFixed(2)));
+
                   this.setState({ 
                     possui_tarifa: true,
                     campvalor: valorMask(valor_total.toFixed(2)),
