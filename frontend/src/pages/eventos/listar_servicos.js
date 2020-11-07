@@ -4227,10 +4227,13 @@ verifica_rota(inicio) {
 
     if (this.state.tabIndex == 1) {
      debugger;
+
+     const tempo = parseFloat(this.state.camphora_final) - parseFloat(this.state.camphora_inicial);
+
       this.setState({ 
         controle: 1,
-        campdistancia: 50000, 
-        camptempovalue: this.state.camphora_final - this.state.camphora_inicial,
+        campdistancia: 50, 
+        camptempovalue: tempo,
         camptempo: this.formatar_valor(this.state.camptempovalue),          
       });
 

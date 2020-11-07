@@ -171,11 +171,11 @@
 }
 
 .modal-body{
-  height: 80vh;
+  height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
   margin-left: 0px !important;
-  width: 530px !important;
+  width: 540px !important;
 }
 
 .container_tirar_borda {
