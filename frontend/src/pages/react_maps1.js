@@ -31,6 +31,7 @@ class React_maps extends Component {
   render() {
     return (
       <Map
+      key="AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4"
       google={this.props.google}
       zoom={8}     
       initialCenter={{ lat: 47.444, lng: -122.176}}

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import axios from 'axios';
@@ -22,6 +23,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FilledInput from '@material-ui/core/FilledInput';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import CheckIcon from '@material-ui/icons/Check';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import Menu_cliente_individual from '../cliente/menu_cliente_individual';
+import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
+import Menu_motorista from '../motorista/menu_motorista';
+import Menu_operador from '../operadores/menu_operador';
 
 //library sweetalert
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -29,6 +36,17 @@ import 'sweetalert2/src/sweetalert2.scss';
 import Menu_administrador from '../administrador/menu_administrador';
 const perfil = localStorage.getItem('logperfil');
 const nome = localStorage.getItem('lognome');  
+
+const LightTooltip = withStyles((theme) => ({
+  tooltip: {     
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+    margin: "1px 0",
+    whiteSpace: 0,
+  },
+}))(Tooltip);
 
 const customStyles = {
   overlay: {    
@@ -225,18 +243,47 @@ class ConfiguracaoComponent extends React.Component  {
       } 
 } 
 
+verificar_menu_lateral() {
+ 
+  if (localStorage.getItem('logperfil') == 1) {
+   return( 
+     <Menu_administrador />     
+   );
+  } else if (localStorage.getItem('logperfil') == 2) {
+    return( 
+      <Menu_cliente_individual />     
+    );    
+  } else if (localStorage.getItem('logperfil') == 3) {
+    return( 
+      <Menu_motorista />     
+    );
+  } else if (localStorage.getItem('logperfil') == 7) {
+    return( 
+      <Menu_cliente_empresarial />     
+    );   
+  } else if (localStorage.getItem('logperfil') == 8) {
+   return( 
+     <Menu_operador />     
+   );
+  }
+
+
+}
+
+
   render()
   {
     return (
       <div>    
 
-          <Menu_administrador />  
+        {this.verificar_menu_lateral()}
 
           <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <strong>Configuração</strong>
+              <div className="titulo_bemvindo"> Configuração </div>   
               </div>      
             </div>
+          
                       
       </div>   
     );

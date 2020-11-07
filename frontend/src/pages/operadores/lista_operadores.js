@@ -10,7 +10,7 @@ import { Spinner } from 'reactstrap';
 
 import ReactModal from 'react-modal';
 import MaterialTable from 'material-table';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import { celularMask } from '../formatacao/celularmask';
 import { cpfMask } from '../formatacao/cpfmask';
@@ -29,6 +29,13 @@ import 'moment/locale/pt-br';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
 
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -153,7 +160,7 @@ class listComponent extends React.Component  {
       campMonitorar_eventos: false, 
       camprepresentante_legal: false, 
       checked: true,
-
+      value: "1",
    /*   campgerenciar_todos_eventos: false, 
       campincluir_alterar_cartao: false, 
       campvisualizar_eventos_servicos: false,
@@ -1799,6 +1806,12 @@ mostrar_endereco() {
   }
 }
 
+opcao_tabChange = (event, newValue) => {   
+  this.setState({        
+      value: newValue 
+  });    
+};
+
   render()
   {
    // const iosStyles = useIosSwitchStyles();
@@ -1807,25 +1820,39 @@ mostrar_endereco() {
           <div>
             <Menu_administrador />  
             <div className="titulo_lista">
-              <div className="unnamed-character-style-4 descricao_admministrador">          
-              <strong>Operadores</strong>
-              </div>      
+              <div className="unnamed-character-style-4 descricao_admministrador">   
+              <div className="ajustar_top">
+            <div class="row">
+              <div class="col-auto mr-auto">             
+                   <a href={"/auxiliares"}><img src="/voltar@2x.png" width="14" height="27"/></a>  
+              </div>
+              <div className="col mr-auto div1 titulo_bemvindo">Operador</div>
+            </div>
+          </div>               
+            
+            </div>      
             </div>
 
           </div>
 
      <div className="container-fluid margem_left">      
      <br/>
-    
-    <Tabs 
-       defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
-      <Tab eventKey="ativos" title="Ativos">
+     <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>
+                <Tab label="Excluidos" value="2" className="tabs_titulo_lista_2"/>            
+                <Tab label="Cadastro Incompleto" value="3" className="tabs_titulo_lista_2"/>            
+                <Tab label="Convites" value="4" className="tabs_titulo_lista_2"/>           
+              </TabList>
+            </AppBar>        
+          <TabPanel value="1" className="tirar_espaco">      
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
@@ -1865,7 +1892,7 @@ mostrar_endereco() {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
                               exportFileName: 'Rel_adm_empresas',
@@ -1873,11 +1900,11 @@ mostrar_endereco() {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',                             
-                              tableLayout: 'fixed',   
+                           //   tableLayout: 'fixed',   
                               actionsColumnIndex: 7,
                               exportButton: { pdf: true },          
                               //pageSize: 7,
@@ -1900,14 +1927,14 @@ mostrar_endereco() {
                         ]}                       
                       />      
             </div>      
-      </Tab>       
-      <Tab eventKey="excluidos" title="Excluidos">
+      </TabPanel>       
+      <TabPanel value="2" className="tirar_espaco">      
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
@@ -1947,7 +1974,7 @@ mostrar_endereco() {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
                           exportFileName: 'Rel_adm_empresas',
@@ -1955,11 +1982,11 @@ mostrar_endereco() {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,          
-                          maxBodyHeight: 430,
-                          minBodyHeight: 430, 
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450, 
                           padding: 'dense',   
                           overflowY: 'scroll',
-                          tableLayout: 'fixed',   
+                        //  tableLayout: 'fixed',   
                           actionsColumnIndex: 7,
                           exportButton: { pdf: true },          
                           //pageSize: 7,
@@ -1981,14 +2008,14 @@ mostrar_endereco() {
                         ]}
                       />      
             </div>      
-      </Tab>  
-      <Tab eventKey="incompletos" title="Cadastro Incompleto">
+      </TabPanel>  
+      <TabPanel value="3" className="tirar_espaco">      
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
@@ -2028,7 +2055,7 @@ mostrar_endereco() {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
                           exportFileName: 'Rel_adm_empresas',
@@ -2036,11 +2063,11 @@ mostrar_endereco() {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,          
-                          maxBodyHeight: 430,
-                          minBodyHeight: 430, 
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450, 
                           padding: 'dense',   
                           overflowY: 'scroll',
-                          tableLayout: 'fixed',   
+                         // tableLayout: 'fixed',   
                           actionsColumnIndex: 7,
                           exportButton: { pdf: true },          
                           //pageSize: 7,
@@ -2065,17 +2092,17 @@ mostrar_endereco() {
                         ]}
                       />      
             </div>      
-      </Tab>  
-      <Tab eventKey="convites" title="Convites">
+      </TabPanel>  
+      <TabPanel value="4" className="tirar_espaco">   
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: '20px' },
-                          { title: 'Status', field: 'status.descricao', width: '220px' },               
-                          { title: 'Email', field: 'email', width: '420px' },                 
-                          { title: '', field: '#', width: '50px' },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },               
+                          { title: 'Email', field: 'email', width: '400px', minWidth: '400px', maxWidth: '400px' },                 
+                          { title: '', field: '#', width: '50px', minWidth: '50px', maxWidth: '50px' },
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listOperadoresConvites}   
@@ -2109,7 +2136,7 @@ mostrar_endereco() {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           //paginationPosition: 'bottom',  
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
@@ -2118,7 +2145,8 @@ mostrar_endereco() {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,          
-                          maxBodyHeight: 530,                    
+                          maxBodyHeight: 430,
+                          minBodyHeight: 430,                     
                           exportButton: { pdf: true },           
                           actionsColumnIndex: 3,
                           //pageSize: 7,
@@ -2151,10 +2179,10 @@ mostrar_endereco() {
                         }}*/
                       />      
             </div>      
-      </Tab>                  
-    </Tabs>   
+      </TabPanel>                  
+    </TabContext>   
     <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Operador  </div>
                         </Fab>
                       </div>    

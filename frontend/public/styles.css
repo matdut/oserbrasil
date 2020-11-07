@@ -2,12 +2,12 @@
     .right {
         top: 30%;
         float: left;       
-    }
+    }   
 
     .left {
         background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
         width: 80px;     
-        height: 100vh; 
+        height: 99vh; 
     }    
 
     .right {
@@ -17,6 +17,12 @@
         border-style: solid;
         border-color: #ccc;
         border-width: 1px; */
+    }
+
+    .backgroud_gradiente {
+      background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+      width: 80px;     
+      height: 100vh; 
     }
 /*
     .left:hover {
@@ -51,6 +57,8 @@
       margin-left: -6px;
       padding-top: 5px;
     }
+
+    
 
     .item {
         height: 55px;
@@ -358,12 +366,15 @@
   margin-bottom: 8px !important;
 }
 
+
 .MuiFormLabel-root {
   color: rgba(0, 0, 0, 0.54);
   padding: 0;
-  font-weight: 160 !important;  
-  font-size: 17px !important;
-}  
+  font-weight: normal !important;  
+  font-size: 12px !important;
+  font-family: Effra !important;
+} 
+ 
 
 .rodape {
   color: #fff !important;  
@@ -589,7 +600,7 @@
     /* width: 100% !important; */
     width: 224% !important;
     /*border-bottom: 1px dotted #707070;      */    
-    border-bottom: 1px solid #dee2e6;
+   /*  border-bottom: 1px solid #dee2e6; */
   }
 
   .titulo_admministrador_editar {       
@@ -622,6 +633,14 @@
     border-bottom: 1px solid #dee2e6;
   }
 
+  .titulo_lista_auxiliares {
+    margin-left: 0px !important; 
+    height: 120px !important; 
+    padding-left: 0px; 
+    width: 100% !important;
+    font: normal normal Effra !important;
+  }
+
   .titulo_lista_servicos {       
     margin-left: 0px !important; 
     height: 120px !important; 
@@ -635,7 +654,13 @@
 
   .descricao_admministrador {         
     padding-top: 15px !important;  
-    margin-left: 80px !important;       
+    margin-left: 50px !important;       
+    height: 52px !important;      
+   /* font-size: 44px !important;   */
+  }
+
+  .descricao_admministrador_servico {            
+    margin-left: 20px !important;       
     height: 52px !important;      
    /* font-size: 44px !important;   */
   }
@@ -780,13 +805,17 @@
     width: 80% !important;
   }
 
+  .margem_left_ajustar {
+    margin-left: 10px !important;
+  }
+
   .botao_lista_incluir {          
     font: normal normal bold Effra !important;
     color: #0F074E !important;
     font-size: 12px;
     position: absolute;
     left: 75% !important; 
-    top: 16% !important;  
+    top: 18% !important;  
     line-height: 10% !important;   
    /* bottom: 500px; 
       height: 50px;*/
@@ -939,6 +968,10 @@
     left: 30%;
   }
 
+  .botao_close_modal_servico {
+    left: 50%;
+  }
+
   .botao_close_modal_tarifarios_esp {
     margin-left: 25% !important; 
   }
@@ -960,7 +993,7 @@
   }
 
   .botao_close_incluir_evento_modal {
-    left: 55%;
+    left: 50%;
   }
 
   .botao_close_modal_cartao {
@@ -1310,17 +1343,7 @@
   margin-bottom: 0px !important;
 }
 
-.tabs_titulo_lista {
-  text-align: left;
-  font-family: Effra !important;
-  font-size: 12px !important;
-  /* font-weight: var(--unnamed-font-weight-medium)  !important; 
-  font-weight: bolder !important;*/
-  letter-spacing: 0px !important;
-  color: #4F4F4F !important;
-  opacity: 1 !important;  
-  margin-left: 20px !important;
-}
+
 
 .lista_padroes_layout {
   font: normal normal bold 14px Effra !important;
@@ -1416,13 +1439,12 @@
 }
 
 
-.label_text {
-  font: normal normal medium Effra !important;
+.label_text { 
+  font-weight: medium !important;
   letter-spacing: 0px !important;
   color: #4F4F4F !important;
   opacity: 1 !important;   
-  font-size: 14px !important;
-  font-weight: medium;
+  font-size: 12px !important;  
 }
 
 
@@ -1475,12 +1497,25 @@
   text-indent: 10000px;
 }
 */
+.menu_adm_auxiliar {
+  margin-top: 50px !important; 
+  margin-left: 50px !important;  
+ }
+
+.menu_adm {
+ margin-top: 50px !important; 
+ margin-left: 150px !important;  
+}
+.centraliza_img{
+  text-align: center !important;
+}
 
 .titulo_bemvindo{
+  margin-top: 20px !important;
   text-align: left !important;
   font-family: Effra !important;  
   font-weight: normal !important;
-  font-size: 40px !important;  
+  font-size: 35px !important;  
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
@@ -1497,12 +1532,21 @@
 }
 
 .sub_titulo_empresa{
-  margin-top: 10px !important;
+  margin-top: 6px !important;
   text-align: left !important;
   font-family: Effra !important;    
   font-weight: normal !important;
-  font-size: 22px !important;  
+  font-size: 18px !important;  
   letter-spacing: 0px !important;
   color: #0F074E !important;
   opacity: 1 !important;
+}
+
+.ajustar_top{ 
+  margin-top: 18px !important;
+}
+
+.div1 {
+  margin-top: 6px !important;
+  display: inline;
 }

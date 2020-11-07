@@ -6,6 +6,7 @@ import Menu_cliente_individual from '../cliente/menu_cliente_individual' ;
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
+
 class Area_cliente extends React.Component  {
   constructor(props){
     super(props);    
@@ -29,7 +30,7 @@ class Area_cliente extends React.Component  {
   verifica_titulo() {    
 
     return (      
-       <strong>{localStorage.getItem('lognome')}</strong>
+       localStorage.getItem('lognome')
      ); 
   
   }  
@@ -71,15 +72,15 @@ verifica_horario(){
      <div> 
         <Menu_cliente_individual />  
          <div className="titulo_lista">        
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-               {this.verifica_titulo()}, {this.verifica_horario()} !
+           <div className="unnamed-character-style-4 descricao_admministrador">          
+           <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>                                           
             </div>             
             
               <Container maxWidth="sm">
                 <Typography component="div" style={{ backgroundColor: '#white', height: '15vh' }} />
               </Container>
 
-              <div className="titulo_area">NÚMEROS OSER</div>
+              <div className="titulo_area">SEUS NÚMEROS</div>
 
               <div class="p-2">               
                 <div class="d-flex justify-content-start titulo_area_descricao">

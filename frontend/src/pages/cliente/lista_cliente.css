@@ -148,7 +148,7 @@ border-left: 10px !important;
   color: #0F074E !important;
   font-weight: bold !important;
   opacity: 1;
-  margin-left: 80px !important;
+  margin-left: 55px !important;
 }
 
 
@@ -199,4 +199,9 @@ border-left: 10px !important;
 
 .resolucao_tela {
   max-width: '100%';   
+}
+
+.tamanho_grid {
+  width: '100%'; 
+  height: '100vh';    
 }

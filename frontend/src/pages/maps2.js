@@ -119,7 +119,9 @@ class ExampleDirections extends Component {
       </div>
 
       <div className='map-container'>     
-      
+      <LoadScript
+      googleMapsApiKey="AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4"
+    >
         <GoogleMap
           id='direction-example'
          // mapContainerStyle={this.props.styles.container}
@@ -148,7 +150,7 @@ class ExampleDirections extends Component {
             />
           )}
         </GoogleMap>      
-
+       </LoadScript>
       </div>
     </div>
   )

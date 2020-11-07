@@ -14,7 +14,7 @@ import 'moment/locale/pt-br';
 import { cartaoMask } from '../formatacao/cartaoMask';
 import { cartaoAmericanMask } from '../formatacao/cartaoAmericanMask';
 import { cartaoDinersMask } from '../formatacao/cartaoDinersMask';
-
+//import Resizer from 'react-image-file-resizer';
 import creditCardType from 'credit-card-type'
 
 import './cartao.css';
@@ -132,7 +132,8 @@ class CartaoCreditoComponent extends React.Component  {
       issuer: "",
       focused: "",
       formData: null,    
-      listaCartao:[],
+      listaCartao:[],      
+      mensagem_cartao: '',
       validate: {
         descricaoState: ''
       }    
@@ -140,6 +141,8 @@ class CartaoCreditoComponent extends React.Component  {
     this.descricaochange = this.descricaochange.bind(this);  
     this.verificaDescricao = this.verificaDescricao.bind(this);       
     this.descricaofocus = this.descricaofocus.bind(this);     
+    this.verifica_cartao = this.verifica_cartao.bind(this);     
+    
     this.validateDescricaoChange = this.validateDescricaoChange.bind(this);  
   }
 
@@ -180,7 +183,7 @@ class CartaoCreditoComponent extends React.Component  {
     } else if (target.name === "cvc") {
       target.value = formatCVC(target.value);
     }
-
+     
     this.setState({ [target.name]: target.value });
   };
   
@@ -198,6 +201,7 @@ class CartaoCreditoComponent extends React.Component  {
       mensagem_descricao: '',
       erro_descricao: false,
       validacao_descricao: false,
+      validacao_cartao: false,
       cvc: '',
       expiry: '',
       focus: '',
@@ -298,7 +302,7 @@ class CartaoCreditoComponent extends React.Component  {
       this.botao_modal(this.state.inicio)
   }
 
-   
+  
   sendSave(){        
 /*
     if (visaRegex.test('4509 9535 6623 3704')) {       
@@ -322,10 +326,9 @@ class CartaoCreditoComponent extends React.Component  {
       codigo_seguranca: this.state.cvc,      
       logid: localStorage.getItem('logid'), 
       perfilId: localStorage.getItem('logperfil'), 
-      bandeira: cartao[0].type,
+      bandeira: cartao[0].type,  
       statusId: 1, 
-    }           
-    
+    }               
     
       console.log('datapost1 - '+JSON.stringify(datapost, null, "    "));  
 
@@ -386,7 +389,7 @@ class CartaoCreditoComponent extends React.Component  {
       codigo_seguranca: this.state.cvc,      
       logid: localStorage.getItem('logid'), 
       perfilId: localStorage.getItem('logperfil'), 
-      bandeira: cartao[0].type,
+      bandeira: cartao[0].type,      
       statusId: 1,     
     }               
    
@@ -470,7 +473,7 @@ botao_modal_update(inicio) {
      
     } else {
 
-      if (this.state.cvc !== '' && this.state.name !== '' && this.state.expiry !== '' && this.state.number !== '' ) { 
+      if (this.state.cvc !== '' && this.state.name !== '' && this.state.expiry !== '' && this.state.number !== '') { 
           return (
       
             <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
@@ -591,6 +594,27 @@ verifica_bandeira(bandeira) {
 
 }
 
+verifica_cartao() {
+debugger;
+
+const cartao = creditCardType(this.state.number).filter((card) => {        
+  return card.type
+});
+
+if (cartao == null) {
+  this.setState({                   
+    validacao_cartao: false,          
+  });    
+  
+} else {
+  this.setState({                   
+    validacao_cartao: true,          
+  });    
+}  
+//const cartao = cartao[0].type
+
+}
+
   render()
   {
     const { cvc, focused, locale, name, placeholders } = this.props;
@@ -603,7 +627,7 @@ verifica_bandeira(bandeira) {
 
           <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <h3><strong>Cartões de Créditos</strong></h3>
+              <div className="titulo_bemvindo"> Cartão de Crédito </div>         
               </div>      
             </div>
             <div className="container-fluid margem_left">                                         
@@ -661,8 +685,8 @@ verifica_bandeira(bandeira) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,                                        
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
@@ -743,10 +767,19 @@ verifica_bandeira(bandeira) {
         isOpen={this.state.showModalInclusao}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Incluir Cartão Crédito
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_cartao">
+        ><div className="editar_titulo_inclusao"> 
+        <div className="container-fluid">
+             <div className="row">
+               <div className="col-9 altura_titulo">
+               Incluir Cartão Crédito
+               </div>
+               <div className="col-1">
+               <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()}>
               <CloseOutlinedIcon />
-            </IconButton></div>       
+            </IconButton></div>                    
+               </div>                    
+             </div>
+           </div>                 
             <div className="container_modal_alterado">
                <div className="d-flex justify-content">        
                  <div className="App-payment">  
@@ -768,6 +801,7 @@ verifica_bandeira(bandeira) {
                             autoComplete="off"   
                             className="cartao_campo"
                             placeholder="Número do cartao"                                                        
+                          //  onBlur={this.verifica_cartao}
                             onChange={this.handleInputChange}
                             onFocus={this.handleInputFocus}
                             pattern="[\d| ]{16,22}" 
@@ -925,7 +959,7 @@ verifica_bandeira(bandeira) {
                  </div>
      </ReactModal>       
      <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
                             <AddIcon/> <div className="botao_incluir"> Adiciona Cartão </div>
                         </Fab>
                       </div>    

@@ -1,0 +1,315 @@
+.qtd_modal_servicos {
+  width: 220px !important;   
+  padding: 0px !important;
+  border: 0px !important;
+  font-family: Effra !important;
+  font-size: 12px !important;  
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important; 
+}
+
+.label_modal_servicos { 
+  padding-left: 20px !important;   
+  text-align: left !important;
+  font: normal normal medium !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;   
+}  
+
+.label_modal_direita {  
+  font-weight: medium !important;
+  font-family: Effra !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;    
+  width: 230px !important;  
+  
+}
+
+.input_modal_direita {    
+  font-weight: bold !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  width: 220px !important;  
+  
+}
+
+.input_modal_esquerda { 
+  font-weight: bold !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+ /*  line-height: 46px !important;    */
+  width: 220px !important;    
+  margin-left: 10px !important;
+}
+
+.label_modal_esquerda {  
+  font-weight: medium !important;
+  font-family: Effra !important;
+  font-size: 14px !important;
+  letter-spacing: 0px !important;
+  color: #707070 !important;
+  opacity: 1 !important;    
+  width: 230px !important;    
+  margin-left: 10px !important;
+}
+
+.select_modal_tipo { 
+  font-weight: medium !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;         
+}
+
+.label_select_modal_tipo {
+  font-weight: medium !important;
+  font-family: Effra !important;
+  font-size: 12px !important;  
+}
+
+.text_select_modal_tipo {
+  text-align: left !important;  
+  font-family: Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;    
+  width: 460px !important;  
+}
+
+.text_modal_servico { 
+  font: normal normal medium !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #868686 !important;
+  opacity: 1 !important;       
+  width: 460px !important;  
+}
+
+.label_modal_servico {
+  font: normal normal medium !important;
+  font-family: Effra !important;
+  font-size: 14px !important;  
+}
+
+.tabs_titulo_diaria {
+  text-align: left;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  /* font-weight: var(--unnamed-font-weight-medium)  !important; 
+  font-weight: bolder !important;*/
+  letter-spacing: 0px !important;
+  color: #4F4F4F !important;
+  opacity: 1 !important;  
+  margin-left: 35px !important;
+  width: 50px !important;
+  padding: 0px !important;  
+}
+
+.tabs_titulo_translado {
+  text-align: left;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  /* font-weight: var(--unnamed-font-weight-medium)  !important; 
+  font-weight: bolder !important;*/
+  letter-spacing: 0px !important;
+  color: #4F4F4F !important;
+  opacity: 1 !important;      
+  padding: 0px !important;  
+}
+.centraliza_opcao {
+  margin-left: 20px !important
+}
+
+.tirar_espaco_modal{
+  margin-top: 15px !important;
+  padding: 0px !important;  
+  margin-left: 0px !important
+}
+
+.alinha_campos {
+  margin-left: 10px !important
+}
+
+.botao_servico_fixo {
+  font-family: Effra !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+  position: absolute !important;  
+  width: 450px !important;
+  height: 127px !important;
+  background: #F3F3F3 0% 0% no-repeat padding-box;
+  display: block !important; 
+  margin-bottom: 0px !important;
+}
+
+
+.editar_titulo_inclusao{
+  display: block !important;  /* I added this to see the modal, you don't need this */
+ /* overflow-y: initial !important; */
+}
+
+/* Important part */
+.modal-dialog{
+  overflow-y: initial !important
+}
+
+.modal-body{
+  height: 405px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-left: 0px !important;
+  width: 530px !important;
+}
+
+.container_tirar_borda {
+  overflow-x: hidden;
+}
+
+.modal-botao{
+  display: block !important; /* I added this to see the modal, you don't need this */
+ /* overflow-y: initial !important; */
+}
+
+.titulo_total_servicos{
+  text-align: left;
+  font-weight: bold !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px;
+  color: #707070;
+  opacity: 1;  
+}
+
+.margin_total_servicos {
+  margin-top: 10px !important;
+  margin-left: 37px !important;
+}
+
+.tamanho_coluna{
+  width: 100px !important;
+}
+
+.tamanho_coluna_tempo{
+  width: 150px !important;
+}
+
+.resultado_total_servicos {
+  text-align: left;
+  font-weight: bold !important;
+  font-family: Effra !important;
+  font-size: 16px !important;  
+  letter-spacing: 0px;
+  color: #0F074E;
+  opacity: 1;
+}
+
+.checkbox_modal_descricao{
+  margin-top: 20px !important;
+  font-family: Effra !important;
+  text-align: left !important;
+  font: normal normal medium Effra !important;
+  letter-spacing: 0px !important;  
+  font-size: 12px !important;   
+  width: 420px !important;
+}
+
+.checkbox_modal_dados_voo{
+  margin-top: 20px !important;
+  line-height: 10px !important;
+  font-family: Effra !important;
+  text-align: left !important;
+  font: normal normal medium Effra !important;
+  letter-spacing: 0px !important;  
+  font-size: 12px !important;   
+  width: 410px !important;
+}
+
+.input_modal_voo{
+  margin-top: 30px !important;
+  font-family: Effra !important;
+  text-align: left !important;  
+  letter-spacing: 0px !important;  
+  font-size: 12px !important;   
+  width: 120px !important;
+}
+
+.font_link_alterar {  
+  font-family: Effra !important;
+  text-align: right !important;  
+  font-size: 12px !important;   
+  font-weight: normal !important;
+  text-decoration: underline !important;  
+  letter-spacing: 0px !important;
+  color: #0F93D9 !important;
+  opacity: 1;
+  cursor: pointer;
+}
+.data_text_servico {
+  font-weight: bold !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;      
+  width: 460px !important;      
+}
+
+.descricao_modal_servico {
+  margin-top: 10px !important;
+  text-align: left !important;
+  font: normal normal Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+  opacity: 1 !important;
+  padding-left: 20px !important;
+}
+
+.altura_titulo {
+  margin-top: 10px !important; 
+}
+
+.fixar_tabela_servico {  
+  position: fixed;
+  margin-top: 0px !important;
+  left: 67%;
+  background-color: white;
+  width: 425px !important;  
+  /* width: 450px !important; */
+}
+
+.font_mensagem_erro {  
+  position: fixed;
+  left: 67%;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+}
+
+.MuiAlert-root {
+  font-family: Effra !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  letter-spacing: 0px !important;
+  color: #0F074E !important;
+}

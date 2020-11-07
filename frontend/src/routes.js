@@ -64,6 +64,8 @@ import Inicio from './pages/inicio';
  import Alterar_senha_Motorista from './pages/motorista/alterar_senha'; 
  import Area_motorista from './pages/motorista/area_motorista';
 
+ import ListBancoMotorista from './pages/motorista/banco/list';
+
  import Motorista_cadastro_incluir from './pages/motorista/incluir/motorista'; 
  import Motorista_veiculo_incluir from './pages/motorista/incluir/veiculo';
  import Motorista_senha_incluir from './pages/motorista/incluir/senha_motorista';
@@ -96,9 +98,8 @@ import Area_administrador from './pages/administrador/area_administrador';
 //import Cartao_creedito_cadastrar from './pages/cartao/cartao_credito';
 import Lista_cad_Incompleto from './pages/administrador/lista_cad_incompleto';
 
-/* ADMINISTRADOR AUXILIAR   */
-import Area_administrador_Auxiliar from './pages/administrador_auxiliar/area_adm_convidado';
-import Lista_administrador_Auxiliar from './pages/administrador_auxiliar/lista_adm_convidado';
+//import Area_administrador_auxiliar from './pages/administrador_auxiliar/area_adm_convidaod';
+import List_administrador_auxiliar from './pages/administrador_auxiliar/lista_adm_auxiliar';
 
 /* MATRIZ */
 import Matriz_tarifaria_editar from './pages/matriz_tarifaria/edit';
@@ -116,17 +117,23 @@ import Cartao_credito from './pages/cartao_credito/list';
 
 import Configuracao from './pages/configuracao/list';
 
+import Auxiliares from './pages/auxiliares/list';
+
 import Esqueceu_Senha from './pages/esqueceu_senha';
 /* MAPS */
 
 /* EMAIL */ 
 
+
+/* <Route path="/area_administrador_auxiliar" component={Area_administrador_auxiliar} />
+            <Route path="/List_administrador_auxiliar" component={List_administrador_auxiliar} />
+*/
 //import Sobre from './pages/maps4';
  import Menu_bootstrap from './pages/teste_menu';
  import Sobre from './pages/sobre';
  import Login from './pages/login'; 
  import Rodape from './pages/rodape';
- import Servicos from './pages/servicos';
+ import Servicos from './pages/servico';
  import Contato from './pages/contato';
 
  var fs = require('fs');
@@ -140,6 +147,11 @@ function base64_decode(base64str,fileName){
     }
   } );
 }
+
+/* 
+  <Route path="/area_adm_convidado" component={Area_administrador_Auxiliar} />    
+            <Route path="/lista_adm_convidado" component={Lista_administrador_Auxiliar} />        
+            */
 
 //Convertendo arquivo em binário
 function base64_encode(fileName){
@@ -158,6 +170,8 @@ export default function Routes() {
             <Route path="/sobre" component={Sobre} />
 
             <Route path="/configuracao" component={Configuracao} />
+
+            <Route path="/auxiliares" component={Auxiliares} />
             
             <Route path="/area_cliente_individual" component={Area_cliente_individual} />
             <Route path="/area_cliente_empresarial" component={Area_cliente_empresarial} />
@@ -165,11 +179,10 @@ export default function Routes() {
             <Route path="/area_administrador" component={Area_administrador} />
             <Route path="/servicos" component={Servicos} />
             <Route path="/contato" component={Contato} />
-                        
-            <Route path="/listar" component={ListMotorista} />         
 
-            <Route path="/area_adm_convidado" component={Area_administrador_Auxiliar} />    
-            <Route path="/lista_adm_convidado" component={Lista_administrador_Auxiliar} />        
+            <Route path="/lista_adm_auxiliar" component={List_administrador_auxiliar} />                               
+            
+            <Route path="/listar" component={ListMotorista} />                   
 
             <Route path="/lista_individual" component={Lista_Individual} />     
             <Route path="/lista_empresarial" component={Lista_Empresarial} />               
@@ -217,6 +230,8 @@ export default function Routes() {
 
              <Route path="/cliente_endereco/:id" component={cliente_endereco} />                     
 
+             <Route path="/motorista_lista_banco/list" component={ListBancoMotorista} />
+             
              <Route path="/motorista_incluir_convite/:email" component={Motorista_cadastro_incluir} />
              <Route path="/motorista_incluir/:id" component={Motorista_cadastro_incluir} />             
              <Route path="/veiculo_motorista_incluir/:id" component={Motorista_veiculo_incluir} />      

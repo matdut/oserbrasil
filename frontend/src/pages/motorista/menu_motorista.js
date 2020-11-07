@@ -188,17 +188,10 @@ class menu_motoristaComponent extends React.Component  {
      <i class="fas fa-car-alt"></i>
      </a>  
   </LightTooltip>   
-  </div>  
-  <div className="item teste">
-      <LightTooltip title="Cartão Crédito" placement="top">
-        <a href={`/cartao_credito/list`}>                 
-        <i class="fas fa-credit-card"></i>
-        </a>  
-      </LightTooltip>    
-    </div>  
+  </div>   
   <div class="item teste">
-  <LightTooltip title="Meus Ganhos" placement="top">
-     <a href="#">
+  <LightTooltip title="Agência Bancária" placement="top">
+     <a href={`/motorista_lista_banco/list`}>    
        <i className="fas fa-fw fa-th"></i>
      </a>  
   </LightTooltip>   

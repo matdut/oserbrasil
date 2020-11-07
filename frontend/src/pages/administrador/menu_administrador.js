@@ -138,9 +138,9 @@ class menu_administradorComponent extends React.Component  {
     </LightTooltip>   
     </div>   
     <div className="item teste">
-      <LightTooltip title="Operadores" placement="top">
-        <a href={"/operador_lista"}>
-        <i class="fas fa-users"></i>
+      <LightTooltip title="Auxiliares" placement="top">
+        <a href={`/auxiliares`}>
+           <i class="fas fa-users"></i>
         </a>   
       </LightTooltip>    
     </div>
@@ -188,4 +188,3 @@ export default withRouter(menu_administradorComponent);
 //export default cabecalho_clienteComponent;
 
 //ReactDOM.unmountComponentAtNode(document.getElementById('cabecalho'));
-

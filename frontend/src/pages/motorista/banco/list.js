@@ -4,24 +4,26 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import axios from 'axios';
 import { Link } from "react-router-dom";
-import api from '../../services/api';
+import api from '../../../services/api';
 import Box from '@material-ui/core/Box';
 import Cards from 'react-credit-cards';
 import PropTypes from 'prop-types';
 import 'react-credit-cards/es/styles-compiled.css';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
-import { cartaoMask } from '../formatacao/cartaoMask';
-import { cartaoAmericanMask } from '../formatacao/cartaoAmericanMask';
-import { cartaoDinersMask } from '../formatacao/cartaoDinersMask';
-
-import creditCardType from 'credit-card-type'
+import CheckIcon from '@material-ui/icons/Check';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import creditCardType from 'credit-card-type';
+import Select from '@material-ui/core/Select';
 
 import './cartao.css';
+import MenuItem from '@material-ui/core/MenuItem';
 
-import { bandeira_cartao } from '../formatacao/bandeira_cartao';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FormControl from '@material-ui/core/FormControl';
 
-import NumberFormat from 'react-number-format';
 
 import { Input } from 'reactstrap';
 import Fab from '@material-ui/core/Fab';
@@ -31,18 +33,17 @@ import AddIcon from '@material-ui/icons/Add';
 import MaterialTable from 'material-table';
 import ReactModal from 'react-modal';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
-import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData } from './utils';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 //library sweetalert
 //import Swal from 'sweetalert2/dist/sweetalert2.js';
 //import 'sweetalert2/src/sweetalert2.scss';
-import Menu_administrador from '../administrador/menu_administrador';
-import Menu_cliente_individual from '../cliente/menu_cliente_individual';
-import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
-import Menu_motorista from '../motorista/menu_motorista';
-import Menu_operador from '../operadores/menu_operador';
+import Menu_administrador from '../../administrador/menu_administrador';
+import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
+import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
+import Menu_motorista from '../../motorista/menu_motorista';
+import Menu_operador from '../../operadores/menu_operador';
 import { Card } from '@material-ui/core';
 const perfil = localStorage.getItem('logperfil');
 const nome = localStorage.getItem('lognome');  
@@ -105,7 +106,7 @@ const customStyles = {
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-class CartaoCreditoComponent extends React.Component  {
+class BancoComponent extends React.Component  {
 
   constructor(props){
     super(props);
@@ -115,8 +116,12 @@ class CartaoCreditoComponent extends React.Component  {
       mensagem: '',
       campId: '',
       campNome: '',
+      campDeletarId: '',
+      campconta: '',
       campdesccartao: '',
       campDescricao: "",   
+      campagencia: '',
+      campcodigo: '',
       mensagem_descricao: '',
       erro_descricao: false,
       validacao_descricao: false,
@@ -132,14 +137,34 @@ class CartaoCreditoComponent extends React.Component  {
       issuer: "",
       focused: "",
       formData: null,    
-      listaCartao:[],
+      listaAgencias: [],
+      listaBanco:[],
+      listaStatus:[],
+      error_agencia: false,
+      error_conta: false,
+      error_banco: false,
+      mensagem_agencia: false,
+      mensagem_conta: false,
+      mensagem_banco: false,
+      validacao_agencia: false,
+      validacao_conta: false, 
+      validacao_banco: false, 
       validate: {
         descricaoState: ''
       }    
     }
-    this.descricaochange = this.descricaochange.bind(this);  
+    this.agenciachange = this.agenciachange.bind(this);  
+    this.contachange = this.contachange.bind(this);  
+    this.bancochange = this.bancochange.bind(this);  
+
     this.verificaDescricao = this.verificaDescricao.bind(this);       
-    this.descricaofocus = this.descricaofocus.bind(this);     
+    this.verificabanco = this.verificabanco.bind(this);       
+    this.verificaagencia = this.verificaagencia.bind(this);       
+    this.verificaconta = this.verificaconta.bind(this);       
+
+    this.busca_descricao = this.busca_descricao.bind(this);          
+
+    //this.descricaofocus = this.descricaofocus.bind(this);     
     this.validateDescricaoChange = this.validateDescricaoChange.bind(this);  
   }
 
@@ -154,43 +179,31 @@ class CartaoCreditoComponent extends React.Component  {
       this.props.history.push(`/login`);       
 
     } else if (localStorage.getItem('logperfil') > 0) {       
-       this.loadCartaoCliente();  
+       this.loadBancoMotorista();  
     }      
 
-    //console.log('locale '+ );
-    
+    this.carrega_status();
+ 
   }  
 
   
   handleInputFocus = (e) => {
     this.setState({ focus: e.target.name });
   }
-  
-  handleCallback = ({ issuer }, isValid) => {
-    if (isValid) {
-      this.setState({ issuer });
-    }
-  };
-
-  handleInputChange = ({ target }) => {
-    if (target.name === "number") {
-      target.value = formatCreditCardNumber(target.value);
-    } else if (target.name === "expiry") {
-      target.value = formatExpirationDate(target.value);
-    } else if (target.name === "cvc") {
-      target.value = formatCVC(target.value);
-    }
-
-    this.setState({ [target.name]: target.value });
-  };
+ 
   
   limpar_campos() {
     this.setState({
       mensagem: '',
       campId: '',
       campNome: '',
+      campDeletarId: '',
+      campconta: '',
+      campdesccartao: '',
       campDescricao: "",   
-      tipo_cartao: "",
+      campagencia: '',
+      campcodigo: '',
+      mensagem_descricao: '',
       numero_disable: false,
       validade_disable: false,
       nome_disable: false,
@@ -198,29 +211,36 @@ class CartaoCreditoComponent extends React.Component  {
       mensagem_descricao: '',
       erro_descricao: false,
       validacao_descricao: false,
-      cvc: '',
-      expiry: '',
-      focus: '',
-      name: '',
-      number: '',            
+      error_agencia: false,
+      error_conta: false,
+      error_banco: false,
+      mensagem_agencia: false,
+      mensagem_conta: false,
+      mensagem_banco: false,
+      validacao_agencia: false,
+      validacao_conta: false, 
+      validacao_banco: false,          
     });
   }
 
-  carrega_dados_cartao_cliente(cartao){ 
+  carrega_dados_banco_motorista(banco){ 
    
-    console.log('entrou carrega'+ cartao) 
-    api.get(`/cartao/get/${cartao}}`)
+    console.log('entrou carrega'+ banco) 
+    api.get(`/banco/get/${banco}}`)
     .then(res=>{
       console.log('datapost - '+JSON.stringify(res.data, null, "    "));  
       if (res.data.success == true)  {
         const data = res.data.data
-        this.setState({
-          campId: res.data.data[0].id,
-          cvc: res.data.data[0].codigo_seguranca,
-          expiry: dateFormat(res.data.data[0].data_vencimento, "UTC:mm/yy"),
-          name: res.data.data[0].nome,          
-          number: res.data.data[0].numero, 
-     //     bandeira: res.data.data[0].bandeira,   
+        this.setState({          
+          campDescricao: res.data.data[0].banco,
+          campBanco: res.data.data[0].banco,
+          campagencia: res.data.data[0].agencia,
+          campconta: res.data.data[0].conta,      
+          inicio: 2,    
+          validacao_agencia: true,
+          validacao_banco: true,
+          validacao_conta: true,
+          validacao_descricao: true,
         })        
       }
     })
@@ -230,13 +250,43 @@ class CartaoCreditoComponent extends React.Component  {
   
    }   
 
-  loadCartaoCliente(){ 
+   carrega_agencia_bancaria(){    
    
-    api.get(`/cartao/list_cartao_cliente/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/agencia/list`)
+    .then(res=>{      
+      if (res.data.success == true)  {
+        const data = res.data.data
+        this.setState({listaAgencias:data})  
+      }
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })  
+   }   
+
+   busca_descricao(){       
+   // console.log('descricao '+this.state.campDescricao);
+
+    api.get(`/agencia/getbusca/${this.state.campDescricao}`)
+    .then(res=>{      
+      if (res.data.success == true)  {
+       // const data = res.data.data;          
+        this.setState({ campcodigo: res.data.data[0].codigo})  
+        return (res.data.data[0].codigo);
+      }
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })  
+   }   
+
+   loadBancoMotorista(){ 
+   
+    api.get(`/banco/list_banco_motorista/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
-        this.setState({listaCartao:data})
+        this.setState({listaBanco:data})
       }
     })
     .catch(error=>{
@@ -251,10 +301,105 @@ class CartaoCreditoComponent extends React.Component  {
 
   }
 
-  descricaochange(e) {
-    this.setState({ campDescricao: e.target.value })
+  bancochange(e) {
+    this.setState({ campbanco: e.target.value })
+  }
+  agenciachange(e) {
+    this.setState({ campagencia: e.target.value })
+  }
+  contachange(e) {
+    this.setState({ campconta: e.target.value })
   }
 
+  loadagenciaData(){   
+    return this.state.listaAgencias.map((data)=>{          
+      return(
+        <MenuItem value={data.descricao}>{data.id} - {data.descricao}</MenuItem>              
+      )
+    })     
+  
+   }
+
+   verifica_botao(inicio) {
+ //   const { validate } = this.state   
+    console.log('validate - '+JSON.stringify(this.state, null, "    ")); 
+
+     if (inicio == 1) {
+  
+      return (
+  
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+                <div className="d-flex justify-content-center">
+                <label> Salvar </label>
+                </div>     
+          </Box>           
+      );   
+       
+      } else {
+
+        if (this.state.validacao_agencia == true && this.state.validacao_banco == true 
+          && this.state.validacao_conta == true) { 
+            return (
+        
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
+                      <div className="d-flex justify-content-center">
+                      <label> Salvar </label>
+                      </div>     
+                </Box>           
+            );   
+        } else {
+          return (
+        
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+                    <div className="d-flex justify-content-center">
+                    <label> Salvar </label>
+                    </div>     
+              </Box>           
+          );   
+        }   
+
+      } 
+} 
+verifica_botao_update(inicio) {
+  const { validate } = this.state   
+  //console.log('validate - '+JSON.stringify(this.state, null, "    ")); 
+
+   if (inicio == 1) {
+
+    return (
+
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+              <div className="d-flex justify-content-center">
+              <label> Salvar </label>
+              </div>     
+        </Box>           
+    );   
+     
+    } else {
+
+      if (this.state.validacao_agencia == true && this.state.validacao_banco == true 
+        && this.state.validacao_conta == true) { 
+          return (
+      
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
+                    <div className="d-flex justify-content-center">
+                    <label> Salvar </label>
+                    </div>     
+              </Box>           
+          );   
+      } else {
+        return (
+      
+          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+                  <div className="d-flex justify-content-center">
+                  <label> Salvar </label>
+                  </div>     
+            </Box>           
+        );   
+      }   
+
+    } 
+} 
   verificaDescricao(e) {
     const { validate } = this.state
     if (e.target.value.length == 0) {
@@ -268,18 +413,57 @@ class CartaoCreditoComponent extends React.Component  {
     } 
   }
 
-  descricaofocus(e) {
-    const { validate } = this.state
-    if (e.target.value.length == 0) {
-      validate.cpfState = ''
+  verificabanco(e) {
+    if (this.state.campDescricao.length == 0) {
       this.setState({ 
-        validate,       
-        erro_descricao:false,
-        validacao_descricao: false,                       
-        mensagem_cpf: ''  
+        error_banco:true,
+        validacao_banco: false,               
+        mensagem_banco: '',
+        inicio: 1    
        })            
-    }  
-  } 
+    } else if (this.state.campDescricao.length > 0) {
+      this.setState({ 
+        error_banco:false,
+        validacao_banco: true,               
+        mensagem_banco: '',
+        inicio: 2  
+       })            
+    }
+  }
+  verificaagencia(e) {
+    if (this.state.campagencia.length == 0) {
+      this.setState({ 
+        error_agencia:true,
+        validacao_agencia: false,               
+        mensagem_agencia: '',
+        inicio: 1    
+       })            
+    } else if (this.state.campagencia.length > 0) {
+      this.setState({ 
+        error_agencia: false,
+        validacao_agencia: true,               
+        mensagem_agencia: '',
+        inicio: 2    
+       })            
+    } 
+  }
+  verificaconta(e) {
+    if (this.state.campconta.length == 0) {
+      this.setState({ 
+        error_conta:true,
+        validacao_conta: false,               
+        mensagem_conta: '',
+        inicio: 1    
+       })            
+    } else if (this.state.campconta.length > 0) {
+      this.setState({ 
+        error_conta:false,
+        validacao_conta: true,               
+        mensagem_conta: '',  
+        inicio: 2  
+       })            
+    } 
+  }  
 
   validateDescricaoChange(e){
     const { validate } = this.state
@@ -299,181 +483,121 @@ class CartaoCreditoComponent extends React.Component  {
   }
 
    
-  sendSave(){        
-/*
-    if (visaRegex.test('4509 9535 6623 3704')) {       
-      this.setState({ 
-        tipo_cartao: 'visa'
-      });  
-    } else if (masterRegex.test(this.state.number)) {       
-      this.setState({ 
-        tipo_cartao: 'master'
-      });  
-    }  */
-
-    let cartao = creditCardType(this.state.number).filter((card) => {        
-      return card.type
-   });
-
-    const datapost = {
-      numero: this.state.number,              
-      nome: this.state.name,              
-      data_vencimento: moment(this.state.expiry, "MM YY"),
-      codigo_seguranca: this.state.cvc,      
-      logid: localStorage.getItem('logid'), 
-      perfilId: localStorage.getItem('logperfil'), 
-      bandeira: cartao[0].type,
-      statusId: 1, 
-    }           
-    
-    
-      console.log('datapost1 - '+JSON.stringify(datapost, null, "    "));  
-
-          api.post('/cartao/create',datapost)
-          .then(response=>{
-            if (response.data.success == true) {          
+  sendUpdate(){        
 
 
-                this.setState({                   
-                    mensagem_usuario: 'Cartão incluido com sucesso!',          
-                });          
-        
-                this.envia_mensagemClick();    
-             //this.handleCloseModalInclusao();           
-            
-          }
-    
-          }).catch(error=>{
-            alert("Erro verificar log  ")
-          })
-    
-  }  
+    api.get(`/agencia/getbusca/${this.state.campDescricao}`)
+    .then(rescodigo=>{      
+      if (rescodigo.data.success == true)  {  
 
-  sendUpdate(){                 
-
-    let cartao = creditCardType(this.state.number).filter((card) => {        
-       return card.type
-    });
-
-   // console.log('bandeira - '+JSON.stringify(cartao[0].type, null, "    "));  
-  /*  this.setState({ 
-      tipo_cartao: card.type,
-      campdesccartao: card.type,
-  });  */
-
-    const datapost = {
-      numero: this.state.number,              
-      nome: this.state.name,              
-      data_vencimento: moment(this.state.expiry, "MM YY"),
-      codigo_seguranca: this.state.cvc,      
-      logid: localStorage.getItem('logid'), 
-      perfilId: localStorage.getItem('logperfil'), 
-      bandeira: cartao[0].type,
-      statusId: 1,     
-    }               
+        const datapost = {
+          codigo: rescodigo.data.data[0].codigo,
+          banco: this.state.campDescricao,     
+          agencia: this.state.campagencia,
+          conta: this.state.campconta,  
+          logid: localStorage.getItem('logid'), 
+          perfilId: localStorage.getItem('logperfil')  
+        }                  
    
-    //  bandeira_cartao.getCardFlag('4509 9535 6623 3704');
-    //tgdeveloper.getCardFlag('4509 9535 6623 3704')
-  //      console.log('bandeira - '+JSON.stringify(formatCreditCardNumber('4509953566233704'), null, "    "));  
-
-          api.put(`/cartao/update/${this.state.campId}`,datapost)
+          api.put(`/banco/update/${this.state.campId}`,datapost)
           .then(response=>{
 
             if (response.data.success == true) {          
             
              this.setState({                   
-               mensagem_usuario: 'Cartão alterado com sucesso!',          
+               mensagem_usuario: 'Banco alterador com sucesso!',          
              });          
     
-            this.envia_mensagemClick();    
-
-            
+            this.loadBancoMotorista(); 
+            this.envia_mensagemClick();           
             
           }
     
           }).catch(error=>{
             alert("Erro verificar log  "+ error)
           })
-    
+        }    
+   })
+    .catch(error=>{
+      alert("Error server "+error)
+   }) 
   }  
 
-  botao_modal(inicio) {
-    const { validate } = this.state   
-
-     if (inicio == 1) {
+  sendSave(){                     
+  //  debugger;
+   // const codigo = this.busca_descricao();
   
-      return (
+   api.get(`/agencia/getbusca/${this.state.campDescricao}`)
+   .then(rescodigo=>{      
+     if (rescodigo.data.success == true)  {  
+    
+        const datapost = {
+          codigo: rescodigo.data.data[0].codigo,
+          banco: this.state.campDescricao,     
+          agencia: this.state.campagencia,
+          conta: this.state.campconta,  
+          logid: localStorage.getItem('logid'), 
+          perfilId: localStorage.getItem('logperfil')  
+        }                  
+      
+          console.log('dataPost '+JSON.stringify(datapost, null, "    ")); 
+          api.post(`/banco/create`,datapost)
+          .then(response=>{
+
+            if (response.data.success == true) {          
+            
+             this.setState({                   
+               mensagem_usuario: 'Banco incluido com sucesso!',          
+             });          
+    
+            this.loadBancoMotorista(); 
+            this.envia_mensagemClick();            
+            
+          }
+    
+          }).catch(error=>{
+            alert("Erro verificar "+ error)
+          })
+    
+        }
+      })
+      .catch(error=>{
+        alert("Error server "+error)
+      }) 
+         
+  }   
+
+loadStatus(){
   
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
-                <div className="d-flex justify-content-center">
-                <label> Incluir </label>
-                </div>     
-          </Box>           
-      );   
-       
-      } else {
+  return this.state.listaStatus.map((data)=>{          
+    return(
+      <MenuItem value={data.id}>{data.descricao}</MenuItem>              
+    )
+  })     
 
-        if (this.state.cvc !== '' && this.state.name !== '' && this.state.expiry !== '' && this.state.number !== '' ) { 
-            return (
-        
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
-                      <div className="d-flex justify-content-center">
-                      <label> Incluir </label>
-                      </div>     
-                </Box>           
-            );   
-        } else {
-          return (
-        
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
-                    <div className="d-flex justify-content-center">
-                    <label> Incluir </label>
-                    </div>     
-              </Box>           
-          );   
-        }    
+ }
 
-      } 
-} 
+ carrega_status(){
+  
+  //const baseUrl = "http://34.210.56.22:3333"
+  //const url = baseUrl+"/seguradora/list"
+  api.get('/status/listafiltro')
+  .then(res=>{
+    if (res.data.success) {
+      const data = res.data.data
+      this.setState({listaStatus:data})
+    }
+    else {
+      alert("Erro de conexão")
+    }
+  })
+  .catch(error=>{
+    alert("Error server "+error)
+  })
 
-botao_modal_update(inicio) {
-  const { validate } = this.state   
+ }  
 
-   if (inicio == 1) {
 
-    return (
-
-      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
-              <div className="d-flex justify-content-center">
-              <label> Salvar Alterações </label>
-              </div>     
-        </Box>           
-    );   
-     
-    } else {
-
-      if (this.state.cvc !== '' && this.state.name !== '' && this.state.expiry !== '' && this.state.number !== '' ) { 
-          return (
-      
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
-                    <div className="d-flex justify-content-center">
-                    <label> Salvar Alterações </label>
-                    </div>     
-              </Box>           
-          );   
-     } else {
-        return (
-      
-          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
-                  <div className="d-flex justify-content-center">
-                  <label> Salvar Alterações </label>
-                  </div>     
-            </Box>           
-        );   
-      }    
-
-    } 
-} 
 
 verificar_menu_lateral() {
  
@@ -502,77 +626,6 @@ verificar_menu_lateral() {
 
 }
 
-verifica_formatacao(bandeira, data) {
- 
- if (bandeira == 'visa') {
-    return (
-      '****.****'+cartaoMask(data.numero).substring(9,data.numero.length)
-    );
- } else if (bandeira == 'mastercard') {
-   return (
-      '****.****'+cartaoMask(data.numero).substring(9,data.numero.length)
-    );
- } else if (bandeira == 'american-express') {
-     return (
-      '****.******.'+cartaoAmericanMask(data.numero).substring(11,data.numero.length)
-      );
- } else if (bandeira == 'diners-club') {
-  return (
-    '****.******.'+cartaoDinersMask(data.numero).substring(11,data.numero.length)    
-   );
-} else if (bandeira == 'discover') {
-  return (
-    '****.****'+cartaoMask(data.numero).substring(9,data.numero.length)  
-   );
-} else if (bandeira == 'maestro') {
-  return (
-    '****.****'+cartaoMask(data.numero).substring(9,data.numero.length)  
-   );
-} else if (bandeira == 'jcb') {
-  return (
-    '****.****'+cartaoMask(data.numero).substring(9,data.numero.length)  
-   );
-}  else {
-  return (
-    '****.****'+cartaoMask(data.numero).substring(9,data.numero.length)
-  );
-}    
-}
-
-verifica_bandeira(bandeira) {
-
-  if (bandeira == 'visa') {
-     return (
-      <img src='/visa.jpg' style={{ width: '40px', height: '20px' }}/>
-     );
-  } else if (bandeira == 'mastercard') {
-    return (
-      <img src='/master_card.png' style={{ width: '40px', height: '20px' }}/>
-     );
-  } else if (bandeira == 'discover') {
-      return (
-        <img src='/discover.png' style={{ width: '40px', height: '20px' }}/>
-       );
-  } else if (bandeira == 'diners-club') {
-    return (
-      <img src='/dinerrs.png' style={{ width: '60px', height: '40px' }}/>
-     );
-  } else if (bandeira == 'american-express') {
-    return (
-      <img src='/america_express.jpg' style={{ width: '60px', height: '40px' }}/>
-     );
-  } else if (bandeira == 'maestro') {
-    return (
-      <img src='/EloFundo.png' style={{ width: '40px', height: '20px' }}/>
-     );
-  } else if (bandeira == 'jcb') {
-    return (
-      <img src='/jcb.jpg' style={{ width: '40px', height: '20px' }}/>
-     );
-  }      
-
-}
-
   render()
   {
     const { cvc, focused, locale, name, placeholders } = this.props;
@@ -585,7 +638,7 @@ verifica_bandeira(bandeira) {
 
           <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <h3><strong>Banco</strong></h3>
+              <div className="titulo_bemvindo"> Agência Bancária </div>
               </div>      
             </div>
             <div className="container-fluid margem_left">                                         
@@ -595,15 +648,15 @@ verifica_bandeira(bandeira) {
                         title=""
                         style={ {width: "96%" }}     
                         columns={[
-                          { title: '', field: '#', width: '40px' },                          
-                          { title: 'Bandeira', field: 'bandeira', width: '100px', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
-                          { title: 'Número', field: 'numero', width: '300px', render: rowData => this.verifica_formatacao(rowData.bandeira, rowData) },  
-                          { title: 'Nome', field: 'nome', width: '300px' },                               
-                          { title: 'Data Validade', field: 'data_vencimento', width: '300px', render: rowData => dateFormat(rowData.data_vencimento, "UTC:mm/yyyy") },                            
+                          { title: '', field: '#', width: '40px' },                        
+                          { title: 'Codigo', field: 'codigo', width: '200px'},                            
+                          { title: 'Banco', field: 'banco', width: '200px'},                          
+                          { title: 'Agencia', field: 'agencia', width: '100px'},                          
+                          { title: 'Conta', field: 'conta', width: '100px'},                            
                           { title: '', field: '#', width: '50px' },                       
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
-                        data={this.state.listaCartao}     
+                        data={this.state.listaBanco}     
                         localization={{
                           body: {
                             emptyDataSourceMessage: 'Nenhum registro para exibir',
@@ -701,7 +754,7 @@ verifica_bandeira(bandeira) {
             <div className="container_alterado">
               
              <div className="moldura_modal_delecao">
-               <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Cartão de Crédito? </div>
+               <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Banco? </div>
                <div className="titulo_moldura_modal_delecao_2">Ao confirmar a exclusão o registro será apagado.  </div>
              </div>     
                               <div className="retorno">{this.state.retorno}</div>
@@ -721,86 +774,116 @@ verifica_bandeira(bandeira) {
             </div>
          </ReactModal>     
 
-        <ReactModal 
+         <ReactModal 
         isOpen={this.state.showModalInclusao}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Incluir Banco
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_cartao">
+        ><div className="editar_titulo_inclusao"> Inclusão do Banco    
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_tipo_veiculo">
               <CloseOutlinedIcon />
             </IconButton></div>       
-            <div className="container_modal_alterado">
+            <div className="container_alterado">
                <div className="d-flex justify-content">        
-                 <div className="App-payment">  
-                 <div class="d-flex flex-column espacamento_caixa_modal_cartao">              
-                    
-                      
-                      <div class="p-2">                     
-                      <input
-                            type="tel"
-                            name="number"
-                            autoComplete="off"   
-                            className="cartao_campo"
-                            placeholder="Número do cartao"                                                        
-                            onChange={this.handleInputChange}
-                            onFocus={this.handleInputFocus}
-                            pattern="[\d| ]{16,22}" 
-                            size="40"                           
-                            required
-                          />
-                      </div>      
-                      <div class="p-2">          
-                      <input
-                            type="text"
-                            name="name"
-                            size="40"  
-                            autoComplete="off"   
-                            className="cartao_campo"
-                            placeholder="Nome" 
-                            minlength="11" maxlength="33"                        
-                            onChange={this.handleInputChange}
-                            onFocus={this.handleInputFocus}  
-                            required                          
-                          /> 
-                      </div>      
-                      <div class="p-2">          
-                          <div className="d-flex justify-content-start">
+                 <div>  
+                 <div class="d-flex flex-column espacamento_caixa_texto">              
+                  <div class="p-2"> 
+                  <FormControl className="select_matriz_tipo" variant="outlined">
+                        <InputLabel className="label_select_matriz_tipo" id="demo-simple-select-outlined-label">Banco</InputLabel>
+                        <Select
+                          className="text_select_matriz_tipo"
+                          error={this.state.error_banco} 
+                          helperText={this.state.mensagem_banco}
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.campDescricao}
+                          onFocus={this.verificabanco}
+                          //onClick={this.verificaTipo_veiculo}
+                          onChange={(value)=> this.setState({campDescricao:value.target.value})}      
+                          endAdornment={
+                            <InputAdornment position="end">
+                                 {this.state.validacao_banco? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }                          
+                          labelWidth={80}
+                        >
+                          {this.loadagenciaData()}                    
+                        </Select>
+                      </FormControl>      
+                                                     
+                    </div> 
+                    <div class="p-2">   
+                    <div class="d-flex justify-content-start">
                             <div>
-                                <input
-                                      type="text"
-                                      name="expiry"
-                                      size="20"  
-                                      autoComplete="off"   
-                                      className="cartao_campo data_valid"
-                                      placeholder="Data validade"
-                                      pattern="\d\d/\d\d"
-                                      required
-                                      onChange={this.handleInputChange}
-                                      onFocus={this.handleInputFocus}
-                                    />
-                              </div>
-                              <div>
-                                <input
-                                  type="text"
-                                  name="cvc"
-                                  size="20"  
-                                  autoComplete="off"   
-                                  className="cartao_campo cvc_valid"
-                                  placeholder="CVC"
-                                  pattern="\d{3,4}"
-                                  required
-                                  onChange={this.handleInputChange}
-                                  onFocus={this.handleInputFocus}
-                                />
-                              </div>      
-                            </div>   
-                          </div>
-                        </div>
-                        {this.botao_modal(2)}     
-                      </div>
-                    </div>        
+                            <FormControl variant="outlined">
+                                <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Agencia</InputLabel>
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_agencia}
+                                    helperText={this.state.mensagem_agencia}
+                                    className="text_cor_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campagencia}                            
+                                    onKeyUp={this.verificaagencia}
+                                    onChange={(value)=> this.setState({campagencia:value.target.value})}                          
+                                    inputProps={{
+                                      maxLength: 7,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_agencia? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={80}
+                                />                  
+                                <FormHelperText error={this.state.error_agencia}>
+                                      {this.state.mensagem_agencia}
+                                </FormHelperText>
+                              </FormControl>                          
+                            </div>
+                            <div>
+                            <FormControl variant="outlined">
+                                <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Conta</InputLabel>
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_conta}
+                                    helperText={this.state.mensagem_conta}
+                                    className="text_anodut_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campconta}                        
+                                    onKeyUp={this.verificaconta}
+                                    onChange={(value)=> this.setState({campconta:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 9,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_conta? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_conta}>
+                                      {this.state.mensagem_conta}
+                                </FormHelperText>
+                              </FormControl>                           
+                            </div>                                                       
+                      </div>                      
+                    </div>  
+                  
+              <br/>
+              <br/>
+                </div>
+                       
+                  {this.verifica_botao(this.state.inicio)}                          
+                      
                  </div>
-     </ReactModal>       
+               </div>        
+            </div>
+     </ReactModal>   
 
      <ReactModal 
         isOpen={this.state.showModalAlterar}
@@ -812,86 +895,110 @@ verifica_bandeira(bandeira) {
             </IconButton></div>       
             <div className="container_alterado">
                <div className="d-flex justify-content">        
-               <div className="App-payment">  
-                 <div class="d-flex flex-column espacamento_caixa_modal_cartao">              
-                     
+                 <div>  
+                 <div class="d-flex flex-column espacamento_caixa_texto">              
+                  <div class="p-2"> 
+                  <FormControl className="select_matriz_tipo" variant="outlined">
+                        <InputLabel className="label_select_matriz_tipo" id="demo-simple-select-outlined-label">Banco</InputLabel>
+                        <Select
+                          className="text_select_matriz_tipo"
+                          error={this.state.error_banco} 
+                          helperText={this.state.mensagem_banco}
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.campDescricao}
+                          onFocus={this.verificabanco}
+                          //onClick={this.verificaTipo_veiculo}
+                          onChange={(value)=> this.setState({campDescricao:value.target.value})}      
+                          endAdornment={
+                            <InputAdornment position="end">
+                                 {this.state.validacao_banco? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }     
+                          label="Tipo Transporte"
+                          labelWidth={80}
+                        >
+                          {this.loadagenciaData()}                    
+                        </Select>
+                      </FormControl>      
+                                                     
+                    </div> 
+                    <div class="p-2">   
+                    <div class="d-flex justify-content-start">
+                            <div>
+                            <FormControl variant="outlined">
+                                <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Agencia</InputLabel>
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_agencia}
+                                    helperText={this.state.mensagem_agencia}
+                                    className="text_cor_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campagencia}                            
+                                    onBlur={this.verificaagencia}
+                                    onChange={(value)=> this.setState({campagencia:value.target.value})}                          
+                                    inputProps={{
+                                      maxLength: 20,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_agencia? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={80}
+                                />                  
+                                <FormHelperText error={this.state.error_agencia}>
+                                      {this.state.mensagem_agencia}
+                                </FormHelperText>
+                              </FormControl>                          
+                            </div>
+                            <div>
+                            <FormControl variant="outlined">
+                                <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Conta</InputLabel>
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_conta}
+                                    helperText={this.state.mensagem_conta}
+                                    className="text_anodut_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campconta}                        
+                                    onBlur={this.verificaconta}
+                                    onChange={(value)=> this.setState({campconta:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 4,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_conta? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_conta}>
+                                      {this.state.mensagem_conta}
+                                </FormHelperText>
+                              </FormControl>                           
+                            </div>                                                       
+                      </div>                      
+                    </div>  
+                  
+              <br/>
+              <br/>
+                </div>
+                       
+                  {this.verifica_botao_update(this.state.inicio)}                          
                       
-                      <div class="p-2">                                   
-                      <input
-                            type="tel"
-                            name="number"
-                            readOnly={this.state.numero_disable}                            
-                            className="cartao_campo"
-                            autoComplete="off"   
-                            placeholder="Número do cartao"                                                        
-                           // onChange={this.handleInputChange}
-                           // onFocus={this.handleInputFocus}
-                            pattern="[\d| ]{16,22}"                            
-                            value={this.state.number}
-                            required
-                            size="40"    
-                          />
-                      </div>      
-                      <div class="p-2">          
-                      <input
-                            type="text"
-                            name="name"
-                            disabled={this.state.nome_disable}
-                            className="cartao_campo"
-                            autoComplete="off"   
-                            placeholder="Nome"                         
-                            value={this.state.name}
-                           // onChange={this.handleInputChange}
-                           // onFocus={this.handleInputFocus}  
-                            required                          
-                            size="40"    
-                          /> 
-                      </div>      
-                      <div class="p-2">     
-                      <div className="d-flex justify-content-start">
-                            <div>     
-                              <input
-                                    type="text"
-                                    name="expiry"
-                                    autoComplete="off"   
-                                    disabled={this.state.nome_disable}
-                                    className="cartao_campo data_valid"
-                                    placeholder="Data validade"
-                                    pattern="\d\d/\d\d"
-                                    value={this.state.expiry}
-                                    required
-                                    size="20"  
-                                    onChange={this.handleInputChange}
-                                    onFocus={this.handleInputFocus}
-                                  />
-                              </div>
-                              <div>
-                                <input
-                                  type="text"
-                                  name="cvc"
-                                  autoComplete="off"   
-                                  disabled={this.state.cvc_disable}
-                                  className="cartao_campo cvc_valid"
-                                  placeholder="CVC"
-                                  pattern="\d{3,4}"
-                                  value={this.state.cvc}
-                                  required
-                                  size="20"  
-                                //  onChange={this.handleInputChange}
-                                // onFocus={this.handleInputFocus}
-                                />
-                              </div>     
-                        </div>      
-                        </div>      
-                        </div>
-                        {this.botao_modal_update(2)}     
-                      </div>
-                    </div>        
                  </div>
+               </div>        
+            </div>
      </ReactModal>       
      <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
-                            <AddIcon/> <div className="botao_incluir"> Adiciona Cartão </div>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                            <AddIcon/> <div className="botao_incluir"> Adiciona Banco </div>
                         </Fab>
                       </div>    
        <Snackbar                   
@@ -961,18 +1068,18 @@ verifica_bandeira(bandeira) {
       mensagem_alert: false      
     });    
   
-    this.loadCartaoCliente();       
+    this.loadBancoMotorista();       
     this.handleCloseModalInclusao();      
     this.handleCloseModalAlteracao();           
   };     
 
   handleOpenModalInclusao () { 
     this.setState({ 
-      showModalInclusao: true,
-      campDescricao: '',      
+      showModalInclusao: true,      
     });  
 
     this.limpar_campos();     
+    this.carrega_agencia_bancaria();
     
   }
   
@@ -980,15 +1087,15 @@ verifica_bandeira(bandeira) {
     this.setState({ 
       showModalInclusao: false
     });
-  
-    this.loadCartaoCliente();      
+    this.limpar_campos();   
+    this.loadBancoMotorista();      
   }
 
 
   handleOpenModalAlteracao (data) { 
     this.setState({ 
       showModalAlterar: true,
-      campDescricao: '',
+      campId: data.id,      
       numero_disable: true,
       validade_disable: false,
       nome_disable: true,
@@ -997,8 +1104,9 @@ verifica_bandeira(bandeira) {
 
     console.log('registro - '+data.id);
 
-    this.limpar_campos();   
-    this.carrega_dados_cartao_cliente(data.id);  
+   // this.limpar_campos();   
+    this.carrega_agencia_bancaria();
+    this.carrega_dados_banco_motorista(data.id);  
 
     
   }
@@ -1007,8 +1115,9 @@ verifica_bandeira(bandeira) {
     this.setState({ 
       showModalAlterar: false
     });
-  
-    this.loadCartaoCliente();  
+
+    this.limpar_campos();   
+    this.loadBancoMotorista();  
    
   }
 
@@ -1059,13 +1168,13 @@ verifica_bandeira(bandeira) {
     })
   }
 */
-  sendDelete(userId){  
-     console.log('delete - '+userId)
-    api.delete(`/cartao/delete/${userId}`)
+  sendDelete(userId){    
+    console.log('id '+userId);   
+    api.delete(`/banco/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {
 
-        this.loadCartaoCliente();
+        this.loadBancoMotorista();
         this.handleCloseModalDelete();        
       }
     })
@@ -1076,4 +1185,4 @@ verifica_bandeira(bandeira) {
 
 }
 
-export default CartaoCreditoComponent;
+export default BancoComponent;

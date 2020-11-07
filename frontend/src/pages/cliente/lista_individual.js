@@ -32,15 +32,20 @@ import CheckIcon from '@material-ui/icons/Check';
 import { Data } from '@react-google-maps/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MaterialTable from 'material-table';
-import TabContext from '@material-ui/lab/TabContext';
 //import TabList from '@material-ui/lab/TabList';
 //import TabPanel from '@material-ui/lab/TabPanel';
-import AppBar from '@material-ui/core/AppBar';
 //import Tab from '@material-ui/core/Tab';
 //import Tabs from '@material-ui/core/Tabs';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
 //import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 //import 'react-tabs/style/react-tabs.css';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
 
 //import { Tabs, Tab } from 'react-bootstrap';
 import TesteAlteracao from '../cliente/modal/representante';
@@ -201,12 +206,14 @@ class listaClienteComponent extends React.Component  {
       mensagem_data_nascimento: '',        
       mensagem_aguarde: '',
       color: 'light',
+      value: "1",
       listVazia:[],
       listCliente:[],
       listClienteExcluidos:[],
       listClienteCadIncompletos:[],
       listaStatus:[],   
       listatipo:[], 
+      seconds: 0,
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -255,7 +262,7 @@ class listaClienteComponent extends React.Component  {
   }
 
   componentDidMount(){
-
+    //this.interval = setInterval(() => this.tick(), 1000);
     moment.locale('pt-br');
     this.setState({
       mensagem_aguarde: '',
@@ -276,6 +283,18 @@ class listaClienteComponent extends React.Component  {
         this.carrega_status();        
     }
     this.carrega_ativos();
+  }
+
+  componentWillUnmount() {
+    //clearInterval(this.interval);
+  }
+
+  tick() { 
+
+    this.loadCliente();  
+    this.loadClienteExcluidos();  
+    this.loadClienteCadIncompletos();  
+    this.carrega_status();        
   }
 
   buscachange(e) {
@@ -1080,31 +1099,42 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
     
   };
 
-
+  opcao_tabChange = (event, newValue) => {   
+    this.setState({        
+        value: newValue 
+    });    
+  };
 
   render()
   {       
   
-    return (
+    return (      
+      
       <div className="ajuste_tela">
 
       <Menu_administrador />  
       <div className="container-fluid titulo_lista margem_left">     
         <div className="unnamed-character-style-4 descricao_admministrador">          
-           <strong>Clientes</strong>
+        <div className="titulo_bemvindo"> Cliente </div>
          </div>      
       </div>     
-      <div className="container-fluid margem_left">   
-       <br/>            
-          <Tabs 
-           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
-        <Tab eventKey="ativos" title="Ativos">                    
-          <div>
-          <MaterialTable           
-                       style={ {width: "96%"}}                                  
+      <div className="container-fluid margem_left tamanho_grid">   
+       <br/>    
+
+         <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>
+                <Tab label="Excluidos" value="2" className="tabs_titulo_lista_2"/>            
+                <Tab label="Cadastro Incompleto" value="3" className="tabs_titulo_lista_2"/>            
+              </TabList>
+            </AppBar>        
+          <TabPanel value="1" className="tirar_espaco">          
+              <MaterialTable           
+                            style={ {width: "96%", height: '100vh'}}                                  
                             title=""
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "46px", minWidth: '46px', maxWidth: '46px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
@@ -1119,7 +1149,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar motorista',        
+                                searchPlaceholder: 'Buscar cliente',        
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -1135,7 +1165,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
                               exportFileName: 'Rel_adm_clientes',
@@ -1143,13 +1173,13 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                            //  minBodyHeight: 450,       
-                             // maxBodyHeight: 600,   
-                             maxBodyHeight: 400,
-                             minBodyHeight: 400, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
+                              // maxBodyHeight: 430,
+                             // minBodyHeight: 430, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',                               
+                             // tableLayout: 'fixed',                               
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,                              
                               pageSizeOptions: [0],      
@@ -1160,17 +1190,16 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                                 onClick: (evt, data) => this.handleOpenModal(data)
                               }
                             ]}
-                          />     
-          </div> 
-          </Tab>       
-            <Tab eventKey="excluidos" title="Excluidos">
+                          />             
+          </TabPanel>       
+          <TabPanel value="2" className="tirar_espaco">  
                <div style={{ maxWidth: '100%' }}>
                 <MaterialTable        
                            style={ {width: "96%"}}                                  
                          //   className="resize_table"
                             title=""
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "46px", minWidth: '46px', maxWidth: '46px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
@@ -1185,7 +1214,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar motorista',         
+                                searchPlaceholder: 'Buscar cliente',         
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -1201,7 +1230,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1210,11 +1239,11 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',
+                             // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                               //pageSize: 7,
@@ -1233,15 +1262,15 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                             ]}
                           />         
                 </div>     
-            </Tab>          
-            <Tab eventKey="incompletos" title="Cadastro Incompleto">
+            </TabPanel>          
+            <TabPanel value="3" className="tirar_espaco">  
                <div style={{ maxWidth: '100%' }}>
                 <MaterialTable               
                            style={ {width: "96%"}}                                                          
                          //   className="resize_table"
                             title=""
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "46px", minWidth: '46px', maxWidth: '46px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
@@ -1256,7 +1285,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar motorista',         
+                                searchPlaceholder: 'Buscar cliente',       
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -1272,7 +1301,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1281,11 +1310,11 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',             
+                             // tableLayout: 'fixed',             
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                               //pageSize: 7,
@@ -1309,9 +1338,8 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                             ]}
                           />         
                 </div>     
-            </Tab>                          
-          </Tabs>   
-              
+            </TabPanel>                          
+          </TabContext>                 
             
        <br/>
        <ReactModal 

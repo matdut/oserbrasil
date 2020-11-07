@@ -1199,7 +1199,7 @@ class listComponent extends React.Component  {
         <Menu_motorista />         
         <div className="container-fluid titulo_lista margem_left">     
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-               <strong>Veículos</strong>  
+           <div className="titulo_bemvindo"> Veículo </div>                     
             </div>             
             
               <Container maxWidth="sm">
@@ -1266,8 +1266,8 @@ class listComponent extends React.Component  {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',
@@ -1303,7 +1303,7 @@ class listComponent extends React.Component  {
         </div> 
 
         <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                        <Fab style={{ textTransform: 'capitalize'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Veiculos  </div>
                         </Fab>
                       </div> 

@@ -300,231 +300,224 @@ class listComponent extends React.Component  {
       <div>    
 
           <Menu_administrador />  
-
-          <div className="titulo_lista">
+            <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <strong>Tipo de Veículos</strong>
+              <div className="titulo_bemvindo"> Tipo de Veículo </div>
               </div>      
             </div>
-            <div>   
-            <div>                              
-                
-                </div>                    
-            </div>
-
-            <div className="container-fluid margem_left">                                                            
-            <br/>            
+            <div className="container-fluid margem_left">      
             <div style={{ maxWidth: '100%' }}>
                
-                    <MaterialTable          
-                        title=""
-                        style={ {width: "96%"}}                                  
-                        columns={[                          
-                          { title: '', field: '#', width: '40px' },
-                          { title: 'Descrição', field: 'descricao', width: '600px' },                                                     
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
-                        ]}
-                        data={this.state.listaTipoVeiculo}     
-                        localization={{
-                          body: {
-                            emptyDataSourceMessage: 'Nenhum registro para exibir',
-                            addTooltip: 'Adicionar Valores Tarifários',
-                            deleteTooltip: 'Deletar',
-                            editTooltip: 'Editar',
-                            editRow: {
-                               deleteText: 'Deseja realmente deletar esta linha ?',
-                               cancelTooltip: 'Cancelar',
-                               saveTooltip: 'Salvar',
-                            }
-                          },
-                          toolbar: {
-                            searchTooltip: 'Pesquisar',
-                            searchPlaceholder: 'Buscar tipo de veículo',        
-                          },
-                          pagination: {
-                            labelRowsSelect: 'linhas',
-                            labelDisplayedRows: '{count} de {from}-{to}',
-                            firstTooltip: 'Primeira página',
-                            previousTooltip: 'Página anterior',
-                            nextTooltip: 'Próxima página',
-                            lastTooltip: 'Última página'
-                          },
-                          header: {
-                            actions: 'Ações',
-                          },
-                        }}        
-                        options={{
-                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                              paginationPosition: 'bottom',  
-                              searchFieldAlignment: 'left', 
-                              exportFileName: 'Relatorio_tipo_veiculo',
-                              search: true,     
-                              exportAllData: true,                              
-                              searchFieldVariant: 'outlined', 
-                              toolbarButtonAlignment: 'right',                                    
-                              /*exportButton: true, */            
-                              exportButton: { pdf: true },          
-                              actionsColumnIndex: 2,
-                              paging: false,       
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
-                              padding: 'dense',   
-                              overflowY: 'scroll',
-                             // tableLayout: 'fixed', 
-                            //  maxBodyHeight: 400,
-                              //headerStyle: { position: 'sticky', top: 0 },    
-                              //pageSize: 7,
-                              pageSizeOptions: [0],   
-                        }}                        
-                        actions={[                        
-                         /* {
-                            icon: 'add',                                                             
-                            tooltip: 'Adiciona Tipos Veiculos',
-                            isFreeAction: true,
-                            onClick: (event) => this.handleOpenModalInclusao()
-                          }, */
-                          {
-                            icon: 'delete',                                                             
-                            tooltip: 'Deleta Veiculo',          
-                            onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
-                          }
-                        ]} 
-                        /*
-                        editable={{                          
-                          onRowDelete: oldData =>
-                            new Promise((resolve, reject) => {
-                              setTimeout(() => {
-                                const dataDelete = [...this.state.campId];
-                                const index = oldData.id;   
-                                dataDelete.splice(index, 1);                              
-                                resolve()                                
-                                this.sendDelete(index)
-                              }, 1000)
-                            }),
-                        }} */
-                      />      
-                       <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
-                            <AddIcon/> <div className="botao_incluir"> Adicionar Tipo Veiculos  </div>
-                        </Fab>
-                      </div>                        
-             </div>                
-        <br/> 
-        
+               <MaterialTable          
+                   title=""
+                   style={ {width: "96%"}}                                  
+                   columns={[                          
+                     { title: '', field: '#', width: '40px' },
+                     { title: 'Descrição', field: 'descricao', width: '600px' },                                                     
+                     { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                   ]}
+                   data={this.state.listaTipoVeiculo}     
+                   localization={{
+                     body: {
+                       emptyDataSourceMessage: 'Nenhum registro para exibir',
+                       addTooltip: 'Adicionar Valores Tarifários',
+                       deleteTooltip: 'Deletar',
+                       editTooltip: 'Editar',
+                       editRow: {
+                          deleteText: 'Deseja realmente deletar esta linha ?',
+                          cancelTooltip: 'Cancelar',
+                          saveTooltip: 'Salvar',
+                       }
+                     },
+                     toolbar: {
+                       searchTooltip: 'Pesquisar',
+                       searchPlaceholder: 'Buscar tipo de veículo',        
+                     },
+                     pagination: {
+                       labelRowsSelect: 'linhas',
+                       labelDisplayedRows: '{count} de {from}-{to}',
+                       firstTooltip: 'Primeira página',
+                       previousTooltip: 'Página anterior',
+                       nextTooltip: 'Próxima página',
+                       lastTooltip: 'Última página'
+                     },
+                     header: {
+                       actions: 'Ações',
+                     },
+                   }}        
+                   options={{
+                     rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
+                         searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                         paginationPosition: 'bottom',  
+                         searchFieldAlignment: 'left', 
+                         exportFileName: 'Relatorio_tipo_veiculo',
+                         search: true,     
+                         exportAllData: true,                              
+                         searchFieldVariant: 'outlined', 
+                         toolbarButtonAlignment: 'right',                                    
+                         /*exportButton: true, */            
+                         exportButton: { pdf: true },          
+                         actionsColumnIndex: 2,
+                         paging: false,       
+                         maxBodyHeight: 450,
+                         minBodyHeight: 450, 
+                         padding: 'dense',   
+                         overflowY: 'scroll',
+                        // tableLayout: 'fixed', 
+                       //  maxBodyHeight: 400,
+                         //headerStyle: { position: 'sticky', top: 0 },    
+                         //pageSize: 7,
+                         pageSizeOptions: [0],   
+                   }}                        
+                   actions={[                        
+                    /* {
+                       icon: 'add',                                                             
+                       tooltip: 'Adiciona Tipos Veiculos',
+                       isFreeAction: true,
+                       onClick: (event) => this.handleOpenModalInclusao()
+                     }, */
+                     {
+                       icon: 'delete',                                                             
+                       tooltip: 'Deleta Veiculo',          
+                       onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
+                     }
+                   ]} 
+                   /*
+                   editable={{                          
+                     onRowDelete: oldData =>
+                       new Promise((resolve, reject) => {
+                         setTimeout(() => {
+                           const dataDelete = [...this.state.campId];
+                           const index = oldData.id;   
+                           dataDelete.splice(index, 1);                              
+                           resolve()                                
+                           this.sendDelete(index)
+                         }, 1000)
+                       }),
+                   }} */
+                 />      
+                  <div className="botao_lista_incluir">
+                   <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                       <AddIcon/> <div className="botao_incluir"> Adicionar Tipo Veiculos  </div>
+                   </Fab>
+                 </div>                        
+        </div>                
+   <br/> 
+   
 
-        <ReactModal 
-        isOpen={this.state.showModalInclusao}
-        style={customStyles}
-        contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Tipos de Veiculos    
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_tipo_veiculo">
-              <CloseOutlinedIcon />
-            </IconButton></div>       
-            <div className="container_alterado">
-               <div className="d-flex justify-content">        
-                 <div>  
-                 <div class="d-flex flex-column espacamento_caixa_texto">              
-                      <div class="p-2">  
-                      <FormControl variant="outlined" className="posicao_caixa_texto">
-                              <InputLabel  className="label_modal" htmlFor="filled-adornment-password">Descrição</InputLabel>
-                              <OutlinedInput  
-                                  autoComplete="off"                                        
-                                  error={this.state.erro_descricao}
-                                  helperText={this.state.mensagem_descricao}
-                                  className="nome_text"                       
-                                  id="outlined-basic"                   
-                                  variant="outlined"
-                                  value={this.state.campDescricao}                                
-                                  onBlur={this.descricaofocus}
-                                  onKeyUp={this.verificaDescricao}
-                                  onFocus={this.verificaDescricao}
-                                  onChange={ (e) => {
-                                    this.descricaochange(e)                                                 
-                                    this.validateDescricaoChange(e)
-                                  }}  
-                                inputProps={{
-                                  maxLength: 50,
-                                }}              
-                                endAdornment={
-                                  <InputAdornment position="end">
-                                      {this.state.validacao_descricao? <CheckIcon />: ''}
-                                  </InputAdornment>
-                                }
-                                labelWidth={80}
-                              />
-                            <FormHelperText error={this.state.erro_descricao}>
-                                  {this.state.mensagem_descricao}
-                            </FormHelperText>
-                            </FormControl>    
-                          </div>
-                        </div>
-                        {this.botao_modal(this.state.inicio)}     
-                      </div>
-                    </div>        
+   <ReactModal 
+   isOpen={this.state.showModalInclusao}
+   style={customStyles}
+   contentLabel="Inline Styles Modal Example"                                  
+   ><div className="editar_titulo_inclusao"> Tipos de Veiculos    
+       <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_tipo_veiculo">
+         <CloseOutlinedIcon />
+       </IconButton></div>       
+       <div className="container_alterado">
+          <div className="d-flex justify-content">        
+            <div>  
+            <div class="d-flex flex-column espacamento_caixa_texto">              
+                 <div class="p-2">  
+                 <FormControl variant="outlined" className="posicao_caixa_texto">
+                         <InputLabel  className="label_modal" htmlFor="filled-adornment-password">Descrição</InputLabel>
+                         <OutlinedInput  
+                             autoComplete="off"                                        
+                             error={this.state.erro_descricao}
+                             helperText={this.state.mensagem_descricao}
+                             className="nome_text"                       
+                             id="outlined-basic"                   
+                             variant="outlined"
+                             value={this.state.campDescricao}                                
+                             onBlur={this.descricaofocus}
+                             onKeyUp={this.verificaDescricao}
+                             onFocus={this.verificaDescricao}
+                             onChange={ (e) => {
+                               this.descricaochange(e)                                                 
+                               this.validateDescricaoChange(e)
+                             }}  
+                           inputProps={{
+                             maxLength: 50,
+                           }}              
+                           endAdornment={
+                             <InputAdornment position="end">
+                                 {this.state.validacao_descricao? <CheckIcon />: ''}
+                             </InputAdornment>
+                           }
+                           labelWidth={80}
+                         />
+                       <FormHelperText error={this.state.erro_descricao}>
+                             {this.state.mensagem_descricao}
+                       </FormHelperText>
+                       </FormControl>    
+                     </div>
+                   </div>
+                   {this.botao_modal(this.state.inicio)}     
                  </div>
-     </ReactModal>       
-     <ReactModal 
-        isOpen={this.state.showMensagemDelete}
-        style={ConfirmacaodelStyles}
-        contentLabel="Inline Styles Modal Example"                                  
-        ><div> 
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
-              <CloseOutlinedIcon />
-            </IconButton></div>       
-            <center><img src="/exclamation.png" /> </center>
-            <div className="container_alterado">              
-              
-             <div className="moldura_modal_delecao">
-               <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Tipo de Veículo? </div>
-               <div>Ao confirmar a exclusão o registro será apagado.  </div>
-             </div>     
-                              <div className="retorno">{this.state.retorno}</div>
-            <Box 
-               className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
-              <div className="d-flex justify-content-center">
-              <label> Cancelar </label>
-              </div>     
-            </Box>      
-            <Box 
-               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId)}>
-              <div className="d-flex justify-content-center">
-              <label> Excluir </label>
-              </div>     
-            </Box>      
-
+               </div>        
             </div>
-     </ReactModal>     
-           <Snackbar                   
-                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
-                open={this.state.mensagem_alert}                
-                autoHideDuration={2000}               
-                onClose={this.envia_mensagemClose}                
-                >
-            <Alert onClose={this.envia_mensagemClose} severity="success">
-                  {this.state.mensagem_usuario}
-            </Alert>
-          </Snackbar>
-          <Snackbar                   
-                anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
-                open={this.state.mensagem_alert_exclusao}                
-                autoHideDuration={2000}               
-                onClose={this.envia_mensagemExclusaoClose}                
-                >
-            <Alert onClose={this.envia_mensagemExclusaoClose} severity="error">
-                  {this.state.mensagem_usuario}
-            </Alert>
-          </Snackbar>
-       { 
-       // <div className="botao_lista_incluir">
-       //   <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
-       //       <AddIcon/> Adicionar Tipo Veículo
-       //   </Fab>
-      // </div>
-  }
-      </div>   
-    </div>  
-    );
+</ReactModal>       
+<ReactModal 
+   isOpen={this.state.showMensagemDelete}
+   style={ConfirmacaodelStyles}
+   contentLabel="Inline Styles Modal Example"                                  
+   ><div> 
+       <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
+         <CloseOutlinedIcon />
+       </IconButton></div>       
+       <center><img src="/exclamation.png" /> </center>
+       <div className="container_alterado">              
+         
+        <div className="moldura_modal_delecao">
+          <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Tipo de Veículo? </div>
+          <div>Ao confirmar a exclusão o registro será apagado.  </div>
+        </div>     
+                         <div className="retorno">{this.state.retorno}</div>
+       <Box 
+          className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
+         <div className="d-flex justify-content-center">
+         <label> Cancelar </label>
+         </div>     
+       </Box>      
+       <Box 
+          className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId)}>
+         <div className="d-flex justify-content-center">
+         <label> Excluir </label>
+         </div>     
+       </Box>      
+
+       </div>
+</ReactModal>     
+      <Snackbar                   
+           anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+           open={this.state.mensagem_alert}                
+           autoHideDuration={2000}               
+           onClose={this.envia_mensagemClose}                
+           >
+       <Alert onClose={this.envia_mensagemClose} severity="success">
+             {this.state.mensagem_usuario}
+       </Alert>
+     </Snackbar>
+     <Snackbar                   
+           anchorOrigin= {{ horizontal: 'center', vertical: 'bottom' }}           
+           open={this.state.mensagem_alert_exclusao}                
+           autoHideDuration={2000}               
+           onClose={this.envia_mensagemExclusaoClose}                
+           >
+       <Alert onClose={this.envia_mensagemExclusaoClose} severity="error">
+             {this.state.mensagem_usuario}
+       </Alert>
+     </Snackbar>
+  { 
+  // <div className="botao_lista_incluir">
+  //   <Fab size="large" color="secondary" variant="extended" onClick={()=>this.onIncluir()}>
+  //       <AddIcon/> Adicionar Tipo Veículo
+  //   </Fab>
+ // </div>
+}
+   </div>   
+         
+   </div>
+    );       
   }
 
   handleOpenModalInclusao () { 

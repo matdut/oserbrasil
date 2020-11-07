@@ -11,12 +11,20 @@ import { cpfMask } from '../formatacao/cpfmask';
 import Box from '@material-ui/core/Box';
 
 import MaterialTable from 'material-table';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 //import { useTheme } from "@material-ui/core/styles";
 
 import { Link } from "react-router-dom";
 import Modal from 'react-modal';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
+
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -1280,6 +1288,12 @@ carrega_status(){
  
  }  
 
+ opcao_tabChange = (event, newValue) => {   
+  this.setState({        
+      value: newValue 
+  });    
+};
+
   render()
   {
     return (
@@ -1289,22 +1303,28 @@ carrega_status(){
             <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
               <h5> {localStorage.getItem('lograzao_social')} </h5>                                         
-                  <strong>Operadores</strong>
+                  <div className="titulo_bemvindo"> Operador </div>                     
               </div>      
             </div>
           </div>
      <div className="container-fluid margem_left">          
      <br/>
-    
-    <Tabs 
-       defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
-      <Tab eventKey="ativos" title="Ativos">
-      <div style={{ maxWidth: '100%' }}>
+     <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>
+                <Tab label="Excluidos" value="2" className="tabs_titulo_lista_2"/>            
+                <Tab label="Cadastro Incompleto" value="3" className="tabs_titulo_lista_2"/>            
+                <Tab label="Convites" value="4" className="tabs_titulo_lista_2"/>              
+              </TabList>
+            </AppBar>        
+          <TabPanel value="1" className="tirar_espaco">  
+           <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
@@ -1344,7 +1364,7 @@ carrega_status(){
                         }}        
                         options={{                          
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           //paginationPosition: 'bottom',  
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
@@ -1353,7 +1373,8 @@ carrega_status(){
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,      
-                          maxBodyHeight: 530,        
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450,   
                          // maxBodyHeight: 400,
                          // resizable: false,
                         //  headerStyle: { position: 'static', top: 0 },      
@@ -1381,14 +1402,14 @@ carrega_status(){
                         ]}
                       />      
             </div>      
-      </Tab>       
-      <Tab eventKey="excluidos" title="Excluidos">
+      </TabPanel>       
+      <TabPanel value="2" className="tirar_espaco">  
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
@@ -1428,7 +1449,7 @@ carrega_status(){
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                           searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1437,8 +1458,8 @@ carrega_status(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                             //  maxBodyHeight: 400,
                             //  resizable: false,
                             //  headerStyle: { position: 'static', top: 0 },      
@@ -1465,14 +1486,14 @@ carrega_status(){
                         ]}
                       />      
             </div>      
-      </Tab>  
-      <Tab eventKey="incompletos" title="Cadastro Incompleto">
+      </TabPanel>  
+      <TabPanel value="3" className="tirar_espaco">  
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
@@ -1512,7 +1533,7 @@ carrega_status(){
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1521,8 +1542,8 @@ carrega_status(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                             //  maxBodyHeight: 400,
                             //  resizable: false,
                             //  headerStyle: { position: 'static', top: 0 },      
@@ -1553,18 +1574,18 @@ carrega_status(){
                         ]}
                       />      
             </div>      
-      </Tab>  
-      <Tab eventKey="convites" title="Convites">
+      </TabPanel>  
+      <TabPanel value="4" className="tirar_espaco">  
       <div style={{ maxWidth: '100%' }}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: '20px' },
-                          { title: 'Status', field: 'status.descricao', width: '155px' },               
-                          { title: 'Email', field: 'email', width: '400px' },                 
-                          { title: '', field: '#', width: '50px' },
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },               
+                          { title: 'Email', field: 'email', width: '400px', minWidth: '400px', maxWidth: '400px' },                 
+                          { title: '', field: '#', width: '50px', minWidth: '50px', maxWidth: '50px' },
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                  
                         ]}
                         data={this.state.listOperadoresConvites}   
                         localization={{
@@ -1597,7 +1618,7 @@ carrega_status(){
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           //paginationPosition: 'bottom',  
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
@@ -1606,8 +1627,8 @@ carrega_status(){
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,          
-                          maxBodyHeight: 430,
-                          minBodyHeight: 430,            
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450,     
                           exportButton: { pdf: true },           
                           actionsColumnIndex: 3,
                           //pageSize: 7,
@@ -1640,10 +1661,10 @@ carrega_status(){
                         }} */
                       />      
             </div>      
-      </Tab>               
-    </Tabs>   
+      </TabPanel>               
+    </TabContext>   
     <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                        <Fab style={{ textTransform: 'capitalize'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Operador  </div>
                         </Fab>
                       </div>  

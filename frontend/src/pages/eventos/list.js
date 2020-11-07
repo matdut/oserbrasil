@@ -18,6 +18,7 @@ import Menu_cliente_individual from '../cliente/menu_cliente_individual';
 import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu_operador from '../operadores/menu_operador';
 import Menu from '../../pages/cabecalho' ;
+import { valorMask } from '../formatacao/valormask';
 import Menu_administrador from '../administrador/menu_administrador';
 import ReactModal from 'react-modal';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
@@ -37,7 +38,6 @@ import Tab from '@material-ui/core/Tab';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
-import Tabs from '@material-ui/core/Tabs';
 
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -54,6 +54,7 @@ import 'moment/locale/pt-br';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { valorDoublemask } from '../formatacao/valorDoublemask';
 
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
@@ -184,10 +185,11 @@ class listaeventosComponent extends React.Component  {
       mensagem_ordem_servico: '',
       mensagem_nome_evento: '',
       mensagem_evento: '',     
+      mensagem_data_evento: false,    
       campOperadorId: '',
       mudar_estilo: customStyles,
       inicio: 0, 
-      value: "1",
+      value: "1",      
       mensagem_tipo_transporte: '',
       erro_ordem_servico: false,
       erro_nome_evento: false,
@@ -236,6 +238,7 @@ class listaeventosComponent extends React.Component  {
     //let userId = this.props.match.params.id;  
 
    // localStorage.setItem('logid',userId)
+   //this.interval = setInterval(() => this.tick(), 1000);
     this.setState({
       perfil: localStorage.getItem('logperfil'),
       id: localStorage.getItem('logid')   
@@ -249,6 +252,16 @@ class listaeventosComponent extends React.Component  {
 
     
   }
+
+  tick() {
+    this.loadlistEventos();  
+    this.loadOperadores();  
+    this.loadTodosOperadores();
+  }
+
+  componentWillUnmount() {
+  //  clearInterval(this.interval);
+   }
 
   limpar_campos() {
     this.setState({
@@ -270,6 +283,7 @@ class listaeventosComponent extends React.Component  {
     });  
   }
 
+  
   loadOperadores() {
     api.get(`/operador/listaempresa/`+localStorage.getItem('logid'))
     .then(res=>{
@@ -302,7 +316,7 @@ class listaeventosComponent extends React.Component  {
   
     return this.state.listTodosOperadores.map((data)=>{          
       return(
-         <MenuItem value={data.id}>{data.email}</MenuItem>      
+         <MenuItem value={data.id}>{data.nome}</MenuItem>      
       )
     })
   }
@@ -511,9 +525,7 @@ class listaeventosComponent extends React.Component  {
              this.enviar_botao_modal(1);         
 
              this.handleCloseModalCompartilha();
-             this.envia_mensagemClick();     
-
-             // this.handleCloseModalInclusao();
+             this.envia_mensagemClick();             
      
             }       
           })        
@@ -599,6 +611,7 @@ class listaeventosComponent extends React.Component  {
                });
             
                this.verifica_botao(1);
+               this.handleCloseModalInclusao();
                this.envia_mensagemClick();    
      
            console.log(' logperfil '+localStorage.getItem('logperfil'));
@@ -633,7 +646,7 @@ class listaeventosComponent extends React.Component  {
             });
         
            this.verifica_botao(1);
-
+           this.handleCloseModalInclusao();
            this.envia_mensagemClick();    
 
             this.props.history.push(`/lista_evento/list`);                              
@@ -805,12 +818,37 @@ verificaData_Evento(e) {
      erro_data_evento: false,   
      validacao_data_evento: false,    
     })            
-  } else if (e.target.value.length > 0) {        
-   this.setState({                   
-     inicio: 1,
-     erro_data_evento: false,   
-     validacao_data_evento: true,    
-    })            
+  } else if (e.target.value.length == 10) {        
+
+    let date_validar = e.target.value;
+    var dia = date_validar.substr(0,2);
+    var mes = date_validar.substr(3,2);         
+
+    if (dia > 31) {
+     this.setState({ 
+      erro_data_evento: true,   
+      validacao_data_evento: false,             
+       mensagem_data_evento: 'Dia é inválido.' 
+      })  
+    } else if (mes > 12) {
+     this.setState({ 
+      erro_data_evento: true,   
+      validacao_data_evento: false,             
+       mensagem_data_evento: 'Mês é inválido.' 
+      })  
+    } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+     this.setState({ 
+      erro_data_evento: true,   
+      validacao_data_evento: false,             
+      mensagem_data_evento: 'Data do serviço é inválido.' 
+      })  
+    } else {
+     this.setState({ 
+      erro_data_evento: false,   
+      validacao_data_evento: true,             
+      mensagem_data_evento: '',
+     });   
+    }             
   } 
 }  
 
@@ -872,14 +910,11 @@ verificaData_Evento(e) {
 
        {this.verifica_menu()}
        <div className="container-fluid titulo_lista margem_left">     
-       
-        <div className="unnamed-character-style-4 descricao_admministrador">   
-        <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
-        <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>
-        
 
-           <div className="sub_titulo_empresa">Eventos</div>
-         </div>      
+        <div className="unnamed-character-style-4 descricao_admministrador">   
+        <div className="titulo_bemvindo"> Eventos </div>            
+        </div>      
+
       </div>
       <div className="container-fluid margem_left"> 
       <br/>          
@@ -887,9 +922,9 @@ verificaData_Evento(e) {
      <div className="selecao_tabs">       
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
-          <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
+          <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
             <Tab label="Eventos Ativos" value="1" className="tabs_titulo_lista"/>
-            <Tab label="Histórico de Eventos" value="2" className="tabs_titulo_lista"/>            
+            <Tab label="Histórico de Eventos" value="2" className="tabs_titulo_lista_2"/>            
           </TabList>
         </AppBar>
         <TabPanel value="1" className="tirar_espaco">
@@ -898,12 +933,17 @@ verificaData_Evento(e) {
                             title=""
                             style={ {width: "100%" }}  
                             columns={[
-                              { title: '', field: '#', width: '40px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
-                              { title: 'Data do Evento', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
-                              { title: 'Total de Viagens', field: 'viagens_total', width: '350px' },
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '#', width: '30px', minWidth: '30px', maxWidth: '30px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '150px', minWidth: '150px', maxWidth: '150px', 
+                              render: rowData => rowData.nome_evento.substr(0,50) },
+                              { title: 'Data do Evento', field: 'data_evento', width: '80px', minWidth: '80px', maxWidth: '80px', 
+                              render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
+                              { title: 'Total de Viagens', field: 'viagens_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
+                              { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
+                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
                             ]}
                             data={this.state.listEventos}   
@@ -937,7 +977,7 @@ verificaData_Evento(e) {
                             }}        
                             options={{                             
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px", color: "#0F074E"  },
                               paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -946,13 +986,13 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,     
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 5,
+                              actionsColumnIndex: 7,
                              // pageSize: 7,
                               pageSizeOptions: [0],                 
                             }}
@@ -985,12 +1025,18 @@ verificaData_Evento(e) {
                             title=""
                             style={ {width: "96%" }}     
                             columns={[
-                              { title: '', field: '#', width: '40px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '255px' },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px' },
-                              { title: 'Data do Evento', field: 'data_evento', width: '300px', render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },                                                                                  
-                              { title: 'Total de Viagens', field: 'viagens_total', width: '350px' },
-                              { title: '', field: '', align: 'left', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                              { title: '', field: '#', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '150px', minWidth: '150px', maxWidth: '150px', 
+                              render: rowData => rowData.nome_evento.substr(0,50) },
+                              { title: 'Data do Evento', field: 'data_evento', width: '80px', minWidth: '80px', maxWidth: '80px', 
+                              render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
+                              { title: 'Total de Viagens', field: 'viagens_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
+                              { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
+                              { title: '', field: '', width: '90px', minWidth: '90px', maxWidth: '90px', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },          
                             ]}
                             data={this.state.listClienteExcluidos}   
                             localization={{
@@ -1023,7 +1069,7 @@ verificaData_Evento(e) {
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "20px", color: "#0F074E"  },
                               paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1032,13 +1078,13 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 5,
+                              actionsColumnIndex: 7,
                              // pageSize: 7,
                               pageSizeOptions: [0],                    
                             }}
@@ -1057,7 +1103,7 @@ verificaData_Evento(e) {
    </div> 
        
         <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Eventos </div>
                         </Fab>
                       </div>    
@@ -1097,10 +1143,19 @@ verificaData_Evento(e) {
         isOpen={this.state.showModalInclusao}
         style={this.state.mudar_estilo}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Incluir Eventos
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_incluir_evento_modal">
+        ><div className="editar_titulo_inclusao"> 
+        <div className="container-fluid">
+             <div className="row">
+               <div className="col-9 altura_titulo">
+               Incluir Eventos
+               </div>
+               <div className="col-1">
+               <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()}>
               <CloseOutlinedIcon />
-            </IconButton></div>             
+            </IconButton></div>                    
+               </div>                    
+             </div>
+           </div>            
             <div className="container_modal_alterado">
                 <div class="d-flex flex-column espacamento_modal">
                   <div class="p-2">      
@@ -1119,7 +1174,7 @@ verificaData_Evento(e) {
                             onKeyUp={this.verificaOrdem_servico}
                             onChange={(value)=> this.setState({campordem_servico:value.target.value})}                                 
                             inputProps={{
-                              maxLength: 10,
+                              maxLength: 7,
                             }}
                           endAdornment={
                             <InputAdornment position="end">
@@ -1149,7 +1204,7 @@ verificaData_Evento(e) {
                                     onKeyUp={this.verificaNome_Evento}
                                     onChange={(value)=> this.setState({campnome_evento:value.target.value})}         
                                     inputProps={{
-                                      maxLength: 50,
+                                      maxLength: 100,
                                     }}            
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1231,10 +1286,19 @@ verificaData_Evento(e) {
         isOpen={this.state.showModalCompartilhar}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao">Solicitar Inclusão do operador 
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalCompartilha()} className="botao_close_modal_operador">
+        ><div className="editar_titulo_inclusao"> 
+        <div className="container-fluid">
+             <div className="row">
+               <div className="col-9 altura_titulo">
+               Solicitar Inclusão do operador 
+               </div>
+               <div className="col-1">
+               <IconButton aria-label="editar" onClick={()=>this.handleCloseModalCompartilha()}>
               <CloseOutlinedIcon />
-            </IconButton></div>       
+            </IconButton></div>                    
+               </div>                    
+             </div>
+           </div>                   
             <div className="container_alterado">
                <div className="d-flex justify-content">        
                  <div>  
@@ -1317,6 +1381,7 @@ verificaData_Evento(e) {
     );
   }
   onEditar(data) {    
+     localStorage.setItem('logeventoId', data.id);
      this.props.history.push(`/lista_evento_servico/${data.id}`);        
   }
   onAdicionar() {
@@ -1338,8 +1403,7 @@ verificaData_Evento(e) {
       mensagem_alert: false      
     });   
     
-    this.loadlistEventos();
-    this.handleCloseModalInclusao();
+    this.loadlistEventos();    
   
   };
 

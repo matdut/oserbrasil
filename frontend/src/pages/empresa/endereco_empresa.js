@@ -936,8 +936,7 @@ return (
    <div>     
    <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
-              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
+           <div className="titulo_bemvindo"> Endereço </div>     
             </div>    
             
               <Container maxWidth="sm">
@@ -949,7 +948,7 @@ return (
               <br/>
           </div> 
           
-          <div class="d-flex flex-column espacamento_caixa_texto">
+          <div class="d-flex flex-column espacamento_caixa_texto_ajuste">
               <div class="p-2"> 
               <FormControl variant="outlined">
                     <InputLabel className="label_cep_incluir_motorista" htmlFor="filled-adornment-password">Cep</InputLabel>

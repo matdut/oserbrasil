@@ -37,7 +37,15 @@ import CheckIcon from '@material-ui/icons/Check';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
 import { Data } from '@react-google-maps/api';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
+
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
@@ -180,6 +188,9 @@ class listaMatrizComponent extends React.Component  {
       mensagem_receptivo: '',            
       mensagem_bilingue: '',            
       mensagem_pedagio: '',      
+      
+      value: "1",
+
       listaMatriz:[],
       listaMatrizEspeciais:[],
       validate: {
@@ -567,16 +578,39 @@ verificaData_inicio(e) {
      validacao_datainicio: false,     
      mensagem_data_inicio: ""  
     })            
-  } else {     
+  } else if (e.target.value.trim().length == 10 ) {     
   // validate.faixa_finalState = 'has-success'
-   this.setState({         
-   //  validate,
-     erro_datainicio: false,
-     validacao_datainicio: true,     
-     inicio: 2,        
-     mensagem_data_inicio: ""  
-    })            
-    //this.verifica_botao(this.state.inicio)
+  let date_validar = e.target.value;
+  var dia = date_validar.substr(0,2);
+  var mes = date_validar.substr(3,2);         
+
+  if (dia > 31) {
+   this.setState({ 
+    erro_datainicio: true,
+    validacao_datainicio: false,           
+    mensagem_data_inicio: 'Dia é inválido.' 
+    })  
+  } else if (mes > 12) {
+   this.setState({ 
+    erro_datainicio: true,
+    validacao_datainicio: false,              
+    mensagem_data_inicio: 'Mês é inválido.' 
+    })  
+  } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+   this.setState({ 
+    erro_datainicio: true,
+    validacao_datainicio: false,              
+    mensagem_data_inicio: 'Data do serviço é inválido.' 
+    })  
+  } else {
+   this.setState({ 
+    erro_datainicio: false,
+    validacao_datainicio: true,            
+    inicio: 2,        
+    mensagem_data_inicio: ""  
+   });   
+  }              
+  
   }            
 }
 
@@ -587,17 +621,39 @@ verificaData_fim(e) {
      validacao_datafim: false,     
      mensagem_data_fim: ""  
     })            
-  } else {     
-  // validate.faixa_finalState = 'has-success'
-   this.setState({         
-   //  validate,
-     erro_datafim: false,
-     validacao_datafim: true,     
-     inicio: 2,        
-     mensagem_data_inicio: ""  
-    })            
-    //this.verifica_botao(this.state.inicio)
-  }            
+  } else if (e.target.value.trim().length == 10 ) {     
+    // validate.faixa_finalState = 'has-success'
+    let date_validar = e.target.value;
+    var dia = date_validar.substr(0,2);
+    var mes = date_validar.substr(3,2);         
+  
+    if (dia > 31) {
+     this.setState({ 
+      erro_datafim: true,
+      validacao_datafim: false,           
+      mensagem_data_fim: 'Dia é inválido.' 
+      })  
+    } else if (mes > 12) {
+     this.setState({ 
+      erro_datafim: true,
+      validacao_datafim: false,            
+      mensagem_data_fim: 'Mês é inválido.' 
+      })  
+    } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+     this.setState({ 
+      erro_datafim: true,
+      validacao_datafim: false,               
+      mensagem_data_fim: 'Data do serviço é inválido.' 
+      })  
+    } else {
+     this.setState({ 
+      erro_datafim: false,
+      validacao_datafim: true,   
+      mensagem_data_fim: ""  
+     });   
+    }              
+    
+    }             
 }
 
 verificahora_inicial(e) {  
@@ -1091,7 +1147,11 @@ verifica_botao_especial_E(inicio) {
   
   }
 
- 
+  opcao_tabChange = (event, newValue) => {   
+    this.setState({        
+        value: newValue 
+    });    
+  };
  
   render()
   {
@@ -1100,35 +1160,40 @@ verifica_botao_especial_E(inicio) {
              <Menu_administrador />  
              <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                 <strong>Tarifas</strong>
+              <div className="titulo_bemvindo"> Tarifas </div>
               </div>      
             </div>
       <div className="container-fluid margem_left">                                         
-            <br/>                  
-          <Tabs 
-           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
-          <Tab eventKey="ativos" title="Tarifa">             
+            <br/>      
+            <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                <Tab label="Tarifa" value="1" className="tabs_titulo_lista"/>
+                <Tab label="Tarifa Especial" value="2" className="tabs_titulo_lista_2"/>            
+              </TabList>
+            </AppBar>        
+          <TabPanel value="1" className="tirar_espaco">         
           <div>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%" }}     
                         columns={[                                                    
-                          { title: '', field: '#', width: "10px" },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px', },
                           { title: 'Transporte', field: 'tipoTransporte', width: '250px', minWidth: '250px', maxWidth: '250px',
                           render: rowData => rowData.tipoTransporte.substr(0,20)  },                                     
-                          { title: 'Km Inicial', field: 'nome', width: '90px', minWidth: '90px', maxWidth: '90px',
+                          { title: 'Km Inicial', field: 'faixa_inicial', width: '90px', minWidth: '90px', maxWidth: '90px',  align: 'right',
                           render: rowData => rowData.faixa_inicial},
-                          { title: 'Km Final', field: 'email', width: '90px', minWidth: '90px', maxWidth: '90px' ,
+                          { title: 'Km Final', field: 'faixa_final', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right',
                           render: rowData => rowData.faixa_final}, 
-                          { title: 'KM (R$)', field: 'valor_km', width: '90px', minWidth: '90px', maxWidth: '90px' ,
+                          { title: 'KM (R$)', field: 'valor_km', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right' ,
                           render: rowData =>  valorMask(rowData.valor_km) },                        
-                          { title: 'Tempo (R$)', field: 'valor_tempo', width: '100px', minWidth: '100px', maxWidth: '100px' ,
+                          { title: 'Tempo (R$)', field: 'valor_tempo', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
                           render: rowData =>  valorMask(rowData.valor_tempo) },                          
-                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '130px', minWidth: '130px', maxWidth: '100px' ,
+                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '130px', minWidth: '130px', maxWidth: '130px', align: 'right',
                           render: rowData =>  valorMask(rowData.bandeira) },                          
-                          { title: 'Receptivo (R$)', field: 'receptivo', width: '130px', minWidth: '130px', maxWidth: '100px' ,
+                          { title: 'Receptivo (R$)', field: 'receptivo', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
                           render: rowData =>  valorMask(rowData.receptivo) }, 
-                          { title: 'Bilingue (%)', field: 'bilingue', width: '120px', minWidth: '120px', maxWidth: '100px' },                                            
+                          { title: 'Bilingue (%)', field: 'bilingue', width: '120px', minWidth: '120px', maxWidth: '100px', align: 'center' },                                            
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                         ]}
                         data={this.state.listaMatriz}     
@@ -1162,7 +1227,7 @@ verifica_botao_especial_E(inicio) {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           //paginationPosition: 'bottom',  
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
@@ -1171,8 +1236,8 @@ verifica_botao_especial_E(inicio) {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,    
-                          maxBodyHeight: 430,
-                          minBodyHeight: 430, 
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450, 
                            padding: 'dense',   
                            overflowY: 'scroll',
                           // tableLayout: 'fixed',         
@@ -1215,41 +1280,42 @@ verifica_botao_especial_E(inicio) {
                       />      
              </div>      
              <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalIncluir()}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalIncluir()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Tarifas  </div>
                         </Fab>
                       </div>  
-            </Tab>
-            <Tab eventKey="especiais" title="Tarifa Especial">             
+
+            </TabPanel>
+            <TabPanel value="2" className="tirar_espaco">            
             <div>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%" }}     
                         columns={[
-                          { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px', },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px', },
                           { title: 'Transporte', field: 'tipoTransporte', width: '150px', minWidth: '150px', maxWidth: '150px', 
                           render: rowData => rowData.tipoTransporte.substr(0,20) },                                     
-                          { title: 'Km Inicial', field: 'nome', width: '88px', minWidth: '88px', maxWidth: '88px',
+                          { title: 'Km Inicial', field: 'faixa_inicial', width: '88px', minWidth: '88px', maxWidth: '88px', align: 'right',
                           render: rowData => rowData.faixa_inicial},
-                          { title: 'Km Final', field: 'email', width: '82px', minWidth: '82px', maxWidth: '82px' ,
+                          { title: 'Km Final', field: 'faixa_final', width: '88px', minWidth: '88px', maxWidth: '88px', align: 'right' ,
                           render: rowData => rowData.faixa_final}, 
-                          { title: 'Dt Inicial', field: 'data_inicial', width: '84px', minWidth: '84px', maxWidth: '84px', 
+                          { title: 'Dt Inicial', field: 'data_inicial', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'center',  
                           render: rowData => dateFormat(rowData.data_inicial, "UTC:dd/mm/yyyy") },
-                          { title: 'Dt Final', field: 'data_final', width: '84px', minWidth: '84px', maxWidth: '84px' ,
+                          { title: 'Dt Final', field: 'data_final', width: '104px', minWidth: '104px', maxWidth: '104px', align: 'center',
                           render: rowData => dateFormat(rowData.data_final, "UTC:dd/mm/yyyy") },
                           { title: 'Hr Inicial', field: 'hora_inicial', width: '85px', minWidth: '85px', maxWidth: '85px' ,
                           render: rowData => rowData.hora_inicial.substring(0,5)},
                           { title: 'Hr Final', field: 'hora_final', width: '75px', minWidth: '75px', maxWidth: '75px' ,
                           render: rowData => rowData.hora_final.substring(0,5) },                          
-                          { title: 'Km (R$)', field: 'valor_km', width: '80px', minWidth: '80px', maxWidth: '80px' ,
+                          { title: 'Km (R$)', field: 'valor_km', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right', 
                           render: rowData =>  valorMask(rowData.valor_km) },                        
-                          { title: 'Tempo (R$)', field: 'valor_tempo', width: '98px', minWidth: '98px', maxWidth: '98px' ,
+                          { title: 'Tempo (R$)', field: 'valor_tempo', width: '98px', minWidth: '98px', maxWidth: '98px', align: 'right' ,
                           render: rowData =>  valorMask(rowData.valor_tempo) },                          
-                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '123px', minWidth: '123px', maxWidth: '123px' ,
+                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '123px', minWidth: '123px', maxWidth: '123px', align: 'right' ,
                           render: rowData =>  valorMask(rowData.bandeira) },                          
-                          { title: 'Receptivo (R$)', field: 'receptivo', width: '118px', minWidth: '118px', maxWidth: '118px' ,
+                          { title: 'Receptivo (R$)', field: 'receptivo', width: '118px', minWidth: '118px', maxWidth: '118px', align: 'right' ,
                           render: rowData =>  valorMask(rowData.receptivo) }, 
-                          { title: 'Bilingue (%)', field: 'bilingue', width: '108px', minWidth: '108px', maxWidth: '108px' },                                                  
+                          { title: 'Bilingue (%)', field: 'bilingue', width: '108px', minWidth: '108px', maxWidth: '108px', align: 'center' },                                                  
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },        
                         ]}
                         data={this.state.listaMatrizEspeciais}     
@@ -1283,7 +1349,7 @@ verifica_botao_especial_E(inicio) {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px", color: "#0F074E"  },
                           //paginationPosition: 'bottom',  
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
@@ -1292,8 +1358,8 @@ verifica_botao_especial_E(inicio) {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,       
-                          maxBodyHeight: 430,
-                          minBodyHeight: 430, 
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450, 
                           padding: 'dense',   
                           overflowY: 'scroll',
                         //  tableLayout: 'fixed',
@@ -1339,19 +1405,19 @@ verifica_botao_especial_E(inicio) {
                       />      
              </div>      
              <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalEspecialI()}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalEspecialI()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Tarifas Especial </div>
                         </Fab>
                       </div>  
-            </Tab>
+            </TabPanel>
 
-           </Tabs>          
+           </TabContext>          
 
       <ReactModal 
         isOpen={this.state.showModal}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Editar Tarifários             
+        ><div className="editar_titulo_inclusao"> Editar Tarifa             
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModal()} className="botao_close_modal_editar_tarifarios">
               <CloseOutlinedIcon />
             </IconButton></div>               
@@ -1655,7 +1721,7 @@ verifica_botao_especial_E(inicio) {
         isOpen={this.state.showModalInclusao}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Incluir Valores Tarifários             
+        ><div className="editar_titulo_inclusao"> Incluir Tarifa
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalIncluir()} className="botao_close_modal_tarifarios">
               <CloseOutlinedIcon />
             </IconButton></div>       
@@ -1959,7 +2025,7 @@ verifica_botao_especial_E(inicio) {
         isOpen={this.state.showModalEspecialE}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Editar Valores Tarifários Especial            
+        ><div className="editar_titulo_inclusao"> Editar Tarifa Especial            
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalEspecialE()} className="botao_close_modal_tarifarios_esp">
               <CloseOutlinedIcon />
             </IconButton></div>       
@@ -2407,7 +2473,7 @@ verifica_botao_especial_E(inicio) {
         isOpen={this.state.showModalEspecialI}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Incluir Valores Tarifários Especiais         
+        ><div className="editar_titulo_inclusao"> Incluir Tarifa Especial         
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalEspecialI()} className="botao_close_modal_tarifarios_esp">
               <CloseOutlinedIcon />
             </IconButton></div>       

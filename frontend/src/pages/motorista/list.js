@@ -11,7 +11,7 @@ import { numeroMask } from '../formatacao/numeromask';
 import ReactModal from 'react-modal';
 import Box from '@material-ui/core/Box';
 import MaterialTable from 'material-table';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,6 +20,13 @@ import AddIcon from '@material-ui/icons/Add';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
 
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
@@ -203,6 +210,7 @@ class listComponent extends React.Component  {
       campCor: "",
       campNome: "",
       campApolice: "",
+      value: "1",
       campNomeSalvar: "",
       campSeguradoraNome: "",  
       estado_selecionado: '',
@@ -1625,6 +1633,12 @@ abre_foto(foto) {
 }
 */
 
+opcao_tabChange = (event, newValue) => {   
+  this.setState({        
+      value: newValue 
+  });    
+};
+
   render()
   {
     return (
@@ -1633,29 +1647,37 @@ abre_foto(foto) {
           <Menu_administrador />  
           <div className="container-fluid titulo_lista margem_left">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-                  <strong>Motoristas</strong>
+              <div className="titulo_bemvindo"> Motorista </div>                     
               </div>      
             </div>
 
        </div>       
        <div className="container-fluid margem_left">                
         <br/>      
-        <Tabs 
-           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
-          <Tab eventKey="ativos" title="Ativos">          
+
+        <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>
+                <Tab label="Excluidos" value="2" className="tabs_titulo_lista_2"/>            
+                <Tab label="Cadastro Incompleto" value="3" className="tabs_titulo_lista_2"/>            
+                <Tab label="Convites" value="4" className="tabs_titulo_lista_2"/>            
+              </TabList>
+            </AppBar>        
+          <TabPanel value="1" className="tirar_espaco">               
           <div>
                         <MaterialTable          
                             title=""
                             style={ {width: "96%"}}                                  
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px', fontSize: 5 },  
                               { title: '', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align:"center", 
-                              cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10}}>Bilingue</div> : "" },                               
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },                               
                               { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                             ]}
                             data={this.state.listMotorista}   
@@ -1681,7 +1703,7 @@ abre_foto(foto) {
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1690,11 +1712,11 @@ abre_foto(foto) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',
+                             // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 7,
                              // pageSize: 9,
@@ -1716,14 +1738,14 @@ abre_foto(foto) {
                             ]}
                           />      
                 </div>      
-          </Tab>       
-          <Tab eventKey="excluidos" title="Excluidos">
+          </TabPanel>       
+          <TabPanel value="2" className="tirar_espaco">               
           <div style={{ maxWidth: '100%' }}>
                         <MaterialTable          
                             title=""
                             style={ {width: "96%"}}                                    
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
@@ -1754,7 +1776,7 @@ abre_foto(foto) {
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1762,13 +1784,12 @@ abre_foto(foto) {
                               search: true,     
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
-                              paging: false,
-                              maxBodyHeight: 500,   
+                              paging: false,                           
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                            //  tableLayout: 'fixed',
+                            maxBodyHeight: 450,
+                            minBodyHeight: 450, 
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                              // pageSize: 9,
@@ -1787,14 +1808,14 @@ abre_foto(foto) {
                             ]}
                           />      
                 </div>      
-          </Tab>       
-          <Tab eventKey="incompletos" title="Cadastro Incompleto">
+          </TabPanel>       
+          <TabPanel value="3" className="tirar_espaco">    
           <div style={{ maxWidth: '100%'}}>
                         <MaterialTable          
                             title=""
                             style={ {width: "96%"}}                                     
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
@@ -1825,7 +1846,7 @@ abre_foto(foto) {
                             }}        
                             options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
@@ -1834,11 +1855,11 @@ abre_foto(foto) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',                            
+                          //    tableLayout: 'fixed',                            
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                              // pageSize: 9,
@@ -1862,14 +1883,14 @@ abre_foto(foto) {
                             ]}
                           />      
                 </div>      
-          </Tab>            
-          <Tab eventKey="convites" title="Convites">
+          </TabPanel>            
+          <TabPanel value="4" className="tirar_espaco">    
           <div style={{ maxWidth: '100%'}}>
                     <MaterialTable          
                         title=""
                         style={ {width: "96%"}}                                  
                         columns={[
-                          { title: '', field: '#', width: '20px' },
+                          { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                           { title: 'Status', field: 'status.descricao', width: '200px' },               
                           { title: 'Email', field: 'email', width: '420px' },                                           
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
@@ -1905,7 +1926,7 @@ abre_foto(foto) {
                         }}        
                         options={{
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportFileName: 'Relatorio_motorista_convites',
@@ -1915,11 +1936,11 @@ abre_foto(foto) {
                               toolbarButtonAlignment: 'right',  
                               //resizable: false,
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',     
+                              //tableLayout: 'fixed',     
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 4,
                               //pageSize: 7,
@@ -1951,10 +1972,10 @@ abre_foto(foto) {
                         }}*/
                       />                              
             </div>      
-      </Tab>              
-        </Tabs>          
+          </TabPanel>              
+        </TabContext>          
            <div className="botao_lista_incluir">
-                        <Fab className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalEnvio()}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalEnvio()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Motorista  </div>
                         </Fab>
                       </div>  

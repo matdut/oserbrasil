@@ -300,7 +300,8 @@ class funcionalidadesComponent extends React.Component  {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',    
                               paging: false,          
-                              maxBodyHeight: 520,
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                           //    headerStyle: { position: 'sticky', top: 0 },
                                 /*exportButton: true, */            
                               exportButton: { pdf: true },      

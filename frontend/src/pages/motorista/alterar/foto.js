@@ -532,7 +532,7 @@ return (
     <div>     
     <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
+           <div className="titulo_bemvindo"> Foto </div>            
             </div>           
             
               <Container maxWidth="sm">

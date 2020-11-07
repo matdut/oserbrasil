@@ -797,8 +797,7 @@ return (
     <div>     
     <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
-              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
+              <div className="titulo_bemvindo"> Dados da Empresa </div>              
             </div>      
             
               <Container maxWidth="sm">
@@ -810,7 +809,7 @@ return (
               <br/>
           </div> 
 
-            <div className="d-flex flex-column espacamento_caixa_texto">
+            <div className="d-flex flex-column espacamento_caixa_texto_ajuste">
             <div>                
               </div>
               <div class="p-2"> 

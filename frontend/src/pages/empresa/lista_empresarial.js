@@ -30,6 +30,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
+
 import { createGlobalStyle } from "styled-components";
 import px2vw from "../utils/px2vw";
 
@@ -59,7 +66,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 
 
 import MaterialTable from 'material-table';
-import { Tabs, Tab } from 'react-bootstrap';
+//import { Tabs, Tab } from 'react-bootstrap';
 
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -131,6 +138,21 @@ const ConfirmacaodelStyles = {
     border: '1px solid #ccc',   
   }
 };
+
+const gunnarStyle       = {   
+  
+  //top                    : '50%',
+ // left                   : '66%',    
+ // right                  : '0%',
+//  bottom                 : 'auto',  
+  height                 : '200px',    
+ // width                  : '95vw',    
+ // padding                : '0px !important',      
+  //overflow               : 'auto',
+  WebkitOverflowScrolling: 'touch',
+  //position               : 'absolute',
+  border: '1px solid #ccc',   
+ };
 /*
 let columns = [
   { id: '1', label: '', minWidth: 80, align: 'left' },
@@ -177,6 +199,7 @@ class listComponent extends React.Component  {
       campEstadoId:0,      
       estadoSelecionado: "",   
       color: 'light',
+      value: "1",
       mensagem_nome: '',  
       mensagem_cpf: '',  
       mensagem_email: '',  
@@ -213,6 +236,7 @@ class listComponent extends React.Component  {
       listEmpresasExcluidos:[],
       listEmpresasCadIncompletos:[],
       listaStatus:[],
+      lista_height: 0,
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -271,8 +295,10 @@ class listComponent extends React.Component  {
   }
 
   componentDidMount(){
+    debugger;
     this.setState({     
-      perfil: localStorage.getItem('logperfil')    
+      perfil: localStorage.getItem('logperfil'),    
+      lista_height: px2vw(createGlobalStyle.height),
     });
 
     console.log('logperfil - '+perfil);
@@ -415,7 +441,7 @@ class listComponent extends React.Component  {
     const estadoId = "";
     const { validate } = this.state
     
-    console.log('BASE '+JSON.stringify(base.replace('-',''), null, "    "));                
+  //  console.log('BASE '+JSON.stringify(base.replace('-',''), null, "    "));                
   
     if (base.length > 0) {
      buscadorcep(base.replace('-','')).
@@ -1297,30 +1323,43 @@ busca_cpf(e){
       );
     }
   }
+
+  opcao_tabChange = (event, newValue) => {   
+    this.setState({        
+        value: newValue 
+    });    
+  };
  
   render()
   {
     return (
+    <div>  
       <div>    
           <div>
             <Menu_administrador />  
             <div className="titulo_lista">
                <div className="unnamed-character-style-4 descricao_admministrador">                       
-                 <strong>Clientes Empresarial</strong>
+                 <div className="titulo_bemvindo"> Cliente Empresarial </div>
               </div>      
             </div>
           </div>
-          <div className="container-fluid margem_left">                    
-            <br/>           
-          <Tabs 
-           defaultActiveKey="ativos" id="uncontrolled-tab-example" className="tabs_titulo_lista">
-          <Tab eventKey="ativos" title="Ativos">          
-          <div style={{ maxWidth: '100%' }}>
+          <div className="container-fluid margem_left">                         
+            <br/>      
+            <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>
+                <Tab label="Excluidos" value="2" className="tabs_titulo_lista_2"/>            
+                <Tab label="Cadastro Incompleto" value="3" className="tabs_titulo_lista_2"/>            
+              </TabList>
+            </AppBar>        
+          <TabPanel value="1" className="tirar_espaco">  
+          <div className="ajuste_height" id="tabela1">          
                  <MaterialTable       
-                       title=""     
-                        style={ {width: "96%" }}                                                                   
+                       title=""          
+                       //style={gunnarStyle}                   
                         columns={[
-                          { title: '', field: '#', width: "18px" },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px' },
                           { title: 'Status', field: 'cliente.status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                           { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
                           { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
@@ -1359,20 +1398,23 @@ busca_cpf(e){
                           },
                         }}                               
                         options={{
+                      //    headerStyle: {fontFamily: "Effra", fontSize: "14px"},
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
                           exportFileName: 'Rel_adm_empresas',
                           search: true,     
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
-                          paging: false,          
-                          maxBodyHeight: 430,
-                          minBodyHeight: 430, 
+                          paging: false,                                   
+                          maxBodyHeight: 450,
+                          minBodyHeight: 450, 
                           padding: 'dense',   
                           overflowY: 'scroll',
-                          tableLayout: 'fixed',   
+                       //   position: "sticky",                        
+                          //tableLayout: 'fixed',                  
+                        //  tableLayout: 'fixed',   
                           exportButton: { pdf: true },          
                           actionsColumnIndex: 7,
                          // pageSize: 9,
@@ -1387,21 +1429,21 @@ busca_cpf(e){
                         ]}
                       />      
              </div>      
-          </Tab>
-          <Tab eventKey="excluidos" title="Excluidos">
-          <div style={{ maxWidth: '100%' }}>
+          </TabPanel>
+          <TabPanel value="2" className="tirar_espaco">  
+          <div>
                         <MaterialTable          
                             title=""
-                            style={ {width: "96%" }}      
+                     //       style={gunnarStyle}                
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px' },
                               { title: 'Status', field: 'cliente.status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
                               { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
                               { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
                               { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
                               { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                      
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                         
                             ]}
                             data={this.state.listEmpresasExcluidos}        
                             localization={{
@@ -1442,11 +1484,11 @@ busca_cpf(e){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',   
+                             // tableLayout: 'fixed',   
 
                               exportButton: { pdf: true },     
                               actionsColumnIndex: 7,
@@ -1466,21 +1508,21 @@ busca_cpf(e){
                             ]}
                           />      
                 </div>      
-          </Tab>  
-          <Tab eventKey="incompletos" title="Cadastro Incompleto">
-          <div style={{ maxWidth: '100%' }}>
+          </TabPanel>  
+          <TabPanel value="3" className="tirar_espaco">  
+          <div>
                         <MaterialTable          
                             title=""
-                            style={ {width: "96%" }}     
+                     //       style={gunnarStyle}                
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px' },
                               { title: 'Status', field: 'cliente.status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
                               { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
                               { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
                               { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
                               { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                         
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                            
                             ]}
                             data={this.state.listEmpresasCadIncompletos}        
                             localization={{
@@ -1521,11 +1563,11 @@ busca_cpf(e){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
                               padding: 'dense',   
                               overflowY: 'scroll',
-                              tableLayout: 'fixed',   
+                             // tableLayout: 'fixed',   
                               actionsColumnIndex: 7,
                               exportButton: { pdf: true },          
                               //pageSize: 7,
@@ -1549,8 +1591,8 @@ busca_cpf(e){
                             ]}
                           />      
                 </div>      
-          </Tab>          
-        </Tabs>  
+          </TabPanel>          
+        </TabContext>  
         
        <br/>
        <Snackbar                   
@@ -1847,9 +1889,10 @@ busca_cpf(e){
      </ReactModal>         
           <br/>
           <br/>       
-       
-      </div>   
-    </div>      
+       </div>          
+    </div>        
+   </div>
+
     );
   }
 

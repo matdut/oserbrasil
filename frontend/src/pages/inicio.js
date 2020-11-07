@@ -23,6 +23,7 @@ class inicioComponent extends React.Component  {
       localStorage.setItem('logVeiculo', 0)    
 
     return (             
+
       <div>
         <Cabecalho />
         <br/>                
