@@ -4238,9 +4238,12 @@ verifica_rota(inicio) {
       });
 
     }
+
+
    /* const datapost_alterar = {
     } */
   
+   /* aqui teste */
    // api.get(`/eventos/update/${localStorage.getItem('logid')}`, datapost_alterar)
    // .then(response=>{
    //   if (response.data.success==true) {         
