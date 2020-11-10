@@ -127,6 +127,14 @@ var Servicos = sequelize.define(nametable,{
     type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,
   },
+  valor_bilingue: {
+    type: Sequelize.DECIMAL(20,2) ,    
+    allowNull: true,
+  },
+  valor_receptivo: {
+    type: Sequelize.DECIMAL(20,2) ,    
+    allowNull: true,
+  },
   valor_oser: {
     type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,
@@ -143,7 +151,10 @@ var Servicos = sequelize.define(nametable,{
   }, 
   tempo_value:  {  
     type: Sequelize.INTEGER
-  }, 
+  },
+  servico_pai_id:  {  
+    type: Sequelize.INTEGER
+  },
   statusId:{
     type: Sequelize.INTEGER,
     // this is a refence to another model

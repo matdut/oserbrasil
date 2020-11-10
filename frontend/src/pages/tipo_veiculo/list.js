@@ -409,7 +409,7 @@ class listComponent extends React.Component  {
    isOpen={this.state.showModalInclusao}
    style={customStyles}
    contentLabel="Inline Styles Modal Example"                                  
-   ><div className="editar_titulo_inclusao"> Tipos de Veiculos    
+   ><div className="editar_titulo_inclusao"> Incluir Tipo de Veiculo    
        <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} className="botao_close_modal_tipo_veiculo">
          <CloseOutlinedIcon />
        </IconButton></div>       

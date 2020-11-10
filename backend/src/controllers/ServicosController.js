@@ -182,7 +182,7 @@ controllers.create = async (req,res) => {
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
     logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, desembarque_latitude, desembarque_longitude,
-    companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, distancia_value, tempo_value } = req.body;
+    valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, distancia_value, tempo_value, servico_pai_id } = req.body;
   //console.log("ROle es ==>"+role)
 
   //console.log(req.body);      
@@ -205,6 +205,8 @@ controllers.create = async (req,res) => {
     local_desembarque: local_desembarque, 
     embarque_latitude: embarque_latitude, 
     embarque_logitude: embarque_logitude, 
+    valor_bilingue: valor_bilingue, 
+    valor_receptivo: valor_receptivo,
     desembarque_latitude: desembarque_latitude, 
     desembarque_longitude: desembarque_longitude, 
     motorista_bilingue: motorista_bilingue, 
@@ -224,6 +226,7 @@ controllers.create = async (req,res) => {
     tempo_value: tempo_value,
     perfilId: perfilId,    
     cartaoId: cartaoId,
+    servico_pai_id: servico_pai_id,
     statusId: statusId 
   })
   .then( function (data){
@@ -243,7 +246,7 @@ controllers.update = async (req, res) => {
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
     motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, 
     desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId,
-    distancia_value, tempo_value} = req.body;
+    valor_bilingue, valor_receptivo, distancia_value, tempo_value, servico_pai_id} = req.body;
 
   console.log('entrou aqui = '+data_servico);
 
@@ -261,6 +264,8 @@ controllers.update = async (req, res) => {
     data_servico: data_servico,  
     hora_inicial: hora_inicial,
     hora_final: hora_final,  
+    valor_bilingue: valor_bilingue, 
+    valor_receptivo: valor_receptivo,
     motorista_alocado: motorista_alocado, 
     companhia_aerea: companhia_aerea,
     numero_voo: numero_voo, 
@@ -287,6 +292,7 @@ controllers.update = async (req, res) => {
     cartaoId: cartaoId,
     distancia_value: distancia_value, 
     tempo_value: tempo_value,
+    servico_pai_id: servico_pai_id,
     statusId: statusId
   },{
     where: { id: id}

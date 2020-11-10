@@ -595,10 +595,10 @@
 
   .titulo_admministrador {       
     margin-left: 0px !important; 
-    height: 120px !important; 
+    height: 90px !important; 
     padding-left: 80px;   
     /* width: 100% !important; */
-    width: 224% !important;
+    /* width: 220% !important; */
     /*border-bottom: 1px dotted #707070;      */    
    /*  border-bottom: 1px solid #dee2e6; */
   }

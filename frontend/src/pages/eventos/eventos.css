@@ -381,7 +381,8 @@
 }
 .selecao_tabs {
   /* flex-grow: 1;*/
-  margin: -5px !important;
+  margin-top: 0px !important; 
+  margin: 0px !important;
   padding: 0px !important;
 }
 .tirar_espaco{

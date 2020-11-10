@@ -1771,8 +1771,8 @@ sendEnvioEmail(){
                       <div class="p-2">                        
                         <div class="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d"> 
-                               <div className="checkbox_subtitulo">Permissão de Representante Legal</div> 
-                               <div className="checkbox_descricao">É permitido realizar todas as funcionalidades disponiveis na conta da sua empresa.</div>
+                               <div className="checkbox_subtitulo">Pemissão de Administrador Master</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador realizar todas as funcionalidades disponiveis no sistema.</div>
                             </div>                               
                            <div className="coluna_modal_separacao_e">                                                  
 
@@ -1791,8 +1791,8 @@ sendEnvioEmail(){
                       <div class="p-2">                        
                         <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d"> 
-                               <div className="checkbox_subtitulo">Gerenciar Eventos</div> 
-                               <div className="checkbox_descricao">É permitido criar, alterar, excluir e gerenciar eventos na conta da sua empresa.</div>
+                               <div className="checkbox_subtitulo">Cliente Individual - Emitir Relatório</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador emitir relatórios do cliente Individual</div>
                             </div>                               
                            <div className="coluna_modal_separacao_e"> 
                                 <FormGroup aria-label="position" row>
@@ -1809,8 +1809,8 @@ sendEnvioEmail(){
                       <div class="p-2">                        
                         <div class="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d"> 
-                               <div className="checkbox_subtitulo">Monitorar Eventos</div> 
-                               <div className="checkbox_descricao">É permitido Listar e Monitorar eventos na conta da sua empresa.</div>
+                               <div className="checkbox_subtitulo">Cliente Empresarial - Emitir Relatório</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador emitir relatórios do cliente empresarial.</div>
                             </div>                               
                            <div className="coluna_modal_separacao_e"> 
                                 <FormGroup aria-label="position" row>
@@ -1824,7 +1824,83 @@ sendEnvioEmail(){
                                 </FormGroup>
                            </div>
                         </div>                      
-                </div>
+                     </div>
+                     <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Monitorar e Alterar Eventos / Serviços</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador alterar, excluir e gerenciar eventos e serviços.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                     </div>
+                     <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Gerenciar Motoristas</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador gerenciar motoristas.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                     </div>
+                     <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Gerenciar Veiculos</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador gerenciar veiculos.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                     </div>
+                     <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Gerenciar Valores Tarifários</div> 
+                               <div className="checkbox_descricao">É permitido ao administrador valores tarifarios.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                     </div>
               </div>      
                       </FormControl>             
                           </div>

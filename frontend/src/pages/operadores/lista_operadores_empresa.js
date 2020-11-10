@@ -206,6 +206,7 @@ class listComponent extends React.Component  {
       showModalInclusao: false,
       inicio: 0,
       mensagem: '',
+      value: "1",
       color: 'light',
       listOperadores:[],
       listOperadoresExcluidos:[],

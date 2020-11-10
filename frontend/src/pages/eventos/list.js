@@ -490,9 +490,9 @@ class listaeventosComponent extends React.Component  {
         empresaId: localStorage.getItem('logid'),     
         statusId: 8,
         perfilId: localStorage.getItem('logperfil'),
-     /*   gerenciar_eventos: this.state.campgerencia_eventos, 
+        gerenciar_eventos: this.state.campgerencia_eventos, 
         monitorar_eventos: this.state.campMonitorar_eventos,   
-        representante_legal: this.state.camprepresentante_legal,               */
+        representante_legal: this.state.camprepresentante_legal,        
       }    
       
       api.get(`/emailOperador/getemail/${this.state.campEmail}`)
@@ -1331,8 +1331,70 @@ verificaData_Evento(e) {
                         </FormHelperText>
                       </FormControl>                         
                       </div>
-                      <div className="posicao_2">                             
-              </div>                      
+                      <div className="posicao_2">    
+                      <div class="p-2">                        
+                          <div className="checkbox_titulo">Permissões de Acesso </div>
+                      </div>                         
+                      </div>     
+                      <div className="posicao_2">
+                      <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Permissão de Representante Legal</div> 
+                               <div className="checkbox_descricao">É permitido realizar todas as funcionalidades disponiveis na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e">                                                  
+
+                           <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.camprepresentante_legal}
+                                    control={<Switch color="primary" checked={this.state.camprepresentante_legal} 
+                                        onChange={this.handlerepresentantelegalChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                           </FormGroup>
+                               
+                           </div>
+                        </div>     
+                      </div>
+                      <div class="p-2">                        
+                        <div className="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Gerenciar Eventos</div> 
+                               <div className="checkbox_descricao">É permitido criar, alterar, excluir e gerenciar eventos na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.campgerencia_eventos}
+                                    control={<Switch color="primary" checked={this.state.campgerencia_eventos} 
+                                        onChange={this.handlegerenciaChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>     
+                      </div>
+                      <div class="p-2">                        
+                        <div class="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d"> 
+                               <div className="checkbox_subtitulo">Monitorar Eventos</div> 
+                               <div className="checkbox_descricao">É permitido Listar e Monitorar eventos na conta da sua empresa.</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e"> 
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    className="checkbox_esquerdo_operador"
+                                    value={this.state.campMonitorar_eventos}
+                                    control={<Switch color="primary" checked={this.state.campMonitorar_eventos} 
+                                        onChange={this.handlemonitorar_eventosChange}/>}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div>                      
+                </div>
+              </div>              
                     </div>                        
                     {this.enviar_botao_modal(this.state.inicio)}          
 

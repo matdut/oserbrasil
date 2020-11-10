@@ -261,6 +261,7 @@ class listComponent extends React.Component  {
       listaStatus:[],
       listSeguradoras:[],      
       listaVeiculos:[],
+      loading: true,
       validate: {         
         carroState: '',          
         modeloState: '',          
@@ -1281,7 +1282,10 @@ cadeirarodasChange(e) {
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data
-         this.setState({listMotoristaCadIncompletos:data})
+         this.setState({
+           listMotoristaCadIncompletos:data,
+           loading: false,
+          })
        }
      })
      .catch(error=>{
@@ -1668,7 +1672,15 @@ opcao_tabChange = (event, newValue) => {
           <div>
                         <MaterialTable          
                             title=""
-                            style={ {width: "96%"}}                                  
+                            isLoading={this.state.loading}
+                            style={{
+                              border: "0px solid gray",
+                              maxWidth: "94vw",
+                              overflowY: "hidden",
+                              overflowX: "hidden",
+                              marginTop: "0px",
+                              marginLeft: "0px",
+                            }}
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
