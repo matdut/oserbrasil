@@ -311,7 +311,7 @@ controllers.totalValorServicos = async (req, res) => {
   const { eventoid,  id, perfilId } = req.params;
 
   const salesValue = await Servicos.sum('valor_estimado', {
-    where: { eventoId: eventoid, logid: id, perfilId: perfilId }
+    where: { eventoId: eventoid, logid: id, perfilId: perfilId, servico_pai_id: 0 }
   });
 
    return res.json({success:true, data: salesValue});
@@ -336,7 +336,7 @@ controllers.valorServicoTodosEventos = async (req, res) => {
   const { id, perfilId } = req.params;
 
   const salesValue = await Servicos.sum('valor_estimado', {
-    where: { logid: id, perfilId: perfilId }
+    where: { logid: id, perfilId: perfilId, servico_pai_id: 0 }
   });
 
    return res.json({success:true, data: salesValue});
@@ -373,6 +373,7 @@ controllers.totalViagensADM = async (req, res) => {
   const { id, perfilId } = req.params;
 
   const salesValue = await Servicos.sum('valor_estimado', {
+    where: { servico_pai_id: 0 }
   });
 
    return res.json({success:true, data: salesValue});
