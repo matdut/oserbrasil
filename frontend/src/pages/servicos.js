@@ -22,7 +22,7 @@ const Servicos = props => {
         <Cabecalho />
         <br/>
         <br/>
-        <div className='container-fluid text-center'>
+        <div className='container text-center'>
         <h2>SERVIÇOS</h2>        
         <br />
         <div className='row '>

@@ -1,5 +1,5 @@
 .nav-side-menu {
-  overflow: auto;
+  overflow: hidden;
   font-family: Effra;
   font-size: 12px;
   font-weight: 100;
@@ -9,6 +9,7 @@
   top: 0px;  
   width: 100px;     
   height: 100vh; 
+  padding-left: 5px;
   /* width: 300px;
   height: 100%; */
   color: #e1ffff !important;
@@ -34,7 +35,7 @@
   list-style: none;
   padding: 0px;
   margin: 0px;
-  line-height: 35px;
+  line-height: 55px;
   cursor: pointer;
   /*    
     .collapsed{
@@ -96,6 +97,7 @@
 }
 .nav-side-menu li {
   padding-left: 0px;
+ 
   /*border-left: 3px solid #2e353d;
   border-bottom: 1px solid #23282e;  */
   border: 1px solid #707070 !important;
@@ -104,11 +106,11 @@
   text-decoration: none;
   color: #e1ffff !important;
 }
-.nav-side-menu li a i {
-  padding-left: 0px;
+.nav-side-menu li a i {  
   width: 20px;
   padding-right: 20px;
   border: 1px solid #23282e !important;
+  padding-left: 0px !important;
 }
 .nav-side-menu li:hover {
   border-left: 3px solid #d19b3d;

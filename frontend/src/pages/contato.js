@@ -51,7 +51,7 @@ resetForm(){
     return (     
         <div>                   
           <Menu /> 
-        <div className='container-fluid'>               
+        <div className='container'>               
         <h2 className='text-center'>CONTATO</h2>
         <br/>        
         <div className='row'>

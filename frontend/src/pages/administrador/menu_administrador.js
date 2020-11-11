@@ -99,86 +99,102 @@ class menu_administradorComponent extends React.Component  {
   {  
 
  return (
-  <div>    
-    <div className="left">    
-     <br/>
-    <div className="item avatar_titulo">
-       <i> <div className="avatar_adm"><Avatar className="classe_orange">AD</Avatar>                      
-         </div>      
-           <div className="teste perfil">                
-          </div>
-       </i>      
-   </div>     
-    <div class="item teste active">
-      <LightTooltip title="Inicio" placement="top">
-        <a href="/area_administrador">
-        <i class="fas fa-home"></i>   
-        </a>  
-      </LightTooltip>   
-    </div>    
-    <div className="item teste">    
-       <LightTooltip title="Cliente" placement="top">
-            <a href={'/lista_individual'}>           
-              <i class="fas fa-user"></i>
-            </a>  
-        </LightTooltip>    
-    </div>  
-    <div className="item teste">
-    <LightTooltip title="Empresa" placement="top">
-        <a href={"/lista_empresarial"}>
-        <i class="fas fa-city"></i>
-        </a>  
-    </LightTooltip>    
-    </div>
-    <div class="item teste">
-    <LightTooltip title="Motoristas" placement="top">
-       <a href={"/listar"}>       
-       <i class="fas fa-address-card"></i>
-       </a>  
-    </LightTooltip>   
-    </div>   
-    <div className="item teste">
-      <LightTooltip title="Auxiliares" placement="top">
-        <a href={`/auxiliares`}>
-           <i class="fas fa-users"></i>
-        </a>   
-      </LightTooltip>    
-    </div>
-    <div className="item teste">
-      <LightTooltip title="Veículos" placement="top">
-        <a href={"/listar_tipo_veiculo"}>
-        <i class="fas fa-car-alt"></i>
-        </a>   
-      </LightTooltip>    
-    </div>
-    <div className="item teste">
-      <LightTooltip title="Tarifas" placement="top">
-        <a href={"/matriz_listar"}>
-        <i class="fas fa-money-bill-wave"></i>
-        </a>   
-      </LightTooltip>    
-    </div>
-    <div className="item teste">
-      <LightTooltip title="Configuração" placement="top">
-        <a href={"/configuracao"}>
-        <i class="fas fa-cog"></i>
-        </a>   
-      </LightTooltip>    
-    </div>
-    <div className="item teste">
-       <LightTooltip title="Sair" placement="right">
-        <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
-           <i class="fas fa-sign-out-alt"></i> </button>   
-       </LightTooltip>    
-    </div>    
-      
-      <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-        <div className="data_versao"> 07/09/20 v1.8.0 </div>
-     </div>    
-   </div>                                       
-                            
-  </div> 
+  <div className="nav-side-menu">
+  <div className="brand"></div>
+  <i className="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+
+      <div className="menu-list">
+
+          <ul id="menu-content" className="menu-content collapse out">
+              <li>
+                <div className="item avatar_titulo">
+                    <div className="avatar_adm">
+                      <Avatar className="classe_orange">AD</Avatar>                      
+                    </div>      
+                    <div className="teste perfil">                
+                    </div>
+                </div>   
+              </li>
+              <li>
+                <a href="/area_administrador" className="icon_centralizado_novo">                    
+                   <LightTooltip title="Inicio" placement="top">                
+                      <i className="fas fa-home"></i>   
+                   </LightTooltip>    
+                </a>
+              </li>     
+              <li>
+                <a href={'/lista_individual'} className="icon_centralizado_novo">
+                <LightTooltip title="Cliente" placement="top">
+                   <i className="fas fa-user"></i>                     
+                </LightTooltip>              
+                </a>
+              </li>
+              <li>
+                <a href={"/lista_empresarial"} className="icon_centralizado_novo">
+                <LightTooltip title="Empresa" placement="top">
+                     <i className="fas fa-city"></i>
+                </LightTooltip>              
+                </a>
+              </li>
+              <li>
+                <a href={"/listar"} className="icon_centralizado_novo">
+                <LightTooltip title="Motoristas" placement="top">
+                    <i className="fas fa-address-card"></i>
+                </LightTooltip>              
+                </a>
+              </li>
+                 
+              <li data-toggle="collapse" data-target="#service" class="collapsed">
+                <LightTooltip title="Auxiliares" placement="top">
+                  <a href="#" className="icon_centralizado">                   
+                  <i className="fa fa-th" aria-hidden="true"></i><span className="arrow"></span>                   
+                  </a>
+                 </LightTooltip> 
+                </li>  
+                <ul className="sub-menu collapse" id="service">
+                  <li>
+                    <a href={`/operador_lista`}>
+                      <LightTooltip title="Operadores" placement="top">
+                      <i className="fas fa-users-cog"></i>
+                      </LightTooltip>              
+                    </a>
+                  </li>
+                  <li>
+                    <a href={`/lista_adm_auxiliar`}>
+                      <LightTooltip title="Adm Auxiliar" placement="top">
+                          <i className="fas fa-users"></i>
+                      </LightTooltip>              
+                    </a>
+                  </li>            
+                </ul>
+
+              <li>
+                <a href={"/listar_tipo_veiculo"} className="icon_centralizado_novo">
+                <LightTooltip title="Veículos" placement="top">
+                    <i className="fas fa-car-alt"></i>
+                </LightTooltip>              
+                </a>
+              </li>
+              <li>
+                <a href={"/matriz_listar"} className="icon_centralizado_novo">
+                <LightTooltip title="Tarifas" placement="top">
+                <i className="fas fa-money-bill-wave"></i>
+                </LightTooltip>              
+                </a>
+              </li>
+              <li>
+                <a href={"/configuracao"} className="icon_centralizado_novo">
+                <LightTooltip title="Configuração" placement="top">
+                <i className="fas fa-cog"></i>
+                </LightTooltip>              
+                </a>
+              </li>                                   
+          </ul>
+   </div>
+</div>     
+
+
+  
  );  
  }
 }

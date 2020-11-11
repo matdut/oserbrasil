@@ -24,8 +24,9 @@ class inicioComponent extends React.Component  {
 
     return (             
 
-      <div>
-        <Cabecalho />
+      <div>               
+            <Cabecalho />
+        
         <br/>                
         <br/>
         
@@ -59,7 +60,8 @@ class inicioComponent extends React.Component  {
         <br/>
         <br/>
         <br/>
-      </div>  
+      </div>      
+
     );
     }    
   

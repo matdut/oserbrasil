@@ -38,7 +38,7 @@ class sobreComponent extends React.Component  {
         <div>    
       </div>        
         <br/>
-        <div className='container-fluid'>
+        <div className='container'>
             <div>
                 <div className='row'>
                     <div className='col-sm-8'>
