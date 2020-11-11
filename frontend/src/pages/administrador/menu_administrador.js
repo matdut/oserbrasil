@@ -188,7 +188,14 @@ class menu_administradorComponent extends React.Component  {
                 <i className="fas fa-cog"></i>
                 </LightTooltip>              
                 </a>
-              </li>                                   
+              </li>  
+              <li>
+              <a onClick={this.handleClick} className="icon_centralizado_novo">
+                <LightTooltip title="Sair" placement="right">                  
+                   <i className="fas fa-sign-out-alt"></i>
+                </LightTooltip>    
+              </a>  
+              </li>                                 
           </ul>
    </div>
 </div>     
