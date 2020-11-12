@@ -11,7 +11,7 @@ const sequelize = new Sequelize (
     host: 'mysql.oser.app.br',
     dialect: 'mysql'
   } */
-  'bancomdc', // database
+  'oser', // database
   'root', // user / usuario
   '', //password
   {

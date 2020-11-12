@@ -1649,14 +1649,13 @@ opcao_tabChange = (event, newValue) => {
       <div>    
        <div>
           <Menu_administrador />  
-          <div className="container-fluid titulo_lista margem_left">
-              <div className="unnamed-character-style-4 descricao_admministrador">          
-              <div className="titulo_bemvindo"> Motorista </div>                     
+          <div className="titulo_lista">
+               <div className="unnamed-character-style-4 descricao_admministrador">                       
+                 <div className="titulo_bemvindo"> Motorista </div>
               </div>      
             </div>
-
-       </div>       
-       <div className="container-fluid margem_left">                
+          </div>     
+       <div className="margem_left">                      
         <br/>      
 
         <TabContext value={this.state.value} className="tabs_padrao">
@@ -1755,7 +1754,7 @@ opcao_tabChange = (event, newValue) => {
           <div style={{ maxWidth: '100%' }}>
                         <MaterialTable          
                             title=""
-                            style={ {width: "96%"}}                                    
+                                                           
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
@@ -1825,7 +1824,7 @@ opcao_tabChange = (event, newValue) => {
           <div style={{ maxWidth: '100%'}}>
                         <MaterialTable          
                             title=""
-                            style={ {width: "96%"}}                                     
+                                                    
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
@@ -1900,7 +1899,7 @@ opcao_tabChange = (event, newValue) => {
           <div style={{ maxWidth: '100%'}}>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%"}}                                  
+                                            
                         columns={[
                           { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                           { title: 'Status', field: 'status.descricao', width: '200px' },               

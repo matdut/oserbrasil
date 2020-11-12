@@ -127,7 +127,7 @@ const ConfirmacaodelStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+    width                  : '500px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -1110,15 +1110,15 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
   
     return (      
       
-      <div className="ajuste_tela">
+      <div>
 
       <Menu_administrador />  
-      <div className="container-fluid titulo_lista margem_left">     
-        <div className="unnamed-character-style-4 descricao_admministrador">          
-        <div className="titulo_bemvindo"> Cliente </div>
-         </div>      
-      </div>     
-      <div className="container-fluid margem_left tamanho_grid">   
+      <div className="titulo_lista">
+               <div className="unnamed-character-style-4 descricao_admministrador">                       
+                 <div className="titulo_bemvindo"> Cliente </div>
+              </div>      
+            </div>    
+      <div className="margem_left">   
        <br/>    
 
          <TabContext value={this.state.value} className="tabs_padrao">
@@ -1131,7 +1131,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
             </AppBar>        
           <TabPanel value="1" className="tirar_espaco">          
               <MaterialTable           
-                            style={ {width: "96%", height: '100vh'}}                                  
+                                                       
                             title=""
                             columns={[
                               { title: '', field: '#', width: "46px", minWidth: '46px', maxWidth: '46px' },
@@ -1195,7 +1195,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
           <TabPanel value="2" className="tirar_espaco">  
                <div style={{ maxWidth: '100%' }}>
                 <MaterialTable        
-                           style={ {width: "96%"}}                                  
+                                        
                          //   className="resize_table"
                             title=""
                             columns={[
@@ -1266,7 +1266,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
             <TabPanel value="3" className="tirar_espaco">  
                <div style={{ maxWidth: '100%' }}>
                 <MaterialTable               
-                           style={ {width: "96%"}}                                                          
+                                                                    
                          //   className="resize_table"
                             title=""
                             columns={[

@@ -1195,22 +1195,16 @@ class listComponent extends React.Component  {
   {
     const { uploadedCRVL } = this.state; 
     return (
-      <div>           
+      <div>     
+        <div>      
         <Menu_motorista />         
-        <div className="container-fluid titulo_lista margem_left">     
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-           <div className="titulo_bemvindo"> Veículo </div>                     
-            </div>             
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div>      
-       <div className="container-fluid margem_left">        
+        <div className="titulo_lista">
+               <div className="unnamed-character-style-4 descricao_admministrador">                       
+                 <div className="titulo_bemvindo"> Veículo </div>
+              </div>      
+            </div>
+          </div>     
+       <div className="margem_left">
     
         <br/>
         <div style={{ maxWidth: '100%' }}>

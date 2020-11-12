@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Link} from 'react-router-dom';
 import { withRouter } from "react-router-dom";
+import '../teste_menu.css';
 import {
   Collapse,
   Navbar,
@@ -99,6 +100,7 @@ class menu_administradorComponent extends React.Component  {
   {  
 
  return (
+  <div className="d-flex justify-content-left">        
   <div className="nav-side-menu">
   <div className="brand"></div>
   <i className="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
@@ -107,7 +109,7 @@ class menu_administradorComponent extends React.Component  {
 
           <ul id="menu-content" className="menu-content collapse out">
               <li>
-                <div className="item avatar_titulo">
+                <div className="avatar_titulo">
                     <div className="avatar_adm">
                       <Avatar className="classe_orange">AD</Avatar>                      
                     </div>      
@@ -116,38 +118,46 @@ class menu_administradorComponent extends React.Component  {
                 </div>   
               </li>
               <li>
+              <div className="itens_menu">
                 <a href="/area_administrador" className="icon_centralizado_novo">                    
                    <LightTooltip title="Inicio" placement="top">                
                       <i className="fas fa-home"></i>   
                    </LightTooltip>    
                 </a>
+               </div> 
               </li>     
               <li>
+              <div className="itens_menu">
                 <a href={'/lista_individual'} className="icon_centralizado_novo">
                 <LightTooltip title="Cliente" placement="top">
                    <i className="fas fa-user"></i>                     
                 </LightTooltip>              
                 </a>
+                </div>
               </li>
               <li>
+              <div className="itens_menu">
                 <a href={"/lista_empresarial"} className="icon_centralizado_novo">
                 <LightTooltip title="Empresa" placement="top">
                      <i className="fas fa-city"></i>
                 </LightTooltip>              
                 </a>
+                </div>
               </li>
               <li>
+              <div className="itens_menu">
                 <a href={"/listar"} className="icon_centralizado_novo">
                 <LightTooltip title="Motoristas" placement="top">
                     <i className="fas fa-address-card"></i>
                 </LightTooltip>              
                 </a>
+                </div>
               </li>
                  
-              <li data-toggle="collapse" data-target="#service" class="collapsed">
+              <li data-toggle="collapse" data-target="#service" className="collapsed">
                 <LightTooltip title="Auxiliares" placement="top">
                   <a href="#" className="icon_centralizado">                   
-                  <i className="fa fa-th" aria-hidden="true"></i><span className="arrow"></span>                   
+                      <i className="fa fa-th" aria-hidden="true"></i><span className="arrow"></span>                   
                   </a>
                  </LightTooltip> 
                 </li>  
@@ -169,36 +179,45 @@ class menu_administradorComponent extends React.Component  {
                 </ul>
 
               <li>
+              <div className="itens_menu">
                 <a href={"/listar_tipo_veiculo"} className="icon_centralizado_novo">
                 <LightTooltip title="Veículos" placement="top">
                     <i className="fas fa-car-alt"></i>
                 </LightTooltip>              
                 </a>
+                </div>
               </li>
               <li>
+              <div className="itens_menu">
                 <a href={"/matriz_listar"} className="icon_centralizado_novo">
                 <LightTooltip title="Tarifas" placement="top">
                 <i className="fas fa-money-bill-wave"></i>
                 </LightTooltip>              
                 </a>
+                </div>
               </li>
               <li>
+              <div className="itens_menu">
                 <a href={"/configuracao"} className="icon_centralizado_novo">
                 <LightTooltip title="Configuração" placement="top">
                 <i className="fas fa-cog"></i>
                 </LightTooltip>              
                 </a>
+                </div>
               </li>  
               <li>
+              <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">
                 <LightTooltip title="Sair" placement="right">                  
                    <i className="fas fa-sign-out-alt"></i>
                 </LightTooltip>    
               </a>  
+              </div>
               </li>                                 
           </ul>
    </div>
 </div>     
+</div>
 
 
   

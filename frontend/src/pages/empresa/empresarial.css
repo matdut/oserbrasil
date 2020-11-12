@@ -100,9 +100,7 @@
   margin-left: 118px !important
 }     
 
-.margem_left {
-  margin-left: 90px !important;
-}
+
 
 .titulo_logo {
   margin-top: 213px !important;
@@ -443,7 +441,7 @@
 }
 
 .ajuste_height {
-  width: 95vw !important;
+  width: 100vw !important;
  /* height: 85vh !important;
   max-height: 200px !important; */
   position: fixed !important;  

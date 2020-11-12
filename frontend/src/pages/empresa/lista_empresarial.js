@@ -1343,7 +1343,7 @@ busca_cpf(e){
               </div>      
             </div>
           </div>
-          <div className="container-fluid margem_left">                         
+          <div className="margem_left">                         
             <br/>      
             <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
@@ -1354,7 +1354,7 @@ busca_cpf(e){
               </TabList>
             </AppBar>        
           <TabPanel value="1" className="tirar_espaco">  
-          <div className="ajuste_height" id="tabela1">          
+          <div id="tabela1">          
                  <MaterialTable       
                        title=""          
                        //style={gunnarStyle}                   
@@ -1366,7 +1366,7 @@ busca_cpf(e){
                           { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
                           { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
                           { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
-                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                                                                                                                                        
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                                                                                                                                        
                         ]}
                         data={this.state.listEmpresas}     
                         localization={{

@@ -48,7 +48,7 @@ const ModalExample = (props) => {
   
             <ul id="menu-content" className="menu-content collapse out">
                 <li>
-                  <div className="item avatar_titulo">
+                  <div className="avatar_titulo">
                   </div>   
                 </li>
                 <li>

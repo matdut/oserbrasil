@@ -81,8 +81,8 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
-    right                  : '0%',
+    left                   : '60vw',    
+    right                  : '10%',
     bottom                 : 'auto',  
     height                 : '100%',    
     width                  : '40%',    
@@ -133,11 +133,11 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+    width                  : '550px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -577,6 +577,7 @@ class listaeventosComponent extends React.Component  {
                perfilId: localStorage.getItem('logperfil'),    
                ordem_servico: this.state.campordem_servico, 
                nome_evento: this.state.campnome_evento, 
+               viagens_total: 0,
                data_evento: moment(this.state.campdata_evento, "DD MM YYYY"), 
                statusId: 1,          
               }           
@@ -907,16 +908,15 @@ verificaData_Evento(e) {
     
     return (
       <div>
-
+       <div>
        {this.verifica_menu()}
-       <div className="container-fluid titulo_lista margem_left">     
-
-        <div className="unnamed-character-style-4 descricao_admministrador">   
-        <div className="titulo_bemvindo"> Eventos </div>            
-        </div>      
-
-      </div>
-      <div className="container-fluid margem_left"> 
+       <div className="titulo_lista">
+               <div className="unnamed-character-style-4 descricao_admministrador">                       
+                 <div className="titulo_bemvindo"> Eventos </div>
+              </div>      
+            </div>
+          </div>
+       <div className="margem_left">       
       <br/>          
      
      <div className="selecao_tabs">       
@@ -928,22 +928,22 @@ verificaData_Evento(e) {
           </TabList>
         </AppBar>
         <TabPanel value="1" className="tirar_espaco">
-        <div style={{ maxWidth: '96%' }}>
+        <div>
                         <MaterialTable          
                             title=""
-                            style={ {width: "100%" }}  
+                         
                             columns={[
-                              { title: '', field: '#', width: '30px', minWidth: '30px', maxWidth: '30px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '150px', minWidth: '150px', maxWidth: '150px', 
+                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '200px', minWidth: '200px', maxWidth: '200px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '250px', minWidth: '250px', maxWidth: '250px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
-                              { title: 'Data do Evento', field: 'data_evento', width: '80px', minWidth: '80px', maxWidth: '80px', 
+                              { title: 'Data do Evento', field: 'data_evento', width: '120px', minWidth: '120px', maxWidth: '120px', 
                               render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
-                              { title: 'Total de Viagens', field: 'viagens_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              { title: 'Total de Viagens', field: 'viagens_total', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
                               { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
                             ]}
                             data={this.state.listEventos}   
@@ -986,9 +986,9 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,     
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
-                              padding: 'dense',   
+                              maxBodyHeight: 410,
+                              minBodyHeight: 410, 
+                              padding: 'dense',                               
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
@@ -1020,10 +1020,10 @@ verificaData_Evento(e) {
                 </div>    
         </TabPanel>
         <TabPanel value="2" className="tirar_espaco">
-        <div style={{ maxWidth: '100%' }}>
+        <div>
                         <MaterialTable          
                             title=""
-                            style={ {width: "96%" }}     
+                              
                             columns={[
                               { title: '', field: '#', width: '60px', minWidth: '60px', maxWidth: '60px' },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
@@ -1548,7 +1548,7 @@ verificaData_Evento(e) {
       validacao_descricao: false,
     });  
 
-    console.log('resultado '+JSON.stringify(data.id, null, "    ")); 
+    //console.log('resultado '+JSON.stringify(data.id, null, "    ")); 
     //console.log('modal id - '+data.id)  
      
     
@@ -1615,6 +1615,19 @@ verificaData_Evento(e) {
     //console.log('deletar o id - '+userId);
    // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
     // network
+    //funcao para pegar os serviços e eventos e colocar na tabela historico
+    api.get(`/servicos/getEvento/${userId}`)
+    .then(response =>{
+      if (response.data.success) {    
+
+      }
+    })
+    .catch ( error => {
+      alert("Error 325 ")
+    })    
+
+    api.delete(`/servicos/deleteevento/${userId}`)
+    
     api.delete(`/eventos/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {       

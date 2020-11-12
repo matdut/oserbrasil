@@ -150,8 +150,9 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',      
+    left                   : '60vw',      
     right                  : '0%',
+    width                  : '43%',   
     bottom                 : 'auto',  
     height                 : '100vh',        
     padding                : '0px !important',      
@@ -404,7 +405,6 @@ class listaservicosComponent extends React.Component  {
     this.telefonemotoristaChange = this.telefonemotoristaChange.bind(this);
     //this.data_format = this.data_format.bind(this);
     
-
     this.verificaCartao = this.verificaCartao.bind(this);  
 
     this.calculo_bilingue = this.calculo_bilingue.bind(this);
@@ -433,7 +433,6 @@ class listaservicosComponent extends React.Component  {
     this.validaDataServicoChange = this.validaDataServicoChange.bind(this);          
   }
   
-
   componentDidMount(){
     
  //  let eventoId = this.props.match.params.id;    
@@ -535,6 +534,23 @@ class listaservicosComponent extends React.Component  {
      })
    }
 
+   
+   /*procura_filho() {
+    api.get(`/servicos/busca_filho/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data    
+        this.setState({
+          listservicoseventos:data,
+          loading: false,
+         })
+      }
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+   }
+*/
 
   carrega_servico(data){
     // const url = baseUrl+"/cliente/list"   
@@ -1787,8 +1803,8 @@ verifica_rota(inicio) {
               </div>         
           </div> 
         </div>
-        <div className="container-fluid margem_left">       
-      <div className="selecao_tabs">         
+      <div className="margem_left">       
+      <div>         
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
@@ -1798,12 +1814,12 @@ verifica_rota(inicio) {
         </AppBar>
         
         <TabPanel value="1" className="tirar_espaco">
-        <div style={{ maxWidth: '96%' }}>
+        <div>
                         <MaterialTable          
                             title=""
                             isLoading={this.state.loading}                            
                             columns={[
-                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center' },   
+                              { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px', align: 'center' },   
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
@@ -1855,21 +1871,18 @@ verifica_rota(inicio) {
                                 actions: 'Ação',
                               },
                             }}    
-                         /*   
-                            detailPanel={rowData => {
-                              
-                              return (
-                                <iframe
-                                  width="100%"
-                                  height="315"
-                                  src="https://www.youtube.com/embed/C0DPdy98e4c"
-                                  frameborder="0"
-                                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                  allowfullscreen
-                                />
-                              )
-                            }}     */
-                            options={{                             
+                            parentChildData={(row, rows) => rows.find(a => a.id === row.servico_pai_id)}
+                            
+                          /*  detailPanel={[
+                              {
+                                tooltip: 'Filhos',
+                                render: rowData => 
+                                rowData.tipoEventoId == 2 ? false : <RowDetails data={this.procura_filho(rowData.eventoId)} />          
+                                                      
+                              } ]}
+                              */
+                            options={{        
+                                        
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
                               searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
                               //paginationPosition: 'bottom',  
@@ -1880,11 +1893,12 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 390,
-                              minBodyHeight: 390, 
+                              maxBodyHeight: 410,
+                              minBodyHeight: 410, 
                               padding: 'dense',   
                               //overflowY: 'scroll',
                               overflowX: 'hidden',
+                              overflowY: 'scroll',
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
@@ -1916,7 +1930,7 @@ verifica_rota(inicio) {
                 </div>    
         </TabPanel>      
         <TabPanel value="2" className="tirar_espaco">
-           <div style={{ maxWidth: '100%' }}>
+           <div>
                         <MaterialTable          
                             title=""
                             columns={[
@@ -4997,6 +5011,8 @@ verifica_rota(inicio) {
       camptempo: 0,
       campCompanhia_aerea: '',
       campNumero_voo: '',
+      campnomemotorista: '',
+      camptelefonemotorista: '',
       campvalor: '0,00',
       campvalor_estimado: '',
       valor_oser: '',
@@ -5013,6 +5029,8 @@ verifica_rota(inicio) {
       erro_data_evento: false,    
       erro_companhia_aerea: false,
       erro_numero_voo: false,
+      erro_nome_motorista: false,
+      erro_telefone_motorista: false,
       erro_cartao: false,
       camptempovalue: '',  
       mensagem_data_evento: '',    
@@ -5027,9 +5045,11 @@ verifica_rota(inicio) {
       mensagem_localdesembarque: '',
       mensagem_data_nao_encontrada: '',
       mensagem_nao_possui_registro: '',
-      mensagem_companhia_aerea: false,
-      mensagem_numero_voo: false,
-      mensagem_cartao: false,
+      mensagem_nome_motorista: '',
+      mensagem_telefone_motorista: '',
+      mensagem_companhia_aerea: '',
+      mensagem_numero_voo: '',
+      mensagem_cartao: '',
       valor_bilingue: '',
       valor_receptivo: '',
       listTarifas:[],
@@ -5048,6 +5068,8 @@ verifica_rota(inicio) {
       validacao_localdesembarque: false,
       validacao_companhia_aerea: false,
       validacao_numero_voo: false,
+      validacao_nome_motorista: false,
+      validacao_telefone_motorista: false,
       controle: 0,
       resultado_bilingue: '',
       resultado_receptivo: '',

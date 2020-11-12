@@ -5,7 +5,7 @@ const Op = Sequelize.Op;
 
 // import model and sequelize
 var sequelize = require('../model/database');
-var Servicos = require('../model/servicos');
+var HistoricoServicos = require('../model/historico_servicos');
 var Eventos = require('../model/Eventos');
 var TarifaEspecial = require('../model/Tarifa_especial');
 
@@ -20,7 +20,7 @@ controllers.delete = async (req,res) => {
 
   //console.log('delete id  - '+id);
   // delete sequelize
-  await Servicos.destroy({
+  await HistoricoServicos.destroy({
     where: { id: id }
   }).then( function (data){
     return res.json({success:true, data: data});
@@ -42,7 +42,7 @@ controllers.deleteevento = async (req,res) => {
 
   //console.log('delete id  - '+id);
   // delete sequelize
-  await Servicos.destroy({
+  await HistoricoServicos.destroy({
     where: { eventoId: eventoid }
   }).then( function (data){
     return res.json({success:true, data: data});
@@ -59,7 +59,7 @@ controllers.deleteevento = async (req,res) => {
 controllers.get = async (req, res) => {
   const { id } = req.params;
   
-  await Servicos.findAll({    
+  await HistoricoServicos.findAll({    
     where: { id: id} 
   })
   .then( function(data){
@@ -70,94 +70,12 @@ controllers.get = async (req, res) => {
   })
   
 }
-controllers.getEvento = async (req, res) => {
-  const { eventoid } = req.params;
-  
-  await Servicos.findAll({    
-    where: { eventoId: eventoid} 
-  })
-  .then( function(data){
-    return res.json({success:true, data:data});
-  })
-  .catch(error => {
-     return res.json({success:false});
-  })
-  
-}
-/* 
-Se (Data do Serviço for > ou = Data Inicial e Data do Serviço for < ou = Data Final) E
-(Hora do Serviço for > ou = Hora Inicial e Hora do Serviço for < ou = Hora Final)
-
-datainicial  >= dataservico and datafinal <= dataservico  
- 
-    1987-05-01      1990-05-01
 
 
-          1988-05-01
-
-          select * from `tarifa_especials` 
-where '1987-05-01' >= data_inicial and '1987-05-01' <= data_final   
-
-*/
-controllers.getbusca = async (req, res) => {
-  const { data_servico, hora_inicial, hora_final } = req.params;
-
- // console.log('data_servico - '+ data_servico);
- await TarifaEspecial.findAll({    
-  where: {  
-    [Op.and]: 
-    [{ 
-      data_inicial: {
-        [Op.gte]: [data_servico],         
-      }
-    },
-     { 
-      data_final: {
-        [Op.lte]: [data_servico],                 
-      }
-    }],        
-  },         
-}) 
-  .then( function(data){
-    return res.json({success:true, data:data});
-  })
-  .catch(error => {
-     return res.json({success:false});
-  })
-  
-}
-/*controllers.getbusca = async (req, res) => {
-  const { data_servico } = req.params;
-
- // console.log('data_servico - '+ data_servico);
-  await TarifaEspecial.findAll({    
-    where: {  
-      [Op.and]: 
-      [{ 
-        data_inicial: {
-          [Op.gte]: [data_servico],         
-        }
-      },
-       { 
-        data_final: {
-          [Op.lte]: [data_servico],                 
-        }
-      }],        
-    },         
-  }) 
-  .then( function(data){
-    return res.json({success:true, data:data});
-  })
-  .catch(error => {
-     return res.json({success:false});
-  })
-  
-}
-*/
 controllers.listporevento = async (req,res) => {
   const { id } = req.params;
   
-  await Servicos.findAll({
+  await HistoricoServicos.findAll({
     where: { eventoId: id  }  
   })
   .then( function (data){
@@ -171,7 +89,7 @@ controllers.listporevento = async (req,res) => {
 controllers.listaeventosservicos = async (req,res) => {
   const { eventoid, id, perfilId } = req.params;
   
-  await Servicos.findAll({
+  await HistoricoServicos.findAll({
     include: [
       { 
        model: Eventos,
@@ -192,31 +110,15 @@ controllers.listaeventosservicos = async (req,res) => {
   })
 }
 
-controllers.busca_filho = async (req,res) => {
-  const { eventoid, id, perfilId } = req.params;
-  
-  await Servicos.findAll({
-    where: { 
-      servico_pai_id: eventoid,  logid: id, perfilId: perfilId,     
-    }, 
-  })
-  .then( function (data){
-    return res.json({success:true, data: data});
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  })
-}
-
 controllers.listaservicos = async (req,res) => {
   const { eventoid, id, perfilId } = req.params;
   
-  await Servicos.findAll({
+  await HistoricoServicos.findAll({
     where: { 
       eventoId: eventoid,  logid: id, perfilId: perfilId,
    /*   servico_pai_id: {
         [Op.In]: [null,0]             
-      } a*/
+      } */
     },  
     order: [
       ['createdAt', 'DESC']
@@ -244,7 +146,7 @@ controllers.create = async (req,res) => {
   //console.log(req.body);      
 
   //create
-  await Servicos.create({       
+  await HistoricoServicos.create({       
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
     nome_passageiro: nome_passageiro, 
@@ -310,7 +212,7 @@ controllers.update = async (req, res) => {
     const { id } = req.params;
   // update data
   
-  await Servicos.update({
+  await HistoricoServicos.update({
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
     nome_passageiro: nome_passageiro, 
@@ -361,89 +263,6 @@ controllers.update = async (req, res) => {
   })
 
 }
-
-controllers.totalValorServicos = async (req, res) => { 
-
-  const { eventoid,  id, perfilId } = req.params;
- 
-  const salesValue = await Servicos.sum('valor_estimado', {
-    where: { eventoId: eventoid, logid: id, perfilId: perfilId, 
-      servico_pai_id: {
-        [Op.or]: [null, 0],  
-      } }
-  });
-
-   return res.json({success:true, data: salesValue});
-  
-}
-
-controllers.totalViagens = async (req, res) => {
- 
-  const { eventoid,  id, perfilId } = req.params;
-
-  const salesCount = await Servicos.count({
-    where: { eventoId: eventoid, logid: id, perfilId: perfilId }
-  });
-
-  return res.json({success:true, data: salesCount});
-  
-}
-
-
-controllers.valorServicoTodosEventos = async (req, res) => {
- 
-  const { id, perfilId } = req.params;
-
-  const salesValue = await Servicos.sum('valor_estimado', {
-    where: { logid: id, perfilId: perfilId, servico_pai_id: 0 }
-  });
-
-   return res.json({success:true, data: salesValue});
-  
-}
-
-
-controllers.totalViagensEventos = async (req, res) => {
- 
-  const { id, perfilId } = req.params;
-
-  const salesCount = await Servicos.count({
-    where: { logid: id, perfilId: perfilId,
-      servico_pai_id: {
-        [Op.In]: [null,0]             
-      }
-     }
-  });
-
-  return res.json({success:true, data: salesCount});
-  
-}
-
-
-controllers.totalViagensADM = async (req, res) => {
- 
-  // const { eventoid,  id, perfilId } = req.params;
- 
-   const salesCount = await Servicos.count({ 
-   });
- 
-   return res.json({success:true, data: salesCount});
-   
- }
-
- controllers.TotalTodosvalorServicoADM = async (req, res) => {
- 
-  const { id, perfilId } = req.params;
-
-  const salesValue = await Servicos.sum('valor_estimado', {
-    where: { servico_pai_id: 0 }
-  });
-
-   return res.json({success:true, data: salesValue});
-  
-}
-
-
 
 
 module.exports = controllers;

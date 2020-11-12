@@ -133,83 +133,102 @@ class menu_motoristaComponent extends React.Component  {
   {     
     
  return (
-  <div>    
-  <div className="left">    
- <br/> 
-  <div className="item avatar_titulo">
-       <i><div className="avatar_motorista"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil}/>                    
-       </div>
-         <div className="teste perfil">
-         <a href={`/motorista_alterar/`+localStorage.getItem('logid')}>     
-              Editar Perfil  
-          </a>  
-          <br/>
-         </div>
-       </i>      
-   </div>        
-  <div class="item teste active">
-    <LightTooltip title="Inicio" placement="top">
-       <a href="/area_motorista">
-       <i class="fas fa-home"></i>   
-       </a>  
-    </LightTooltip>   
-    </div>
-  <div className="item teste">    
-     <LightTooltip title="Endereço" placement="top">
-          <a href={`/endereco_motorista_alterar/`+localStorage.getItem('logid')}>           
-          <i class="fas fa-address-card"></i>
-          </a>  
-      </LightTooltip>    
-  </div>  
-  <div className="item teste">
-  <LightTooltip title="Documentos" placement="top">
-      <a href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')}>
-      <i class="fas fa-folder-open"></i>
-      </a>  
-  </LightTooltip>    
-  </div>
-  <div class="item teste">
-  <LightTooltip title="Minha Foto" placement="top">
-     <a href={`/foto_motorista_alterar/`+localStorage.getItem('logid')}>
-        <i class="fas fa-camera"></i>
-     </a>  
-  </LightTooltip>   
-  </div>
-  <div className="item teste">
-    <LightTooltip title="Senha" placement="top">
-      <a href={`/senha_motorista_alterar/`+localStorage.getItem('logid')}>
-          <i class="fas fa-unlock-alt"></i>
-      </a>   
-    </LightTooltip>    
-  </div>
-  <div class="item teste">
-  <LightTooltip title="Veículos" placement="top">
-     <a href={`/lista_veiculos/`+localStorage.getItem('logid')}>
-     <i class="fas fa-car-alt"></i>
-     </a>  
-  </LightTooltip>   
-  </div>   
-  <div class="item teste">
-  <LightTooltip title="Agência Bancária" placement="top">
-     <a href={`/motorista_lista_banco/list`}>    
-       <i className="fas fa-fw fa-th"></i>
-     </a>  
-  </LightTooltip>   
-  </div>      
-  <div className="item teste">
-     <LightTooltip title="Sair" placement="top">
-      <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
-         <i class="fas fa-sign-out-alt"></i> </button>   
-     </LightTooltip>    
-  </div>    
-    
-  <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-       <div className="data_versao"> 30/09/20 v2.0.0 </div>
-     </div>  
- </div>                                       
-                          
-</div> 
+  <div className="nav-side-menu">
+  <div className="brand"></div>
+  <i className="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+
+      <div className="menu-list">
+
+          <ul id="menu-content" className="menu-content collapse out">
+              <li>
+                <div className="item avatar_titulo">
+                <div className="avatar_motorista"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil}/>                       
+                </div>
+                  <div className="teste perfil">
+                    <a href={`/motorista_alterar/`+localStorage.getItem('logid')}>   
+                        Editar Perfil  
+                    </a>  
+                    <br/>
+                  </div>
+                </div>   
+              </li>
+              <li>
+              <div className="itens_menu">
+                 <a href="/area_motorista" className="icon_centralizado_novo">                    
+                   <LightTooltip title="Inicio" placement="top">                
+                      <i className="fas fa-home"></i>   
+                   </LightTooltip>    
+                </a>
+                </div>
+              </li>     
+              <li>
+              <div className="itens_menu">
+              <a href={`/endereco_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">                    
+                   <LightTooltip title="Endereço" placement="top">                
+                   <i className="fas fa-address-card"></i>
+                   </LightTooltip>    
+                </a>
+                </div>
+              </li>   
+              <li>
+              <div className="itens_menu">
+               <a href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <LightTooltip title="Documentos" placement="top">
+                <i className="fas fa-folder-open"></i>                
+                </LightTooltip>              
+                </a>
+                </div>
+              </li>
+              <li>
+              <div className="itens_menu">
+              <a href={`/foto_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <LightTooltip title="Minha Foto" placement="top">
+                <i className="fas fa-camera"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li> 
+              <li>
+              <div className="itens_menu">
+              <a href={`/senha_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <LightTooltip title="Senha" placement="top">
+                <i className="fas fa-unlock-alt"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li> 
+              <li>
+              <div className="itens_menu">
+              <a href={`/lista_veiculos/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <LightTooltip title="Veículos" placement="top">
+                <i className="fas fa-car-alt"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li> 
+              <li>
+              <div className="itens_menu">
+                 <a href={`/motorista_lista_banco/list`} className="icon_centralizado_novo">
+                <LightTooltip title="Agência Bancária" placement="top">
+                   <i className="fas fa-fw fa-th"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li> 
+              <li>
+              <div className="itens_menu">
+              <a onClick={this.handleClick} className="icon_centralizado_novo">
+                <LightTooltip title="Sair" placement="right">                  
+                   <i className="fas fa-sign-out-alt"></i>
+                </LightTooltip>    
+              </a> 
+              </div> 
+              </li>                                 
+          </ul>
+   </div>
+</div>     
+
+ 
  );  
  }
 }

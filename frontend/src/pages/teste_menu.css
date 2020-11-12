@@ -1,7 +1,7 @@
 .nav-side-menu {
-  overflow: hidden;
-  font-family: Effra;
-  font-size: 12px;
+  overflow-y: hidden !important;
+  font-family: Effra !important;
+  font-size: 12px !important;
   font-weight: 100;
   /*background-color: #2e353d; */
   background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
@@ -9,7 +9,8 @@
   top: 0px;  
   width: 100px;     
   height: 100vh; 
-  padding-left: 5px;
+  z-index: 1 !important;
+
   /* width: 300px;
   height: 100%; */
   color: #e1ffff !important;
@@ -26,6 +27,11 @@
   padding-left: 18px;
   border-style: none;
   margin-left: 15px !important;
+}
+.icon_centralizado_novo {
+  padding-left: 6px;
+  border-style: none;
+  margin-left: 6px !important;
 }
 .nav-side-menu .toggle-btn {
   display: none;
@@ -106,6 +112,14 @@
   text-decoration: none;
   color: #e1ffff !important;
 }
+.avatar_titulo {
+  height: 129px;
+  padding-top: 33px;
+}
+.itens_menu {
+  margin-top: 0px;
+  height: 55px;
+}
 .nav-side-menu li a i {  
   width: 20px;
   padding-right: 20px;
@@ -121,10 +135,37 @@
   -ms-transition: all 1s ease;
   transition: all 1s ease;
 }
+@media (max-height: 600px) {
+  .nav-side-menu {
+    overflow-y: auto !important;
+    font-family: Effra !important;
+    font-size: 10px !important;
+    font-weight: 50;
+    /*background-color: #2e353d; */
+    background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+    position: fixed;
+    top: 0px;  
+    width: 100px;     
+    height: 100vh; 
+    z-index: 5 !important;
+  
+    /* width: 300px;
+    height: 100%; */
+    color: #e1ffff !important;
+  }
+  .icon_centralizado_novo {
+    padding-left: 6px;
+    border-style: none;
+    margin-left: 6px !important;
+    height: 25px !important;
+  }
+
+
+}
 @media (max-width: 767px) {
   .nav-side-menu {
     position: relative;
-    width: 100%;
+    width: 40%;
     margin-bottom: 10px;
   }
   .nav-side-menu .toggle-btn {
