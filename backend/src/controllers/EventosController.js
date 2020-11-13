@@ -196,7 +196,11 @@ controllers.get = async (req, res) => {
     where: { id: id }   
   })
   .then( function (data){
-    return res.json({success:true, data: data});
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
   })
   .catch(error => {
     return res.json({success:false, message: error});

@@ -3,13 +3,8 @@ var sequelize = require('./database');
 // import Role for FK roleId
 //var Role = require('./Role');
 // name table
-var Perfil = require('./Perfil');
-var Transporte = require('./Tipo_transporte');
 var Status = require('./Status');
-var Eventos = require('./Eventos');
 var Situacao = require('./Situacao');
-var Tipo_evento = require('./tipo_evento');
-var Cartao = require('./Cartao_credito');
 
 var nametable = 'historico_servicos';
 
@@ -21,19 +16,12 @@ var Historico_servicos = sequelize.define(nametable,{
     autoIncrement:true
   },  
   eventoId:{
-    type: Sequelize.INTEGER,    
-    refences: {
-      model: Eventos,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   tipoEventoId: {
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Tipo_evento,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },  
   nome_passageiro: {
     type:Sequelize.STRING(250),    
@@ -156,53 +144,30 @@ var Historico_servicos = sequelize.define(nametable,{
     type: Sequelize.INTEGER
   },
   statusId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Status,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   situacaoId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Situacao,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   motivo_cancelamento: {
     type: Sequelize.STRING(250), 
     allowNull: true,
   },
   cartaoId: {
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Cartao,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   logid: {
     type: Sequelize.INTEGER,
     allowNull: false,     
   },
   perfilId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Perfil,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
 })
-
-
-Historico_servicos.belongsTo(Situacao);
-Historico_servicos.belongsTo(Status);
-Historico_servicos.belongsTo(Eventos);
-Historico_servicos.belongsTo(Tipo_evento);
-Historico_servicos.belongsTo(Cartao);
 
 
 module.exports = Historico_servicos

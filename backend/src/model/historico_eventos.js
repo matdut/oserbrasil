@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-var Perfil = require('./Perfil');
-var Status = require('./Status');
+
 var nametable = 'historico_eventos';
 
 var Historico_eventos = sequelize.define(nametable,{
@@ -17,12 +16,8 @@ var Historico_eventos = sequelize.define(nametable,{
     allowNull: false,     
   },
   perfilId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Perfil,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   ordem_servico:  {  
     type: Sequelize.STRING(30),
@@ -45,16 +40,10 @@ var Historico_eventos = sequelize.define(nametable,{
     allowNull: true,     
   },
   statusId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Status,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   }
 })
 
-Historico_eventos.belongsTo(Perfil);
-Historico_eventos.belongsTo(Status);
 
 module.exports = Historico_eventos

@@ -1732,49 +1732,112 @@ verificaData_Evento(e) {
   // this.loadeventodelete(userId);
    
  // debugger;
-   
- api.get(`/eventos/get/${userId}`)
-   .then(res=>{
-    if (res.data.success == true) {
-      const eventos = res.data.data         
-      console.log('criando loadeventodelete 123 - '+JSON.stringify(res.data, null, "    "));     
+   api.get(`/servicos/getEvento/${userId}`)
+    .then(res =>{
 
-        const datapost_evento_incluir = {
-          logid: eventos[0].logid,
-          perfilId: eventos[0].perfilId,    
-          ordem_servico: eventos[0].ordem_servico, 
-          nome_evento: eventos[0].nome_evento, 
-          viagens_total: eventos[0].viagens_total,
-          data_evento: eventos[0].data_evento, 
-          statusId: eventos[0].statusId,          
-        }           
-        
-        api.post('/historicoEventos/create',datapost_evento_incluir);
-     //   this.setState({listaeventodelete: data});
-        api.delete(`/eventos/delete/${userId}`)
-        .then(response =>{
-          if (response.data.success) {       
-    
-            this.loadlistEventos()
-    
-            this.setState({       
-              mensagem_usuario: 'Evento excluído com sucesso!'
-              });
-    
-            this.handleCloseModalDelete();
-            this.envia_mensagemExclusaoClick();
-    
-          }
-        })
-        .catch ( error => {
-          alert("Error 325 ")
-        })
+     if (res.data.success == true) {
+      const servicos = res.data.data; 
+      this.setState({listservicosevento: servicos}); 
+  //   console.log('criando loadservicoseventos  - '+JSON.stringify(res.data, null, "    ")); 
+ //   if (res.data.success) {
+     for (let i = 0; i < (this.state.listservicosevento.length); i++) {
+       
+        const datapost_incluir = {
+          tipoEventoId: this.state.listservicosevento[i].tipoEventoId, 
+          eventoId: this.state.listservicosevento[i].eventoId, 
+          tipoTransporte: this.state.listservicosevento[i].tipoTransporte,
+          nome_passageiro: this.state.listservicosevento[i].nome_passageiro, 
+          telefone_passageiro: this.state.listservicosevento[i].telefone_passageiro,
+          quantidade_passageiro: this.state.listservicosevento[i].quantidade_passageiro,  
+          data_servico: this.state.listservicosevento[i].data_servico,
+          quantidade_diarias: this.state.listservicosevento[i].quantidade_diarias, 
+          hora_inicial: this.state.listservicosevento[i].hora_inicial,  
+          hora_final: this.state.listservicosevento[i].hora_final,  
+          local_embarque: this.state.listservicosevento[i].local_embarque, 
+          local_desembarque: this.state.listservicosevento[i].local_desembarque, 
+          embarque_latitude: this.state.listservicosevento[i].embarque_latitude, 
+          embarque_longitude: this.state.listservicosevento[i].embarque_longitude, 
+          desembarque_latitude: this.state.listservicosevento[i].desembarque_latitude, 
+          desembarque_longitude: this.state.listservicosevento[i].desembarque_longitude,      
+          distancia_value: this.state.listservicosevento[i].distancia_value, 
+          tempo_value: this.state.listservicosevento[i].tempo_value,
+          companhia_aerea: this.state.listservicosevento[i].companhia_aerea,
+          numero_voo: this.state.listservicosevento[i].numero_voo, 
+          motorista_bilingue: this.state.listservicosevento[i].motorista_bilingue, 
+          valor_bilingue: this.state.listservicosevento[i].valor_bilingue,
+          valor_receptivo: this.state.listservicosevento[i].valor_receptivo,
+          motorista_receptivo: this.state.listservicosevento[i].motorista_receptivo, 
+          nome_motorista: this.state.listservicosevento[i].nome_motorista, 
+          telefone_motorista: this.state.listservicosevento[i].telefone_motorista, 
+          km_translado: this.state.listservicosevento[i].km_translado, 
+          tempo_translado: this.state.listservicosevento[i].tempo_translado,
+          cartaoId: this.state.listservicosevento[i].cartaoId,        
+          valor_estimado: this.state.listservicosevento[i].valor_estimado,    
+          valor_oser: this.state.listservicosevento[i].valor_oser,
+          valor_motorista: this.state.listservicosevento[i].valor_motorista,  
+          logid: this.state.listservicosevento[i].logid,
+          servico_pai_id: this.state.listservicosevento[i].servico_pai_id,
+          perfilId: this.state.listservicosevento[i].perfilId,               
+        }  
+        api.post('/historicoServicos/create', datapost_incluir);
+      }  
 
+      api.delete(`/servicos/deleteevento/${userId}`)
       }
-    }).catch ( error => {
-      alert("Error loadeventodelete ")
-    })
+         debugger;
+         api.get(`/eventos/get/${userId}`)
+            .then(res=>{
 
+            if (res.data.success == true) {
+              const eventos = res.data.data         
+            //  console.log('criando loadeventodelete 123 - '+JSON.stringify(res.data, null, "    "));     
+            debugger;
+                const datapost_evento_incluir = {
+                  logid: eventos[0].logid,
+                  perfilId: eventos[0].perfilId,    
+                  ordem_servico: eventos[0].ordem_servico, 
+                  nome_evento: eventos[0].nome_evento, 
+                  viagens_total: eventos[0].viagens_total,
+                  data_evento: eventos[0].data_evento, 
+                  statusId: eventos[0].statusId,          
+                }           
+                
+                api.post('/historicoEventos/create',datapost_evento_incluir);
+              //   this.setState({listaeventodelete: data});             
+              debugger;
+                api.delete(`/eventos/delete/${userId}`)
+                .then(response =>{
+                  if (response.data.success) {       
+                    debugger;
+                    this.loadlistEventos()
+            
+                    this.setState({       
+                      mensagem_usuario: 'Evento excluído com sucesso!'
+                      });
+            
+                    this.handleCloseModalDelete();
+                    this.envia_mensagemExclusaoClick();
+            
+                  }
+                })
+                .catch ( error => {
+                  alert("Error 325 ")
+                })
+        
+              }
+         }).catch ( error => {
+           alert("Error loadeventodelete "+error)
+         })
+     
+    //  })
+    // }
+    })
+    .catch ( error => {
+      alert("Error loadservicoseventos "+error)
+    })    
+    
+   
+ 
     //debugger;
  
  /*   this.state.listservicosevento.map((servicos)=>{          
