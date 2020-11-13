@@ -1789,6 +1789,7 @@ verifica_rota(inicio) {
         
         <TabPanel value="1" className="tirar_espaco">
         <div>
+          
                         <MaterialTable          
                             title=""
                             isLoading={this.state.loading}                            
