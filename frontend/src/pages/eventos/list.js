@@ -212,6 +212,8 @@ class listaeventosComponent extends React.Component  {
       listEventos:[],
       listOperadores:[],
       listTodosOperadores:[],
+      listservicosevento:[],
+      listaeventodelete:[],
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -262,6 +264,38 @@ class listaeventosComponent extends React.Component  {
   componentWillUnmount() {
   //  clearInterval(this.interval);
    }
+
+  loadservicoseventos(userId) {
+   // debugger;
+    api.get(`/servicos/getEvento/${userId}`)
+    .then(resp =>{
+     // console.log('criando loadservicoseventos  - '+JSON.stringify(resp.data, null, "    ")); 
+      if (resp.data.success) {
+        const data = resp.data.data
+
+        this.setState({listservicosevento:data})
+      }
+    })
+    .catch ( error => {
+      alert("Error loadservicoseventos ")
+    })    
+  } 
+
+  loadeventodelete(userId) {
+  //  debugger;
+    api.get(`/eventos/get/${userId}`)
+    .then(resp =>{
+      //console.log('criando loadeventodelete  - '+JSON.stringify(resp.data, null, "    ")); 
+      if (resp.data.success) {
+        const data = resp.data.data
+
+        this.setState({listaeventodelete:data})
+      }
+    })
+    .catch ( error => {
+      alert("Error loadeventodelete ")
+    })    
+  } 
 
   limpar_campos() {
     this.setState({
@@ -632,7 +666,7 @@ class listaeventosComponent extends React.Component  {
        const datapost_alterar = {     
          logid: localStorage.getItem('logid'),
          perfilId: localStorage.getItem('logperfil'),    
-         ordem_servico: this.state.campordem_servico, 
+         ordem_servico: this.state.campordem_servico,         
          nome_evento: this.state.campnome_evento, 
          data_evento: moment(this.state.campdata_evento, "DD MM YYYY"),   
          statusId: 1,      
@@ -919,7 +953,7 @@ verificaData_Evento(e) {
        <div className="margem_left">       
       <br/>          
      
-     <div className="selecao_tabs">       
+     <div className="container-fluid">       
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
@@ -1686,17 +1720,87 @@ verificaData_Evento(e) {
   sendDelete(userId){
     // url de backend
     //console.log('deletar o id - '+userId);
-   // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
+    //const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
     // network
     //funcao para pegar os serviços e eventos e colocar na tabela historico
-    api.get(`/servicos/getEvento/${userId}`)
-    .then(response =>{
-      if (response.data.success) {    
+    
+   // for (let i = 0; i < (this.state.listservicosevento.length); i++) {
+        
+   // }
 
+   this.loadservicoseventos(userId);
+   this.loadeventodelete(userId);
+   
+   api.get(`/eventos/get/${userId}`)
+    .then(resp =>{
+      //console.log('criando loadeventodelete  - '+JSON.stringify(resp.data, null, "    ")); 
+      if (resp.data.success == true) {
+        const data = resp.data.data;
+
+        this.setState({listaeventodelete:data})
       }
+    }).catch ( error => {
+      alert("Error loadeventodelete ")
     })
-    .catch ( error => {
-      alert("Error 325 ")
+
+    debugger;
+    this.state.listservicosevento.map((servicos)=>{          
+      
+      const datapost_incluir = {
+        tipoEventoId: servicos.tabIndex, 
+        eventoId: servicos.campeventoId, 
+        tipoTransporte: servicos.camptipoId,
+        nome_passageiro: servicos.campNome, 
+        telefone_passageiro: servicos.campTelefone1,
+        quantidade_passageiro: servicos.campqtdpassageiro,  
+        data_servico: servicos.campdata_servico,
+        quantidade_diarias: servicos.campqtddiarias, 
+        hora_inicial: servicos.camphora_inicial,  
+        hora_final: servicos.camphora_final,  
+        local_embarque: servicos.camplocalembarque, 
+        local_desembarque: servicos.camplocaldesembarque, 
+        embarque_latitude: servicos.embarque_latitude, 
+        embarque_longitude: servicos.embarque_longitude, 
+        desembarque_latitude: servicos.desembarque_latitude, 
+        desembarque_longitude: servicos.desembarque_longitude,      
+        distancia_value: servicos.campdistancia, 
+        tempo_value: servicos.camptempovalue,
+        companhia_aerea: servicos.campCompanhia_aerea,
+        numero_voo: servicos.campNumero_voo, 
+        motorista_bilingue: servicos.campbilingue, 
+        valor_bilingue: servicos.valor_bilingue,
+        valor_receptivo: servicos.valor_receptivo,
+        motorista_receptivo: servicos.campreceptivo, 
+        nome_motorista: servicos.campnomemotorista, 
+        telefone_motorista: servicos.camptelefonemotorista, 
+        km_translado: servicos.campdistancia, 
+        tempo_translado: servicos.camptempo,
+        cartaoId: servicos.campcartaoid,        
+        valor_estimado: servicos.campvalor,    
+        valor_oser: servicos.campvalor,
+        valor_motorista: servicos.campvalor,  
+        logid: servicos.logid,
+        servico_pai_id: servicos.servico_pai_id,
+        perfilId: servicos.perfilId,               
+      }  
+      api.post('/historicoServicos/create',datapost_incluir)
+   
+    })
+
+    this.state.listaeventodelete.map((eventos)=>{   
+
+      const datapost_evento_incluir = {
+        logid: eventos.logid,
+        perfilId: eventos.perfilId,    
+        ordem_servico: eventos.ordem_servico, 
+        nome_evento: eventos.nome_evento, 
+        viagens_total: eventos.viagens_total,
+        data_evento: eventos.data_evento, 
+        statusId: eventos.statusId,          
+      }           
+      
+      api.post('/historicoEeventos/create',datapost_evento_incluir);
+
     })    
 
     api.delete(`/servicos/deleteevento/${userId}`)

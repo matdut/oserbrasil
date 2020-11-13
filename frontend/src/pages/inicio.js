@@ -36,7 +36,7 @@ class inicioComponent extends React.Component  {
         <div className="d-flex justify-content-center espacamento_logo">           
             <div className="texto_logo">novos caminhos para seu futuro teste</div>          
         </div>
-        
+      <Container>
         <div className="d-flex justify-content-center">  
           <div class="d-flex flex-column espacamento_caixa_texto">
                 <div class="p-2 inicio_cliente"> 
@@ -56,6 +56,7 @@ class inicioComponent extends React.Component  {
               </div>     
           </Box>      
         </div>
+        </Container>
         <br/>
         <br/>
         <br/>

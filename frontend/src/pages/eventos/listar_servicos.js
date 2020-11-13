@@ -199,11 +199,10 @@ const customrotaStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '40vm',  
-    width                  : '520px',
+    left                   : '40vm',          
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '99vh',        
+    height                 : '100vh',        
     padding                : '0px !important',      
     overflow               : 'hidden',
     WebkitOverflowScrolling: 'hidden',
@@ -1152,7 +1151,7 @@ validatelefone1Change(e){
 
            const datapost_incluir = {
               tipoEventoId: this.state.tabIndex, 
-              eventoId: this.state.campeventoId, 
+              eventoId: localStorage.getItem('logeventoservico'), 
               tipoTransporte: this.state.camptipoId,
               nome_passageiro: this.state.campNome, 
               telefone_passageiro: this.state.campTelefone1,
@@ -1190,7 +1189,7 @@ validatelefone1Change(e){
               perfilId: 7,               
             }           
          
-             console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
+            // console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
              api.post('/servicos/create',datapost_incluir)
              .then(respevento=>{    
 
@@ -1211,7 +1210,7 @@ validatelefone1Change(e){
                            data_alteracao_servico = data_alteracao_servico.add(1, "days");
                             const datapost_filho = {
                                 tipoEventoId: this.state.tabIndex, 
-                                eventoId: this.state.campeventoId, 
+                                eventoId: localStorage.getItem('logeventoservico'), 
                                 tipoTransporte: this.state.camptipoId,
                                 nome_passageiro: this.state.campNome, 
                                 telefone_passageiro: this.state.campTelefone1,
@@ -1796,22 +1795,22 @@ verifica_rota(inicio) {
                             columns={[
                               { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px', align: 'center' },   
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                              { title: '', field: 'tipoEventoId', width: '60px', minWidth: '60px', maxWidth: '60px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '300px', minWidth: '300px', maxWidth: '300px' },
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '250px', minWidth: '250px', maxWidth: '250px' },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
-                              { title: 'Hora inicial', field: 'hora_inicial', width: '100px', minWidth: '100px', maxWidth: '100px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
-                              { title: 'Hora Final', field: 'hora_final', width: '100px', minWidth: '100px', maxWidth: '100px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                                  
+                              { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
-                              { title: 'Valor Total', field: 'valor_estimado', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: 'Valor Total', field: 'valor_estimado', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
+                             
                               { title: '', field: 'motorista_bilingue', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                           
                               { title: '', field: 'motorista_receptivo', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
                               { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
@@ -1876,7 +1875,8 @@ verifica_rota(inicio) {
                               overflowX: 'hidden',
                               overflowY: 'scroll',
                               //WebkitOverflowScrolling: 'hidden',
-                             // tableLayout: 'fixed',
+                             //tableLayout: 'fixed',
+                           //   columnResizable: true,
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 18,
                              // pageSize: 9,
@@ -4891,7 +4891,7 @@ verifica_rota(inicio) {
   handleOpenModalAlteracaoEvento() {     
     this.setState({ 
       showModalAlteracaoEvento: true,      
-      campeventoId: '',      
+      //campeventoId: '',      
       incluir: false,
     });  
 
@@ -5147,7 +5147,8 @@ verifica_rota(inicio) {
 
   handleOpenModalInclusao () { 
     this.setState({ 
-      showModalInclusao: true,      
+      showModalInclusao: true,  
+     // campeventoId: ,    
       incluir: true,      
       possui_tarifa_especial: false,
       possui_tarifa: false,

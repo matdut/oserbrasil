@@ -72,7 +72,7 @@ controllers.get = async (req, res) => {
 }
 controllers.getEvento = async (req, res) => {
   const { eventoid } = req.params;
-  
+  console.log('eventoid - '+ eventoid);
   await Servicos.findAll({    
     where: { eventoId: eventoid} 
   })

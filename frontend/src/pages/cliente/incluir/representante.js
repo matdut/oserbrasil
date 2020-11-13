@@ -1,6 +1,6 @@
 import React  from 'react';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
+import {Form, Container, Progress, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
@@ -16,7 +16,7 @@ import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
 import FilledInput from '@material-ui/core/FilledInput';
-import Container from '@material-ui/core/Container';
+//import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
@@ -863,7 +863,7 @@ verificar_menu() {
                </div>                  
                <div>
                  <div className="titulo_representante_cliente">                
-                   <label>  Olá, Fale um pouco sobre você!</label>            
+                   <label className="label_titulo">  Olá, Fale um pouco sobre você!</label>            
                  </div>
                </div>   
                
@@ -908,7 +908,7 @@ return (
          </div>      
       </div>    
    </div>
-    <div className="area_esquerda">     
+   <Container>
            {this.verificar_menu()}
             <div className="d-flex flex-column espacamento_caixa_texto">        
               <div className="p-2"> 
@@ -1081,12 +1081,7 @@ return (
               </FormHelperText>       
             </div>  
             {this.verifica_botao(this.state.inicio)}             
-         </div>   
-         <div className="area_neutra">
-              <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '244px' }} />
-              </Container>            
-         </div>              
+         </Container> 
    </div>  
  </div>
 </div> 
