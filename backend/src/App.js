@@ -95,7 +95,7 @@ app.use('/operador', OperadorRouters);
 app.use('/cartao', Cartao_creditoRouters);
 app.use('/servicos', ServicosRoutes);
 app.use('/historicoServicos', HistoricoServicosRoutes);
-app.use('/historicoEeventos', HistoricoEventosRouters);
+app.use('/historicoEventos', HistoricoEventosRouters);
 app.use('/funcionalidade', FuncionalidadeRouters);
 app.use('/matriz', Matriz_tarifariaRouters);
 app.use('/matrizEspecial', Matriz_tarifaria_especialRoutes);

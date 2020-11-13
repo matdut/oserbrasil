@@ -1728,23 +1728,56 @@ verificaData_Evento(e) {
         
    // }
 
-   this.loadservicoseventos(userId);
-   this.loadeventodelete(userId);
+  // this.loadservicoseventos(userId);
+  // this.loadeventodelete(userId);
    
-   api.get(`/eventos/get/${userId}`)
-    .then(resp =>{
-      //console.log('criando loadeventodelete  - '+JSON.stringify(resp.data, null, "    ")); 
-      if (resp.data.success == true) {
-        const data = resp.data.data;
+ // debugger;
+   
+ api.get(`/eventos/get/${userId}`)
+   .then(res=>{
+    if (res.data.success == true) {
+      const eventos = res.data.data         
+      console.log('criando loadeventodelete 123 - '+JSON.stringify(res.data, null, "    "));     
 
-        this.setState({listaeventodelete:data})
+        const datapost_evento_incluir = {
+          logid: eventos[0].logid,
+          perfilId: eventos[0].perfilId,    
+          ordem_servico: eventos[0].ordem_servico, 
+          nome_evento: eventos[0].nome_evento, 
+          viagens_total: eventos[0].viagens_total,
+          data_evento: eventos[0].data_evento, 
+          statusId: eventos[0].statusId,          
+        }           
+        
+        api.post('/historicoEventos/create',datapost_evento_incluir);
+     //   this.setState({listaeventodelete: data});
+        api.delete(`/eventos/delete/${userId}`)
+        .then(response =>{
+          if (response.data.success) {       
+    
+            this.loadlistEventos()
+    
+            this.setState({       
+              mensagem_usuario: 'Evento excluído com sucesso!'
+              });
+    
+            this.handleCloseModalDelete();
+            this.envia_mensagemExclusaoClick();
+    
+          }
+        })
+        .catch ( error => {
+          alert("Error 325 ")
+        })
+
       }
     }).catch ( error => {
       alert("Error loadeventodelete ")
     })
 
-    debugger;
-    this.state.listservicosevento.map((servicos)=>{          
+    //debugger;
+ 
+ /*   this.state.listservicosevento.map((servicos)=>{          
       
       const datapost_incluir = {
         tipoEventoId: servicos.tabIndex, 
@@ -1786,7 +1819,8 @@ verificaData_Evento(e) {
       api.post('/historicoServicos/create',datapost_incluir)
    
     })
-
+*/
+    /*
     this.state.listaeventodelete.map((eventos)=>{   
 
       const datapost_evento_incluir = {
@@ -1802,27 +1836,10 @@ verificaData_Evento(e) {
       api.post('/historicoEeventos/create',datapost_evento_incluir);
 
     })    
-
-    api.delete(`/servicos/deleteevento/${userId}`)
+*/
+    //api.delete(`/servicos/deleteevento/${userId}`)
     
-    api.delete(`/eventos/delete/${userId}`)
-    .then(response =>{
-      if (response.data.success) {       
-
-        this.loadlistEventos()
-
-        this.setState({       
-          mensagem_usuario: 'Evento excluído com sucesso!'
-         });
-
-        this.handleCloseModalDelete();
-        this.envia_mensagemExclusaoClick();
-
-      }
-    })
-    .catch ( error => {
-      alert("Error 325 ")
-    })
+    
   }
 
 }

@@ -107,8 +107,10 @@ controllers.listaevento = async (req,res) => {
 }
 
 controllers.create = async (req,res) => {  
-  // DATA parametros desde post
+  // DATA parametros desde post  
   const { logid, perfilId, ordem_servico, nome_evento, data_evento, valor_total } = req.body;
+
+  console.log('passou aqui create '+logid);
 
   //console.log(req.body);          
   //console.log("ROle es ==>"+role)
