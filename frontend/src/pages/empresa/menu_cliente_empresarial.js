@@ -212,23 +212,16 @@ class menu_clienteComponent extends React.Component  {
                 </LightTooltip>              
                 </a>
                 </div>
-              </li>              
-              <li data-toggle="collapse" data-target="#service" class="collapsed">
-                <LightTooltip title="Auxiliares" placement="top">
-                  <a href="#" className="icon_centralizado">                   
-                  <i className="fa fa-th" aria-hidden="true"></i><span className="arrow"></span>                   
-                  </a>
-                 </LightTooltip> 
-                </li>  
-                <ul className="sub-menu collapse" id="service">
-                  <li>
-                    <a href={`/operador_lista_empresa/`+localStorage.getItem('logid')}>
-                      <LightTooltip title="Operadores" placement="top">
+              </li>         
+              <li>
+              <div className="itens_menu">
+                <a href={`/operador_lista_empresa/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                     <LightTooltip title="Operadores" placement="top">
                       <i className="fas fa-users-cog"></i>
                       </LightTooltip>              
                     </a>
-                  </li>                          
-                </ul>          
+                 </div>   
+               </li>                          
               <li>
               <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">

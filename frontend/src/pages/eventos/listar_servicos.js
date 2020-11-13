@@ -150,7 +150,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60vw',      
+    left                   : '40vm',  
     right                  : '0%',
     width                  : '43%',   
     bottom                 : 'auto',  
@@ -175,11 +175,10 @@ const customFixoStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',      
-    width                  : '520px',
+    left                   : '40vm',          
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '99vh',        
+    height                 : '100vh',        
     padding                : '0px !important',      
     overflow               : 'hidden',
     WebkitOverflowScrolling: 'hidden',
@@ -200,7 +199,7 @@ const customrotaStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',      
+    left                   : '40vm',  
     width                  : '520px',
     right                  : '0%',
     bottom                 : 'auto',  
@@ -447,7 +446,7 @@ class listaservicosComponent extends React.Component  {
     });
 
     localStorage.setItem('logeventoservico',this.props.match.params.id);
-    this.loadEventos();    
+    this.loadServicos();    
     this.loadlistServicos();
     this.loadTarifaespecial();
     this.loadTarifa();
@@ -467,7 +466,7 @@ class listaservicosComponent extends React.Component  {
   } 
 */ 
  tick() {
-  this.loadEventos();    
+  this.loadServicos();    
   this.loadlistServicos();
   this.loadTarifaespecial();
   this.loadTarifa();
@@ -534,6 +533,7 @@ class listaservicosComponent extends React.Component  {
      })
    }
 
+   
    
    /*procura_filho() {
     api.get(`/servicos/busca_filho/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
@@ -1023,33 +1023,6 @@ validatelefone1Change(e){
 
        }        
    }
-
-
-  loadEventos(){
-   // const url = baseUrl+"/cliente/list"
-   let userId = this.props.match.params.id;  
-
-   //debugger;
-   api.get(`/eventos/get/${userId}`)
-    .then(res=>{
-      if (res.data.success == true) {
-        
-        //console.log(' Evento - '+ JSON.stringify(res.data, null, "    ") );
-        const data = res.data.data      
-        this.setState({
-          campeventoId: res.data.data[0].id,
-          campordem_servico: res.data.data[0].ordem_servico,
-          campnome_evento: res.data.data[0].nome_evento,
-          campdata_evento: dateFormat(res.data.data[0].data_evento, "UTC:dd/mm/yyyy"),          
-        });   
-        
-        // this.setState({listEventos:data})
-      }      
-    })
-    .catch(error=>{
-      alert("Error server"+error)
-    })
-  }
 
   loadServicos(){
     // const url = baseUrl+"/cliente/list"
@@ -1810,6 +1783,7 @@ verifica_rota(inicio) {
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
             <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>          
             <Tab label="Finalizados" value="2" className="tabs_titulo_lista_2"/>          
+            <Tab label="Excluídos" value="2" className="tabs_titulo_lista_2"/>          
           </TabList>
         </AppBar>
         
@@ -1827,7 +1801,8 @@ verifica_rota(inicio) {
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
                               { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '300px', minWidth: '300px', maxWidth: '300px' },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
-                              { title: 'Horário', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },                                                                                  
+                              { title: 'Hora inicial', field: 'hora_inicial', width: '100px', minWidth: '100px', maxWidth: '100px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
+                              { title: 'Hora Final', field: 'hora_final', width: '100px', minWidth: '100px', maxWidth: '100px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                                  
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
@@ -1902,7 +1877,7 @@ verifica_rota(inicio) {
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 16,
+                              actionsColumnIndex: 18,
                              // pageSize: 9,
                               pageSizeOptions: [0],                
                             }}
@@ -2028,6 +2003,90 @@ verifica_rota(inicio) {
                                 onClick: (event) => this.handleOpenModalInclusao()
                               } */
                             ]}
+                            
+                          />      
+                </div>    
+        </TabPanel>      
+        <TabPanel value="3" className="tirar_espaco">
+           <div>
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center' },   
+                              { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
+                              <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Translado</div> },                              
+                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '300px', minWidth: '300px', maxWidth: '300px' },
+                              { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
+                              { title: 'Horário', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },                                                                                  
+                              { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
+                              { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
+                              { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
+                              { title: 'Valor Total', field: 'valor_estimado', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
+                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: '', field: 'motorista_bilingue', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
+                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: '', field: 'motorista_receptivo', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
+                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
+                              { title: '', field: '', width: '0px', minWidth: '0px', maxWidth: '0px', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },                  
+                            ]}
+                            data={this.state.listServicos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Adicionar Valores Tarifários',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{                             
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
+                              //paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_servicos_ativos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,          
+                              maxBodyHeight: 390,
+                              minBodyHeight: 390, 
+                              padding: 'dense',   
+                              //overflowY: 'scroll',
+                              //overflowX: 'hidden',
+                              //WebkitOverflowScrolling: 'hidden',
+                             // tableLayout: 'fixed',
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 16,
+                             // pageSize: 9,
+                              pageSizeOptions: [0],                     
+                            }}                          
                             
                           />      
                 </div>    
@@ -2223,7 +2282,7 @@ verifica_rota(inicio) {
          </ReactModal>           
          <ReactModal 
         isOpen={this.state.showModalAlteracaoServico}
-        style={customStyles}
+        style={customFixoStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> 
               <div className="container-fluid">
@@ -2980,7 +3039,7 @@ verifica_rota(inicio) {
                               <tr className="resultado_total_servicos">
                                                   <td>{this.state.campdistancia} km</td>
                                 <td>{this.state.camptempo}</td>
-                                <td>R$ {this.state.campvalor}</td>
+                                <td>R$ { valorMask(this.state.campvalor)}</td>
                                 </tr>               
                           </table>
                       {this.verifica_botao(this.state.inicio)}         
@@ -2996,7 +3055,7 @@ verifica_rota(inicio) {
 
        <ReactModal 
         isOpen={this.state.showModalInclusao}
-        style={customStyles}
+        style={customFixoStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> 
              <div className="container-fluid">
@@ -3754,7 +3813,7 @@ verifica_rota(inicio) {
                               <tr className="resultado_total_servicos">
                                                   <td>{this.state.campdistancia} km</td>
                                 <td>{this.state.camptempo}</td>
-                                <td>R$ {this.state.campvalor}</td>
+                                <td>R$ { valorMask(this.state.campvalor)}</td>
                                 </tr>               
                           </table>
                       {this.verifica_botao(this.state.inicio)}         
@@ -4393,7 +4452,7 @@ verifica_rota(inicio) {
      let diferenca = (hora_final-hora_inicial);
 
      this.setState({
-      camptempo: this.formatar_minuto(diferenca),     
+      camptempo: this.formatar_minuto(parseInt(this.state.campqtddiarias) * parseInt(diferenca)),     
       tempo_total_filho: this.formatar_minuto(diferenca),     
       km_total_filho: 50,
       camptempovalue: diferenca,

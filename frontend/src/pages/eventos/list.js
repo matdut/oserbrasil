@@ -81,16 +81,15 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60vw',    
-    right                  : '10%',
+    left                   : '40vm',          
+    right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100%',    
-    width                  : '40%',    
+    height                 : '100vh',        
     padding                : '0px !important',      
-    overflow               : 'auto',
-    WebkitOverflowScrolling: 'touch',
+    overflow               : 'hidden',
+    WebkitOverflowScrolling: 'hidden',
     position               : 'absolute',
-    border: '1px solid #ccc',   
+    border: '1px solid #ccc',       
   }
 };
 
@@ -106,7 +105,7 @@ const customStyles_2 = {
   }, 
   content : {
     top                    : '0px',
-    left                   : '33%',    
+    left                   : '40vm', 
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -133,7 +132,7 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '64%',    
+    left                   : '40vm',  
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
@@ -923,8 +922,9 @@ verificaData_Evento(e) {
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
-            <Tab label="Eventos Ativos" value="1" className="tabs_titulo_lista"/>
-            <Tab label="Histórico de Eventos" value="2" className="tabs_titulo_lista_2"/>            
+            <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>
+            <Tab label="Finalizados" value="2" className="tabs_titulo_lista_2"/>            
+            <Tab label="Excluídos" value="3" className="tabs_titulo_lista_2"/>            
           </TabList>
         </AppBar>
         <TabPanel value="1" className="tirar_espaco">
@@ -1095,6 +1095,78 @@ verificaData_Evento(e) {
                                 onClick: (evt, data) => this.handleOpenModal(data)
                               }
                             ]}
+                          />      
+                </div>      
+        </TabPanel> 
+        <TabPanel value="3" className="tirar_espaco">
+        <div>
+                        <MaterialTable          
+                            title=""
+                              
+                            columns={[
+                              { title: '', field: '#', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '150px', minWidth: '150px', maxWidth: '150px', 
+                              render: rowData => rowData.nome_evento.substr(0,50) },
+                              { title: 'Data do Evento', field: 'data_evento', width: '80px', minWidth: '80px', maxWidth: '80px', 
+                              render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
+                              { title: 'Total de Viagens', field: 'viagens_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
+                              { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
+                              { title: '', field: '', width: '90px', minWidth: '90px', maxWidth: '90px', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },          
+                            ]}
+                            data={this.state.listClienteExcluidos}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Add',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar evento',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}        
+                            options={{
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "20px", color: "#0F074E"  },
+                              paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_adm_eventos_finalizados',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,         
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
+                              padding: 'dense',   
+                              overflowY: 'scroll',
+                            //  tableLayout: 'fixed',
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 7,
+                             // pageSize: 7,
+                              pageSizeOptions: [0],                    
+                            }}                           
                           />      
                 </div>      
         </TabPanel>      
