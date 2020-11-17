@@ -40,6 +40,7 @@ const ModalExample = (props) => {
   const toggle = () => setModal(!modal);
 
   return (
+    <div className="fundo_padrao"> 
     <div className="nav-side-menu">
     <div className="brand"></div>
     <i className="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
@@ -90,6 +91,7 @@ const ModalExample = (props) => {
             </ul>
      </div>
 </div>     
+</div>
   );
 }
 

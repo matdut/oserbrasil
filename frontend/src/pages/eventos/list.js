@@ -214,6 +214,8 @@ class listaeventosComponent extends React.Component  {
       listTodosOperadores:[],
       listservicosevento:[],
       listaeventodelete:[],
+      listaeventosexcluidos:[],
+      listEventosADM:[],
       validate: {
         nomeState: '',      
         datanascimentoState: '',   
@@ -250,7 +252,11 @@ class listaeventosComponent extends React.Component  {
        this.loadlistEventos();  
        this.loadOperadores();  
        this.loadTodosOperadores();
-    }   
+       this.loadeventosexcluidos();
+      // this.atualiza_evento();
+    } else {
+        this.loadlistEventosADM();
+    }  
 
     
   }
@@ -297,6 +303,66 @@ class listaeventosComponent extends React.Component  {
     })    
   } 
 
+  loadeventosexcluidos() {
+   //  debugger;
+     api.get(`/historicoEventos/listaeventoexcluidos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(resp =>{
+   
+       if (resp.data.success) {
+         const data = resp.data.data
+ 
+         this.setState({listaeventosexcluidos:data})
+       }
+     })
+     .catch ( error => {
+       alert("Error loadeventosexcluidos "+error)
+     })    
+   } 
+   
+  
+    
+
+   valor_total_servicos(){
+    let data_formatada = '0.00'
+
+    api.get(`/servicos/totalservicos/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success == true) {
+         const data = res.data.data  
+    
+        //   const valor = valorMask(data)
+      if (data !== 0) {
+        data_formatada = valorMask(data.toFixed(2))
+       }
+         this.setState({ 
+           valortotalviagens: data_formatada,
+           valor_total_alterado: data.toFixed(2),
+          });
+       }
+     })
+     .catch(error=>{
+       alert("Error server valor_total_servicos "+error)
+     })
+   }  
+
+   valor_total_viagens(){
+
+    api.get(`/servicos/totalviagens/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success == true) {       
+         
+        const data = res.data.data   
+         
+      //   const valor = valorMask(data)
+         this.setState({ totalviagens: data});
+       }
+     })
+     .catch(error=>{
+       alert("Error server valor_total_viagens"+error)
+     })
+   }  
+
+  
   limpar_campos() {
     this.setState({
       eventoId: '', 
@@ -370,6 +436,21 @@ class listaeventosComponent extends React.Component  {
       alert("Error server "+error)
     })
   }
+
+  loadlistEventosADM(){
+    // const url = baseUrl+"/cliente/list"   
+    
+    api.get(`/eventos/list`)
+     .then(res=>{
+       if (res.data.success) {
+         const data = res.data.data    
+         this.setState({listEventos:data})
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
   
   handleClick = () => {
   
@@ -814,6 +895,20 @@ class listaeventosComponent extends React.Component  {
     }          
   }     
 
+  autorizacao_inclusao() {
+ 
+    if (localStorage.getItem('logperfil') > 1){
+      return (
+        <div className="botao_lista_incluir">
+        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
+            <AddIcon/> <div className="botao_incluir"> Adicionar Eventos </div>
+        </Fab>
+      </div>    
+      );
+    } 
+
+  }
+
   verificaOrdem_servico(e) {    
        if (e.target.value.length == 0) {        
         this.setState({                   
@@ -969,14 +1064,14 @@ verificaData_Evento(e) {
                          
                             columns={[
                               { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '200px', minWidth: '200px', maxWidth: '200px'  },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '250px', minWidth: '250px', maxWidth: '250px', 
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
                               { title: 'Data do Evento', field: 'data_evento', width: '120px', minWidth: '120px', maxWidth: '120px', 
                               render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
-                              { title: 'Total de Viagens', field: 'viagens_total', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
+                              { title: 'Total de Serviços', field: 'viagens_total', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
-                              { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
@@ -1060,17 +1155,17 @@ verificaData_Evento(e) {
                             title=""
                               
                             columns={[
-                              { title: '', field: '#', width: '60px', minWidth: '60px', maxWidth: '60px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '150px', minWidth: '150px', maxWidth: '150px', 
+                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
-                              { title: 'Data do Evento', field: 'data_evento', width: '80px', minWidth: '80px', maxWidth: '80px', 
+                              { title: 'Data do Evento', field: 'data_evento', width: '120px', minWidth: '120px', maxWidth: '120px', 
                               render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
-                              { title: 'Total de Viagens', field: 'viagens_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              { title: 'Total de Serviços', field: 'viagens_total', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
-                              { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', width: '90px', minWidth: '90px', maxWidth: '90px', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },          
                             ]}
                             data={this.state.listClienteExcluidos}   
@@ -1139,20 +1234,20 @@ verificaData_Evento(e) {
                             title=""
                               
                             columns={[
-                              { title: '', field: '#', width: '60px', minWidth: '60px', maxWidth: '60px' },
-                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '100px', minWidth: '100px', maxWidth: '100px'  },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '150px', minWidth: '150px', maxWidth: '150px', 
+                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
-                              { title: 'Data do Evento', field: 'data_evento', width: '80px', minWidth: '80px', maxWidth: '80px', 
+                              { title: 'Data do Evento', field: 'data_evento', width: '120px', minWidth: '120px', maxWidth: '120px', 
                               render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
-                              { title: 'Total de Viagens', field: 'viagens_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              { title: 'Total de Serviços', field: 'viagens_total', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
-                              { title: 'Valor Total', field: 'valor_total', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
+                              { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', width: '90px', minWidth: '90px', maxWidth: '90px', lookup: { 1: 'sadas', 2: 'asdas' },                              
-                             },          
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },   
                             ]}
-                            data={this.state.listClienteExcluidos}   
+                            data={this.state.listaeventosexcluidos}   
                             localization={{
                               body: {
                                 emptyDataSourceMessage: 'Nenhum registro para exibir',
@@ -1209,11 +1304,8 @@ verificaData_Evento(e) {
 
    </div> 
        
-        <div className="botao_lista_incluir">
-                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
-                            <AddIcon/> <div className="botao_incluir"> Adicionar Eventos </div>
-                        </Fab>
-                      </div>    
+       {this.autorizacao_inclusao()}
+               
        <br/>
        <ReactModal 
         isOpen={this.state.showMensagemDelete}
@@ -1605,6 +1697,7 @@ verificaData_Evento(e) {
     if (reason === 'clickaway') {
       return;
     }
+    
     this.setState({ 
       mensagem_alert_exclusao: false      
     });   
@@ -1734,8 +1827,9 @@ verificaData_Evento(e) {
  // debugger;
    api.get(`/servicos/getEvento/${userId}`)
     .then(res =>{
-
+debugger;
      if (res.data.success == true) {
+       debugger;
       const servicos = res.data.data; 
       this.setState({listservicosevento: servicos}); 
   //   console.log('criando loadservicoseventos  - '+JSON.stringify(res.data, null, "    ")); 
@@ -1784,20 +1878,23 @@ verificaData_Evento(e) {
 
       api.delete(`/servicos/deleteevento/${userId}`)
       }
-         debugger;
+
          api.get(`/eventos/get/${userId}`)
             .then(res=>{
 
             if (res.data.success == true) {
               const eventos = res.data.data         
-            //  console.log('criando loadeventodelete 123 - '+JSON.stringify(res.data, null, "    "));     
+           console.log('criando loadeventodelete 123 - '+JSON.stringify(res.data, null, "    "));     
             debugger;
                 const datapost_evento_incluir = {
+                  id: eventos[0].id,
+                  eventoId: eventos[0].id,
                   logid: eventos[0].logid,
                   perfilId: eventos[0].perfilId,    
                   ordem_servico: eventos[0].ordem_servico, 
                   nome_evento: eventos[0].nome_evento, 
                   viagens_total: eventos[0].viagens_total,
+                  valor_total: eventos[0].valor_total, 
                   data_evento: eventos[0].data_evento, 
                   statusId: eventos[0].statusId,          
                 }           
@@ -1805,11 +1902,15 @@ verificaData_Evento(e) {
                 api.post('/historicoEventos/create',datapost_evento_incluir);
               //   this.setState({listaeventodelete: data});             
               debugger;
+             
                 api.delete(`/eventos/delete/${userId}`)
                 .then(response =>{
                   if (response.data.success) {       
                     debugger;
-                    this.loadlistEventos()
+                   
+
+                    this.loadlistEventos();
+                    this.loadeventosexcluidos();
             
                     this.setState({       
                       mensagem_usuario: 'Evento excluído com sucesso!'

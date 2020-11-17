@@ -34,6 +34,28 @@ controllers.delete = async (req,res) => {
 
 }
 
+controllers.deletePaieFilhos  = async (req,res) => {
+  
+  // parameter post  
+  const { id, perfilId, logid, eventoid } = req.params;  
+ 
+  await Servicos.destroy({
+    where: {  eventoId: eventoid, logid: logid, perfilId: perfilId, 
+      servico_pai_id: {
+        [Op.in]: [id, 0],  
+      }}
+  }).then( function (data){
+    return res.json({success:true, data: data});
+    //return data;
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  })
+   //res.json({success:true, deleted:del, message:"Deleted successful"});
+
+}
+
 controllers.deleteevento = async (req,res) => {
   
   // parameter post  
@@ -75,6 +97,25 @@ controllers.getEvento = async (req, res) => {
   console.log('eventoid - '+ eventoid);
   await Servicos.findAll({    
     where: { eventoId: eventoid} 
+  })
+  .then( function(data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+     return res.json({success:false});
+  })
+  
+}
+
+controllers.getEventoPai = async (req, res) => {
+  const { paiId, eventoid } = req.params;
+  console.log('eventoid - '+ eventoid);
+  await Servicos.findAll({    
+    where: { id: paiId, eventoId: eventoid, servico_pai_id: 0} 
   })
   .then( function(data){
     if (data.length > 0) {
@@ -399,7 +440,11 @@ controllers.valorServicoTodosEventos = async (req, res) => {
   const { id, perfilId } = req.params;
 
   const salesValue = await Servicos.sum('valor_estimado', {
-    where: { logid: id, perfilId: perfilId, servico_pai_id: 0 }
+    where: { logid: id, perfilId: perfilId, 
+      servico_pai_id: {
+        [Op.or]: [null, 0],            
+      } 
+    }
   });
 
    return res.json({success:true, data: salesValue});
@@ -412,10 +457,7 @@ controllers.totalViagensEventos = async (req, res) => {
   const { id, perfilId } = req.params;
 
   const salesCount = await Servicos.count({
-    where: { logid: id, perfilId: perfilId,
-      servico_pai_id: {
-        [Op.In]: [null,0]             
-      }
+    where: { logid: id, perfilId: perfilId      
      }
   });
 
@@ -429,6 +471,7 @@ controllers.totalViagensADM = async (req, res) => {
   // const { eventoid,  id, perfilId } = req.params;
  
    const salesCount = await Servicos.count({ 
+     
    });
  
    return res.json({success:true, data: salesCount});
@@ -440,7 +483,10 @@ controllers.totalViagensADM = async (req, res) => {
   const { id, perfilId } = req.params;
 
   const salesValue = await Servicos.sum('valor_estimado', {
-    where: { servico_pai_id: 0 }
+    where: {  servico_pai_id: {
+                    [Op.or]: [null, 0],        
+              } 
+            }
   });
 
    return res.json({success:true, data: salesValue});

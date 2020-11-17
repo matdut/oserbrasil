@@ -192,6 +192,12 @@
       color: #fff;
 
     }
+
+.fundo_padrao {
+    background: transparent linear-gradient(353deg, #45108A 0%, #45108A 13%, #3D065F 62%, #12054E 96%, #10054D 100%) 0% 0% no-repeat padding-box;
+
+}    
+   
 .navbar {
   margin-bottom: 0;
   background-color: #0F074E !important;

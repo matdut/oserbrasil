@@ -6,7 +6,7 @@ const controllers = {}
 
 var sequelize = require('../model/database');
 var Eventos = require('../model/Eventos');
-var Tipo = require('../model/Tipo_transporte');
+//var Tipo = require('../model/Tipo_transporte');
 var Servicos = require('../model/servicos');
 
 // para migrar por si no tiene tablas
@@ -58,7 +58,7 @@ controllers.deleteEmpresa = async (req,res) => {
 
 controllers.list = async (req,res) => {
   await Eventos.findAll({
-    include: [Tipo]
+  
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -67,6 +67,8 @@ controllers.list = async (req,res) => {
     return res.json({success:false, message: error});
   })
 }
+
+
 
 controllers.listServicosBusca = async (req,res) => {
   const { id, perfilId, eventoid } = req.params;

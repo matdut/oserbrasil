@@ -135,54 +135,94 @@ class menu_clienteComponent extends React.Component  {
   {  
 
  return (
-  <div>    
-  <div className="left">    
-  <br/>
-  <div className="item avatar_titulo">
-       <i><div className="avatar"> <Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                    
-       </div>
-         <div className="teste perfil">
-         <a href={`/operadores_alterar/`+localStorage.getItem('logid')}>   
-              Editar Perfil  
-          </a>  
-         </div>
-       </i>      
-   </div>            
-  <div class="item teste active">
-      <LightTooltip title="Inicio" placement="top">
-        <a href="/area_operador">
-        <i class="fas fa-home"></i>   
-        </a>  
-      </LightTooltip>   
-    </div>   
-  <div className="item teste">
-  <LightTooltip title="Senha" placement="top">
-      <a href={`/senha_operador_alterar/`+localStorage.getItem('logid')}>
-        <i className="fas fa-fw fa-columns"></i>
-      </a>  
-  </LightTooltip>    
-  </div>
-  <div className="item teste">    
-       <LightTooltip title="Eventos" placement="top">
-            <a href={"/lista_evento/list"}>           
-            <i class="fas fa-bell"></i>
-            </a>  
-        </LightTooltip>    
-    </div>  
-  <div className="item teste">
-     <LightTooltip title="Sair" placement="top">
-      <button type="button" className="btn btn-sm botao_sair" onClick={this.handleClick}>
-         <i class="fas fa-sign-out-alt"></i> </button>   
-     </LightTooltip>    
-  </div>    
-    
-  <div className="item_sem_borda versao_sistema"> 
-        <img src="/logo.png" alt="..." width="50" className="logo_centralizado"/>
-       <div className="data_versao"> 30/09/20 v2.0.0 </div>
-     </div>  
- </div>                                       
-                          
-</div> 
+  <div className="d-flex justify-content-left">       
+  <div className="nav-side-menu">
+  <div className="brand"></div>
+  <i className="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+
+      <div className="menu-list">
+
+          <ul id="menu-content" className="menu-content collapse out">
+              <li>
+                <div className="avatar_titulo">
+                <div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                         
+                </div>
+                  <div className="teste perfil">
+                  <a href={`/operadores_alterar/`+localStorage.getItem('logid')}>     
+                        Editar Perfil  
+                    </a>  
+                    <br/>
+                  </div>
+                </div>   
+              </li>
+              <li>
+              <div className="itens_menu">
+                <a href="/area_operador" className="icon_centralizado_novo">                    
+                   <LightTooltip title="Inicio" placement="top">                
+                      <i className="fas fa-home"></i>   
+                   </LightTooltip>    
+                </a>
+                </div>
+              </li>     
+              <li>
+              <div className="itens_menu">
+                <a href="/lista_evento/list" className="icon_centralizado_novo">                    
+                   <LightTooltip title="Eventos" placement="top">                
+                   <i className="fas fa-calendar-alt"></i>     
+                   </LightTooltip>    
+                </a>
+                </div>
+              </li>   
+              <li>
+              <div className="itens_menu">
+                <a href={`/empresa_dados_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <LightTooltip title="Dados da empresa" placement="top">
+                <i className="fas fa-fw fa-columns"></i>                  
+                </LightTooltip>              
+                </a>
+                </div>
+              </li>
+              <li>
+              <div className="itens_menu">
+                <a href={"/cartao_credito/list"} className="icon_centralizado_novo">
+                <LightTooltip title="Cartão Crédito" placement="top">
+                    <i className="fas fa-credit-card"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li>
+            
+              <li>
+              <div className="itens_menu">
+                <a href={`/senha_operador_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <LightTooltip title="Senha" placement="top">
+                    <i className="fas fa-unlock-alt"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li>         
+              <li>
+              <div className="itens_menu">
+                <a href={`/operador_lista_empresa/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                     <LightTooltip title="Operadores" placement="top">
+                      <i className="fas fa-users-cog"></i>
+                      </LightTooltip>              
+                    </a>
+                 </div>   
+               </li>                          
+              <li>
+              <div className="itens_menu">
+              <a onClick={this.handleClick} className="icon_centralizado_novo">
+                <LightTooltip title="Sair" placement="right">                  
+                   <i className="fas fa-sign-out-alt"></i>
+                </LightTooltip>    
+              </a> 
+              </div> 
+              </li>                                 
+          </ul>
+   </div>
+   </div>
+</div>     
  );  
  }
 }

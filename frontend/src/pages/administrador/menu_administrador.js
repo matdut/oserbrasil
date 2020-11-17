@@ -128,6 +128,15 @@ class menu_administradorComponent extends React.Component  {
               </li>     
               <li>
               <div className="itens_menu">
+                <a href="/lista_evento/list" className="icon_centralizado_novo">                    
+                   <LightTooltip title="Eventos" placement="top">                
+                   <i className="fas fa-calendar-alt"></i>     
+                   </LightTooltip>    
+                </a>
+                </div>
+              </li>  
+              <li>
+              <div className="itens_menu">
                 <a href={'/lista_individual'} className="icon_centralizado_novo">
                 <LightTooltip title="Cliente" placement="top">
                    <i className="fas fa-user"></i>                     
@@ -196,15 +205,7 @@ class menu_administradorComponent extends React.Component  {
                 </a>
                 </div>
               </li>
-              <li>
-              <div className="itens_menu">
-                <a href={"/configuracao"} className="icon_centralizado_novo">
-                <LightTooltip title="Configuração" placement="top">
-                <i className="fas fa-cog"></i>
-                </LightTooltip>              
-                </a>
-                </div>
-              </li>  
+              
               <li>
               <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">

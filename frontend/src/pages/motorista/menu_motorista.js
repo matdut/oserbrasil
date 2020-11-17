@@ -141,7 +141,7 @@ class menu_motoristaComponent extends React.Component  {
 
           <ul id="menu-content" className="menu-content collapse out">
               <li>
-                <div className="item avatar_titulo">
+                <div className="avatar_titulo">
                 <div className="avatar_motorista"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil}/>                       
                 </div>
                   <div className="teste perfil">

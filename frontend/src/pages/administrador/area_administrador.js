@@ -164,7 +164,7 @@ class Area_administrador extends React.Component  {
                           <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
                         </div>
                         <div className="area_evento"> 
-                          Viagens
+                         Serviços
                           <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
                         </div>
                         <div className="area_evento_3_empresa"> 

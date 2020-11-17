@@ -56,9 +56,25 @@ controllers.deleteEmpresa = async (req,res) => {
 
 }
 
+controllers.listaeventoexcluidos = async (req,res) => {
+  const { id, perfilId } = req.params;
+  
+  await HistoricoEventos.findAll({   
+    where: { logid: id, perfilId: perfilId },  
+    order: [
+      ['createdAt', 'DESC']
+    ]
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
 controllers.list = async (req,res) => {
-  await HistoricoEventos.findAll({
-    include: [Tipo]
+  await HistoricoEventos.findAll({   
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -108,7 +124,7 @@ controllers.listaevento = async (req,res) => {
 
 controllers.create = async (req,res) => {  
   // DATA parametros desde post  
-  const { logid, perfilId, ordem_servico, nome_evento, data_evento, valor_total } = req.body;
+  const { id, eventoId, logid, perfilId, ordem_servico, nome_evento, data_evento, viagens_total, valor_total } = req.body;
 
   console.log('passou aqui create '+logid);
 
@@ -116,11 +132,14 @@ controllers.create = async (req,res) => {
   //console.log("ROle es ==>"+role)
   //create
   await HistoricoEventos.create({   
+    id: id,
+    eventoId: eventoId,
     logid: logid,
     perfilId: perfilId,    
     ordem_servico: ordem_servico, 
     nome_evento: nome_evento, 
     data_evento: data_evento,     
+    viagens_total: viagens_total,
     valor_total: valor_total
   })
   .then( function (data){
@@ -137,7 +156,7 @@ controllers.update = async (req, res) => {
   const { id } = req.params;  
 
   // parameter post
-  const { logid, perfilId, ordem_servico, viagens_total, nome_evento, data_evento, valor_total } = req.body;
+  const { logid, perfilId, ordem_servico, nome_evento, data_evento, viagens_total, valor_total } = req.body;
   
   // update data
   
@@ -147,8 +166,8 @@ controllers.update = async (req, res) => {
     ordem_servico: ordem_servico, 
     nome_evento: nome_evento, 
     data_evento: data_evento,     
-    valor_total: valor_total,
     viagens_total: viagens_total,
+    valor_total: valor_total
   },{
     where: { id: id}
   })

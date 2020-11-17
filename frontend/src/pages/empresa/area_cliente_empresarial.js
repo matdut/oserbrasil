@@ -27,6 +27,8 @@ class Area_cliente extends React.Component  {
     this.loadTotalServicosEvento();
     this.loadTotalViagensEventos();
      //this.loadCliente()
+
+         
   }
 
   loadTotalServicosEvento(){
@@ -37,7 +39,7 @@ class Area_cliente extends React.Component  {
        if (res.data.success == true) {
          const data = res.data.data    
          
-         console.log('valor  -'+data.toFixed(2));
+         //console.log('valor  -'+data.toFixed(2));
 
          this.setState({
             campvalor_total: valorMask(data.toFixed(2)),
@@ -152,7 +154,7 @@ class Area_cliente extends React.Component  {
                         <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
                       </div>
                       <div className="area_evento"> 
-                        Viagens
+                      Serviços
                         <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
                       </div>
                       <div className="area_evento_3_empresa"> 

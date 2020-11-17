@@ -1,11 +1,12 @@
 import React  from 'react';
 import ReactDOM from 'react-dom';
+import api from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Menu_cliente_individual from '../cliente/menu_cliente_individual' ;
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-
+import { valorMask } from '../formatacao/valormask';
 
 class Area_cliente extends React.Component  {
   constructor(props){
@@ -25,6 +26,10 @@ class Area_cliente extends React.Component  {
       id: localStorage.getItem('logid') 
     });
 
+    this.loadlistEventos();
+    this.loadTotalServicosEvento();
+    this.loadTotalViagensEventos();
+
   }
     
   verifica_titulo() {    
@@ -34,7 +39,59 @@ class Area_cliente extends React.Component  {
      ); 
   
   }  
+  loadTotalServicosEvento(){
+    // const url = baseUrl+"/cliente/list"   
+    //debugger;
+    api.get(`/servicos/valorServicoTodosEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success == true) {
+         const data = res.data.data    
+         
+         //console.log('valor  -'+data.toFixed(2));
 
+         this.setState({
+            campvalor_total: valorMask(data.toFixed(2)),
+         })
+       }
+     })
+     .catch(error=>{
+       alert("Error server 1 "+error)
+     })
+   }
+
+   loadTotalViagensEventos(){
+    // const url = baseUrl+"/cliente/list"   
+    debugger;
+    api.get(`/servicos/totalViagensEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success == true) {
+         const data = res.data.data             
+//         console.log('valor  -'+data.toFixed(2));
+
+         this.setState({
+          campTotal_viagens: data,
+         })
+       }
+     })
+     .catch(error=>{
+       alert("Error server 1 "+error)
+     })
+   }
+
+  loadlistEventos(){
+    // const url = baseUrl+"/cliente/list"   
+    
+    api.get(`/eventos/totaleventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success) {
+         const data = res.data.data    
+         this.setState({totalEventos:data.count})
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
 verifica_horario(){
   const d = new Date();
   const hour = d.getHours();
@@ -83,33 +140,31 @@ verifica_horario(){
               <div className="titulo_area">SEUS NÚMEROS</div>
 
               <div class="p-2">               
-                <div class="d-flex justify-content-start titulo_area_descricao">
+                <div class="d-flex justify-content-start titulo_area_descricao_empresarial">
                       <div> 
-                          <img src='/evento.png' style={{ width: '57px', height: '56px' }}/>                           
+                          <img src='/icon-calendar-157837097.jpg' style={{ width: '40px', height: '40px' }}/>                           
                       </div>                      
+                      <div className="area_evento_empresa"> 
+                        Eventos <br/>
+                        <div className="area_evento_valor"> {this.state.totalEventos}   </div>
+                      </div>
+                      <div className="area_evento_2_empresa"> 
+                        <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
+                      </div>
                       <div className="area_evento"> 
-                        Eventos 
-                        0   
+                      Serviços
+                        <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
                       </div>
-                      <div className="area_evento_2"> 
-                        <img src='/tour.png' style={{ width: '57px', height: '56px' }}/>                
-                      </div>
-                      <div className="area_evento"> 
-                        Viagens
-                        0
-                      </div>
-                      <div className="area_evento_3"> 
-                        <img src='/user.png' style={{ width: '57px', height: '56px' }}/>                
+                      <div className="area_evento_3_empresa"> 
+                        <img src='/Group_1157.png' style={{ width: '40px', height: '40px' }}/>                
                       </div>
                       <div className="area_evento"> 
                         Custos
-                        0
-                      </div>
+                           <div className="area_evento_valor">R$ {this.state.campvalor_total}</div>
+                      </div>                     
                   </div>  
               </div>  
-              <br/>
-
-              <br/>
+             
               <br/>
               <br/>
           </div> 

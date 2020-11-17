@@ -282,13 +282,15 @@ class loginComponent extends React.Component  {
     //const { email, senha } = this.state;    
 
     return (
+     
       <div>
         <Cabecalho />     
 
         <br/>                
         <br/>
         
-        <Container className="App">           
+        <Container fluid={true}>
+          
         <br/>
         <div className="d-flex justify-content-center">           
            <img className="logo_inicio" src="logo_oser_black.png"/>
@@ -374,6 +376,8 @@ class loginComponent extends React.Component  {
       <br/>
       <br/>
     </div> 
+    
+
     );
   }
 

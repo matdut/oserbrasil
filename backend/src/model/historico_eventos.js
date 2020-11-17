@@ -9,7 +9,10 @@ var Historico_eventos = sequelize.define(nametable,{
     type:Sequelize.INTEGER,
     primaryKey:true,
     allowNull: false,
-    autoIncrement:true
+  },
+  eventoId:{
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   logid: {
     type: Sequelize.INTEGER,

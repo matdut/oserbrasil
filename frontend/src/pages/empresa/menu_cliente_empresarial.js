@@ -140,6 +140,7 @@ class menu_clienteComponent extends React.Component  {
   {  
 
  return (
+  <div className="d-flex justify-content-left">       
   <div className="nav-side-menu">
   <div className="brand"></div>
   <i className="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
@@ -148,7 +149,7 @@ class menu_clienteComponent extends React.Component  {
 
           <ul id="menu-content" className="menu-content collapse out">
               <li>
-                <div className="item avatar_titulo">
+                <div className="avatar_titulo">
                 <div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                         
                 </div>
                   <div className="teste perfil">
@@ -232,6 +233,7 @@ class menu_clienteComponent extends React.Component  {
               </div> 
               </li>                                 
           </ul>
+   </div>
    </div>
 </div>     
 

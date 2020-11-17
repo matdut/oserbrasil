@@ -1,6 +1,6 @@
 import React  from 'react';
 import Box from '@material-ui/core/Box';
-import {Form, Container, Progress, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
+import {Form, Container, Progress, Row, Col, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
@@ -855,29 +855,23 @@ sendSave(){
 
 verificar_menu() {   
   //console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
-  return(
-    <div>
-        <div className="d-flex justify-content-around">
-             <div className="botao_navegacao">               
-                 
-               </div>                  
-               <div>
-                 <div className="titulo_representante_cliente">                
-                   <label className="label_titulo">  Olá, Fale um pouco sobre você!</label>            
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                      <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                        
-                  </div>   
-               </div>                     
-        </div>      
-          <br/>    
-          <div className="barra_incluir">        
-             <Progress color="warning" value={this.state.progresso} className="progressbar"/>          
-          </div>              
-    </div>           
+  return(   
+
+    <Row>
+    <Col xs={3} md={2}>
+    
+    </Col>
+    <Col xs={6} md={8} className="titulo_representante_cliente">
+    <label className="label_titulo">  Olá, Fale um pouco sobre você!</label>   
+    </Col>
+    <Col xs={3} md={2}>
+    <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>    
+    </Col>
+    <br/>    
+        <div className="barra_incluir">
+           <Progress color="warning" value={this.state.progresso} className="progressbar"/>
+        </div>
+  </Row>      
    );
 }
 

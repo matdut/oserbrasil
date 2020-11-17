@@ -201,6 +201,7 @@ const customrotaStyles = {
     top                    : '0px',
     left                   : '40vm',          
     right                  : '0%',
+    width                  : '40%',   
     bottom                 : 'auto',  
     height                 : '100vh',        
     padding                : '0px !important',      
@@ -225,14 +226,14 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '40vm',     
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
     width                  : '560px',    
     padding                : '0px !important',      
-    overflow               : 'auto',
-    WebkitOverflowScrolling: 'touch',
+    overflow               : 'hidden',
+    WebkitOverflowScrolling: 'hidden',
     position               : 'absolute',
     border: '1px solid #ccc',   
   }
@@ -260,6 +261,8 @@ class listaservicosComponent extends React.Component  {
       hora_formatada: '', 
       inicio: 0,
       tabIndex: "2",
+      //tabAlteracaoIndex: '2',
+     // tabInclusaoIndex: '2',
       address: '',
       campeventoId: '',
       campDeletarId: '',
@@ -274,6 +277,7 @@ class listaservicosComponent extends React.Component  {
       camphora_inicial: '',
       camphora_final: '',
       campTelefone1: '',
+      camptipoevento: '',
       camplocalembarque: '',
       camplocaldesembarque: '',
       campqtddiarias: '',
@@ -282,6 +286,12 @@ class listaservicosComponent extends React.Component  {
       campbilingue: false,
       campreceptivo: false,
       campdistancia: 0,
+      verificaPai: '',
+      valor_estimado_filho: '',
+      distancia_filho: '',
+      tempo_filho: '',
+      eventoid: 0,
+      quantidade_diarias: 0,
       camptempo: 0,      
       campcartaoid: '',
       campCompanhia_aerea: '',
@@ -368,6 +378,7 @@ class listaservicosComponent extends React.Component  {
       listTipoTransporte:[],
       listTodosOperadores:[],
       listservicoseventos:[],
+      listaservicosexcluidos:[],
       listaCartao:[],
       erro_tipo: false,      
       embarque_latitude: '',
@@ -451,10 +462,52 @@ class listaservicosComponent extends React.Component  {
     this.loadTarifa();
     this.valor_total_servicos();
     this.valor_total_viagens();
-
+    this.loadlistServicosExcluidos();  
+    this.atualiza_evento();
    // this.teste();
    // this.calculo_rota_total();
   }
+
+  atualiza_evento() {
+    debugger;
+    let totalservicos = 0;
+    let totalviagens = 0;
+    api.get(`/servicos/totalservicos/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    .then(resservico=>{
+      if (resservico.data.success == true) {
+        totalservicos = resservico.data.data;  
+
+        api.get(`/servicos/totalviagens/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+        .then(resviagem=>{
+          if (resviagem.data.success == true) {       
+            
+           totalviagens = resviagem.data.data;   
+
+           const datapost_alterar_valores = {                
+            viagens_total: totalviagens,
+            valor_total: totalservicos,              
+          }           
+      
+           api.put(`/eventos/update/${localStorage.getItem('logeventoservico')}`, datapost_alterar_valores);
+
+          }
+        })
+        .catch(error=>{
+          alert("Error server valor_total_viagens"+error)
+        })
+
+      }
+    })
+    .catch(error=>{
+      alert("Error server valor_total_servicos "+error)
+    })
+  
+
+    
+
+  
+  }
+ 
 
  /* teste() {
     const num = 6.647; 
@@ -489,11 +542,15 @@ class listaservicosComponent extends React.Component  {
       if (data !== 0) {
         data_formatada = valorMask(data.toFixed(2))
        }
-         this.setState({ valortotalviagens: data_formatada});
+     //  debugger;
+         this.setState({           
+           valortotalviagens: data_formatada,
+           valor_total_alterado: data.toFixed(2),
+          });
        }
      })
      .catch(error=>{
-       alert("Error server "+error)
+       alert("Error server valor_total_servicos "+error)
      })
    }  
 
@@ -504,13 +561,13 @@ class listaservicosComponent extends React.Component  {
        if (res.data.success == true) {       
          
         const data = res.data.data   
-         
+        debugger;
       //   const valor = valorMask(data)
          this.setState({ totalviagens: data});
        }
      })
      .catch(error=>{
-       alert("Error server "+error)
+       alert("Error server valor_total_viagens"+error)
      })
    }  
 
@@ -528,10 +585,27 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server "+error)
+       alert("Error server loadlistServicos "+error)
      })
    }
 
+   loadlistServicosExcluidos(){
+    // const url = baseUrl+"/cliente/list"   
+    //debugger;
+    api.get(`/historicoServicos/listaservicosexcluidos/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success == true) {
+         const data = res.data.data    
+         this.setState({
+          listaservicosexcluidos:data,
+           loading: false,
+          })
+       }
+     })
+     .catch(error=>{
+       alert("Error server loadlistServicosExcluidos "+error)
+     })
+   }
    
    
    /*procura_filho() {
@@ -558,7 +632,11 @@ class listaservicosComponent extends React.Component  {
      .then(res=>{
        if (res.data.success == true) {
         this.setState({     
-           camptipoId: res.data.data[0].tipoTransporte,
+           camptipoId: res.data.data[0].tipoTransporte,           
+           tabIndex: res.data.data[0].tipoEventoId.toString(),
+         //  tabIndex: res.data.data[0].tipoEventoId,
+          // tabInclusaoIndex: res.data.data[0].tipoEventoId,
+          // tabAlteracaoIndex: res.data.data[0].tipoEventoId,
            campeventoId: res.data.data[0].eventoid,
            campNome: res.data.data[0].nome_passageiro,
            campTelefone1: res.data.data[0].telefone_passageiro,
@@ -1446,7 +1524,7 @@ verifica_rota(inicio) {
   verifica_botao(inicio) {
     const { validate } = this.state 
 
-    //console.log(' inicio verifica_botao - '+JSON.stringify(this.state, null, "    "))
+    console.log(' inicio verifica_botao - '+JSON.stringify(this.state, null, "    "))
 
     if (inicio == 1) {
       
@@ -1608,7 +1686,7 @@ verifica_rota(inicio) {
 
     if (this.state.mensagem_servico !== "") {
       return (
-        <div class="p-2 font_mensagem_erro"> 
+        <div className="p-2 font_mensagem_erro"> 
           <Collapse in={this.state.mensagem_error}>
           <Alert
             severity="error" 
@@ -1744,30 +1822,30 @@ verifica_rota(inicio) {
           <div className="titulo_admministrador">
           <div className="unnamed-character-style-4 descricao_admministrador_servico">          
               
-            <div class="p-2">               
-                <div class="d-flex justify-content-start titulo_area_descricao_servico">
+            <div className="p-2">               
+                <div className="d-flex justify-content-start titulo_area_descricao_servico">
                       <div> 
                           <img src='/icon-calendar-157837097.jpg' style={{ width: '30px', height: '30px', marginTop: '17px' }}/>                           
                       </div>                      
-                      <div class="p-2">
+                      <div className="p-2">
                         <div className="servico_titulo">Ordem Serviço</div>                        
                         <div className="servico_descricao_evento">{this.state.campordem_servico}</div>                                                     
                       </div>   
-                      <div class="p-2">
+                      <div className="p-2">
                         <div className="servico_titulo">Data Evento</div>       
                         <div className="servico_descricao_evento">{this.state.campdata_evento}</div>                             
                       </div>
                       <div className="area_evento_4_empresa"> 
                         <img src='/tour.png' style={{ width: '30px', height: '30px', marginTop: '17px' }}/>                
                       </div>
-                      <div class="p-2"> 
-                      <div className="servico_titulo">Total de Viagens</div>       
+                      <div className="p-2"> 
+                      <div className="servico_titulo">Total de Serviços</div>       
                                  <div className="servico_descricao_evento">{this.state.totalviagens}</div>          
                       </div>
                       <div className="area_evento_4_empresa"> 
                         <img src='/Group_1157.png' style={{ width: '30px', height: '30px', marginTop: '17px' }}/>                
                       </div>
-                      <div class="p-2"> 
+                      <div className="p-2"> 
                       <div className="servico_titulo">Custos</div>       
                        <div className="servico_descricao_evento">R$ {this.state.valortotalviagens}</div>  
                       </div>
@@ -1782,7 +1860,7 @@ verifica_rota(inicio) {
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
             <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>          
             <Tab label="Finalizados" value="2" className="tabs_titulo_lista_2"/>          
-            <Tab label="Excluídos" value="2" className="tabs_titulo_lista_2"/>          
+            <Tab label="Excluídos" value="3" className="tabs_titulo_lista_2"/>          
           </TabList>
         </AppBar>
         
@@ -1799,14 +1877,14 @@ verifica_rota(inicio) {
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '250px', minWidth: '250px', maxWidth: '250px' },
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '200px', minWidth: '200px', maxWidth: '200px' },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
                               { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
                               { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
-                              { title: 'Valor Total', field: 'valor_estimado', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
+                              { title: 'Valor Total', field: 'valor_estimado', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
                              
                               { title: '', field: 'motorista_bilingue', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
@@ -1910,28 +1988,28 @@ verifica_rota(inicio) {
                         <MaterialTable          
                             title=""
                             columns={[
-                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center' },   
+                              { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px', align: 'center' },   
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                              { title: '', field: 'tipoEventoId', width: '60px', minWidth: '60px', maxWidth: '60px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '300px', minWidth: '300px', maxWidth: '300px' },
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '250px', minWidth: '250px', maxWidth: '250px' },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
-                              { title: 'Horário', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },                                                                                  
+                              { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
-                              { title: 'Valor Total', field: 'valor_estimado', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: 'Valor Total', field: 'valor_estimado', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
+                             
                               { title: '', field: 'motorista_bilingue', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                           
                               { title: '', field: 'motorista_receptivo', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
-                              { title: '', field: '', width: '0px', minWidth: '0px', maxWidth: '0px', lookup: { 1: 'sadas', 2: 'asdas' },                              
-                             },                  
+                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },                 
                             ]}
                             data={this.state.listServicos}   
                             localization={{
@@ -1986,16 +2064,7 @@ verifica_rota(inicio) {
                               pageSizeOptions: [0],                     
                             }}
                             actions={[
-                              {             
-                                icon: 'edit',
-                                tooltip: 'editar',                                
-                                onClick: (evt, data) => this.onEditar(data)
-                              },
-                              {
-                                icon: 'delete',                                                             
-                                tooltip: 'Deleta Evento',          
-                                onClick: (evt, data) => this.handleOpenModalDelete(data)                                     
-                              }
+                             
                               /*,
                               {
                                 icon: 'add',                                                             
@@ -2013,30 +2082,31 @@ verifica_rota(inicio) {
                         <MaterialTable          
                             title=""
                             columns={[
-                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center' },   
+                              { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px', align: 'center' },   
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                              { title: '', field: 'tipoEventoId', width: '60px', minWidth: '60px', maxWidth: '60px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '300px', minWidth: '300px', maxWidth: '300px' },
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '250px', minWidth: '250px', maxWidth: '250px' },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
-                              { title: 'Horário', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },                                                                                  
+                              { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
-                              { title: 'Valor Total', field: 'valor_estimado', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: 'Valor Total', field: 'valor_estimado', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
+                             
                               { title: '', field: 'motorista_bilingue', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                           
                               { title: '', field: 'motorista_receptivo', width: '70px', minWidth: '70px', maxWidth: '70px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
-                              { title: '', field: '', width: '0px', minWidth: '0px', maxWidth: '0px', lookup: { 1: 'sadas', 2: 'asdas' },                              
-                             },                  
+                              
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                             },                     
                             ]}
-                            data={this.state.listServicos}   
+                            data={this.state.listaservicosexcluidos}   
                             localization={{
                               body: {
                                 emptyDataSourceMessage: 'Nenhum registro para exibir',
@@ -2111,8 +2181,8 @@ verifica_rota(inicio) {
               <CloseOutlinedIcon />
             </IconButton></div>             
             <div className="container_modal_alterado">
-                <div class="d-flex flex-column espacamento_modal">
-                  <div class="p-2">      
+                <div className="d-flex flex-column espacamento_modal">
+                  <div className="p-2">      
                               
                       <FormControl variant="outlined" disabled={this.state.ordem_servico_disabled}>
                         <InputLabel className="label_text" htmlFor="filled-adornment-password">Número de ordem</InputLabel>
@@ -2142,7 +2212,7 @@ verifica_rota(inicio) {
                       </FormHelperText>
                       </FormControl>     
                   </div>
-                  <div class="p-2">      
+                  <div className="p-2">      
                               
                               <FormControl variant="outlined" disabled={this.state.nome_evento_disabled}>
                                 <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Evento</InputLabel>
@@ -2172,7 +2242,7 @@ verifica_rota(inicio) {
                               </FormHelperText>
                               </FormControl>     
                           </div>
-                        <div class="p-2">                                    
+                        <div className="p-2">                                    
                               <FormControl variant="outlined" disabled={this.state.data_evento_disabled}>
                                 <InputLabel className="label_text" htmlFor="filled-adornment-password">Data do Evento</InputLabel>
                                 <OutlinedInput
@@ -2201,8 +2271,8 @@ verifica_rota(inicio) {
                               </FormHelperText>
                               </FormControl>     
                           </div>                                                  
-                          <div class="p-2">  
-                             <div class="d-flex justify-content-start">
+                          <div className="p-2">  
+                             <div className="d-flex justify-content-start">
                              <div>                  
                                     <FormControl variant="outlined" className="select_evento_operador">
                                       <InputLabel id="demo-simple-select-outlined-label">Operadores</InputLabel>
@@ -2225,7 +2295,7 @@ verifica_rota(inicio) {
                                  <div>
                                  <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
                                             onClick={()=>this.handleOpenModalCompartilhar()}>
-                                    Adicionar Operador  <i class="fas fa-users"></i>
+                                    Adicionar Operador  <i className="fas fa-users"></i>
                                  </Button>    
                                  </div>
                              </div>       
@@ -2302,11 +2372,12 @@ verifica_rota(inicio) {
           <div>
           <div className="row modal-body">    
           
-              <div class="p-2">  
+              <div className="p-2">  
               <TabContext value={this.state.tabIndex} className="tabs_padrao">
               <div>                  
                 <AppBar position="static" color="transparent" >
-                  <TabList onChange={(e, index) => this.setState({ tabIndex: index })} aria-label="simple tabs example">
+                  <TabList onChange={(e, index) => this.setState({ tabIndex: index })} 
+                           aria-label="simple tabs example">
                     <Tab label="Translado" value="2" className="tabs_titulo_lista"/>          
                     <Tab label="Diária" value="1" className="tabs_titulo_lista_2"/>          
                   </TabList>
@@ -2314,7 +2385,7 @@ verifica_rota(inicio) {
               </div>
           
                 <TabPanel value="2" className="tirar_espaco_modal">
-                <div class="p-2">  
+                <div className="p-2">  
                 <FormControl className="select_modal_tipo" variant="outlined">
                         <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
                         <Select
@@ -2342,7 +2413,7 @@ verifica_rota(inicio) {
                         </Select>
                       </FormControl>                                                                  
                </div>            
-               <div class="p-2">
+               <div className="p-2">
                   <FormControl variant="outlined" className="data_text_servico">
                               <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Passageiro</InputLabel>
                               <OutlinedInput
@@ -2372,8 +2443,8 @@ verifica_rota(inicio) {
                               />                         
                         </FormControl>    
                </div>
-               <div class="p-2">  
-                   <div class="d-flex justify-content-start">
+               <div className="p-2">  
+                   <div className="d-flex justify-content-start">
                        <div>   
                        <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Telefone</InputLabel>
@@ -2438,8 +2509,8 @@ verifica_rota(inicio) {
                       </div>
                   </div>        
               </div> 
-              <div class="p-2">    
-                        <div class="d-flex justify-content-start">
+              <div className="p-2">    
+                        <div className="d-flex justify-content-start">
                               <div>
                               <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
@@ -2511,7 +2582,7 @@ verifica_rota(inicio) {
 
                 </TabPanel>
                 <TabPanel value="1" className="tirar_espaco_modal">
-                <div class="p-2">  
+                <div className="p-2">  
                 <FormControl className="select_modal_tipo" variant="outlined">
                         <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
                         <Select
@@ -2539,7 +2610,7 @@ verifica_rota(inicio) {
                         </Select>
                       </FormControl>                                                                    
                </div>            
-               <div class="p-2">
+               <div className="p-2">
                <FormControl variant="outlined" className="data_text_servico">
                               <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Passageiro</InputLabel>
                               <OutlinedInput
@@ -2569,8 +2640,8 @@ verifica_rota(inicio) {
                               />                         
                         </FormControl>        
                </div>
-               <div class="p-2">  
-                   <div class="d-flex justify-content-start">
+               <div className="p-2">  
+                   <div className="d-flex justify-content-start">
                        <div>   
                        <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Telefone</InputLabel>
@@ -2635,8 +2706,8 @@ verifica_rota(inicio) {
                       </div>
                   </div>        
               </div> 
-              <div class="p-2">    
-                        <div class="d-flex justify-content-start">
+              <div className="p-2">    
+                        <div className="d-flex justify-content-start">
                               <div>
                           <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
@@ -2702,8 +2773,8 @@ verifica_rota(inicio) {
                               </div>                
                       </div>    
                     </div>
-                    <div class="p-2">    
-                        <div class="d-flex justify-content-start">
+                    <div className="p-2">    
+                        <div className="d-flex justify-content-start">
                               <div>
                               <FormControl className="input_modal_direita" variant="outlined">
                                     <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Hora Final</InputLabel>
@@ -2776,7 +2847,7 @@ verifica_rota(inicio) {
                </TabContext>
               </div>
               <div className="alinha_campos">              
-                    <div class="p-2">           
+                    <div className="p-2">           
                     <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_descricao">Local de Embarque</div>
@@ -2796,7 +2867,7 @@ verifica_rota(inicio) {
                     </table>
                   </div>
                   
-                    <div class="p-2">
+                    <div className="p-2">
                     <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_descricao">Local de Desembarque</div>
@@ -2814,7 +2885,7 @@ verifica_rota(inicio) {
                   
                     </div>              
 
-                    <div class="p-2">
+                    <div className="p-2">
                     <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                                                             
                                <div className="checkbox_modal_descricao">Motorista deve fala Inglês?</div>
@@ -2834,10 +2905,10 @@ verifica_rota(inicio) {
                         </div> 
                     </div>
 
-                    <div class="p-2">
+                    <div className="p-2">
                       {this.verificar_tipo_servico()}
                     </div>
-                    <div class="p-2">
+                    <div className="p-2">
                     <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_dados_voo">Dados do vôo</div>
@@ -2916,7 +2987,7 @@ verifica_rota(inicio) {
                     </table>      
                     </div>               
 
-                    <div class="p-2">                      
+                    <div className="p-2">                      
                       <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_dados_voo">Motorista Preferencial</div>
@@ -2993,7 +3064,7 @@ verifica_rota(inicio) {
                          </tr>   
                     </table>    
                     </div>
-                    <div class="p-2">
+                    <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
                                <div className="checkbox_modal_descricao">Cartão Escolhido</div>
@@ -3074,7 +3145,7 @@ verifica_rota(inicio) {
                 </div> 
           <div>
           <div className="row modal-body">                      
-              <div class="p-2">             
+              <div className="p-2">             
               <TabContext value={this.state.tabIndex} className="tabs_padrao">
               <div>                
   
@@ -3088,7 +3159,7 @@ verifica_rota(inicio) {
               </div>
          
                 <TabPanel value="2" className="tirar_espaco_modal">
-                <div class="p-2">  
+                <div className="p-2">  
                 <FormControl className="select_modal_tipo" variant="outlined">
                         <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
                         <Select
@@ -3116,7 +3187,7 @@ verifica_rota(inicio) {
                         </Select>
                       </FormControl>                                                                  
                </div>            
-               <div class="p-2">
+               <div className="p-2">
                   <FormControl variant="outlined" className="data_text_servico">
                               <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Passageiro</InputLabel>
                               <OutlinedInput
@@ -3146,8 +3217,8 @@ verifica_rota(inicio) {
                               />                         
                         </FormControl>    
                </div>
-               <div class="p-2">  
-                   <div class="d-flex justify-content-start">
+               <div className="p-2">  
+                   <div className="d-flex justify-content-start">
                        <div>   
                        <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Telefone</InputLabel>
@@ -3212,8 +3283,8 @@ verifica_rota(inicio) {
                       </div>
                   </div>        
               </div> 
-              <div class="p-2">    
-                        <div class="d-flex justify-content-start">
+              <div className="p-2">    
+                        <div className="d-flex justify-content-start">
                               <div>
                               <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
@@ -3285,7 +3356,7 @@ verifica_rota(inicio) {
 
                 </TabPanel>
                 <TabPanel value="1" className="tirar_espaco_modal">
-                <div class="p-2">  
+                <div className="p-2">  
                 <FormControl className="select_modal_tipo" variant="outlined">
                         <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
                         <Select
@@ -3313,7 +3384,7 @@ verifica_rota(inicio) {
                         </Select>
                       </FormControl>                                                                    
                </div>            
-               <div class="p-2">
+               <div className="p-2">
                <FormControl variant="outlined" className="data_text_servico">
                               <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Passageiro</InputLabel>
                               <OutlinedInput
@@ -3343,8 +3414,8 @@ verifica_rota(inicio) {
                               />                         
                         </FormControl>        
                </div>
-               <div class="p-2">  
-                   <div class="d-flex justify-content-start">
+               <div className="p-2">  
+                   <div className="d-flex justify-content-start">
                        <div>   
                        <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Telefone</InputLabel>
@@ -3409,8 +3480,8 @@ verifica_rota(inicio) {
                       </div>
                   </div>        
               </div> 
-              <div class="p-2">    
-                        <div class="d-flex justify-content-start">
+              <div className="p-2">    
+                        <div className="d-flex justify-content-start">
                               <div>
                           <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
@@ -3476,8 +3547,8 @@ verifica_rota(inicio) {
                               </div>                
                       </div>    
                     </div>
-                    <div class="p-2">    
-                        <div class="d-flex justify-content-start">
+                    <div className="p-2">    
+                        <div className="d-flex justify-content-start">
                               <div>
                               <FormControl className="input_modal_direita" variant="outlined">
                                     <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Hora Final</InputLabel>
@@ -3550,7 +3621,7 @@ verifica_rota(inicio) {
                </TabContext>
               </div>
               <div className="alinha_campos">              
-                    <div class="p-2">           
+                    <div className="p-2">           
                     <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_descricao">Local de Embarque</div>
@@ -3561,7 +3632,7 @@ verifica_rota(inicio) {
                            </tr>
                         <tr>
                           <td rowSpan="2">                           
-                           <div style={{width: '70%'}}>
+                           <div>
                                { this.mostrar_endereco_selecionado_embarque() } 
                                
                               </div>
@@ -3570,7 +3641,7 @@ verifica_rota(inicio) {
                     </table>
                   </div>
                   
-                    <div class="p-2">
+                    <div className="p-2">
                     <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_descricao">Local de Desembarque</div>
@@ -3588,7 +3659,7 @@ verifica_rota(inicio) {
                   
                     </div>              
 
-                    <div class="p-2">
+                    <div className="p-2">
                     <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                                                             
                                <div className="checkbox_modal_descricao">Motorista deve fala Inglês?</div>
@@ -3608,10 +3679,10 @@ verifica_rota(inicio) {
                         </div> 
                     </div>
 
-                    <div class="p-2">
+                    <div className="p-2">
                       {this.verificar_tipo_servico()}
                     </div>
-                    <div class="p-2">
+                    <div className="p-2">
                     <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_dados_voo">Dados do vôo</div>
@@ -3690,7 +3761,7 @@ verifica_rota(inicio) {
                     </table>      
                     </div>               
 
-                    <div class="p-2">                      
+                    <div className="p-2">                      
                       <table style={{width: '70%'}}>
                       <tr><td> 
                            <div className="checkbox_modal_dados_voo">Motorista Preferencial</div>
@@ -3767,7 +3838,7 @@ verifica_rota(inicio) {
                          </tr>   
                     </table>    
                     </div>
-                    <div class="p-2">
+                    <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
                                <div className="checkbox_modal_descricao">Cartão Escolhido</div>
@@ -3844,8 +3915,8 @@ verifica_rota(inicio) {
             <div className="container_modal_alterado">
                <div className="d-flex justify-content">        
                  <div className="App-payment">  
-                 <div class="d-flex flex-column espacamento_caixa_modal_cartao">              
-                      <div class="p-2">                        
+                 <div className="d-flex flex-column espacamento_caixa_modal_cartao">              
+                      <div className="p-2">                        
                         <Cards
                             cvc={this.state.cvc}
                             expiry={this.state.expiry}
@@ -3855,7 +3926,7 @@ verifica_rota(inicio) {
                           />
                       </div>   
                       
-                      <div class="p-2">                     
+                      <div className="p-2">                     
                       <input
                             type="tel"
                             name="number"
@@ -3870,7 +3941,7 @@ verifica_rota(inicio) {
                             required
                           />
                       </div>      
-                      <div class="p-2">          
+                      <div className="p-2">          
                       <input
                             type="text"
                             name="name"
@@ -3884,7 +3955,7 @@ verifica_rota(inicio) {
                             required                          
                           /> 
                       </div>      
-                      <div class="p-2">          
+                      <div className="p-2">          
                           <div className="d-flex justify-content-start">
                             <div>
                                 <input
@@ -3928,7 +3999,7 @@ verifica_rota(inicio) {
         style={customrotaStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> 
-        <div className="container-fluid">
+        <div >
              <div className="row">
                <div className="col-9 altura_titulo">
                Local Embarque
@@ -3943,8 +4014,8 @@ verifica_rota(inicio) {
             <div className="container_alterado">
                <div className="d-flex justify-content">        
                  <div>  
-                 <div class="d-flex flex-column espacamento_modal_motorista">                                   
-                      <div class="p-2">   
+                 <div className="d-flex flex-column espacamento_modal_motorista">                                   
+                      <div className="p-2">   
                       <GooglePlacesAutocomplete                                                                                  
                                 apiKey="AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4"                                                                 
                                 country="br"
@@ -3995,7 +4066,7 @@ verifica_rota(inicio) {
         style={customrotaStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> 
-        <div className="container-fluid">
+        <div className="container">
              <div className="row">
                <div className="col-9 altura_titulo">
                Local Desembarque
@@ -4010,8 +4081,8 @@ verifica_rota(inicio) {
             <div className="container_alterado">
                <div className="d-flex justify-content">        
                  <div>  
-                 <div class="d-flex flex-column espacamento_modal_motorista">                                   
-                      <div class="p-2">   
+                 <div className="d-flex flex-column espacamento_modal_motorista">                                   
+                      <div className="p-2">   
                       <GooglePlacesAutocomplete                                                                                  
                                 apiKey="AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4"                                                                 
                                 country="br"
@@ -4084,17 +4155,18 @@ verifica_rota(inicio) {
       return (
 
         <Grid container alignItems="center">
-                            <Grid item>
+        <Grid item>
           <LocationOnIcon styles={useStyles.icon} />
+          </Grid>        
+          <Grid item xs className="descricao_modal_servico">
+        
+          {this.state.camplocalembarque}                            
+     
+          <Typography variant="body2" color="textSecondary">                                   
+          </Typography>
+          </Grid>
         </Grid>        
-            <Grid item xs>
-              <div className="descricao_modal_servico">
-                 {this.state.camplocalembarque}                            
-              </div>   
-                 <Typography variant="body2" color="textSecondary">                                   
-                 </Typography>
-             </Grid>
-       </Grid>              
+               
     
       );
     }
@@ -4277,15 +4349,22 @@ verifica_rota(inicio) {
   }   
 
   handleOpenModalDelete(data) { 
+
     this.setState({ 
       showMensagemDelete: true,
       campDeletarId: data.id,
+      camptipoevento: data.tipoEventoId, 
+      verificaPai: data.servico_pai_id,
+      eventoid: data.eventoId,
+      camptipoevento: data.tipoEventoId,
+      valor_estimado_filho: data.valor_estimado,
+      distancia_filho: data.km_translado,
+      quantidade_diarias: data.quantidade_diarias,
+      tempo_filho: this.formatar_total_segundos(parseInt(data.tempo_translado.substring(0,2)),data.tempo_translado.substring(3,5)),
       retorno: '',
       campDescricao: '',
       validacao_descricao: false,
-    });     
-
-    
+    });        
      
     
   }
@@ -4432,6 +4511,11 @@ verifica_rota(inicio) {
       }
 
   }
+
+  formatar_total_segundos(h,min) {
+    return parseInt(h*60) + parseInt(min);
+   }
+   
   
   separa_hora_minuto(separar) {
 
@@ -4440,6 +4524,8 @@ verifica_rota(inicio) {
 
 
   }
+
+  
 
   calcula_hora() {
   
@@ -4822,10 +4908,10 @@ verifica_rota(inicio) {
         <Grid item>
           <LocationOnIcon styles={useStyles.icon} />
           </Grid>        
-          <Grid item xs>
-          <div className="descricao_modal_servico">
+          <Grid item xs className="descricao_modal_servico">
+         
               {this.state.camplocaldesembarque}    
-          </div>                              
+                              
           <Typography variant="body2" color="textSecondary">                                   
           </Typography>
           </Grid>
@@ -4891,8 +4977,9 @@ verifica_rota(inicio) {
   handleOpenModalAlteracaoEvento() {     
     this.setState({ 
       showModalAlteracaoEvento: true,      
-      //campeventoId: '',      
+      mensagem_servico: '',      
       incluir: false,
+      inicio: 1,
     });  
 
    // this.carrega_evento();
@@ -4908,10 +4995,11 @@ verifica_rota(inicio) {
   }
 
 
-  handleOpenModalAlteracaoServico(data) {     
+  handleOpenModalAlteracaoServico(data) {    
+   // debugger;
     this.setState({ 
       showModalAlteracaoServico: true,      
-      campservicoId: data.id,    
+      campservicoId: data.id,        
       possui_tarifa_especial: false,
       possui_tarifa: false,  
       incluir: false,
@@ -5295,11 +5383,161 @@ verifica_rota(inicio) {
    
    }
 
+   atualiza_pai(paiId) {
+     debugger;
+    let tempo_pai = '';
+
+    api.get(`/servicos/getEventoPai/${this.state.eventoid}/${paiId}`)
+    .then(reseventopai =>{
+      if (reseventopai.data.success == true) {
+  
+        debugger;
+       tempo_pai = this.formatar_total_segundos(parseInt(reseventopai.data.data[0].tempo_translado.substring(0,2)),reseventopai.data.data[0].tempo_translado.substring(3,5));
+       
+       tempo_pai = this.formatar_minuto(tempo_pai - this.state.tempo_filho);
+  
+       const datapost_alterar = {                
+         quantidade_diarias: reseventopai.data.data[0].quantidade_diarias - 1,    
+         km_translado: reseventopai.data.data[0].km_translado - this.state.distancia_filho, 
+         tempo_translado: tempo_pai,                  
+         valor_estimado: reseventopai.data.data[0].valor_estimado - this.state.valor_estimado_filho,
+       }  
+  
+       api.put(`/servicos/update/${reseventopai.data.data[0].id}`, datapost_alterar);
+  
+      }
+     })
+     .catch ( error => {
+       alert("Error servicos/getEventoPai/ "+error)
+     })   
+  }
+  
+
   sendDelete(userId){
     // url de backend
     console.log('deletar o id - '+userId);
+ 
+    
+    debugger;
+    api.get(`/servicos/get/${userId}`)
+    .then(res =>{
+      if (res.data.success == true) {
+      
+       const servicos = res.data.data;
+     //  tipoEvento = servicos[0].tipoEventoId;
+      // verificaPai = servicos[0].servico_pai_id;
+     //  eventoid = servicos[0].id;
+       const datapost_incluir = {
+        tipoEventoId: servicos[0].tipoEventoId, 
+        eventoId: servicos[0].eventoId, 
+        tipoTransporte: servicos[0].tipoTransporte,
+        nome_passageiro: servicos[0].nome_passageiro, 
+        telefone_passageiro: servicos[0].telefone_passageiro,
+        quantidade_passageiro: servicos[0].quantidade_passageiro,  
+        data_servico: servicos[0].data_servico,
+        quantidade_diarias: servicos[0].quantidade_diarias, 
+        hora_inicial: servicos[0].hora_inicial,  
+        hora_final: servicos[0].hora_final,  
+        local_embarque: servicos[0].local_embarque, 
+        local_desembarque: servicos[0].local_desembarque, 
+        embarque_latitude: servicos[0].embarque_latitude, 
+        embarque_longitude: servicos[0].embarque_longitude, 
+        desembarque_latitude: servicos[0].desembarque_latitude, 
+        desembarque_longitude: servicos[0].desembarque_longitude,      
+        distancia_value: servicos[0].distancia_value, 
+        tempo_value: servicos[0].tempo_value,
+        companhia_aerea: servicos[0].companhia_aerea,
+        numero_voo: servicos[0].numero_voo, 
+        motorista_bilingue: servicos[0].motorista_bilingue, 
+        valor_bilingue: servicos[0].valor_bilingue,
+        valor_receptivo: servicos[0].valor_receptivo,
+        motorista_receptivo: servicos[0].motorista_receptivo, 
+        nome_motorista: servicos[0].nome_motorista, 
+        telefone_motorista: servicos[0].telefone_motorista, 
+        km_translado: servicos[0].km_translado, 
+        tempo_translado: servicos[0].tempo_translado,
+        cartaoId: servicos[0].cartaoId,        
+        valor_estimado: servicos[0].valor_estimado,    
+        valor_oser: servicos[0].valor_oser,
+        valor_motorista: servicos[0].valor_motorista,  
+        logid: servicos[0].logid,
+        servico_pai_id: servicos[0].servico_pai_id,
+        perfilId: servicos[0].perfilId,               
+      }  
+      api.post('/historicoServicos/create', datapost_incluir);
+       
+      }
+    })
+    .catch ( error => {
+      alert("Error servicos/get ")
+    })
+
    // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
     // network
+    //verificar se o servico e diaria ou translado //
+    if (this.state.camptipoevento == 1) { // Diaria
+       if (this.state.verificaPai == 0) { // verifica se e pai deleta os filhos
+
+        api.delete(`/servicos/deletePaieFilhos/${this.state.campDeletarId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}/${this.state.eventoid}`)
+        .then(resppai =>{
+          if (resppai.data.success) {
+            this.setState({  
+              //open: true,
+              mensagem_usuario: 'Serviço Pai e filhos Excluido com sucesso!'
+             });
+           //  debugger;
+          
+            this.valor_total_servicos();
+            this.valor_total_viagens();
+            this.loadlistServicos();
+            this.loadlistServicosExcluidos();                
+           
+            this.handleCloseModalDelete(); 
+            this.envia_mensagemClick();            
+          
+        }    
+        })
+        .catch ( error => {
+          alert("Error servicos/deletePaieFilhos/ "+error)
+        })
+
+       } else {
+       
+           // recalcular o valor do pai com o filho excluido
+          // this.state.valor_estimado_filho
+          // this.state.distancia_filho
+          // this.state.quantidade_diarias
+          // this.state.tempo_filho
+debugger;
+            
+            this.atualiza_pai(this.state.verificaPai);
+
+            api.delete(`/servicos/delete/${userId}`)
+            .then(resppai =>{
+              if (resppai.data.success) {
+                this.setState({  
+                  //open: true,
+                  mensagem_usuario: 'Serviço Excluido com sucesso!'
+                });
+              //  debugger;
+              
+                this.valor_total_servicos();
+                this.valor_total_viagens();
+                this.loadlistServicos();
+                this.loadlistServicosExcluidos();                
+              
+                this.handleCloseModalDelete(); 
+                this.envia_mensagemClick();            
+              
+            }    
+            })
+            .catch ( error => {
+              alert("Error servicos/deletePaieFilhos/ "+error)
+            })
+           
+       }    
+    }  else {
+   
     api.delete(`/servicos/delete/${userId}`)
     .then(response =>{
       if (response.data.success) {
@@ -5307,15 +5545,25 @@ verifica_rota(inicio) {
           //open: true,
           mensagem_usuario: 'Serviço Excluido com sucesso!'
          });
-        this.loadlistServicos()
+       //  debugger;
+      
+        this.valor_total_servicos();
+        this.valor_total_viagens();
+        this.loadlistServicos();
+         this.loadlistServicosExcluidos();
+             
+       
         this.handleCloseModalDelete(); 
         this.envia_mensagemClick();
         
-      }
+      
+    }    
     })
     .catch ( error => {
-      alert("Error 325 ")
+      alert("Error servicos/delete/ "+error)
     })
+
+    }  
   }
 
 }

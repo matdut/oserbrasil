@@ -34,6 +34,28 @@ controllers.delete = async (req,res) => {
 
 }
 
+controllers.listaservicosExcluidos = async (req,res) => {
+  const { eventoid, id, perfilId } = req.params;
+  
+  await HistoricoServicos.findAll({
+    where: { 
+      eventoId: eventoid,  logid: id, perfilId: perfilId,
+   /*   servico_pai_id: {
+        [Op.In]: [null,0]             
+      } a*/
+    },  
+    order: [
+      ['createdAt', 'DESC']
+    ]  
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
 controllers.deleteevento = async (req,res) => {
   
   // parameter post  

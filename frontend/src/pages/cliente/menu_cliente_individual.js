@@ -80,6 +80,7 @@ class menu_clienteComponent extends React.Component  {
     this.props.history.push("/");
   }
 
+  
   verifica_menu() {
     if ( this.state.perfil == 1) {
       return (            
@@ -119,7 +120,7 @@ class menu_clienteComponent extends React.Component  {
 
           <ul id="menu-content" className="menu-content collapse out">
               <li>
-                <div className="item avatar_titulo">
+                <div className="avatar_titulo">
                 <div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                       
                 </div>
                   <div className="teste perfil">
