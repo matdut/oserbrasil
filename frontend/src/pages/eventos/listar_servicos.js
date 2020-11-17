@@ -1374,6 +1374,7 @@ validatelefone1Change(e){
                            this.valor_total_servicos();
                            this.valor_total_viagens();
                            this.envia_mensagemClick();  
+                           this.atualiza_evento();
 
                         } 
                         })                        
@@ -1442,6 +1443,7 @@ validatelefone1Change(e){
                this.loadlistServicos();
                this.valor_total_servicos();
                this.valor_total_viagens();
+               this.atualiza_evento();
                this.envia_mensagemClick();  
 
        }
@@ -2132,7 +2134,7 @@ verifica_rota(inicio) {
                                 lastTooltip: 'Última página'
                               },
                               header: {
-                                actions: 'Ação',
+                                actions: '',
                               },
                             }}        
                             options={{                             
@@ -2157,7 +2159,13 @@ verifica_rota(inicio) {
                               actionsColumnIndex: 16,
                              // pageSize: 9,
                               pageSizeOptions: [0],                     
-                            }}                          
+                            }}           
+                            actions={[
+                              {             
+                                icon: '',
+                                tooltip: '',                              
+                              }
+                            ]}                      
                             
                           />      
                 </div>    
@@ -5138,7 +5146,7 @@ verifica_rota(inicio) {
   }
 
   limpar_campos() {
-    this.setState({   
+    this.setState({       
       campDeletarId: '',
       campNome: '',
       selectedPlace:'',
@@ -5236,7 +5244,7 @@ verifica_rota(inicio) {
   handleOpenModalInclusao () { 
     this.setState({ 
       showModalInclusao: true,  
-     // campeventoId: ,    
+      campeventoId: localStorage.getItem('logeventoservico'),
       incluir: true,      
       possui_tarifa_especial: false,
       possui_tarifa: false,
@@ -5491,7 +5499,8 @@ verifica_rota(inicio) {
             this.valor_total_viagens();
             this.loadlistServicos();
             this.loadlistServicosExcluidos();                
-           
+            this.atualiza_evento();
+
             this.handleCloseModalDelete(); 
             this.envia_mensagemClick();            
           
@@ -5508,8 +5517,7 @@ verifica_rota(inicio) {
           // this.state.distancia_filho
           // this.state.quantidade_diarias
           // this.state.tempo_filho
-debugger;
-            
+
             this.atualiza_pai(this.state.verificaPai);
 
             api.delete(`/servicos/delete/${userId}`)
@@ -5525,10 +5533,11 @@ debugger;
                 this.valor_total_viagens();
                 this.loadlistServicos();
                 this.loadlistServicosExcluidos();                
-              
+                this.atualiza_evento();
+
                 this.handleCloseModalDelete(); 
                 this.envia_mensagemClick();            
-              
+                  
             }    
             })
             .catch ( error => {
@@ -5550,7 +5559,8 @@ debugger;
         this.valor_total_servicos();
         this.valor_total_viagens();
         this.loadlistServicos();
-         this.loadlistServicosExcluidos();
+        this.loadlistServicosExcluidos();
+        this.atualiza_evento();
              
        
         this.handleCloseModalDelete(); 

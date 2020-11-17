@@ -1107,24 +1107,24 @@ verificaData_Evento(e) {
                             }}        
                             options={{                             
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px", color: "#0F074E"  },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "20px", color: "#0F074E"  },
                               paginationPosition: 'bottom',  
                               searchFieldAlignment: 'left', 
                               exportAllData: true,
-                              exportFileName: 'Rel_adm_eventos_Ativos',
+                              exportFileName: 'Rel_adm_eventos_ativos',
                               search: true,     
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
-                              paging: false,     
-                              maxBodyHeight: 410,
-                              minBodyHeight: 410, 
-                              padding: 'dense',                               
+                              paging: false,         
+                              maxBodyHeight: 450,
+                              minBodyHeight: 450, 
+                              padding: 'dense',   
                               overflowY: 'scroll',
-                             // tableLayout: 'fixed',
+                            //  tableLayout: 'fixed',
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 7,
                              // pageSize: 7,
-                              pageSizeOptions: [0],                 
+                              pageSizeOptions: [0],          
                             }}
                             actions={[
                               {             
@@ -1244,7 +1244,7 @@ verificaData_Evento(e) {
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
                               { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                
                              },   
                             ]}
                             data={this.state.listaeventosexcluidos}   
@@ -1273,7 +1273,7 @@ verificaData_Evento(e) {
                                 lastTooltip: 'Última página'
                               },
                               header: {
-                                actions: 'Ação',
+                                actions: '',
                               },
                             }}        
                             options={{
@@ -1296,8 +1296,15 @@ verificaData_Evento(e) {
                               actionsColumnIndex: 7,
                              // pageSize: 7,
                               pageSizeOptions: [0],                    
-                            }}                           
-                          />      
+                            }}   
+                            actions={[
+                              {             
+                                icon: '',
+                                tooltip: '',                              
+                              }
+                            ]}                        
+                          />     
+                           
                 </div>      
         </TabPanel>      
       </TabContext>        

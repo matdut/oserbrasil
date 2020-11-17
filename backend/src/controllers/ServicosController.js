@@ -40,7 +40,7 @@ controllers.deletePaieFilhos  = async (req,res) => {
   const { id, perfilId, logid, eventoid } = req.params;  
  
   await Servicos.destroy({
-    where: {  eventoId: eventoid, logid: logid, perfilId: perfilId, 
+    where: {  eventoId: eventoid, logid: logid, perfilId: perfilId, tipoEventoId: 1,
       servico_pai_id: {
         [Op.in]: [id, 0],  
       }}
