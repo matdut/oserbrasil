@@ -456,7 +456,7 @@ class listaservicosComponent extends React.Component  {
     });
 
     localStorage.setItem('logeventoservico',this.props.match.params.id);
-    this.loadServicos();    
+    this.loadEvento();    
     this.loadlistServicos();
     this.loadTarifaespecial();
     this.loadTarifa();
@@ -1101,7 +1101,7 @@ validatelefone1Change(e){
        }        
    }
 
-  loadServicos(){
+  loadEvento(){
     // const url = baseUrl+"/cliente/list"
     let userId = this.props.match.params.id;  
  
@@ -1119,6 +1119,9 @@ validatelefone1Change(e){
            campdata_evento: dateFormat(res.data.data[0].data_evento, "UTC:dd/mm/yyyy"),        
            embarque_longitude:  res.data.data[0].embarque_longitude, 
            desembarque_longitude:  res.data.data[0].desembarque_longitude, 
+           validacao_nome_evento: true,
+           validacao_ordem_servico: true,
+           validacao_data_evento: true,
          });   
          
          // this.setState({listEventos:data})
@@ -1210,6 +1213,38 @@ validatelefone1Change(e){
      this.handleCloseModalDesembarque();
 
   }  
+
+  senUpdate() {
+
+    const datapost_alterar = {     
+      logid: localStorage.getItem('logid'),
+      perfilId: localStorage.getItem('logperfil'),    
+      ordem_servico: this.state.campordem_servico,         
+      nome_evento: this.state.campnome_evento, 
+      data_evento: moment(this.state.campdata_evento, "DD MM YYYY"),   
+      statusId: 1,      
+     }           
+    console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
+    api.put(`/eventos/update/${localStorage.getItem('logid')}`, datapost_alterar)
+    .then(response=>{
+      if (response.data.success==true) {                                  
+  
+         this.setState({                
+           mensagem_usuario: 'Evento alterado com sucesso!'
+         });
+     
+        //this.verifica_botao(1);
+        this.handleCloseModalAlteracaoEvento();
+        this.envia_mensagemClick();                     
+
+      }
+    }).catch(error=>{
+      alert("Error 34 ")
+    })
+ 
+
+
+  } 
   sendSave(){             
 
     this.setState({                
@@ -1442,13 +1477,13 @@ validatelefone1Change(e){
                this.handleCloseModalAlteracaoServico();
                this.loadlistServicos();
                this.valor_total_servicos();
-               this.valor_total_viagens();
-               this.atualiza_evento();
+               this.valor_total_viagens();  
+               this.atualiza_evento();          
                this.envia_mensagemClick();  
 
        }
      }).catch(error=>{
-       alert("Error 34 ")
+       alert("Error alteração evento "+ error)
      })
 
    }      
@@ -1542,6 +1577,50 @@ verifica_rota(inicio) {
           //this.state.validacao_hora_inicial == true  && this.state.validacao_hora_final == true  ) { 
           return (
             <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.sendSave()}>
+                    <div className="d-flex justify-content-center">
+                    <label> Salvar </label>
+                    </div>     
+              </Box>           
+          );   
+        } else {
+          return (
+        
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_evento_modal"  p={2}>
+                    <div className="d-flex justify-content-center">
+                    <label> Salvar </label>
+                    </div>     
+              </Box>           
+          );                   
+        }
+    } else {
+      return (
+        
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_evento_modal"  p={2}>
+                <div className="d-flex justify-content-center">
+                <label> Salvar </label>
+                </div>     
+          </Box>           
+      );                   
+    } 
+
+  }  
+ 
+  verifica_botao_evento(inicio) {
+    const { validate } = this.state 
+   
+
+    if (inicio == 1) {
+      
+      /* this.state.validacao_tipo == true ||     
+      || this.state.validacao_localembarque == true || this.state.validacao_localdesembarque == true 
+            || this.state.validacao_qtdpassageiro == true
+            || this.state.validacao_Telefone1 == true
+       */
+        if (this.state.validacao_ordem_servico == true && this.state.validacao_nome_evento == true 
+          && this.state.validacao_data_evento == true) { 
+          //this.state.validacao_hora_inicial == true  && this.state.validacao_hora_final == true  ) { 
+          return (
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.senUpdate()}>
                     <div className="d-flex justify-content-center">
                     <label> Salvar </label>
                     </div>     
@@ -2309,7 +2388,7 @@ verifica_rota(inicio) {
                              </div>       
                         </div>     
 
-                    {this.verifica_botao(this.state.inicio)}       
+                    {this.verifica_botao_evento(this.state.inicio)}       
 
                  </div>
             </div>  
@@ -4990,7 +5069,7 @@ verifica_rota(inicio) {
       inicio: 1,
     });  
 
-   // this.carrega_evento();
+     //this.carrega_evento();
     
   }
   
@@ -5249,6 +5328,7 @@ verifica_rota(inicio) {
       possui_tarifa_especial: false,
       possui_tarifa: false,
       inicio: 1,
+      tabIndex: "2",
     });  
 
     this.limpar_campos();     
