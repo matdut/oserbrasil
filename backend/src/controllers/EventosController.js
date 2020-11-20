@@ -139,9 +139,8 @@ controllers.update = async (req, res) => {
 
   // parameter post
   const { logid, perfilId, ordem_servico, viagens_total, nome_evento, data_evento, valor_total } = req.body;
-  
-  // update data
-  
+  console.log("id es ==>"+id)
+  // update data  
   await Eventos.update({  
     logid: logid,
     perfilId: perfilId,    
@@ -154,7 +153,11 @@ controllers.update = async (req, res) => {
     where: { id: id}
   })
   .then( function (data){
-    return res.json({success:true, data: data});
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }   
   })
   .catch(error => {
     return res.json({success:false, message: error});

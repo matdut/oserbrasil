@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
+import {Form, Container, Progress, Row, Col,  Input, FormFeedback, Label,  Select, Button, Alert } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
@@ -16,7 +16,7 @@ import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
 import FilledInput from '@material-ui/core/FilledInput';
-import Container from '@material-ui/core/Container';
+
 import Typography from '@material-ui/core/Typography';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
@@ -519,12 +519,35 @@ class empresarialComponent extends React.Component{
          })      
        } else if (this.state.campData_nascimento.length == 10) {
 
-        validate.datanascimentoState = 'has-success' ;        
-        this.setState({ 
+        let date_validar = this.state.campData_nascimento;
+        var dia = date_validar.substr(0,2);
+        var mes = date_validar.substr(3,2);         
+    
+        if (dia > 31) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Dia é inválido.' 
+          })  
+        } else if (mes > 12) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Mês é inválido.' 
+          })  
+        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Data do serviço é inválido.' 
+          })  
+        } else {
+         this.setState({ 
           erro_datanascimento: false,   
-          validacao_datanascimento: true,    
-          mensagem_data_nascimento: ''
-        });     
+          validacao_datanascimento: true,             
+          mensagem_data_nascimento: '',
+         });   
+        }     
 
      }           
    }
@@ -663,15 +686,21 @@ validaNomeChange(e){
 validaDataNascimentoChange(e){
   const { validate } = this.state
   
-    if (e.target.value.length < 10) {
-      validate.datanascimentoState = 'has-danger'
-      this.setState({ 
-        erro_datanascimento: true,   
-        validacao_datanascimento: true,    
-        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
-      })  
-    }  
-    this.setState({ validate })
+  if (e.target.value.length < 1) {
+    validate.datanascimentoState = 'has-danger'
+    this.setState({ 
+      erro_datanascimento: false,
+      validacao_datanascimento: false,
+      mensagem_data_nascimento: '' 
+    })  
+  } else if (e.target.value.length > 0) {      
+    validate.datanascimentoState = 'has-success'       
+    this.setState({ 
+      erro_datanascimento: false,
+      validacao_datanascimento: true,
+      mensagem_data_nascimento: '' 
+    })  
+  }  
 }
 
 verifica_botao(inicio) {
@@ -794,28 +823,24 @@ sendSave(){
 verificar_menu(perfil) {   
 
   return(
-    <div>
-    <div className="d-flex justify-content-around">
-        <div className="botao_navegacao">          
-
-        </div>                  
-        <div>
-          <div className="titulo_representante_empresa">                
-            <label>  Representante da Empresa  </label>            
-          </div>
-        </div>   
-        
-        <div>
-          <div className="botao_navegacao">        
-          <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                        
-          </div>   
+    <Row>
+    <Col xs={3} md={2}>
+    
+    </Col>
+    <Col xs={6} md={8} className="titulo_representante_cliente">
+    <label className="label_titulo">  Representante da Empresa </label>   
+    </Col>
+    <Col xs={3} md={2}>
+    <div className="botao_navegacao">    
+    <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>  
+    </div>
+    </Col>
+    <br/>    
+        <div className="barra_incluir">
+           <Progress color="warning" value={this.state.progresso} className="progressbar"/>
         </div>
-    </div>  
-            <br/>
-            <div className="barra_incluir">
-                    <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-              </div>   
-          </div>               
+  </Row>      
+                 
    );
 }
 
@@ -836,17 +861,16 @@ verificar_menu_lateral() {
 render(){  
 
 return (
-<div>    
 <div>  
 <div className="d-flex justify-content">  
-<div className="d-flex justify-content-start"> 
+   <div className="d-flex justify-content-start"> 
       <div className="area_direita">   
           <div>   
             <img className="titulo_logo" src="../logo.png"/>
          </div>      
       </div>    
    </div>
-    <div className="area_esquerda">     
+   <Container> 
     {this.verificar_menu()}  
          
     <div className="d-flex flex-column espacamento_caixa_texto">        
@@ -1017,16 +1041,11 @@ return (
                   {this.state.mensagem_aguarde}
               </FormHelperText>       
             </div>         
-            {this.verifica_botao(this.state.inicio)}             
-         </div>     
-         <div className="area_neutra">
-              <Container maxWidth="sm" className="barra_incluir">
-                  <Typography component="div" style={{ backgroundColor: '#white', height: '244px' }} />
-              </Container>            
-         </div>             
-      </div>   
+            {this.verifica_botao(this.state.inicio)}     
+           </Container>         
+         </div>   
    </div>  
-</div> 
+ 
   );
 } 
 }

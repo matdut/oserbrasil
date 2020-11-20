@@ -623,12 +623,35 @@ class motoristaComponent extends React.Component{
          })      
        } else if (this.state.campData_nascimento.length == 10) {
 
-        validate.datanascimentoState = 'has-success' ;        
-        this.setState({ 
+        let date_validar = this.state.campData_nascimento;
+        var dia = date_validar.substr(0,2);
+        var mes = date_validar.substr(3,2);         
+    
+        if (dia > 31) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Dia é inválido.' 
+          })  
+        } else if (mes > 12) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Mês é inválido.' 
+          })  
+        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Data do serviço é inválido.' 
+          })  
+        } else {
+         this.setState({ 
           erro_datanascimento: false,   
-          validacao_datanascimento: true,    
-          mensagem_data_nascimento: ''
-        });     
+          validacao_datanascimento: true,             
+          mensagem_data_nascimento: '',
+         });   
+        }     
 
      }           
    }
@@ -813,15 +836,21 @@ validaDataValidadeChange(e){
 validaDataNascimentoChange(e){
   const { validate } = this.state
   
-    if (e.target.value.length < 10) {
-      validate.datanascimentoState = 'has-danger'
-      this.setState({ 
-        erro_datanascimento: true,
-        validacao_datanascimento: false,
-        mensagem_data_nascimento: 'O campo Data de Nascimento é obrigatório.' 
-      })  
-    }  
-    this.setState({ validate })
+  if (e.target.value.length < 1) {
+    validate.datanascimentoState = 'has-danger'
+    this.setState({ 
+      erro_datanascimento: false,
+      validacao_datanascimento: false,
+      mensagem_data_nascimento: '' 
+    })  
+  } else if (e.target.value.length > 0) {      
+    validate.datanascimentoState = 'has-success'       
+    this.setState({ 
+      erro_datanascimento: false,
+      validacao_datanascimento: true,
+      mensagem_data_nascimento: '' 
+    })  
+  }  
 }
 
 verifica_botao(inicio) {

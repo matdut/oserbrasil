@@ -37,10 +37,16 @@ controllers.delete = async (req,res) => {
 controllers.deletePaieFilhos  = async (req,res) => {
   
   // parameter post  
-  const { id, perfilId, logid, eventoid } = req.params;  
- 
+  const { id, perfilId, logid, eventoid, nome_passageiro } = req.params; 
+  
+  
   await Servicos.destroy({
-    where: {  eventoId: eventoid, logid: logid, perfilId: perfilId, tipoEventoId: 1,
+    where: { 
+      eventoId: eventoid, 
+      logid: logid, 
+      perfilId: perfilId, 
+      tipoEventoId: 1,
+      nome_passageiro: nome_passageiro, 
       servico_pai_id: {
         [Op.in]: [id, 0],  
       }}
@@ -264,8 +270,9 @@ controllers.listaservicos = async (req,res) => {
       } a*/
     },  
     order: [
-      ['createdAt', 'DESC']
-    ]  
+      ['createdAt', 'DESC'],
+      ['data_servico', 'ASC'],
+    ]       
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -487,6 +494,18 @@ controllers.totalViagensADM = async (req, res) => {
                     [Op.or]: [null, 0],        
               } 
             }
+  });
+
+   return res.json({success:true, data: salesValue});
+  
+}
+
+controllers.MaxDataEvento = async (req, res) => {
+ 
+  const { eventoid,  id, perfilId } = req.params;
+
+  const salesValue = await Servicos.max('data_servico', {
+    where: { eventoId: eventoid, logid: id, perfilId: perfilId, tipoEventoId: 1 }
   });
 
    return res.json({success:true, data: salesValue});

@@ -380,6 +380,14 @@ class listaeventosComponent extends React.Component  {
       mensagem_nome_evento: '',
       mensagem_evento: '',     
       campOperadorId: '',
+      erro_ordem_servico: false,
+      erro_nome_evento: false,
+      erro_data_evento: false,      
+      erro_tipo_transporte: false,
+      validacao_ordem_servico: false,
+      validacao_nome_evento: false,
+      validacao_data_evento: false,      
+      validacao_tipo_transporte: false,
     });  
   }
 
@@ -829,8 +837,8 @@ class listaeventosComponent extends React.Component  {
   
       if (inicio == 1) {
         
-          if (this.state.validacao_ordem_servico == true || this.state.validacao_data_evento == true 
-            || this.state.validacao_nome_evento == true ) { 
+          if (this.state.validacao_ordem_servico == true && this.state.validacao_data_evento == true 
+            && this.state.validacao_nome_evento == true ) { 
             return (
               <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.sendSave()}>
                       <div className="d-flex justify-content-center">
@@ -1060,8 +1068,7 @@ verificaData_Evento(e) {
         <TabPanel value="1" className="tirar_espaco">
         <div>
                         <MaterialTable          
-                            title=""
-                         
+                            title=""                         
                             columns={[
                               { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
@@ -1116,8 +1123,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: 370,
+                              minBodyHeight: 370, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1208,8 +1215,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: 370,
+                              minBodyHeight: 370, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1287,8 +1294,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: 370,
+                              minBodyHeight: 370, 
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1380,7 +1387,7 @@ verificaData_Evento(e) {
                             onKeyUp={this.verificaOrdem_servico}
                             onChange={(value)=> this.setState({campordem_servico:value.target.value})}                                 
                             inputProps={{
-                              maxLength: 7,
+                              maxLength: 10,
                             }}
                           endAdornment={
                             <InputAdornment position="end">
@@ -1410,7 +1417,7 @@ verificaData_Evento(e) {
                                     onKeyUp={this.verificaNome_Evento}
                                     onChange={(value)=> this.setState({campnome_evento:value.target.value})}         
                                     inputProps={{
-                                      maxLength: 100,
+                                      maxLength: 50,
                                     }}            
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1677,7 +1684,7 @@ verificaData_Evento(e) {
 
   handleOpenModalInclusao () { 
     this.setState({ 
-      showModalInclusao: true,      
+      showModalInclusao: true,        
       incluir: true,
     });  
 
