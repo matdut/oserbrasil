@@ -9,6 +9,7 @@ import MaterialTable from 'material-table';
 import GooglePlacesAutocomplete, {geocodeByPlaceId} from 'react-google-places-autocomplete';
 
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import {Container, Row, Col } from 'reactstrap';
 
 import "@reach/combobox/styles.css";
 
@@ -458,6 +459,7 @@ class listaservicosComponent extends React.Component  {
     });
 
     localStorage.setItem('logeventoservico',this.props.match.params.id);
+    debugger;
     this.loadEvento();    
     this.loadlistServicos();
     this.loadTarifaespecial();
@@ -579,6 +581,7 @@ class listaservicosComponent extends React.Component  {
     api.get(`/servicos/listaservicosevento/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {
+         debugger;
          const data = res.data.data    
          this.setState({
            listservicoseventos:data,
@@ -1273,12 +1276,17 @@ validatelefone1Change(e){
     this.setState({                
       validacao_data_servico: false,
       validacao_nome: false,   
+      validacao_data_evento: false, 
+      mensagem_aguarde: 'Aguarde, alterando os dados...',     
     //  valor_oser: '0.192',
     //  valor_motorista: '0.768',         
     });
   
+    this.verifica_botao(1);
+    
+  
 
-    debugger;
+  //  debugger;
 
     if (this.state.incluir == true) {
 
@@ -1331,7 +1339,7 @@ validatelefone1Change(e){
 
                if (respevento.data.success == true) {          
 
-                debugger;
+            //    debugger;
                 const data = respevento.data.data;
                 const pai_servico = data.id;
 
@@ -1340,7 +1348,7 @@ validatelefone1Change(e){
                 if (this.state.campqtddiarias > 1) {
                     let data_alteracao_servico = moment(this.state.campdata_servico, "DD MM YYYY");                   
 
-                    debugger;
+                 //   debugger;
                     for(let i=0; i < this.state.campqtddiarias - 1; i++){
 
                            data_alteracao_servico = data_alteracao_servico.add(1, "days");
@@ -1398,7 +1406,7 @@ validatelefone1Change(e){
 
 
                    }
-                debugger;
+              // debugger;
                 //console.log(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`); 
 
                 //api.get(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
@@ -1426,6 +1434,7 @@ validatelefone1Change(e){
                             mensagem_usuario: 'Serviço incluído com sucesso!'
                            });
                         
+                           debugger;
                            this.verifica_botao(1);
                            this.handleCloseModalInclusao();
                            this.loadlistServicos();
@@ -1570,28 +1579,16 @@ debugger;
                }
           
                        this.setState({                
-                        mensagem_usuario: 'Serviço 1 alterado com sucesso!'
-                       });
+                        mensagem_usuario: 'Serviço alterado com sucesso!'
+                       });                    
                     
-                       this.verifica_botao(1);
-                       this.setState({
-                        listservicoseventos:[],
-                       })
-                      
-                      // this.loadlistServicos();
-                       this.valor_total_servicos();
-                       this.valor_total_viagens();  
-                       this.atualiza_evento();
-                       this.loadlistServicos();
-                       this.loadlistServicosExcluidos();
                       // this.atualiza_evento();          
                       this.handleCloseModalAlteracaoServico();
                   //    this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);        
                        this.envia_mensagemClick();  
-                       //this.loadServicos();        
-                       this.loadlistServicos();
-                       this.loadlistServicosExcluidos();
-                       this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);   
+                       //this.loadServicos();       
+                       
+                      // this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);   
          
           } else {
 
@@ -2094,8 +2091,8 @@ verifica_rota(inicio) {
               </div>         
           </div> 
         </div>
-      <div className="margem_left">       
-      <div className="container-fluid">         
+      <div className="margem_left">   
+      <Container fluid="true">        
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
@@ -2113,8 +2110,11 @@ verifica_rota(inicio) {
                             isLoading={this.state.loading}       
                             //style=""                     
                             columns={[
-                              { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px', align: 'center' },   
+                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' }, 
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                            cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : ''}, 
+                
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
@@ -2188,8 +2188,8 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 300,
-                              minBodyHeight: 300, 
+                              maxBodyHeight: '46vh',
+                              minBodyHeight: '46vh',                    
                               padding: 'dense',   
                               overflowY: 'scroll',                         
                               exportButton: { pdf: true },          
@@ -2225,7 +2225,7 @@ verifica_rota(inicio) {
                         <MaterialTable          
                             title=""
                             columns={[
-                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },
+                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px' },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: '', field: 'tipoEventoId', width: '60px', minWidth: '60px', maxWidth: '60px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
@@ -2288,8 +2288,8 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 300,
-                              minBodyHeight: 300, 
+                              maxBodyHeight: '46vh',
+                              minBodyHeight: '46vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',     
                               //overflowY: 'scroll',
@@ -2320,7 +2320,7 @@ verifica_rota(inicio) {
                         <MaterialTable          
                             title=""
                             columns={[
-                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },   
+                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: '', field: 'tipoEventoId', width: '60px', minWidth: '60px', maxWidth: '60px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
@@ -2384,8 +2384,8 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 300,
-                              minBodyHeight: 300, 
+                              maxBodyHeight: '46vh',
+                              minBodyHeight: '46vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',     
                               //overflowY: 'scroll',
@@ -2409,7 +2409,7 @@ verifica_rota(inicio) {
         </TabPanel>      
       </TabContext>        
       
-   </div> 
+   </Container> 
         </div>
              <div className="botao_lista_incluir">
                         <Fab style={{ textTransform: 'capitalize',  outline: 'none' }} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
@@ -3347,7 +3347,13 @@ verifica_rota(inicio) {
                 </div>
            </div> 
            <div className="container-fluid">
+             
                    <div>
+                     <div className="mensagem_aguarde">
+                      <FormHelperText>
+                          {this.state.mensagem_aguarde}
+                      </FormHelperText>       
+                    </div>   
                     <div className="botao_servico_fixo">
                           <table className="margin_total_servicos">
                               <tr className="titulo_total_servicos"><td className="tamanho_coluna">Distância Total</td>
@@ -5249,6 +5255,7 @@ debugger;
       showModalAlteracaoServico: true,      
       campservicoId: data.id,        
       possui_tarifa_especial: false,
+      mensagem_aguarde: '',
       qtddiarias_old: 0,
       possui_tarifa: false,  
       incluir: false,
@@ -5265,13 +5272,15 @@ debugger;
   
   handleCloseModalAlteracaoServico() {
     this.setState({ 
-      showModalAlteracaoServico: false
+      showModalAlteracaoServico: false,
+      mensagem_aguarde: '',
     }); 
     
     this.valor_total_servicos();
     this.valor_total_viagens();
     this.loadlistServicos();
     this.loadlistServicosExcluidos();
+    this.atualiza_evento();
   }
 
 
@@ -5492,6 +5501,7 @@ debugger;
       campeventoId: localStorage.getItem('logeventoservico'),
       incluir: true,      
       possui_tarifa_especial: false,
+      mensagem_aguarde: '',
       possui_tarifa: false,
       qtddiarias_old: 0,
       inicio: 1,
@@ -5509,7 +5519,8 @@ debugger;
   
   handleCloseModalInclusao () {
     this.setState({ 
-      showModalInclusao: false
+      showModalInclusao: false,
+      mensagem_aguarde:'',
     }); 
     
     

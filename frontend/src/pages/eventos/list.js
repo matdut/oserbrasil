@@ -1056,7 +1056,8 @@ verificaData_Evento(e) {
        <div className="margem_left">       
       <br/>          
      
-     <div className="container-fluid">       
+     <div className="container-fluid">   
+     <div>
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
@@ -1068,9 +1069,10 @@ verificaData_Evento(e) {
         <TabPanel value="1" className="tirar_espaco">
         <div>
                         <MaterialTable          
-                            title=""                         
+                            title=""   
+                           // style={{ maxBodyHeight: '60vh', minBodyHeight: '60vh' }}                      
                             columns={[
-                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
                               { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
@@ -1123,11 +1125,11 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 370,
-                              minBodyHeight: 370, 
+                              maxBodyHeight: '56vh',
+                              minBodyHeight: '56vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
-                            //  tableLayout: 'fixed',
+                             // tableLayout: 'auto',
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 7,
                              // pageSize: 7,
@@ -1162,7 +1164,7 @@ verificaData_Evento(e) {
                             title=""
                               
                             columns={[
-                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
                               { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
@@ -1215,8 +1217,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 370,
-                              minBodyHeight: 370, 
+                              maxBodyHeight: '56vh',
+                              minBodyHeight: '56vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1241,7 +1243,7 @@ verificaData_Evento(e) {
                             title=""
                               
                             columns={[
-                              { title: '', field: '', width: '60px', minWidth: '60px', maxWidth: '60px' },
+                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
                               { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
@@ -1294,8 +1296,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: 370,
-                              minBodyHeight: 370, 
+                              maxBodyHeight: '56vh',
+                              minBodyHeight: '56vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1315,7 +1317,7 @@ verificaData_Evento(e) {
                 </div>      
         </TabPanel>      
       </TabContext>        
-
+      </div>    
    </div> 
        
        {this.autorizacao_inclusao()}

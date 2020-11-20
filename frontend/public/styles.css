@@ -857,6 +857,10 @@
   
   .margem_left {
     margin-left: 90px !important;
+ 
+  }
+  .tamanho_height{
+    height: 60vh !important;
   }
 
   .botao_lista_incluir {          
