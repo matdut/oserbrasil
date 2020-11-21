@@ -406,7 +406,36 @@ controllers.update = async (req, res) => {
     where: { id: id}
   })
   .then( function (data){
-    return res.json({success:true, data: data, message:"Translados atualizado com sucesso"});
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+}
+controllers.updatefilhos = async (req, res) => {  
+
+  const { id } = req.params;
+  // parameter id get  
+  const { nome_passageiro, logid, perfilId , telefone_passageiro, quantidade_passageiro, data_servico,
+    hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
+    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
+    km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
+    motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, 
+    desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, 
+    valor_bilingue, valor_receptivo, distancia_value, tempo_value } = req.body; 
+    
+
+  console.log('entrou aqui = '+id);  
+  
+  // update data  
+  await Servicos.update({     
+    nome_passageiro: nome_passageiro,     
+  },{
+    where: { servico_pai_id: id }
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
   })
   .catch(error => {
     return res.json({success:false, message: error});

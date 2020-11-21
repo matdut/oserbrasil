@@ -6,6 +6,7 @@ const ServicosController = require('../controllers/ServicosController');
 router.get('/listporevento/:id',ServicosController.listporevento);
 router.post('/create',ServicosController.create);
 router.put('/update/:id',ServicosController.update);
+router.put('/updatefilhos/:id',ServicosController.updatefilhos);
 router.get('/get/:id', ServicosController.get);
 router.get('/getEvento/:eventoid', ServicosController.getEvento);
 router.get('/getEventoPai/:eventoid/:paiId', ServicosController.getEventoPai);

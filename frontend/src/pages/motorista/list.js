@@ -1240,7 +1240,10 @@ cadeirarodasChange(e) {
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
-        this.setState({listMotorista:data})
+        this.setState({
+          listMotorista:data,
+          loading: false,
+        })
       }
     })
     .catch(error=>{

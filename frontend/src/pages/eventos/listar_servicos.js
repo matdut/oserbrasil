@@ -115,6 +115,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 const containerStyle = {
   position: 'relative',  
   width: '80%',
@@ -153,7 +155,7 @@ const customStyles = {
     top                    : '0px',
     left                   : '40vm',  
     right                  : '0%',
-    width                  : '43%',   
+    width                  : '40%',  
     bottom                 : 'auto',  
     height                 : '100vh',        
     padding                : '0px !important',      
@@ -304,6 +306,7 @@ class listaservicosComponent extends React.Component  {
       totalviagens: 0,
       valortotalviagens: '0,00',
       valor_oser: '',
+      loading: true,
       valor_motorista: '',
       erro_nome: false,
       erro_telefone: false,      
@@ -352,6 +355,7 @@ class listaservicosComponent extends React.Component  {
       tempo_total_filho: 0,
       listTarifas:[],
       listTarifasEspeciais:[],
+      listservicosfilho: [],
       origins: '',     
       h: '',
       min: '',
@@ -458,8 +462,7 @@ class listaservicosComponent extends React.Component  {
       eventoId: this.props.match.params.id          
     });
 
-    localStorage.setItem('logeventoservico',this.props.match.params.id);
-    debugger;
+    localStorage.setItem('logeventoservico',this.props.match.params.id);    
     this.loadEvento();    
     this.loadlistServicos();
     this.loadTarifaespecial();
@@ -470,6 +473,10 @@ class listaservicosComponent extends React.Component  {
     this.atualiza_evento();
    // this.teste();
    // this.calculo_rota_total();
+  }
+
+  refreshPage() {
+    window.location.reload(false);
   }
 
   atualiza_evento() {
@@ -1246,8 +1253,8 @@ validatelefone1Change(e){
       data_evento: moment(this.state.campdata_evento, "DD MM YYYY"),   
       statusId: 1,      
      }           
-     console.log('Id - '+JSON.stringify(localStorage.getItem('logeventoservico'), null, "    ")); 
-    console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
+    // console.log('Id - '+JSON.stringify(localStorage.getItem('logeventoservico'), null, "    ")); 
+    //console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
 
     api.put(`/eventos/update/${localStorage.getItem('logeventoservico')}`, datapost_alterar)
     .then(response=>{
@@ -1390,7 +1397,7 @@ validatelefone1Change(e){
                                 perfilId: 7,               
                              }                                
                           
-                         console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
+                      //   console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
                           api.post('/servicos/create',datapost_filho)                         
                           .then(respfilho=>{    
 
@@ -1511,11 +1518,44 @@ debugger;
             
             let data_alteracao_servico = '';
             const data = response.data.data;
-            const pai_servico = data[0].id;
+            const pai_servico = data[0].eventoid;
+debugger;
+          
+                      const datapost_filho_alteracao_1 = {
+                        //tipoEventoId:  this.state.camptipoId,                             
+                        tipoTransporte: this.state.camptipoId,
+                        nome_passageiro: this.state.campNome, 
+                        telefone_passageiro: this.state.campTelefone1,
+                        quantidade_passageiro:this.state.campqtdpassageiro,                              
+                        quantidade_diarias: this.state.campqtddiarias, 
+                        hora_inicial: this.state.camphora_inicial,  
+                        hora_final: this.state.camphora_final,  
+                        local_embarque: '', 
+                        local_desembarque: '', 
+                        local_embarque: this.state.camplocalembarque, 
+                        local_desembarque: this.state.camplocaldesembarque, 
+                        embarque_latitude: this.state.embarque_latitude, 
+                        embarque_longitude: this.state.embarque_longitude, 
+                        desembarque_latitude: this.state.desembarque_latitude, 
+                        desembarque_longitude: this.state.desembarque_longitude,                             
+                        companhia_aerea: this.state.campCompanhia_aerea,
+                        numero_voo: this.state.campNumero_voo, 
+                        motorista_bilingue: this.state.campbilingue, 
+                        motorista_receptivo: this.state.campreceptivo, 
+                        nome_motorista: this.state.campnomemotorista, 
+                        telefone_motorista: this.state.camptelefonemotorista, 
+                        cartaoId: this.state.campcartaoid,                                                            
+                       // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
+                    }       
+                    console.log('id'+ data[0].id);
+                    console.log('Update - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
+                    api.put(`/servicos/updatefilhos/${data[0].id}`,datapost_filho_alteracao_1);
+     
 
             debugger;
             let valor_total_filhos = (parseFloat(valorDoublemask(this.state.campvalor))/ parseInt(this.state.campqtddiarias)).toFixed(2);
           
+            
             if (this.state.campqtddiarias > this.state.qtddiarias_old) {
                 let adicionafilho = Number(this.state.campqtddiarias) - Number(this.state.qtddiarias_old)
                debugger;
@@ -1523,54 +1563,55 @@ debugger;
                 .then(respdataservico=>{    
                       
                   data_alteracao_servico = dateFormat(respdataservico.data.data, "UTC:dd/mm/yyyy");
-                  data_alteracao_servico = moment(data_alteracao_servico, "DD MM YYYY");                                          
-
-                debugger;
+                  data_alteracao_servico = moment(data_alteracao_servico, "DD MM YYYY"); 
+            
+               // criar os filhos se tiver
                 for(let i=0; i < adicionafilho; i++){
 
-                       data_alteracao_servico = data_alteracao_servico.add(1, "days");
-                        const datapost_filho = {
-                            tipoEventoId: this.state.tabIndex, 
-                            eventoId: localStorage.getItem('logeventoservico'), 
-                            tipoTransporte: this.state.camptipoId,
-                            nome_passageiro: this.state.campNome, 
-                            telefone_passageiro: this.state.campTelefone1,
-                            quantidade_passageiro: this.state.campqtdpassageiro,  
-                            data_servico: moment(data_alteracao_servico, "DD MM YYYY"),
-                            quantidade_diarias: this.state.campqtddiarias, 
-                            hora_inicial: this.state.camphora_inicial,  
-                            hora_final: this.state.camphora_final,  
-                            local_embarque: '', 
-                            local_desembarque: '', 
-                            embarque_latitude: this.state.embarque_latitude, 
-                            embarque_longitude: this.state.embarque_longitude, 
-                            desembarque_latitude: this.state.desembarque_latitude, 
-                            desembarque_longitude: this.state.desembarque_longitude, 
-                            //motorista_alocado: this.state.motorista_alocado, 
-                            distancia_value: this.state.km_total_filho, 
-                           // tempo_value: this.state.tempo_total_filho,
-                            companhia_aerea: this.state.campCompanhia_aerea,
-                            numero_voo: this.state.campNumero_voo, 
-                            motorista_bilingue: this.state.campbilingue, 
-                            motorista_receptivo: this.state.campreceptivo, 
-                            nome_motorista: this.state.campnomemotorista, 
-                            telefone_motorista: this.state.camptelefonemotorista, 
-                            km_translado: this.state.km_total_filho, 
-                            tempo_translado: this.state.tempo_total_filho,
-                            cartaoId: this.state.campcartaoid,        
-                            valor_estimado: valorDoublemask(valor_total_filhos),    
-                          //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
-                          //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
-                            //motivo_cancelamento: this.state.campNome,
-                            servico_pai_id: pai_servico,
-                            logid: localStorage.getItem('logid'),
-                            perfilId: 7,               
-                         }                                
-                      
-                     console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
-                      api.post('/servicos/create',datapost_filho);
-                    
-                    }
+                            data_alteracao_servico = data_alteracao_servico.add(1, "days");
+                              const datapost_filho = {
+                                  tipoEventoId: this.state.tabIndex, 
+                                  eventoId: localStorage.getItem('logeventoservico'), 
+                                  tipoTransporte: this.state.camptipoId,
+                                  nome_passageiro: this.state.campNome, 
+                                  telefone_passageiro: this.state.campTelefone1,
+                                  quantidade_passageiro: this.state.campqtdpassageiro,  
+                                  data_servico: moment(data_alteracao_servico, "DD MM YYYY"),
+                                  quantidade_diarias: this.state.campqtddiarias, 
+                                  hora_inicial: this.state.camphora_inicial,  
+                                  hora_final: this.state.camphora_final,  
+                                  local_embarque: '', 
+                                  local_desembarque: '', 
+                                  embarque_latitude: this.state.embarque_latitude, 
+                                  embarque_longitude: this.state.embarque_longitude, 
+                                  desembarque_latitude: this.state.desembarque_latitude, 
+                                  desembarque_longitude: this.state.desembarque_longitude, 
+                                  //motorista_alocado: this.state.motorista_alocado, 
+                                  distancia_value: this.state.km_total_filho, 
+                                // tempo_value: this.state.tempo_total_filho,
+                                  companhia_aerea: this.state.campCompanhia_aerea,
+                                  numero_voo: this.state.campNumero_voo, 
+                                  motorista_bilingue: this.state.campbilingue, 
+                                  motorista_receptivo: this.state.campreceptivo, 
+                                  nome_motorista: this.state.campnomemotorista, 
+                                  telefone_motorista: this.state.camptelefonemotorista, 
+                                  km_translado: this.state.km_total_filho, 
+                                  tempo_translado: this.state.tempo_total_filho,
+                                  cartaoId: this.state.campcartaoid,        
+                                  valor_estimado: valorDoublemask(valor_total_filhos),    
+                                //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
+                                //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
+                                  //motivo_cancelamento: this.state.campNome,
+                                  servico_pai_id: pai_servico,
+                                  logid: localStorage.getItem('logid'),
+                                  perfilId: 7,               
+                              }                                
+                            
+                            console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
+                            api.post('/servicos/create',datapost_filho);
+
+                        }
+
                     }).catch(error=>{
                       alert("Error MaxDataEvento "+error)
                     })             
@@ -1580,16 +1621,19 @@ debugger;
           
                        this.setState({                
                         mensagem_usuario: 'Serviço alterado com sucesso!'
-                       });                    
-                    
+                       });                                  
+                     
+                      this.refreshPage();                    
                       // this.atualiza_evento();          
                       this.handleCloseModalAlteracaoServico();
+                      this.refreshPage();
                   //    this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);        
                        this.envia_mensagemClick();  
                        //this.loadServicos();       
                        
                       // this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);   
          
+                   
           } else {
 
          
@@ -1603,6 +1647,8 @@ debugger;
                this.valor_total_servicos();
                this.valor_total_viagens();  
                this.atualiza_evento();
+
+               this.refreshPage();   
                //this.atualiza_evento();          
                this.envia_mensagemClick();  
                
@@ -1643,7 +1689,7 @@ verificar_tipo_servico() {
 verifica_rota(inicio) {
   const { validate } = this.state 
 
-  console.log(' inicio verifica_rota - '+JSON.stringify(this.state, null, "    "))
+//  console.log(' inicio verifica_rota - '+JSON.stringify(this.state, null, "    "))
 
   if (inicio == 1) {
     
@@ -1688,7 +1734,7 @@ verifica_rota(inicio) {
   verifica_botao(inicio) {
     const { validate } = this.state 
 
-    console.log(' inicio verifica_botao - '+JSON.stringify(this.state, null, "    "))
+   // console.log(' inicio verifica_botao - '+JSON.stringify(this.state, null, "    "))
    
       
       /* this.state.validacao_tipo == true ||     
@@ -2092,7 +2138,7 @@ verifica_rota(inicio) {
           </div> 
         </div>
       <div className="margem_left">   
-      <Container fluid="true">        
+      <div className="container-fluid">   
       <TabContext value={this.state.value} className="tabs_padrao">
         <AppBar position="static" color="transparent">
           <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
@@ -2119,7 +2165,7 @@ verifica_rota(inicio) {
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '200px', minWidth: '200px', maxWidth: '200px' },
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '250px', minWidth: '250px', maxWidth: '250px' },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
                               { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
                               { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
@@ -2409,7 +2455,7 @@ verifica_rota(inicio) {
         </TabPanel>      
       </TabContext>        
       
-   </Container> 
+   </div> 
         </div>
              <div className="botao_lista_incluir">
                         <Fab style={{ textTransform: 'capitalize',  outline: 'none' }} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
@@ -2419,7 +2465,7 @@ verifica_rota(inicio) {
 
        <ReactModal 
         isOpen={this.state.showModalAlteracaoEvento}
-        style={customStyles}
+        style={customFixoStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> Alterar Eventos
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalAlteracaoEvento()} className="botao_close_incluir_evento_modal">
@@ -2443,7 +2489,7 @@ verifica_rota(inicio) {
                             onKeyUp={this.verificaOrdem_servico}
                             onChange={(value)=> this.setState({campordem_servico:value.target.value})}                                 
                             inputProps={{
-                              maxLength: 10,
+                              maxLength: 7,
                             }}
                           endAdornment={
                             <InputAdornment position="end">
@@ -2473,7 +2519,7 @@ verifica_rota(inicio) {
                                     onKeyUp={this.verificaNome_Evento}
                                     onChange={(value)=> this.setState({campnome_evento:value.target.value})}         
                                     inputProps={{
-                                      maxLength: 50,
+                                      maxLength: 100,
                                     }}            
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -4524,7 +4570,7 @@ verifica_rota(inicio) {
           statusId: 1, 
         }               
         
-          console.log('datapost1 - '+JSON.stringify(datapost, null, "    "));  
+        //  console.log('datapost1 - '+JSON.stringify(datapost, null, "    "));  
     
               api.post('/cartao/create',datapost)
               .then(response=>{
@@ -5008,7 +5054,7 @@ debugger;
                     valor_total = valor_total_alterado;
                  } */        
 
-                  console.log('valor_total_mask - '+ valorMask(valor_total.toFixed(2)));
+           //       console.log('valor_total_mask - '+ valorMask(valor_total.toFixed(2)));
 
                   this.setState({ 
                     possui_tarifa: true,
@@ -5276,11 +5322,11 @@ debugger;
       mensagem_aguarde: '',
     }); 
     
-    this.valor_total_servicos();
-    this.valor_total_viagens();
-    this.loadlistServicos();
-    this.loadlistServicosExcluidos();
-    this.atualiza_evento();
+    //this.valor_total_servicos();
+    //this.valor_total_viagens();
+    //this.loadlistServicos();
+    //this.loadlistServicosExcluidos();
+    //this.atualiza_evento();
   }
 
 
@@ -5686,7 +5732,7 @@ debugger;
 
   sendDelete(userId){
     // url de backend
-    console.log('deletar o id - '+userId);
+   // console.log('deletar o id - '+userId);
  
     
     debugger;

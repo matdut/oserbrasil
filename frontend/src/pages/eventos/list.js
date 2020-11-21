@@ -208,6 +208,7 @@ class listaeventosComponent extends React.Component  {
       incluir: false,      
       campEmail:"",   
       mensagem_email: '',
+      loading: true,
       color: 'light',      
       listEventos:[],
       listOperadores:[],
@@ -279,7 +280,10 @@ class listaeventosComponent extends React.Component  {
       if (resp.data.success) {
         const data = resp.data.data
 
-        this.setState({listservicosevento:data})
+        this.setState({
+          listservicosevento:data,
+          loading: false,
+        })
       }
     })
     .catch ( error => {
@@ -318,9 +322,6 @@ class listaeventosComponent extends React.Component  {
        alert("Error loadeventosexcluidos "+error)
      })    
    } 
-   
-  
-    
 
    valor_total_servicos(){
     let data_formatada = '0.00'
@@ -437,7 +438,10 @@ class listaeventosComponent extends React.Component  {
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data    
-        this.setState({listEventos:data})
+        this.setState({
+          listEventos:data,
+          loading: false,
+        })
       }
     })
     .catch(error=>{
@@ -1054,8 +1058,7 @@ verificaData_Evento(e) {
             </div>
           </div>
        <div className="margem_left">       
-      <br/>          
-     
+    
      <div className="container-fluid">   
      <div>
       <TabContext value={this.state.value} className="tabs_padrao">
@@ -1070,11 +1073,12 @@ verificaData_Evento(e) {
         <div>
                         <MaterialTable          
                             title=""   
+                            isLoading={this.state.loading}
                            // style={{ maxBodyHeight: '60vh', minBodyHeight: '60vh' }}                      
                             columns={[
                               { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
-                              { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
+                              { title: 'Nome do Evento', field: 'nome_evento', width: '380px', minWidth: '380px', maxWidth: '380px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
                               { title: 'Data do Evento', field: 'data_evento', width: '120px', minWidth: '120px', maxWidth: '120px', 
                               render: rowData => dateFormat(rowData.data_evento, "UTC:dd/mm/yyyy") },      
@@ -1389,7 +1393,7 @@ verificaData_Evento(e) {
                             onKeyUp={this.verificaOrdem_servico}
                             onChange={(value)=> this.setState({campordem_servico:value.target.value})}                                 
                             inputProps={{
-                              maxLength: 10,
+                              maxLength: 7,
                             }}
                           endAdornment={
                             <InputAdornment position="end">
@@ -1419,7 +1423,7 @@ verificaData_Evento(e) {
                                     onKeyUp={this.verificaNome_Evento}
                                     onChange={(value)=> this.setState({campnome_evento:value.target.value})}         
                                     inputProps={{
-                                      maxLength: 50,
+                                      maxLength: 100,
                                     }}            
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1646,9 +1650,7 @@ verificaData_Evento(e) {
         ><div className="editar_titulo_inclusao"> Alterar Eventos
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalAlteracao()} className="botao_close_modal_cartao">
               <CloseOutlinedIcon />
-            </IconButton></div>    
-
-            evento
+            </IconButton></div>          
 
        </ReactModal>     
        
