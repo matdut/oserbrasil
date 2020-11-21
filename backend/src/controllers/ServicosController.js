@@ -231,9 +231,10 @@ controllers.listaeventosservicos = async (req,res) => {
            },         
       }],
     where: { eventoId: eventoid,  logid: id, perfilId: perfilId },  
-    order: [
-      ['createdAt', 'DESC']
-    ]  
+    //group: ['createdAt', 'DESC'],
+    order:[ 
+      ['createdAt',  'ASC'] 
+    ]       
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -269,9 +270,11 @@ controllers.listaservicos = async (req,res) => {
         [Op.In]: [null,0]             
       } a*/
     },  
-    order: [
-      ['createdAt', 'DESC'],
+   // group: 
+    order: [ 
+      ['createdAt', 'DESC'],     
       ['data_servico', 'ASC'],
+
     ]       
   })
   .then( function (data){

@@ -785,7 +785,7 @@ verificahora_inicial(e) {
     })            
 
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-       this.buscar_informacao();
+       this.calcular_trajeto();
     }
 
   }            
@@ -810,7 +810,7 @@ verificahora_final(e) {
     })            
 
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-       this.buscar_informacao();
+       this.calcular_trajeto();
     }
 
   }            
@@ -847,7 +847,7 @@ verificaqtddiaria(e) {
             })            
 
             if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-                this.buscar_informacao();
+                this.calcular_trajeto();
             }
      } 
   }            
@@ -1030,7 +1030,7 @@ verificaTipo_veiculo(e) {
     })           
     
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-      this.buscar_informacao();
+      this.calcular_trajeto();
     }
    // this.verifica_botao(this.state.inicio) 
   }     
@@ -1050,7 +1050,7 @@ data_servicochange(e) {
   this.setState({ campdata_servico: dataMask(e.target.value) })
 
   if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-    this.buscar_informacao();
+    this.calcular_trajeto();
   }
 }
 hora_inicialchange(e) {
@@ -1242,6 +1242,54 @@ validatelefone1Change(e){
      this.handleCloseModalDesembarque();
 
   }  
+
+  atualizar_todos_filhos() {
+
+    api.get(`/servicos/get/${this.state.campservicoId}`)
+    .then(respfilho=>{    
+
+      const data = respfilho.data.data;
+
+      for(let i=0; i < data.length; i++){
+     
+        const datapost_filho_alteracao_1 = {
+          //tipoEventoId:  this.state.camptipoId,                             
+          tipoTransporte: this.state.camptipoId,
+          nome_passageiro: this.state.campNome, 
+          telefone_passageiro: this.state.campTelefone1,
+          quantidade_passageiro:this.state.campqtdpassageiro,                              
+          quantidade_diarias: this.state.campqtddiarias, 
+          hora_inicial: this.state.camphora_inicial,  
+          hora_final: this.state.camphora_final,  
+          local_embarque: '', 
+          local_desembarque: '', 
+          local_embarque: this.state.camplocalembarque, 
+          local_desembarque: this.state.camplocaldesembarque, 
+          embarque_latitude: this.state.embarque_latitude, 
+          embarque_longitude: this.state.embarque_longitude, 
+          desembarque_latitude: this.state.desembarque_latitude, 
+          desembarque_longitude: this.state.desembarque_longitude,                             
+          companhia_aerea: this.state.campCompanhia_aerea,
+          numero_voo: this.state.campNumero_voo, 
+          motorista_bilingue: this.state.campbilingue, 
+          motorista_receptivo: this.state.campreceptivo, 
+          nome_motorista: this.state.campnomemotorista, 
+          telefone_motorista: this.state.camptelefonemotorista, 
+          cartaoId: this.state.campcartaoid,                                                            
+        // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
+      }       
+    //   debugger;
+
+      console.log('Update - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
+      api.put(`/servicos/update/${data[i].id}`,datapost_filho_alteracao_1);
+    } 
+
+    }).catch(error=>{
+      alert("Error 34 ")
+    })
+ 
+    
+  }
 
   senUpdate() {
 
@@ -1465,84 +1513,56 @@ validatelefone1Change(e){
        //  console.log(' logperfil '+localStorage.getItem('logperfil'));   
       
    } else {
-
-     const datapost_alterar = {     
-      tipoEventoId: this.state.tabIndex, 
-     // eventoId: this.state.campeventoId, 
-      tipoTransporte: this.state.camptipoId,
-      nome_passageiro: this.state.campNome, 
-      telefone_passageiro: this.state.campTelefone1,
-      quantidade_passageiro: this.state.campqtdpassageiro,  
-      data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
-      quantidade_diarias: this.state.campqtddiarias, 
-      hora_inicial: this.state.camphora_inicial,  
-      hora_final: this.state.camphora_final,  
-      local_embarque: this.state.camplocalembarque, 
-      local_desembarque: this.state.camplocaldesembarque, 
-      embarque_latitude: this.state.embarque_latitude, 
-      embarque_longitude: this.state.embarque_longitude, 
-      desembarque_latitude: this.state.desembarque_latitude, 
-      desembarque_longitude: this.state.desembarque_longitude, 
-      distancia_value: this.state.campdistancia, 
-      tempo_value: this.state.camptempovalue,
-      valor_bilingue: this.state.valor_bilingue,
-      valor_receptivo: this.state.valor_receptivo,
-      //motorista_alocado: this.state.motorista_alocado, 
-      companhia_aerea: this.state.campCompanhia_aerea,
-      numero_voo: this.state.campNumero_voo, 
-      motorista_bilingue: this.state.campbilingue, 
-      motorista_receptivo: this.state.campreceptivo, 
-      nome_motorista: this.state.campnomemotorista, 
-      telefone_motorista: this.state.camptelefonemotorista, 
-      km_translado: this.state.campdistancia, 
-      tempo_translado: this.state.camptempo,
-      cartaoId: this.state.campcartaoid,        
-      valor_estimado: valorDoublemask(this.state.campvalor),    
-      valor_oser: (parseFloat('0.192') * valorDoublemask(this.state.campvalor)).toFixed(2),
-      valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
-      //motivo_cancelamento: this.state.campNome,
-      logid: localStorage.getItem('logid'),
-      perfilId: 7,               
-      }           
          
       debugger;
          // verificar se o servico alterado e o pai
-         if (this.state.campservico_pai_id == 0) {           
-                   
 
+          const datapost_alterar = {     
+            tipoEventoId: this.state.tabIndex, 
+           // eventoId: this.state.campeventoId, 
+            tipoTransporte: this.state.camptipoId,
+            nome_passageiro: this.state.campNome, 
+            telefone_passageiro: this.state.campTelefone1,
+            quantidade_passageiro: this.state.campqtdpassageiro,  
+            data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
+            quantidade_diarias: this.state.campqtddiarias, 
+            hora_inicial: this.state.camphora_inicial,  
+            hora_final: this.state.camphora_final,  
+            local_embarque: this.state.camplocalembarque, 
+            local_desembarque: this.state.camplocaldesembarque, 
+            embarque_latitude: this.state.embarque_latitude, 
+            embarque_longitude: this.state.embarque_longitude, 
+            desembarque_latitude: this.state.desembarque_latitude, 
+            desembarque_longitude: this.state.desembarque_longitude, 
+            distancia_value: this.state.campdistancia, 
+            tempo_value: this.state.camptempovalue,
+            valor_bilingue: this.state.valor_bilingue,
+            valor_receptivo: this.state.valor_receptivo,
+            //motorista_alocado: this.state.motorista_alocado, 
+            companhia_aerea: this.state.campCompanhia_aerea,
+            numero_voo: this.state.campNumero_voo, 
+            motorista_bilingue: this.state.campbilingue, 
+            motorista_receptivo: this.state.campreceptivo, 
+            nome_motorista: this.state.campnomemotorista, 
+            telefone_motorista: this.state.camptelefonemotorista, 
+            km_translado: this.state.campdistancia, 
+            tempo_translado: this.state.camptempo,
+            cartaoId: this.state.campcartaoid,        
+            valor_estimado: valorDoublemask(this.state.campvalor),    
+            valor_oser: (parseFloat('0.192') * valorDoublemask(this.state.campvalor)).toFixed(2),
+            valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
+            //motivo_cancelamento: this.state.campNome,
+            logid: localStorage.getItem('logid'),
+            perfilId: 7,               
+            } 
+      
             console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
             api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar);
 
-            const datapost_filho_alteracao_1 = {
-              //tipoEventoId:  this.state.camptipoId,                             
-              tipoTransporte: this.state.camptipoId,
-              nome_passageiro: this.state.campNome, 
-              telefone_passageiro: this.state.campTelefone1,
-              quantidade_passageiro:this.state.campqtdpassageiro,                              
-              quantidade_diarias: this.state.campqtddiarias, 
-              hora_inicial: this.state.camphora_inicial,  
-              hora_final: this.state.camphora_final,  
-              local_embarque: '', 
-              local_desembarque: '', 
-              local_embarque: this.state.camplocalembarque, 
-              local_desembarque: this.state.camplocaldesembarque, 
-              embarque_latitude: this.state.embarque_latitude, 
-              embarque_longitude: this.state.embarque_longitude, 
-              desembarque_latitude: this.state.desembarque_latitude, 
-              desembarque_longitude: this.state.desembarque_longitude,                             
-              companhia_aerea: this.state.campCompanhia_aerea,
-              numero_voo: this.state.campNumero_voo, 
-              motorista_bilingue: this.state.campbilingue, 
-              motorista_receptivo: this.state.campreceptivo, 
-              nome_motorista: this.state.campnomemotorista, 
-              telefone_motorista: this.state.camptelefonemotorista, 
-              cartaoId: this.state.campcartaoid,                                                            
-            // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
-          }       
-          debugger;
-      
-          console.log('Update - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
-          api.put(`/servicos/updatefilhos/${this.state.campservicoId}`,datapost_filho_alteracao_1);
+
+            this.atualizar_todos_filhos();  
+            
+          if (this.state.campservico_pai_id == 0) {     
 
             debugger;
             let valor_total_filhos = (parseFloat(valorDoublemask(this.state.campvalor))/ parseInt(this.state.campqtddiarias)).toFixed(2);
@@ -1627,55 +1647,7 @@ validatelefone1Change(e){
                       // this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);   
          
                    
-          } else {
-
-            const datapost_filho_alteracao_2 = {
-              //tipoEventoId:  this.state.camptipoId,                             
-              tipoTransporte: this.state.camptipoId,
-              nome_passageiro: this.state.campNome, 
-              telefone_passageiro: this.state.campTelefone1,
-              quantidade_passageiro:this.state.campqtdpassageiro,                              
-              quantidade_diarias: this.state.campqtddiarias, 
-              hora_inicial: this.state.camphora_inicial,  
-              hora_final: this.state.camphora_final,  
-              local_embarque: '', 
-              local_desembarque: '', 
-              local_embarque: this.state.camplocalembarque, 
-              local_desembarque: this.state.camplocaldesembarque, 
-              embarque_latitude: this.state.embarque_latitude, 
-              embarque_longitude: this.state.embarque_longitude, 
-              desembarque_latitude: this.state.desembarque_latitude, 
-              desembarque_longitude: this.state.desembarque_longitude,                             
-              companhia_aerea: this.state.campCompanhia_aerea,
-              numero_voo: this.state.campNumero_voo, 
-              motorista_bilingue: this.state.campbilingue, 
-              motorista_receptivo: this.state.campreceptivo, 
-              nome_motorista: this.state.campnomemotorista, 
-              telefone_motorista: this.state.camptelefonemotorista, 
-              cartaoId: this.state.campcartaoid,                                                            
-            // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
-            }      
-
-            //  console.log('Alterar - '+JSON.stringify(datapost_filho_alteracao_2, null, "    ")); 
-              api.put(`/servicos/update/${this.state.campservicoId}`, datapost_filho_alteracao_2);
-         
-               this.setState({                
-                mensagem_usuario: 'Serviço alterado com sucesso!'
-               });
-            
-               this.verifica_botao(1);
-               this.handleCloseModalAlteracaoServico();
-               this.loadlistServicos();
-               this.valor_total_servicos();
-               this.valor_total_viagens();  
-               this.atualiza_evento();
-
-               this.refreshPage();   
-               //this.atualiza_evento();          
-               this.envia_mensagemClick();  
-               
-
-         }
+          }
         
  }       
 }  
@@ -1937,7 +1909,7 @@ verifica_rota(inicio) {
   });
 
   if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-    this.buscar_informacao();
+    this.calcular_trajeto();
   }
 }
   static defaultProps = {
@@ -2047,7 +2019,7 @@ verifica_rota(inicio) {
       } else if (e.target.value.length > 0) {              
         this.setState({ 
           erro_nome: false,   
-          validacao_nome: false,    
+          validacao_nome: true,    
           mensagem_nome: '',
           inicio: 1
          })  
@@ -4901,9 +4873,13 @@ debugger;
   }   
 
 
-  buscar_informacao() {   
+  calcular_trajeto() {   
+
     let contagem_tarifa=0;
+    let contagem_tarifaEspecial=0;
     let campdistancia_inicio = 0;   
+    let contagemespecial = 0;
+    let contagem = 0;
 
     if (this.state.tabIndex == 1) {
       campdistancia_inicio = 50;         
@@ -4914,21 +4890,18 @@ debugger;
     debugger;
     this.setState({ 
       possui_tarifa: false,
-      possui_tarifa_especial: false,
-      //campvalor: '0,00',
-   //   campvalor_estimado: 0,
-    //  campdistancia: campdistancia_inicio,
-    //  valor_bilingue: 0,
-   //  valor_receptivo: 0,          
+      possui_tarifa_especial: false,    
       mensagem_error: '',      
       hora_formatada: '',  
     })  
-
-  
+     contagem_tarifa = this.state.listTarifasEspeciais.length;
+     contagem_tarifaEspecial = this.state.listTarifas.length;
+    
       this.state.listTarifasEspeciais.map((data)=>{   
       
        const teste_data = moment(this.state.campdata_servico, "DD/MM/YYYY");
        const formatar_data = teste_data.format("YYYY-MM-DD");
+     
 
        const data_servico_date = new Date(formatar_data);
        const data_inicial_date = new Date(data.data_inicial);
@@ -4940,6 +4913,8 @@ debugger;
        let valor_tempo_1 = 0;
        let valor_bandeirada = 0;       
        let distanciapai = 0;       
+       contagemespecial = contagemespecial + 1;
+      
 
             if (this.state.camptipoId == data.tipoTransporte &&  
                  data_servico_date.getTime() >= data_inicial_date.getTime() && 
@@ -4995,7 +4970,7 @@ debugger;
                         mensagem_error: false,
                         mensagem_servico: '',
                       })  
-                    } else if (this.state.possui_tarifa_especial == false)  {
+                    } else if (contagemespecial == contagem_tarifaEspecial && this.state.possui_tarifa_especial == false)  {
                           this.setState({                             
                             //campvalor: '0,00',       
                             mensagem_error: true,
@@ -5023,8 +4998,8 @@ debugger;
         let valor_distancia_1 = 0; 
         let valor_tempo_1 = 0;
         let valor_bandeirada = 0;
-        let distanciapai = 0;
-        contagem_tarifa = contagem_tarifa + 1;
+        let distanciapai = 0;        
+        contagem = contagem + 1;
          // if (this.state.possui_tarifa == false) {
            debugger;
               if (this.state.camptipoId == data.tipoTransporte &&                
@@ -5151,7 +5126,7 @@ debugger;
             }
           
            // if (this.state.campdistancia !== 0 && this.state.camptempo !== 0) {        
-            this.buscar_informacao();
+            this.calcular_trajeto();
            // }
 
         } else  {
