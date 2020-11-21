@@ -1076,7 +1076,8 @@ verificaData_Evento(e) {
                             isLoading={this.state.loading}
                            // style={{ maxBodyHeight: '60vh', minBodyHeight: '60vh' }}                      
                             columns={[
-                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' },
+                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px' },
+                              { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
                               { title: 'Nome do Evento', field: 'nome_evento', width: '380px', minWidth: '380px', maxWidth: '380px', 
                               render: rowData => rowData.nome_evento.substr(0,50) },
@@ -1135,7 +1136,7 @@ verificaData_Evento(e) {
                               overflowY: 'scroll',
                              // tableLayout: 'auto',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
+                              actionsColumnIndex: 8,
                              // pageSize: 7,
                               pageSizeOptions: [0],          
                             }}

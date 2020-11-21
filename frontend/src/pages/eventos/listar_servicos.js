@@ -1465,6 +1465,7 @@ validatelefone1Change(e){
        //  console.log(' logperfil '+localStorage.getItem('logperfil'));   
       
    } else {
+
      const datapost_alterar = {     
       tipoEventoId: this.state.tabIndex, 
      // eventoId: this.state.campeventoId, 
@@ -1502,64 +1503,56 @@ validatelefone1Change(e){
       //motivo_cancelamento: this.state.campNome,
       logid: localStorage.getItem('logid'),
       perfilId: 7,               
-      }       
-
-     console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-     api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar);
-debugger;
-
-     api.get(`/servicos/get/${this.state.campservicoId}`)
-     .then(response=>{
-
-       if (response.data.success==true) {             
+      }           
          
+      debugger;
          // verificar se o servico alterado e o pai
-          if (this.state.campservico_pai_id == 0) {
-            
-            let data_alteracao_servico = '';
-            const data = response.data.data;
-            const pai_servico = data[0].eventoid;
-debugger;
-          
-                      const datapost_filho_alteracao_1 = {
-                        //tipoEventoId:  this.state.camptipoId,                             
-                        tipoTransporte: this.state.camptipoId,
-                        nome_passageiro: this.state.campNome, 
-                        telefone_passageiro: this.state.campTelefone1,
-                        quantidade_passageiro:this.state.campqtdpassageiro,                              
-                        quantidade_diarias: this.state.campqtddiarias, 
-                        hora_inicial: this.state.camphora_inicial,  
-                        hora_final: this.state.camphora_final,  
-                        local_embarque: '', 
-                        local_desembarque: '', 
-                        local_embarque: this.state.camplocalembarque, 
-                        local_desembarque: this.state.camplocaldesembarque, 
-                        embarque_latitude: this.state.embarque_latitude, 
-                        embarque_longitude: this.state.embarque_longitude, 
-                        desembarque_latitude: this.state.desembarque_latitude, 
-                        desembarque_longitude: this.state.desembarque_longitude,                             
-                        companhia_aerea: this.state.campCompanhia_aerea,
-                        numero_voo: this.state.campNumero_voo, 
-                        motorista_bilingue: this.state.campbilingue, 
-                        motorista_receptivo: this.state.campreceptivo, 
-                        nome_motorista: this.state.campnomemotorista, 
-                        telefone_motorista: this.state.camptelefonemotorista, 
-                        cartaoId: this.state.campcartaoid,                                                            
-                       // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
-                    }       
-                    console.log('id'+ data[0].id);
-                    console.log('Update - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
-                    api.put(`/servicos/updatefilhos/${data[0].id}`,datapost_filho_alteracao_1);
-     
+         if (this.state.campservico_pai_id == 0) {           
+                   
+
+            console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
+            api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar);
+
+            const datapost_filho_alteracao_1 = {
+              //tipoEventoId:  this.state.camptipoId,                             
+              tipoTransporte: this.state.camptipoId,
+              nome_passageiro: this.state.campNome, 
+              telefone_passageiro: this.state.campTelefone1,
+              quantidade_passageiro:this.state.campqtdpassageiro,                              
+              quantidade_diarias: this.state.campqtddiarias, 
+              hora_inicial: this.state.camphora_inicial,  
+              hora_final: this.state.camphora_final,  
+              local_embarque: '', 
+              local_desembarque: '', 
+              local_embarque: this.state.camplocalembarque, 
+              local_desembarque: this.state.camplocaldesembarque, 
+              embarque_latitude: this.state.embarque_latitude, 
+              embarque_longitude: this.state.embarque_longitude, 
+              desembarque_latitude: this.state.desembarque_latitude, 
+              desembarque_longitude: this.state.desembarque_longitude,                             
+              companhia_aerea: this.state.campCompanhia_aerea,
+              numero_voo: this.state.campNumero_voo, 
+              motorista_bilingue: this.state.campbilingue, 
+              motorista_receptivo: this.state.campreceptivo, 
+              nome_motorista: this.state.campnomemotorista, 
+              telefone_motorista: this.state.camptelefonemotorista, 
+              cartaoId: this.state.campcartaoid,                                                            
+            // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
+          }       
+          debugger;
+      
+          console.log('Update - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
+          api.put(`/servicos/updatefilhos/${this.state.campservicoId}`,datapost_filho_alteracao_1);
 
             debugger;
             let valor_total_filhos = (parseFloat(valorDoublemask(this.state.campvalor))/ parseInt(this.state.campqtddiarias)).toFixed(2);
           
             
             if (this.state.campqtddiarias > this.state.qtddiarias_old) {
-                let adicionafilho = Number(this.state.campqtddiarias) - Number(this.state.qtddiarias_old)
-               debugger;
-                api.get(`/servicos/MaxDataEvento/${data[0].eventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+
+               let adicionafilho = Number(this.state.campqtddiarias) - Number(this.state.qtddiarias_old);               
+               let data_alteracao_servico = ''; 
+                api.get(`/servicos/MaxDataEvento/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
                 .then(respdataservico=>{    
                       
                   data_alteracao_servico = dateFormat(respdataservico.data.data, "UTC:dd/mm/yyyy");
@@ -1602,7 +1595,7 @@ debugger;
                                 //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
                                 //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
                                   //motivo_cancelamento: this.state.campNome,
-                                  servico_pai_id: pai_servico,
+                                  servico_pai_id: this.state.campservicoId,
                                   logid: localStorage.getItem('logid'),
                                   perfilId: 7,               
                               }                                
@@ -1636,6 +1629,35 @@ debugger;
                    
           } else {
 
+            const datapost_filho_alteracao_2 = {
+              //tipoEventoId:  this.state.camptipoId,                             
+              tipoTransporte: this.state.camptipoId,
+              nome_passageiro: this.state.campNome, 
+              telefone_passageiro: this.state.campTelefone1,
+              quantidade_passageiro:this.state.campqtdpassageiro,                              
+              quantidade_diarias: this.state.campqtddiarias, 
+              hora_inicial: this.state.camphora_inicial,  
+              hora_final: this.state.camphora_final,  
+              local_embarque: '', 
+              local_desembarque: '', 
+              local_embarque: this.state.camplocalembarque, 
+              local_desembarque: this.state.camplocaldesembarque, 
+              embarque_latitude: this.state.embarque_latitude, 
+              embarque_longitude: this.state.embarque_longitude, 
+              desembarque_latitude: this.state.desembarque_latitude, 
+              desembarque_longitude: this.state.desembarque_longitude,                             
+              companhia_aerea: this.state.campCompanhia_aerea,
+              numero_voo: this.state.campNumero_voo, 
+              motorista_bilingue: this.state.campbilingue, 
+              motorista_receptivo: this.state.campreceptivo, 
+              nome_motorista: this.state.campnomemotorista, 
+              telefone_motorista: this.state.camptelefonemotorista, 
+              cartaoId: this.state.campcartaoid,                                                            
+            // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
+            }      
+
+            //  console.log('Alterar - '+JSON.stringify(datapost_filho_alteracao_2, null, "    ")); 
+              api.put(`/servicos/update/${this.state.campservicoId}`, datapost_filho_alteracao_2);
          
                this.setState({                
                 mensagem_usuario: 'Serviço alterado com sucesso!'
@@ -1654,11 +1676,7 @@ debugger;
                
 
          }
-       }        
-
-   }).catch(error=>{
-    alert("Error server 2 "+error)
-  })    
+        
  }       
 }  
 
@@ -5299,7 +5317,8 @@ debugger;
    // debugger;
     this.setState({ 
       showModalAlteracaoServico: true,      
-      campservicoId: data.id,        
+      campservicoId: data.id,  
+      campservico_pai_id: data.servico_pai_id,      
       possui_tarifa_especial: false,
       mensagem_aguarde: '',
       qtddiarias_old: 0,
