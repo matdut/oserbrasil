@@ -82,17 +82,16 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',          
+    left                   : '66%',    
     right                  : '0%',
-    width                  : '36% !important',
- //   width                  : '40%',   
     bottom                 : 'auto',  
-    height                 : '100vh',        
+    height                 : '100%',    
+    width                  : '40%',    
     padding                : '0px !important',      
-    overflow               : 'hidden',
-    WebkitOverflowScrolling: 'hidden',
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
     position               : 'absolute',
-    border: '1px solid #ccc',       
+    border: '1px solid #ccc',   
   }
 };
 
@@ -1059,6 +1058,7 @@ verificaData_Evento(e) {
               </div>      
             </div>
           </div>
+        <br/>  
        <div className="margem_left">       
     
      <div className="container-fluid">   
@@ -1132,8 +1132,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',                             
                              // tableLayout: 'auto',
@@ -1225,8 +1225,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1305,8 +1305,8 @@ verificaData_Evento(e) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,         
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
@@ -1370,10 +1370,10 @@ verificaData_Evento(e) {
         ><div className="editar_titulo_inclusao"> 
         <div className="container-fluid">
              <div className="row">
-               <div className="col-9 altura_titulo">
+               <div className="col-8 altura_titulo">
                Incluir Eventos
                </div>
-               <div className="col-1">
+               <div className="col-4">
                <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()}>
               <CloseOutlinedIcon />
             </IconButton></div>                    

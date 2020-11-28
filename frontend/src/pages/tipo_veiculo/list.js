@@ -339,7 +339,7 @@ class listComponent extends React.Component  {
                    title=""
                                        
                    columns={[                          
-                    { title: '', field: '', width: '30px', minWidth: '30px', maxWidth: '30px'  },  
+                    { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px'  },  
                      { title: 'Descrição', field: 'descricao', width: '400px', minWidth: '400px', maxWidth: '400px'  },                                                     
                      { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px'  },  
                      { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
@@ -384,8 +384,8 @@ class listComponent extends React.Component  {
                     searchFieldVariant: 'outlined', 
                     toolbarButtonAlignment: 'right',           
                     paging: false,          
-                    maxBodyHeight: '70vh',
-                    minBodyHeight: '70vh',                    
+                    maxBodyHeight: '60vh',
+                    minBodyHeight: '60vh',                    
                     padding: 'dense',   
                     overflowY: 'scroll', 
               

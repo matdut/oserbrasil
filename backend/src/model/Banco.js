@@ -40,7 +40,7 @@ var Banco = sequelize.define(nametable,{
     allowNull: true,     
   },
   operacao:  {  
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(3),
     allowNull: true,     
   },
   logid: {

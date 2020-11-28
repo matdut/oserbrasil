@@ -15,6 +15,9 @@ class Area_cliente extends React.Component  {
       nome: "",
       perfil:"",
       id: "",
+      campTotal_viagens: '',
+      campvalor_total: '',
+      totalEventos: '',
       isOpen: false
     }
   }

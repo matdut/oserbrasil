@@ -24,6 +24,11 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FormControl from '@material-ui/core/FormControl';
 
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
 
 import { Input } from 'reactstrap';
 import Fab from '@material-ui/core/Fab';
@@ -65,7 +70,7 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '64%',    
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
@@ -90,7 +95,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',    
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -770,9 +775,16 @@ verificar_menu_lateral() {
               <div className="titulo_bemvindo"> Dados Bancários</div>
               </div>      
             </div>
+        <br/>    
             <div className="margem_left">                      
-       <div className="container-fluid">                                          
-<div>          
+       <div className="container-fluid"> 
+       <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                              
+              </TabList>
+            </AppBar>                                         
+
                     <MaterialTable          
                         title=""
                         
@@ -870,8 +882,8 @@ verificar_menu_lateral() {
                               }, 1000)
                             }),
                         }} */
-                      />      
-             </div>                
+                      />               
+         </TabContext>
         <br/>
         <ReactModal 
         isOpen={this.state.showMensagemDelete}
@@ -990,7 +1002,7 @@ verificar_menu_lateral() {
                                     onKeyUp={this.verificaagencia_dv}
                                     onChange={(value)=> this.setState({campagencia_dv:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 2,
+                                      maxLength: 1,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1055,7 +1067,7 @@ verificar_menu_lateral() {
                                     onKeyUp={this.verificaconta}
                                     onChange={(value)=> this.setState({campconta:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 4,
+                                      maxLength: 12,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1085,7 +1097,7 @@ verificar_menu_lateral() {
                                     onKeyUp={this.verificaconta_dv}
                                     onChange={(value)=> this.setState({campconta_dv:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 2,
+                                      maxLength: 1,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1198,7 +1210,7 @@ verificar_menu_lateral() {
                                     onKeyUp={this.verificaagencia_dv}
                                     onChange={(value)=> this.setState({campagencia_dv:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 2,
+                                      maxLength: 1,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1263,7 +1275,7 @@ verificar_menu_lateral() {
                                     onKeyUp={this.verificaconta}
                                     onChange={(value)=> this.setState({campconta:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 4,
+                                      maxLength: 12,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1293,7 +1305,7 @@ verificar_menu_lateral() {
                                     onKeyUp={this.verificaconta_dv}
                                     onChange={(value)=> this.setState({campconta_dv:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 2,
+                                      maxLength: 1,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -1353,9 +1365,10 @@ verificar_menu_lateral() {
        //   </Fab>
       // </div>
   }
-      </div>   
+  
     </div>  
     </div>
+</div>
     );
   }
 

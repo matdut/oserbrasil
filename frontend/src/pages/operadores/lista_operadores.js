@@ -87,7 +87,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',   
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100vh',     
@@ -1831,7 +1831,7 @@ opcao_tabChange = (event, newValue) => {
             </div>
 
           </div>
-
+<br/>
     <div className="margem_left">       
     
     <div className="container-fluid">      

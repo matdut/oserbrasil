@@ -1118,6 +1118,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
               </div>      
             </div>    
       <div className="margem_left">   
+      <div className="container-fluid">   
        <br/>    
 
          <TabContext value={this.state.value} className="tabs_padrao">
@@ -1172,8 +1173,8 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: '55vh',
-                              minBodyHeight: '55vh',                    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',                 
                               padding: 'dense',   
                               overflowY: 'scroll', 
                              // tableLayout: 'fixed',                               
@@ -1236,8 +1237,8 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: '56vh',
-                              minBodyHeight: '56vh',                    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',                 
                               padding: 'dense',   
                               overflowY: 'scroll', 
                              // tableLayout: 'fixed',
@@ -1307,8 +1308,8 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: '56vh',
-                              minBodyHeight: '56vh',                    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',                
                               padding: 'dense',   
                               overflowY: 'scroll', 
                              // tableLayout: 'fixed',             
@@ -1591,7 +1592,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
           </Snackbar>
                  
      </div>       
- 
+    </div> 
     </div>
     );
   }

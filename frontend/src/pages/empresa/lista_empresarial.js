@@ -1345,8 +1345,10 @@ busca_cpf(e){
               </div>      
             </div>
           </div>
-          <div className="margem_left">                         
-            <br/>      
+          <br/>  
+       <div className="margem_left">       
+    
+     <div className="container-fluid">   
             <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
               <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
@@ -1410,8 +1412,8 @@ busca_cpf(e){
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,                                   
-                          maxBodyHeight: '55vh',
-                          minBodyHeight: '55vh', 
+                          maxBodyHeight: '60vh',
+                          minBodyHeight: '60vh', 
                           padding: 'dense',   
                           overflowY: 'scroll',
                        //   position: "sticky",                        
@@ -1894,7 +1896,7 @@ busca_cpf(e){
        </div>          
     </div>        
    </div>
-
+  </div>
     );
   }
 

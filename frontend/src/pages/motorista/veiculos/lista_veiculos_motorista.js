@@ -36,6 +36,13 @@ import CheckIcon from '@material-ui/icons/Check';
 import Resizer from 'react-image-file-resizer';
 import { Container, Content } from "../../style";
 
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+
+
 import filesize from "filesize";
 /* import Upload from "../../UploadDocumentosModal"; */
 //import FileList from "../../FilelistDocInclusao";
@@ -74,7 +81,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',    
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100vh',  
@@ -378,11 +385,13 @@ class listComponent extends React.Component  {
             validacao_seguro: true,                      
           })     
           
-          if (this.state.camptipo_veiculo.length > 0) {
-            this.setState({   
-              validacao_tipo_veiculo: true,        
-            });
-          }
+          if (this.state.camptipo_veiculo !== null) {
+            if (this.state.camptipo_veiculo.length > 0) {
+              this.setState({   
+                validacao_tipo_veiculo: true,        
+              });
+            }
+          }  
 
 
           const uploadedCRVL = res.data.data.map(file => ({     
@@ -1027,7 +1036,7 @@ class listComponent extends React.Component  {
           marca: localStorage.getItem('logMarca'), 
           modelo: localStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
-          camptipoTransporte: this.state.camptipo_veiculo,      
+          tipoTransporte: this.state.camptipo_veiculo,      
           apolice: this.state.campApolice,
           placa: this.state.campPlaca,
           ano: this.state.campAno,
@@ -1272,23 +1281,30 @@ class listComponent extends React.Component  {
               </div>      
             </div>
           </div>     
+        <br/>  
           <div className="margem_left">       
     
     <div className="container-fluid">   
     
-        <br/>
+        <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                              
+              </TabList>
+            </AppBar>
         <div>
+
            <MaterialTable          
                             title=""
                                                      
                             columns={[
-                              { title: '', field: '#', width: '40px' },
-                              { title: 'Marca', field: 'marca', width: '285px' },
-                              { title: 'Modelo', field: 'modelo', width: '285px' },
-                              { title: 'Placa', field: 'placa', width: '250px' },
-                              { title: 'Ano', field: 'ano', width: '300px' },                                                            
-                              { title: '', field: '#', width: '40px' },                              
-                              { title: '', field: '', align: 'left', lookup: { 1: 'sadas', 2: 'asdas' }, },         
+                              { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },
+                              { title: 'Marca', field: 'marca', width: '285px', minWidth: '285px', maxWidth: '285px' },
+                              { title: 'Modelo', field: 'modelo', width: '285px', minWidth: '285px', maxWidth: '285px' },
+                              { title: 'Placa', field: 'placa', width: '250px', minWidth: '250px', maxWidth: '250px' },
+                              { title: 'Ano', field: 'ano', width: '300px', minWidth: '300px', maxWidth: '300px' },                                                            
+                              { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },                              
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },         
                             ]}
                             data={this.state.listVeiculos}   
                             localization={{
@@ -1330,8 +1346,8 @@ class listComponent extends React.Component  {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: '68vh',
-                              minBodyHeight: '68vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',
@@ -1365,6 +1381,7 @@ class listComponent extends React.Component  {
                             }} */
                           />      
         </div> 
+        </TabContext>
 
         <div className="botao_lista_incluir">
                         <Fab style={{ textTransform: 'capitalize'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>

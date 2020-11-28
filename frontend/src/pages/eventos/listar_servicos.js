@@ -153,7 +153,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',    
+    left                   : '66%',      
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -178,7 +178,7 @@ const customFixoStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',          
+    left                   : '66%',        
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100vh',       
@@ -2267,8 +2267,8 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: '44vh',
-                              minBodyHeight: '44vh',                    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',                 
                               padding: 'dense',   
                               overflowY: 'scroll', 
                             //  tableLayout: 'fixed',                        
@@ -2372,8 +2372,8 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: '46vh',
-                              minBodyHeight: '46vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',     
                               //overflowY: 'scroll',
@@ -2427,7 +2427,7 @@ verifica_rota(inicio) {
                            
                               { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
+                             
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                            
                              },                     
                             ]}
@@ -2471,8 +2471,8 @@ verifica_rota(inicio) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: '46vh',
-                              minBodyHeight: '46vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',     
                               //overflowY: 'scroll',
@@ -2691,10 +2691,10 @@ verifica_rota(inicio) {
         ><div className="editar_titulo_inclusao"> 
               <div className="container-fluid">
                   <div className="row">
-                    <div className="col-10 altura_titulo">
+                    <div className="col-8 altura_titulo">
                          Alterar Serviços          
                     </div>
-                    <div className="col-1">
+                    <div className="col-4">
                       <IconButton aria-label="editar" onClick={()=>this.handleCloseModalAlteracaoServico()} >
                         <CloseOutlinedIcon />
                       </IconButton></div>        
@@ -3471,10 +3471,10 @@ verifica_rota(inicio) {
         ><div className="editar_titulo_inclusao"> 
              <div className="container-fluid">
                   <div className="row">
-                    <div className="col-10 altura_titulo">
+                    <div className="col-8 altura_titulo">
                        Incluir Serviços                       
                     </div>
-                    <div className="col-1">
+                    <div className="col-4">
                       <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()} >
                         <CloseOutlinedIcon />
                       </IconButton></div>        

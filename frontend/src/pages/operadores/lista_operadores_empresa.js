@@ -107,7 +107,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',          
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100vh',        
@@ -1307,6 +1307,7 @@ carrega_status(){
               </div>      
             </div>
           </div>
+        <br/>  
      <div className="margem_left">       
     
     <div className="container-fluid">          
@@ -1326,7 +1327,7 @@ carrega_status(){
                         title=""
                                                    
                         columns={[
-                          { title: '', field: '#', width: "28px", minWidth: '28px', maxWidth: '28px' },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px' },
                           { title: 'Status', field: 'status.descricao', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },

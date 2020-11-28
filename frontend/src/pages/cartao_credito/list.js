@@ -94,7 +94,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',     
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -664,7 +664,8 @@ opcao_tabChange = (event, newValue) => {
                                                
                           { title: 'Bandeira', field: 'bandeira', width: "65px", minWidth: '65px', maxWidth: '65px', align: 'right', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
                           { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px' },    
-                          { title: 'Número', field: 'numero', width: "156px", minWidth: '156px', maxWidth: '156px', render: rowData => this.verifica_formatacao(rowData.bandeira, rowData) },  
+                          { title: 'Número', field: 'numero', width: "156px", minWidth: '156px', maxWidth: '156px', align: 'right', render: rowData => this.verifica_formatacao(rowData.bandeira, rowData) },  
+                          { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px' },    
                           { title: 'Nome', field: 'nome', width: "406px", minWidth: '406px', maxWidth: '406px' },                               
                           { title: 'Data Validade', field: 'data_vencimento', width: "156px", minWidth: '156px', maxWidth: '156px', render: rowData => dateFormat(rowData.data_vencimento, "UTC:mm/yyyy") },                            
                                             

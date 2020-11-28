@@ -101,10 +101,10 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',   
+    left                   : '66%',    
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100vh',     
+    height                 : '100%',    
     width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',

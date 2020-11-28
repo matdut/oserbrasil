@@ -1757,6 +1757,7 @@ opcao_tabChange = (event, newValue) => {
               </div>      
             </div>
           </div>     
+          <br/>
        <div className="margem_left">                      
        <div className="container-fluid">    
 
@@ -1825,8 +1826,8 @@ opcao_tabChange = (event, newValue) => {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
@@ -1901,8 +1902,8 @@ opcao_tabChange = (event, newValue) => {
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
-                            maxBodyHeight: '59vh',
-                            minBodyHeight: '59vh',    
+                            maxBodyHeight: '60vh',
+                            minBodyHeight: '60vh',  
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                              // pageSize: 9,
@@ -1968,8 +1969,8 @@ opcao_tabChange = (event, newValue) => {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',  
                               padding: 'dense',   
                               overflowY: 'scroll',
                           //    tableLayout: 'fixed',                            
@@ -2049,8 +2050,8 @@ opcao_tabChange = (event, newValue) => {
                               toolbarButtonAlignment: 'right',  
                               //resizable: false,
                               paging: false,          
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',  
                               padding: 'dense',   
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',     
@@ -2088,11 +2089,7 @@ opcao_tabChange = (event, newValue) => {
             </div>      
           </TabPanel>              
         </TabContext>          
-           <div className="botao_lista_incluir">
-                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalEnvio()}>
-                            <AddIcon/> <div className="botao_incluir"> Adicionar Motorista Auxiliar  </div>
-                        </Fab>
-                      </div>  
+         
         <ReactModal 
             isOpen={this.state.showModal}
             style={customStyles}

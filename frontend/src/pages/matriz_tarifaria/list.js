@@ -1192,11 +1192,11 @@ verifica_botao_especial_E(inicio) {
                           render: rowData =>  valorMask(rowData.valor_km) },                        
                           { title: 'Tempo (R$)', field: 'valor_tempo', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
                           render: rowData =>  valorMask(rowData.valor_tempo) },                          
-                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
+                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
                           render: rowData =>  valorMask(rowData.bandeira) },                          
-                          { title: 'Receptivo (R$)', field: 'receptivo', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
+                          { title: 'Receptivo (R$)', field: 'receptivo', width: '120px', minWidth: '120px', maxWidth: '120px', align: 'right',
                           render: rowData =>  valorMask(rowData.receptivo) }, 
-                          { title: 'Bilingue (%)', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'center' },                                            
+                          { title: 'Bilingue (%)', field: 'bilingue', width: '120px', minWidth: '120px', maxWidth: '120px', align: 'center' },                                            
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                         ]}
                         data={this.state.listaMatriz}     
