@@ -10,6 +10,8 @@ import Menu_administrador from '../../administrador/menu_administrador';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
 
+import Avatar from '@material-ui/core/Avatar';
+
 //FOTO
 
 //import Upload from "../../UploadDocumentos";
@@ -64,6 +66,7 @@ class empresarialComponent extends React.Component{
       campModelo: '',
       campCarroId: '',
       campModeloId: '',            
+      camp_foto: '',
       camp_foto_CRVL_url: '',
       camp_foto_CNH_url: '',
       camp_foto_url: '',
@@ -233,7 +236,8 @@ class empresarialComponent extends React.Component{
            
           this.setState({             
             campNome: res.data.data[0].nome,       
-            uploadedFilesFoto: uploadedFilesFoto
+            uploadedFilesFoto: uploadedFilesFoto,
+            camp_foto: uploadedFilesFoto[0].preview,
           })          
           
           if (res.data.data[0].foto_name !== null) {
@@ -420,6 +424,7 @@ handleUpload = files => {
       //uploadedFiles: this.state.uploadedFiles.concat(uploadedFiles)
       uploadedFilesFoto: uploadedFilesFoto,
       fotoState: 'has-success',
+      camp_foto: uploadedFilesFoto[0].preview,
       incluir_foto: true,
       inicio: 2,
       mensagem_foto: ''
@@ -530,21 +535,13 @@ return (
  {this.verificar_menu_lateral()}
 <div> 
     <div>     
-    <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-           <div className="titulo_bemvindo"> Foto </div>            
-            </div>           
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Foto </div>         
+              </div>      
+            </div> 
 
-              <br/>
-              <br/>
-              <br/>
-          </div> 
-
-          <div class="d-flex flex-column espacamento_caixa_texto">              
+          <div className="d-flex flex-column espacamento_caixa_texto">              
               <div class="p-2">       
               <Grid item xs>
                 <Paper className="documento_motorista_cnh">
@@ -552,7 +549,7 @@ return (
                         <div className="titulocnh"><stronger>FOTO </stronger></div>                                              
                         <Container>  
                    
-                                <div class="d-flex justify-content-start">
+                               <div className="d-flex justify-content-start">
                                    <div>
                                    <Content>
                                       {!!uploadedFilesFoto.length && (
@@ -565,7 +562,8 @@ return (
                                          <Upload onUpload={this.handleUpload} />                                       
                                     </Content>                                            
                                    </div>
-                                 </div>    
+                                 </div>   
+                                  
                            </Container>                                
                             <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
                             <div className="d-flex justify-content-center">

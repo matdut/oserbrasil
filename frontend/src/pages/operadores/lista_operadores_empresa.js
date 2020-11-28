@@ -107,16 +107,15 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',     
+    left                   : '64%',          
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100%',    
-    width                  : '40%',    
+    height                 : '100vh',        
     padding                : '0px !important',      
-    overflow               : 'auto',
-    WebkitOverflowScrolling: 'touch',
+    overflow               : 'hidden',
+    WebkitOverflowScrolling: 'hidden',
     position               : 'absolute',
-    border: '1px solid #ccc',   
+    border: '1px solid #ccc',       
   }
 };
 
@@ -1308,8 +1307,10 @@ carrega_status(){
               </div>      
             </div>
           </div>
-     <div className="container-fluid margem_left">          
-     <br/>
+     <div className="margem_left">       
+    
+    <div className="container-fluid">          
+    
      <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
               <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
@@ -1320,19 +1321,19 @@ carrega_status(){
               </TabList>
             </AppBar>        
           <TabPanel value="1" className="tirar_espaco">  
-           <div style={{ maxWidth: '100%' }}>
+           <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%"}}                                  
+                                                   
                         columns={[
-                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
-                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
+                          { title: '', field: '#', width: "28px", minWidth: '28px', maxWidth: '28px' },
+                          { title: 'Status', field: 'status.descricao', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
                           { title: 'Representante Legal', field: 'nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.nome.substr(0,30) },
                           { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,30) }, 
                           { title: 'Telefone', field: 'celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
-                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },   
+                          { title: '', field: '',  lookup: { 1: 'sadas', 2: 'asdas' }, },   
                         ]}
                         data={this.state.listOperadores}   
                         localization={{
@@ -1373,9 +1374,10 @@ carrega_status(){
                           search: true,     
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
-                          paging: false,      
-                          maxBodyHeight: 450,
-                          minBodyHeight: 450,   
+                          maxBodyHeight: '59vh',
+                          minBodyHeight: '59vh',   
+                          padding: 'dense',   
+                          overflowY: 'scroll', 
                          // maxBodyHeight: 400,
                          // resizable: false,
                         //  headerStyle: { position: 'static', top: 0 },      
@@ -1405,10 +1407,10 @@ carrega_status(){
             </div>      
       </TabPanel>       
       <TabPanel value="2" className="tirar_espaco">  
-      <div style={{ maxWidth: '100%' }}>
+      <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%"}}                                  
+                                                  
                         columns={[
                           { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
@@ -1459,8 +1461,10 @@ carrega_status(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',   
+                              padding: 'dense',   
+                              overflowY: 'scroll',   
                             //  maxBodyHeight: 400,
                             //  resizable: false,
                             //  headerStyle: { position: 'static', top: 0 },      
@@ -1489,10 +1493,10 @@ carrega_status(){
             </div>      
       </TabPanel>  
       <TabPanel value="3" className="tirar_espaco">  
-      <div style={{ maxWidth: '100%' }}>
+      <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%"}}                                  
+                                            
                         columns={[
                           { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
@@ -1543,8 +1547,10 @@ carrega_status(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',   
+                              padding: 'dense',   
+                              overflowY: 'scroll',   
                             //  maxBodyHeight: 400,
                             //  resizable: false,
                             //  headerStyle: { position: 'static', top: 0 },      
@@ -1577,10 +1583,10 @@ carrega_status(){
             </div>      
       </TabPanel>  
       <TabPanel value="4" className="tirar_espaco">  
-      <div style={{ maxWidth: '100%' }}>
+      <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%"}}                                  
+                                                  
                         columns={[
                           { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
                           { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },               
@@ -1628,8 +1634,8 @@ carrega_status(){
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,          
-                          maxBodyHeight: 450,
-                          minBodyHeight: 450,     
+                          maxBodyHeight: '59vh',
+                          minBodyHeight: '59vh',     
                           exportButton: { pdf: true },           
                           actionsColumnIndex: 3,
                           //pageSize: 7,
@@ -1661,7 +1667,8 @@ carrega_status(){
                             }),
                         }} */
                       />      
-            </div>      
+            </div>     
+           
       </TabPanel>               
     </TabContext>   
     <div className="botao_lista_incluir">
@@ -2067,7 +2074,8 @@ carrega_status(){
                {this.state.mensagem_usuario}
         </Alert>
       </Snackbar>   
-      </div>   
+      </div>  
+      </div> 
     </div>  
     );
   }

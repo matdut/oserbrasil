@@ -74,7 +74,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -87,6 +87,7 @@ const customStyles = {
   }
 };
 
+/*
 const FotoStyles = {
   overlay: {    
     position: 'fixed',
@@ -94,17 +95,45 @@ const FotoStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    opacity: '85%',
+    opacity: '100%',
     //backgroundColor: 'rgba(255, 255, 255, 0.75)'
     backgroundColor: 'rgba(0, 0, 0, 0.65)'
   },
   content : {
     top                    : '10px',
-    left                   : '36%',    
+    left                   : '7%',    
+   // right                  : '80%',
+    bottom                 : '80px',  
+    height                 : '60%',    
+    width                  : '35%',    
+    padding                : '0px !important',      
+    overflow               : 'auto',
+    WebkitOverflowScrolling: 'touch',
+    position               : 'absolute',   
+   // backgroundPosition     : '50% 50%', 
+    border: '1px solid #ccc',   
+  }
+};
+*/
+
+const FotoStyles = {
+  overlay: {    
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  //  opacity: '85%',
+    //backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+  },
+  content : {
+    top                    : '10px',
+    left                   : '9%',    
     right                  : '50%',
     bottom                 : '80px',  
     height                 : '60%',    
-    width                  : '350px',    
+    width                  : '450px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -167,6 +196,7 @@ class listComponent extends React.Component  {
       mensagem_usuario: '',
       mensagem_alert: false,
       campMotorista_bilingue: false,
+      camptipoTransporte: '',
       campEmail:"",      
       campTelefone1:"",
       campCpf:"", 
@@ -232,6 +262,7 @@ class listComponent extends React.Component  {
       mensagem_modelo: '', 
       mensagem_numero_carteira: '',    
       mensagem_datavalidade: '',    
+      mensagem_tipo_veiculo: '',
       erro_cpf: false,
       erro_nome: false,
       erro_datanascimento: false,
@@ -240,7 +271,9 @@ class listComponent extends React.Component  {
       erro_marca: false,
       erro_dataCNH: false,
       erro_numero_carteira: false,
+      erro_tipo_veiculo: false,
       validacao_marca:false,
+      validacao_tipo_veiculo: false,
       validacao_cep: false,
       validacao_numero: false,
       validacao_complemento: false,
@@ -258,6 +291,7 @@ class listComponent extends React.Component  {
       listMotoristaExcluidos:[],
       listMotoristaCadIncompletos:[],
       listMotoristaConvite:[],
+      listTipoTransporte:[],
       listaStatus:[],
       listSeguradoras:[],      
       listaVeiculos:[],
@@ -277,6 +311,9 @@ class listComponent extends React.Component  {
     this.busca_motorista = this.busca_motorista.bind(this);
     this.carroChange = this.carroChange.bind(this);
     this.modeloChange = this.modeloChange.bind(this);
+
+    this.tipoChange = this.tipoChange.bind(this);
+    this.verificaTipo_veiculo = this.verificaTipo_veiculo.bind(this);  
 
     this.cepchange = this.cepchange.bind(this);
     this.validaCepChange = this.validaCepChange.bind(this);      
@@ -328,6 +365,7 @@ class listComponent extends React.Component  {
         this.carrega_marca_banco();
         this.loadSeguradoras();
         this.loadMotoristaConvite();
+        this.loadTipoTransporte();
     }    
    
   }
@@ -426,17 +464,54 @@ class listComponent extends React.Component  {
           validacao_dataCNH: false,
           mensagem_datavalidade: ''  
          })      
-       } else {
+       } else if (this.state.campData_CNH.length == 10) {
 
-          validate.data_validadeState = 'has-success' ;        
-          this.setState({ 
-            erro_dataCNH: false,
-            validacao_dataCNH: true,
-            mensagem_datavalidade: ''
-          });     
-
+        let date_validar = this.state.campData_CNH;
+        var dia = date_validar.substr(0,2);
+        var mes = date_validar.substr(3,2);         
+    
+        if (dia > 31) {
+         this.setState({ 
+          erro_dataCNH: true,   
+          validacao_dataCNH: false,             
+          mensagem_datavalidade: 'Dia é inválido.' 
+          })  
+        } else if (mes > 12) {
+         this.setState({ 
+          erro_dataCNH: true,   
+          validacao_dataCNH: false,             
+          mensagem_datavalidade: 'Mês é inválido.' 
+          })  
+        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+         this.setState({ 
+          erro_dataCNH: true,   
+          validacao_dataCNH: false,             
+          mensagem_datavalidade: 'Data do serviço é inválido.' 
+          })  
+        } else {
+         this.setState({ 
+          erro_dataCNH: false,   
+          validacao_dataCNH: true,             
+          mensagem_datavalidade: '',
+         });   
+        }     
+          
        }        
    }
+
+   validaDataValidadeChange(e){
+    const { validate } = this.state
+    
+      if (e.target.value.length < 10) {
+        validate.data_validadeState = 'has-danger'
+        this.setState({ 
+            erro_dataCNH: true,
+            validacao_dataCNH: false,
+            mensagem_datavalidade: 'O campo Data de Validade é obrigatório.' 
+          })  
+      }  
+      this.setState({ validate })
+  }
 
   verificaCnhonblur(e) {
     const { validate } = this.state
@@ -716,6 +791,10 @@ class listComponent extends React.Component  {
 
   }
 
+  data_nascimentochange(e) {
+    this.setState({ campData_nascimento: dataMask(e.target.value) })
+  }
+
   verificaSeguro() {
     const { validate } = this.state
        if (this.state.campSeguradoraId.length == 0) {
@@ -740,6 +819,7 @@ class listComponent extends React.Component  {
             campModelo: res.data.data[0].modelo,
             campCarroId: res.data.data[0].marcaId,
             campModeloId: res.data.data[0].modeloId,
+            camptipoTransporte: res.data.data[0].tipoTransporte,
             campApolice: res.data.data[0].apolice,
             camp_foto_CRVL_url: res.data.data[0].foto_CRVL_url,
             campSeguradoraId: res.data.data[0].seguradoraId,
@@ -844,6 +924,20 @@ class listComponent extends React.Component  {
       })   
     }
 
+    loadTipoTransporte() {
+      api.get('/tipoTransporte/list')
+      .then(res=>{
+        if (res.data.success == true) {
+          const data = res.data.data
+  
+          this.setState({listTipoTransporte:data})
+        }     
+      })
+      .catch(error=>{
+        alert("Error server "+error)
+      })
+  
+    }   
   load_modelo_banco(marca_id){
     const { validate } = this.state   
     api.get(`/modelo/get/${marca_id}`)
@@ -912,13 +1006,36 @@ class listComponent extends React.Component  {
   })    
 
 }
+tipoChange(e) {  
+  this.setState({ camptipoTransporte: e.target.value })  
+}
+
 cepchange(e) {
   this.setState({ campCep: cepMask(e.target.value) })
  // if (this.state.campCep.length > 0) {
  //   this.handleClick(e)
  // }
 }
-
+verificaTipo_veiculo(e) {
+  const { validate } = this.state
+  if (this.state.camptipoTransporte == '') {      
+    this.setState({ 
+      validate,
+      erro_tipo_veiculo: false,
+      validacao_tipo_veiculo: false,
+      mensagem_tipo_veiculo: '',
+      inicio: 1,   
+     })      
+  } else {
+    this.setState({ 
+      validate,
+      erro_tipo_veiculo: false,
+      validacao_tipo_veiculo: true,
+      mensagem_tipo_veiculo: '',
+      inicio: 2,   
+     })  
+  }     
+ }
 handleCepClick(e) {    
   const base = e.target.value;
   const estadoId = "";
@@ -1029,6 +1146,15 @@ handleCepClick(e) {
     }
 
 };
+
+loadtipoTransporte(){  
+  
+  return this.state.listTipoTransporte.map((data)=>{          
+    return(
+       <MenuItem value={data.descricao}>{data.descricao}</MenuItem>      
+    )
+  })
+}
 
 validaCepChange(e){
   const { validate } = this.state
@@ -1404,12 +1530,15 @@ cadeirarodasChange(e) {
            // this.load_modelo_banco(this.state.campCarroId);
           //  this.buscaModelo(this.state.campModeloId);
 
+          debugger;
            api.get(`/modelo/getModelo/${this.state.campModeloId}`)
            .then((modelo)=>{     
 
+            debugger;
               const veiculoupdate = {
                 marcaId: this.state.campCarroId, 
                 modeloId: this.state.campModeloId,
+                tipoTransporte: this.state.camptipoTransporte,
                 marca: localStorage.getItem('logMarca'), 
                 modelo: modelo.data.data[0].name,
                 seguradoraId: this.state.campSeguradoraId,
@@ -1639,6 +1768,61 @@ abre_foto(foto) {
   a.click();
 }
 */
+verificaDataNascimento() {
+  const { validate } = this.state
+     if (this.state.campData_nascimento.length == 0) {    
+      this.setState({ 
+        validate,
+        erro_datanascimento: false,   
+        validacao_datanascimento: false,    
+        mensagem_data_nascimento: ''  
+       })      
+     } else if (this.state.campData_nascimento.length == 10) {
+
+        let date_validar = this.state.campData_nascimento;
+        var dia = date_validar.substr(0,2);
+        var mes = date_validar.substr(3,2);         
+    
+        if (dia > 31) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Dia é inválido.' 
+          })  
+        } else if (mes > 12) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Mês é inválido.' 
+          })  
+        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+         this.setState({ 
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Data do serviço é inválido.' 
+          })  
+        } else {
+         this.setState({ 
+          erro_datanascimento: false,   
+          validacao_datanascimento: true,             
+          mensagem_data_nascimento: '',
+         });   
+        }       
+
+   }           
+ }
+validaDataNascimentoChange(e){
+  const { validate } = this.state
+  
+    if (e.target.value.length == 10) {      
+      this.setState({ 
+        erro_datanascimento: false,
+        validacao_datanascimento: false,
+        mensagem_data_nascimento: '' 
+      })  
+    }  
+    this.setState({ validate })
+}
 
 opcao_tabChange = (event, newValue) => {   
   this.setState({        
@@ -1659,7 +1843,7 @@ opcao_tabChange = (event, newValue) => {
             </div>
           </div>     
        <div className="margem_left">                      
-        <br/>      
+       <div className="container-fluid">    
 
         <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
@@ -1675,14 +1859,7 @@ opcao_tabChange = (event, newValue) => {
                         <MaterialTable          
                             title=""
                             isLoading={this.state.loading}
-                            style={{
-                              border: "0px solid gray",
-                              maxWidth: "94vw",
-                              overflowY: "hidden",
-                              overflowX: "hidden",
-                              marginTop: "0px",
-                              marginLeft: "0px",
-                            }}
+                           
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
@@ -1692,7 +1869,7 @@ opcao_tabChange = (event, newValue) => {
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px', fontSize: 5 },  
                               { title: '', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },                               
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },              
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                             ]}
                             data={this.state.listMotorista}   
                             localization={{
@@ -1726,8 +1903,8 @@ opcao_tabChange = (event, newValue) => {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
@@ -1802,8 +1979,8 @@ opcao_tabChange = (event, newValue) => {
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
-                            maxBodyHeight: 450,
-                            minBodyHeight: 450, 
+                            maxBodyHeight: '59vh',
+                            minBodyHeight: '59vh',    
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                              // pageSize: 9,
@@ -1869,8 +2046,8 @@ opcao_tabChange = (event, newValue) => {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                           //    tableLayout: 'fixed',                            
@@ -1950,8 +2127,8 @@ opcao_tabChange = (event, newValue) => {
                               toolbarButtonAlignment: 'right',  
                               //resizable: false,
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',     
                               padding: 'dense',   
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',     
@@ -1984,7 +2161,8 @@ opcao_tabChange = (event, newValue) => {
                               }, 1000)
                             }),
                         }}*/
-                      />                              
+                      />    
+                                         
             </div>      
           </TabPanel>              
         </TabContext>          
@@ -2421,8 +2599,35 @@ opcao_tabChange = (event, newValue) => {
                             </div>                        
                         </div>
                     </div> 
-                    <div class="p-2">   
-                        <div className="d-flex justify-content-start">
+                    <div class="p-2">
+                      <FormControl variant="outlined" className="posicao_caixa_texto">
+                              <InputLabel className="label_email_motorista" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                              <Select
+                                className="text_email_modal"
+                                error={this.state.erro_tipo_veiculo} 
+                                helperText={this.state.mensagem_tipo_veiculo}
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={this.state.camptipoTransporte}
+                                onFocus={this.verificaTipo_veiculo}
+                                //onClick={this.verificaTipo_veiculo}
+                                onChange={ (e) => {
+                                  this.tipoChange(e)
+                                }}   
+
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_tipo_veiculo? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }     
+                                label="Tipo Transporte"
+                              >
+                                {this.loadtipoTransporte()}                    
+                              </Select>
+                            </FormControl>  
+                    </div>
+                    <div class="p-2">                            
+                        <div className="d-flex justify-content-start">                          
                             <div>
                             <FormControl disabled={this.state.disabled_placa} variant="outlined">
                                 <InputLabel className="label_placa_text_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
@@ -2822,9 +3027,9 @@ opcao_tabChange = (event, newValue) => {
             <div className="container_alterado">
                <div className="d-flex justify-content">        
                  <div>  
-                 <div class="d-flex flex-column espacamento_caixa_texto">              
-                      <div class="p-2">  
-                             <img src={this.state.foto} variant="circle" className="foto_size_modal"/>
+                 <div className="d-flex flex-column espacamento_caixa_texto">              
+                      <div className="p-2 zoom">  
+                             <img src={this.state.foto} variant="circle" className="img-responsive"/>
                        </div>
                     </div>        
                  </div>
@@ -2858,6 +3063,7 @@ opcao_tabChange = (event, newValue) => {
         </Alert>
       </Snackbar>   
 
+</div>
       </div>   
     </div>  
     );

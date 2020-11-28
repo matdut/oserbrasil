@@ -73,6 +73,22 @@ controllers.listMotorista = async (req,res) => {
   
 }
 
+controllers.listMotoristaAux = async (req,res) => {
+  const { id } = req.params;
+
+  await EmailOperador.findAll({
+    include: [{ model: Status  }],
+    where: { perfilId: 9,  empresaId: id }    
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
 
 controllers.listAdministrador = async (req,res) => {
   //const { id } = req.params;

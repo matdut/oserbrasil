@@ -6,6 +6,7 @@ const email_operadorController  = require('../controllers/email_operadorControll
 router.get('/list/:id',email_operadorController.list);
 router.get('/listAdministrador',email_operadorController.listAdministrador);
 router.get('/listMotorista',email_operadorController.listMotorista);
+router.get('/listMotoristaAux/:id',email_operadorController.listMotoristaAux);
 router.post('/create',email_operadorController.create);
 router.get('/get/:id', email_operadorController.get);
 router.get('/getEmpresa/:id/:email', email_operadorController.getEmpresa);

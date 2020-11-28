@@ -382,30 +382,36 @@ return (
          {this.verificar_menu()}   
           <div class="d-flex flex-column espacamento_caixa_texto">              
               <div class="p-2">         
-              <Grid container spacing={1}>
-                  <Grid item xs>
-                    <Paper className="foto_motorista">
-                    <div>
+              <Grid item xs>
+                <Paper className="documento_motorista_cnh">
+                       <div>
                         <div className="titulocnh"><stronger>FOTO </stronger></div>                                              
-                        <Container>   
-                              <Content>
+                        <Container>  
+                   
+                               <div className="d-flex justify-content-start">
+                                   <div>
+                                   <Content>
                                       {!!uploadedFilesFoto.length && (
                                           <FileList files={uploadedFilesFoto} />
                                        )}
-                              </Content>   
-                              <Content>
-                                        <Upload onUpload={this.handleUpload} />                                       
-                              </Content>                                                                      
-                          </Container>    
-                     </div>     
+                                    </Content>   
+                                   </div>
+                                   <div>
+                                     <Content>
+                                         <Upload onUpload={this.handleUpload} />                                       
+                                    </Content>                                            
+                                   </div>
+                                 </div>   
+                                  
+                           </Container>                                
+                            <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
+                            <div className="d-flex justify-content-center">
+                            <label> {this.state.mensagem_foto} </label>
+                            </div>     
+                          </Box>                          
+                        </div> 
                     </Paper>
-                    <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto"  p={2}>
-                              <div className="d-flex justify-content-left">
-                              <label> {this.state.mensagem_foto} </label>
-                             </div>     
-                    </Box>    
-                  </Grid>
-               </Grid>                                                                   
+                  </Grid>                                                                    
               </div> 
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       

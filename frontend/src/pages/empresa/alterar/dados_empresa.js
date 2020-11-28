@@ -794,20 +794,12 @@ return (
 <div>
  {this.verificar_menu_lateral()}
    <div>  
-    <div>     
-    <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> Dados da Empresa </div>              
+    
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Dados da Empresa </div>         
+              </div>      
             </div>      
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div> 
 
             <div className="d-flex flex-column espacamento_caixa_texto_ajuste">
             <div>                
@@ -919,7 +911,7 @@ return (
          </div>            
      </div>             
    </div>  
-</div> 
+
   );
 } 
 }

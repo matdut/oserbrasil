@@ -101,10 +101,10 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '60%',   
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100%',    
+    height                 : '100vh',     
     width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -127,11 +127,11 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+    width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -967,7 +967,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
   
       return (
   
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_scroll"  p={2}>
                 <div className="d-flex justify-content-center">
                 <label> Enviar </label>
                 </div>     
@@ -979,7 +979,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
         if (this.state.validacao_email == true) { 
             return (
         
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendEnvioEmail()}>
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitado_modal_scroll"  p={2} onClick={()=>this.sendEnvioEmail()}>
                       <div className="d-flex justify-content-center">
                       <label> Enviar </label>
                       </div>     
@@ -988,7 +988,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
         } else {
           return (
         
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_scroll"  p={2}>
                     <div className="d-flex justify-content-center">
                     <label> Enviar </label>
                     </div>     
@@ -1192,20 +1192,20 @@ sendEnvioEmail(){
       <div className="ajuste_tela">
 
       <Menu_administrador />  
-      <div className="container-fluid titulo_lista margem_left">     
-        <div className="unnamed-character-style-4 descricao_admministrador">          
-        <div className="ajustar_top">
-            <div class="row">
-              <div class="col-auto mr-auto">             
-                   <a href={"/auxiliares"}><img src="/voltar@2x.png" width="14" height="27"/></a>  
-              </div>
+      <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">   
+              <div className="ajustar_top">
+            <div class="row">             
               <div className="col mr-auto div1 titulo_bemvindo">Administrador Auxiliar</div>
             </div>
-        </div>              
-       </div>      
-      </div>           
+          </div>               
+            
+            </div>      
+            </div>            
 
-      <div className="container-fluid margem_left">   
+      <div className="margem_left">       
+    
+    <div className="container-fluid">    
        <br/>            
 
        <TabContext value={this.state.value} className="tabs_padrao">
@@ -1220,7 +1220,7 @@ sendEnvioEmail(){
           <TabPanel value="1" className="tirar_espaco">       
           <div>
           <MaterialTable           
-                       style={ {width: "96%"}}                                  
+                                                 
                             title=""
                             columns={[
                               { title: '', field: '#', width: "18px" },
@@ -1264,8 +1264,8 @@ sendEnvioEmail(){
                               paging: false,   
                             //  minBodyHeight: 450,       
                              // maxBodyHeight: 600,   
-                             maxBodyHeight: 400,
-                             minBodyHeight: 400, 
+                             maxBodyHeight: '59vh',
+                             minBodyHeight: '59vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',                               
@@ -1283,9 +1283,9 @@ sendEnvioEmail(){
           </div> 
           </TabPanel>       
           <TabPanel value="2" className="tirar_espaco">  
-               <div style={{ maxWidth: '100%' }}>
+               <div>
                 <MaterialTable        
-                           style={ {width: "96%"}}                                  
+                                               
                          //   className="resize_table"
                             title=""
                             columns={[
@@ -1295,7 +1295,7 @@ sendEnvioEmail(){
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                 
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                
                             ]}
                             data={this.state.listClienteExcluidos}   
                             localization={{
@@ -1329,8 +1329,8 @@ sendEnvioEmail(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                           //    tableLayout: 'fixed',
@@ -1354,9 +1354,9 @@ sendEnvioEmail(){
                 </div>     
             </TabPanel>      
             <TabPanel value="3" className="tirar_espaco">                  
-               <div style={{ maxWidth: '100%' }}>
+               <div>
                 <MaterialTable               
-                           style={ {width: "96%"}}                                                          
+                                                                              
                          //   className="resize_table"
                             title=""
                             columns={[
@@ -1366,7 +1366,7 @@ sendEnvioEmail(){
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                   
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                
                             ]}
                             data={this.state.listClienteCadIncompletos}   
                             localization={{
@@ -1400,8 +1400,8 @@ sendEnvioEmail(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',             
@@ -1430,10 +1430,10 @@ sendEnvioEmail(){
                 </div>     
             </TabPanel>    
             <TabPanel value="4" className="tirar_espaco">        
-          <div style={{ maxWidth: '100%'}}>
+          <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%"}}                                  
+                                                    
                         columns={[
                           { title: '', field: '#', width: '20px' },
                           { title: 'Status', field: 'status.descricao', width: '200px' },               
@@ -1481,8 +1481,8 @@ sendEnvioEmail(){
                               toolbarButtonAlignment: 'right',  
                               //resizable: false,
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '59vh',
+                              minBodyHeight: '59vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                            //   tableLayout: 'fixed',     
@@ -1904,7 +1904,8 @@ sendEnvioEmail(){
               </div>      
                       </FormControl>             
                           </div>
-                        </div>                        
+                        </div>   
+                                     
                         {this.enviar_botao_modal(this.state.inicio)}     
                       </div>
                     </div>        
@@ -1967,7 +1968,7 @@ sendEnvioEmail(){
           </Snackbar>
                  
      </div>       
- 
+  </div>
     </div>
     );
   }

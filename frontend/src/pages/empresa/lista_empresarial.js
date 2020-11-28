@@ -100,11 +100,11 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100%',    
-    width                  : '44%',    
+    width                  : '550px',
+    height                 : '100vh',   
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -112,6 +112,8 @@ const customStyles = {
     border: '1px solid #ccc',   
   }
 };
+
+
 
 const ConfirmacaodelStyles = {
   overlay: {
@@ -1364,8 +1366,8 @@ busca_cpf(e){
                           { title: 'CNPJ', field: 'cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.cnpj) }, 
                           { title: 'Razão Social', field: 'razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.razao_social.substr(0,30) },
                           { title: 'Representante Legal', field: 'cliente.nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.cliente.nome.substr(0,30) },
-                          { title: 'Email', field: 'cliente.email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.cliente.email.substr(0,30) }, 
-                          { title: 'Telefone', field: 'cliente.celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                          { title: 'Email', field: 'cliente.email', width: '200px', minWidth: '200px',  maxWidth: '200px', render: rowData => rowData.cliente.email.substr(0,25) }, 
+                          { title: 'Telefone', field: 'cliente.celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                                                                                                                                        
                         ]}
                         data={this.state.listEmpresas}     
@@ -1408,8 +1410,8 @@ busca_cpf(e){
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,                                   
-                          maxBodyHeight: 450,
-                          minBodyHeight: 450, 
+                          maxBodyHeight: '55vh',
+                          minBodyHeight: '55vh', 
                           padding: 'dense',   
                           overflowY: 'scroll',
                        //   position: "sticky",                        
@@ -1484,8 +1486,8 @@ busca_cpf(e){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',   
@@ -1563,8 +1565,8 @@ busca_cpf(e){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',   

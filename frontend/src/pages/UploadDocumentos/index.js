@@ -5,7 +5,7 @@ import { DropContainer, UploadMessage } from "./styles";
 export default class Upload extends Component {
   renderDragMessage = (isDragActive, isDragReject) => {
     if (!isDragActive) {
-      return <UploadMessage className="incluirarquivo">Incluir Arquivo</UploadMessage>;
+      return <UploadMessage className="incluirarquivo">Incluir Foto</UploadMessage>;
     }
     if (isDragReject) {
       return <UploadMessage type="error">Arquivo não suportado</UploadMessage>;

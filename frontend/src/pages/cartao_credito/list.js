@@ -89,7 +89,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',     
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -124,6 +124,7 @@ class CartaoCreditoComponent extends React.Component  {
       tipo_cartao: "",
       inicio: 1,
       color: 'light',
+      loading: false,
       cvc: '',
       expiry: '',
       focus: '',
@@ -240,7 +241,10 @@ class CartaoCreditoComponent extends React.Component  {
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
-        this.setState({listaCartao:data})
+        this.setState({
+          listaCartao:data,
+          isLoading: false,
+        })
       }
     })
     .catch(error=>{
@@ -576,11 +580,11 @@ verifica_bandeira(bandeira) {
        );
   } else if (bandeira == 'diners-club') {
     return (
-      <img src='/dinerrs.png' style={{ width: '60px', height: '40px' }}/>
+      <img src='/dinerrs.png' style={{ width: '40px', height: '20px' }}/>
      );
   } else if (bandeira == 'american-express') {
     return (
-      <img src='/america_express.jpg' style={{ width: '60px', height: '40px' }}/>
+      <img src='/america_express.jpg' style={{ width: '40px', height: '20px' }}/>
      );
   } else if (bandeira == 'maestro') {
     return (
@@ -630,19 +634,20 @@ if (cartao == null) {
               <div className="titulo_bemvindo"> Cartão de Crédito </div>         
               </div>      
             </div>
-            <div className="container-fluid margem_left">                                         
-<br/>
-<div style={{ maxWidth: '100%',  maxHeight: '100%' }}>          
+            <div className="margem_left">       
+    
+    <div className="container-fluid">         
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%" }}     
+                        isLoading={this.state.loading}
                         columns={[
-                          { title: '', field: '#', width: '40px' },                          
-                          { title: 'Bandeira', field: 'bandeira', width: '100px', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
-                          { title: 'Número', field: 'numero', width: '300px', render: rowData => this.verifica_formatacao(rowData.bandeira, rowData) },  
-                          { title: 'Nome', field: 'nome', width: '300px' },                               
-                          { title: 'Data Validade', field: 'data_vencimento', width: '300px', render: rowData => dateFormat(rowData.data_vencimento, "UTC:mm/yyyy") },                            
-                          { title: '', field: '#', width: '50px' },                       
+                                               
+                          { title: 'Bandeira', field: 'bandeira', width: "65px", minWidth: '65px', maxWidth: '65px', align: 'right', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
+                          { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px' },    
+                          { title: 'Número', field: 'numero', width: "156px", minWidth: '156px', maxWidth: '156px', render: rowData => this.verifica_formatacao(rowData.bandeira, rowData) },  
+                          { title: 'Nome', field: 'nome', width: "406px", minWidth: '406px', maxWidth: '406px' },                               
+                          { title: 'Data Validade', field: 'data_vencimento', width: "156px", minWidth: '156px', maxWidth: '156px', render: rowData => dateFormat(rowData.data_vencimento, "UTC:mm/yyyy") },                            
+                                            
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listaCartao}     
@@ -685,15 +690,15 @@ if (cartao == null) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,                                        
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '70vh',
+                              minBodyHeight: '70vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
                               ///headerStyle: { position: 'sticky', top: 0 },
                               /*exportButton: true, */            
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 5,
+                              actionsColumnIndex: 6,
                               //pageSize: 7,
                               pageSizeOptions: [0],   
                         }}                        

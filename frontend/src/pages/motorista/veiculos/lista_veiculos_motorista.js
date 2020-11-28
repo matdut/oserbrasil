@@ -40,7 +40,7 @@ import filesize from "filesize";
 /* import Upload from "../../UploadDocumentosModal"; */
 //import FileList from "../../FilelistDocInclusao";
 /* import FileList from "../../FilelistDocumentoModal"; */
-import Upload from "../../UploadDocumentosModal";
+import Upload from "../../UploadDocumentosModalAlteracao";
 import FileList from "../../FilelistDocumentoModal";
 
 import Snackbar from '@material-ui/core/Snackbar';
@@ -77,7 +77,7 @@ const customStyles = {
     left                   : '60%',    
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100%',    
+    height                 : '100vh',  
     width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -94,17 +94,17 @@ const FotoStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    opacity: '85%',
+  //  opacity: '85%',
     //backgroundColor: 'rgba(255, 255, 255, 0.75)'
     backgroundColor: 'rgba(0, 0, 0, 0.65)'
   },
   content : {
     top                    : '10px',
-    left                   : '36%',    
+    left                   : '9%',    
     right                  : '50%',
     bottom                 : '80px',  
     height                 : '60%',    
-    width                  : '350px',    
+    width                  : '450px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -154,6 +154,7 @@ class listComponent extends React.Component  {
       campId: '',
       campCarroId: 0,
       camp_foto_CRVL_url: '',
+      camptipo_veiculo: '',
       campCarro: '',
       campCarroNovo: '',
       campModeloId: 0,
@@ -184,6 +185,7 @@ class listComponent extends React.Component  {
       erro_anodut: false,
       erro_apolice: false,
       erro_seguro: false,
+      erro_tipo_veiculo: false,
       validacao_carro: false,
       validacao_modelo: false,
       validacao_cor: false,
@@ -192,12 +194,14 @@ class listComponent extends React.Component  {
       validacao_anodut: false,
       validacao_apolice: false,
       validacao_seguro: false,
+      validacao_tipo_veiculo:false,
       incluir_foto_1: false,
       listaMarcas:[],
       listaModelos:[],      
       listVeiculos:[],
       listSeguradoras:[],
       uploadedCRVL: [],      
+      listTipoTransporte:[],
       validate: {         
         carroState: '',          
         modeloState: '',          
@@ -222,6 +226,8 @@ class listComponent extends React.Component  {
     this.cadeirinhapequenaChange = this.cadeirinhapequenaChange.bind(this);  
     this.cadeirinhagrandeChange = this.cadeirinhagrandeChange.bind(this);  
     this.cadeirarodasChange = this.cadeirarodasChange.bind(this);  
+    this.tipoChange = this.tipoChange.bind(this);
+    this.verificaTipo_veiculo = this.verificaTipo_veiculo.bind(this);  
     
     this.verificaCarro = this.verificaCarro.bind(this);  
     this.verificaModelo = this.verificaModelo.bind(this);  
@@ -253,7 +259,23 @@ class listComponent extends React.Component  {
 
 
     this.loadMotorista();  
+    this.loadTipoTransporte();
+
   }
+  loadTipoTransporte() {
+    api.get('/tipoTransporte/list')
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listTipoTransporte:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+
+  }  
 
   limpar_campos(){
     this.setState({
@@ -271,6 +293,8 @@ class listComponent extends React.Component  {
       campApolice: "",
       campNomeSalvar: "",
       campSeguradoraNome: "",
+      camptipoTransporte: '',
+      camptipo_veiculo: '',
       campSeguradoraId: 0,
       campEngate: false,
       campCadeirinhaPequena: false,
@@ -286,6 +310,7 @@ class listComponent extends React.Component  {
       erro_anodut: false,
       erro_apolice: false,
       erro_seguro: false,
+      erro_tipo_veiculo: false,
       validacao_carro: false,
       validacao_modelo: false,
       validacao_cor: false,
@@ -294,7 +319,8 @@ class listComponent extends React.Component  {
       validacao_anodut: false,
       validacao_apolice: false,
       validacao_seguro: false,
-      incluir_foto_1: false,
+      validacao_tipo_veiculo: false,
+      incluir_foto_1: false,      
       uploadedCRVL: [],      
     });      
   } 
@@ -329,6 +355,7 @@ class listComponent extends React.Component  {
             campModelo: res.data.data[0].modelo,
             campCarroId: res.data.data[0].marcaId,
             campModeloId: res.data.data[0].modeloId,
+            camptipo_veiculo: res.data.data[0].tipoTransporte,
             campApolice: res.data.data[0].apolice,
             campSeguradoraId: res.data.data[0].seguradoraId,
             campPlaca: res.data.data[0].placa,
@@ -348,8 +375,14 @@ class listComponent extends React.Component  {
             validacao_cor: true,
             validacao_modelo:true,
             validacao_placa: true,
-            validacao_seguro: true,                   
-          })            
+            validacao_seguro: true,                      
+          })     
+          
+          if (this.state.camptipo_veiculo.length > 0) {
+            this.setState({   
+              validacao_tipo_veiculo: true,        
+            });
+          }
 
 
           const uploadedCRVL = res.data.data.map(file => ({     
@@ -545,7 +578,31 @@ class listComponent extends React.Component  {
       this.setState({ campCadeiraRodas: e.target.checked })
     }
 
-    verificaCarro(e) {
+
+    tipoChange(e) {  
+       this.setState({ camptipo_veiculo: e.target.value })  
+    }
+    verificaTipo_veiculo(e) {
+      const { validate } = this.state
+      if (this.state.camptipo_veiculo == '') {      
+        this.setState({ 
+          validate,
+          erro_tipo_veiculo: false,
+          validacao_tipo_veiculo: false,
+          mensagem_tipo_veiculo: '',
+          inicio: 1,   
+         })      
+      } else {
+        this.setState({ 
+          validate,
+          erro_tipo_veiculo: false,
+          validacao_tipo_veiculo: true,
+          mensagem_tipo_veiculo: '',
+          inicio: 2,   
+         })  
+      }     
+     }
+  verificaCarro(e) {
       const { validate } = this.state
          if (this.state.campCarro.length == 0) {
        //  validate.carroState = ''    
@@ -799,6 +856,14 @@ class listComponent extends React.Component  {
         this.setState({ validate })
     }
 
+    loadtipoTransporte(){  
+  
+      return this.state.listTipoTransporte.map((data)=>{          
+        return(
+           <MenuItem value={data.descricao}>{data.descricao}</MenuItem>      
+        )
+      })
+    }
     buscaMarca(id) { 
       //let marca_saida = ''      
       console.log('id entrada Marca - '+id);
@@ -962,6 +1027,7 @@ class listComponent extends React.Component  {
           marca: localStorage.getItem('logMarca'), 
           modelo: localStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
+          camptipoTransporte: this.state.camptipo_veiculo,      
           apolice: this.state.campApolice,
           placa: this.state.campPlaca,
           ano: this.state.campAno,
@@ -1055,6 +1121,7 @@ class listComponent extends React.Component  {
           marca: localStorage.getItem('logMarca'), 
           modelo: localStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
+          tipoTransporte: this.state.camptipo_veiculo,
           apolice: this.state.campApolice,
           placa: this.state.campPlaca,
           ano: this.state.campAno,
@@ -1077,6 +1144,7 @@ class listComponent extends React.Component  {
           marca: localStorage.getItem('logMarca'), 
           modelo: localStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
+          tipoTransporte: this.state.camptipo_veiculo,
           apolice: this.state.campApolice,
           placa: this.state.campPlaca,
           ano: this.state.campAno,
@@ -1200,17 +1268,19 @@ class listComponent extends React.Component  {
         <Menu_motorista />         
         <div className="titulo_lista">
                <div className="unnamed-character-style-4 descricao_admministrador">                       
-                 <div className="titulo_bemvindo"> Veículo </div>
+                 <div className="titulo_bemvindo"> Veículos </div>
               </div>      
             </div>
           </div>     
-       <div className="margem_left">
+          <div className="margem_left">       
+    
+    <div className="container-fluid">   
     
         <br/>
-        <div style={{ maxWidth: '100%' }}>
+        <div>
            <MaterialTable          
                             title=""
-                            style={ {width: "96%"}}                                  
+                                                     
                             columns={[
                               { title: '', field: '#', width: '40px' },
                               { title: 'Marca', field: 'marca', width: '285px' },
@@ -1260,8 +1330,8 @@ class listComponent extends React.Component  {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: 450,
-                              minBodyHeight: 450, 
+                              maxBodyHeight: '68vh',
+                              minBodyHeight: '68vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',
@@ -1363,6 +1433,33 @@ class listComponent extends React.Component  {
                             </div>                        
                         </div>
                     </div> 
+                    <div class="p-2">
+                      <FormControl variant="outlined" className="posicao_caixa_texto">
+                              <InputLabel className="label_email_motorista" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                              <Select
+                                className="text_email_modal"
+                                error={this.state.erro_tipo_veiculo} 
+                                helperText={this.state.mensagem_tipo_veiculo}
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={this.state.camptipo_veiculo}
+                                onFocus={this.verificaTipo_veiculo}
+                                //onClick={this.verificaTipo_veiculo}
+                                onChange={ (e) => {
+                                  this.tipoChange(e)
+                                }}   
+
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_tipo_veiculo? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }     
+                                label="Tipo Transporte"
+                              >
+                                {this.loadtipoTransporte()}                    
+                              </Select>
+                            </FormControl>  
+                    </div>
                     <div class="p-2">   
                         <div className="d-flex justify-content-start">
                             <div>
@@ -1627,11 +1724,12 @@ class listComponent extends React.Component  {
                    <div className="sub_titulo_modal_editor"> Documentos </div>                
                 </div>      
                 <div class="p-2">  
-                     <div className="borda_documento">                       
+                                       
                         <div className="titulocrvl"><stronger>CRLV</stronger></div>
                         <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
-                        <Container>               
-                                <div class="d-flex justify-content-start">
+                        <Container>   
+            
+                                <div className="d-flex justify-content-start">
                                    <div>
                                    <Content>
                                       {!!uploadedCRVL.length && (
@@ -1647,9 +1745,9 @@ class listComponent extends React.Component  {
                                      </Content>                                            
                                    </div>
                                  </div>                
-                          </Container>                                            
+                          </Container>                                                  
                         
-                        </div>     
+                       
 
                 </div>            
               <br/>
@@ -1724,6 +1822,33 @@ class listComponent extends React.Component  {
                             </div>                        
                         </div>
                     </div> 
+                    <div class="p-2">
+                      <FormControl variant="outlined" className="posicao_caixa_texto">
+                              <InputLabel className="label_email_motorista" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                              <Select
+                                className="text_email_modal"
+                                error={this.state.erro_tipo_veiculo} 
+                                helperText={this.state.mensagem_tipo_veiculo}
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={this.state.camptipo_veiculo}
+                                onFocus={this.verificaTipo_veiculo}
+                                //onClick={this.verificaTipo_veiculo}
+                                onChange={ (e) => {
+                                  this.tipoChange(e)
+                                }}   
+
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_tipo_veiculo? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }     
+                                label="Tipo Transporte"
+                              >
+                                {this.loadtipoTransporte()}                    
+                              </Select>
+                            </FormControl>  
+                    </div>
                     <div class="p-2">   
                         <div className="d-flex justify-content-start">
                             <div>
@@ -1988,30 +2113,20 @@ class listComponent extends React.Component  {
                    <div className="sub_titulo_modal_editor"> Documentos </div>                
                 </div>      
                 <div class="p-2">  
-                     <div className="borda_documento">                       
-                        <div className="titulocrvl"><stronger>CRLV</stronger></div>
-                        <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
-                        <Container>               
-                                <div class="d-flex justify-content-start">
-                                   <div>
-                                   <Content>
-                                      <img src={this.state.camp_foto_CRVL_url} variant="circle" 
-                                         className="foto_cnh_motorista" onClick={()=>this.handleOpenModalFoto(this.state.camp_foto_CRVL_url)} />                                                        
-                                    </Content>                                      
-                                   </div>
-                                   <div>
-                                     <Content>
-                                         <div>
-                                            {this.state.mensagem_foto2} </div>
-                                         <Upload onUpload={this.handleUploadCRVL} />                                       
-                                     </Content>                                            
-                                   </div>
-                                 </div>                
-                          </Container>                                            
-                        
-                        </div>     
-
-                </div>            
+                  <div class="d-flex justify-content-start">                   
+                    <div>
+                    <div>
+                       <div className="titulo_motorista_modal">CRLV</div>
+                       <div className="sub_titulo_motorista_modal_crvl">Certificado de Registro e Licenciamento do Veículo</div>                                 
+                      
+                         <img src={this.state.camp_foto_CRVL_url} 
+                            variant="circle" className="foto_cnh_motorista" onClick={()=>this.handleOpenModalFoto(this.state.camp_foto_CRVL_url)} />
+                      
+                    </div>
+                       
+                    </div>
+                  </div>    
+                </div>         
               <br/>
               <br/>
                 </div>                            
@@ -2097,6 +2212,7 @@ class listComponent extends React.Component  {
 
       </div>   
      </div> 
+     </div>
     );
   }
 
@@ -2116,7 +2232,8 @@ class listComponent extends React.Component  {
   handleCloseModalInclusao () {
     this.setState({ 
       incluir_foto_1: false,
-      showModalInclusao: false
+      showModalInclusao: false,
+
     });
      
     this.loadMotorista();

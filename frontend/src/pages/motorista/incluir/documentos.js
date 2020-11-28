@@ -16,9 +16,9 @@ import Resizer from 'react-image-file-resizer';
 
 //FOTO
 import filesize from "filesize";
-import Upload from "../../UploadDocumentos";
+import Upload from "../../UploadDocumentosModalInclusao";
 //import FileList from "../../FilelistDocInclusao";
-import FileList from "../../FilelistDocumento";
+import FileList from "../../FilelistDocumentoModalInclusao";
 import { Container, Content } from "../../style";
 
 const andamento_cadastro = localStorage.getItem('logprogress');     
@@ -47,6 +47,8 @@ class empresarialComponent extends React.Component{
       foto_incluida_2: false,
       incluir_foto_1: false,    
       incluir_foto_2: false,
+      camp_foto_CNH_url: '',
+      camp_foto_CRVL_url: '',
       mensagem_foto1: '',
       mensagem_foto2: '',
       foto1State: '',          
@@ -114,7 +116,8 @@ class empresarialComponent extends React.Component{
           
           this.setState({                   
             uploadedCNH: uploadedCNH,            
-            foto1State: 'has-success'
+            foto1State: 'has-success',
+            camp_foto_CNH_url: uploadedCNH[0].preview,
           });           
 
         }
@@ -148,7 +151,8 @@ class empresarialComponent extends React.Component{
   
           this.setState({                   
             uploadedCRVL: uploadedCRVL,
-            foto2State: 'has-success'
+            foto2State: 'has-success',
+            camp_foto_CRVL_url: uploadedCRVL[0].preview,
           });         
          
 
@@ -363,6 +367,7 @@ handleUploadCNH = files => {
         uploadedCNH: uploadedCNH,
         incluir_foto_1: true,
         foto1State: 'has-success',
+        camp_foto_CRVL_url_url: uploadedCNH[0].preview,
         mensagem_foto1: ''
       });              
 
@@ -406,6 +411,7 @@ handleUploadCRVL = files => {
       uploadedCRVL: uploadedCRVL,
       incluir_foto_2: true,
       foto2State: 'has-success',
+      camp_foto_CRVL_url_url: uploadedCRVL[0].preview,
       mensagem_foto2: ''
     });
 
@@ -530,16 +536,16 @@ return (
        {this.verificar_menu()}   
           
           <div className="d-flex flex-column">              
-              <div class="p-2">                  
+              <div className="p-2">                  
               
-                 <Grid item xs>
-                    <Paper className="documento_motorista_cnh_2">
+              <Grid item xs>
+                    <Paper className="documento_motorista_cnh_inclusao">
                        <div>
                         <div className="titulocnh"><stronger>CNH </stronger></div>                      
                         <div className="descricaocnh">Carteira Nacional de Habilitação</div>                      
                         <Container>   
                    
-                                <div class="d-flex justify-content-start">
+                                <div className="d-flex justify-content-start">
                                    <div>
                                    <Content>
                                       {!!uploadedCNH.length && (
@@ -552,7 +558,8 @@ return (
                                          <Upload onUpload={this.handleUploadCNH} />                                       
                                     </Content>                                            
                                    </div>
-                                 </div>    
+                                 </div>   
+
                            </Container>                                
                             <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
                             <div className="d-flex justify-content-center">
@@ -563,15 +570,15 @@ return (
                     </Paper>
                   </Grid>
                 </div>
-                <div class="p-2">           
+                <div className="p-2">           
                 <Grid item xs>
-                    <Paper className="documento_motorista_cnh_2">
+                    <Paper className="documento_motorista_cnh_inclusao">
                       <div>                       
                         <div className="titulocrvl"><stronger>CRLV</stronger></div>
                         <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
                         <Container>   
             
-                                <div class="d-flex justify-content-start">
+                                <div className="d-flex justify-content-start">
                                    <div>
                                    <Content>
                                       {!!uploadedCRVL.length && (

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {Alert, Container, Col, Form, FormGroup, Label, Input, Button, FormFeedback, Card, CardBody, CardTitle, CardSubtitle, Row } from 'reactstrap';
 import ReactDOM from 'react-dom';
 import Cabecalho from './cabecalho';
 import {Link} from 'react-router-dom';
+import { Context } from '../services/auth';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -151,6 +152,7 @@ class loginComponent extends React.Component  {
                     if (res.data.data[0].perfilId == 1) {
 
                       localStorage.setItem('logperfil', 1); 
+
                       this.props.history.push('/area_administrador'); 
 
                     } else if (res.data.data[0].perfilId == 2) {

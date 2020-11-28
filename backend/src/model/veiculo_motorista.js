@@ -28,6 +28,9 @@ var Veiculo = sequelize.define(nametable,{
     type: Sequelize.STRING(20),
     allowNull: true,
    },
+  tipoTransporte:  {  
+    type: Sequelize.STRING(150) 
+  },
   modelo: {
     type: Sequelize.STRING(20),
     allowNull: true,

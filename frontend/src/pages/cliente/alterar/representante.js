@@ -1,12 +1,12 @@
 import React  from 'react';
 import Box from '@material-ui/core/Box';
+import {Container, Progress, Row, Col  } from 'reactstrap';
 import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
 import api from '../../../services/api';
 import '../individual.css';
 import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_administrador from '../../administrador/menu_administrador';
-import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -760,21 +760,26 @@ verificar_menu() {
  // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
 
   return(
-    <div className="d-flex justify-content-around">
-            <div className="botao_navegacao">                                           
-             </div>                                  
-             <div>
-               <div className="titulo_representante_cliente">                                 
-                 <label> {this.verifica_nome_individual(this.state.campNome)}, altere seus dados</label>            
-               </div>
-             </div>   
-             
-             <div>
-                <div className="botao_navegacao">                                   
-                </div>   
-             </div>   
-           
+    <div className="barra_incluir">
+    <Row>
+    <Col xs={3} md={2}>
+    
+    </Col>
+    <Col xs={6} md={8} className="titulo_representante_cliente">
+    <label> {this.verifica_nome_individual(this.state.campNome)}, altere seus dados</label>  
+    </Col>
+    <Col xs={3} md={2}>
+    <div className="botao_navegacao">    
+         
     </div>
+    </Col>
+    <br/>    
+        <div className="barra_incluir">
+         
+        </div>
+  </Row> 
+  </div>
+  
   ); 
 
 }
@@ -843,19 +848,11 @@ return (
  {this.verificar_menu_lateral()}
 <div> 
     <div>     
-    <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-                 <div className="titulo_bemvindo"> Dados do Perfil </div>             
-            </div>          
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div> 
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Dados do Perfil </div>         
+              </div>      
+            </div>     
 
             <div class="d-flex flex-column espacamento_caixa_texto">
               <div class="p-2">              

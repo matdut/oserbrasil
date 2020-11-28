@@ -110,7 +110,7 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { marcaId, marca, placa, modeloId, modelo, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
+  const { marcaId, marca, placa, modeloId, modelo, tipoTransporte, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
     foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId, engate, cadeirinha_pequena, 
     cadeirinha_grande, cadeira_rodas, foto_url } = req.body;
   console.log("Foto url  ==>"+foto_url)
@@ -121,6 +121,7 @@ controllers.create = async (req,res) => {
     placa: placa, 
     modeloId: modeloId, 
     modelo: modelo, 
+    tipoTransporte: tipoTransporte,
     ano: ano, 
     anodut: anodut, 
     cor: cor, 
@@ -138,7 +139,11 @@ controllers.create = async (req,res) => {
     cadeira_rodas: cadeira_rodas,
   })
   .then( function (data){
-    return res.json({success:true, data: data});
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
   })
   .catch(error => {
     return res.json({success:false, message: error});
@@ -151,7 +156,7 @@ controllers.update = async (req, res) => {
   const { id } = req.params;
 
   // parameter post
-  const { marcaId, marca, placa, modeloId, modelo, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
+  const { marcaId, marca, placa, modeloId, modelo, ano, tipoTransporte, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
     foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId, engate, cadeirinha_pequena, 
     cadeirinha_grande, cadeira_rodas, foto_url } = req.body;
   // update data
@@ -162,6 +167,7 @@ controllers.update = async (req, res) => {
     placa: placa, 
     modeloId: modeloId, 
     modelo: modelo, 
+    tipoTransporte: tipoTransporte,
     ano: ano, 
     anodut: anodut, 
     cor: cor, 
@@ -181,7 +187,11 @@ controllers.update = async (req, res) => {
     where: { id: id}
   })
   .then( function (data){
-    return res.json({success:true, data: data});
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
   })
   .catch(error => {
     return res.json({success:false, message: error});

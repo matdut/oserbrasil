@@ -42,6 +42,7 @@ class empresarialComponent extends React.Component{
       campModeloId: 0,
       campModelo: '',
       campModeloNovo: '',
+      camptipo_veiculo: '',
       campPlaca: "",
       campAnodut: '',
       campAno: "",
@@ -55,6 +56,8 @@ class empresarialComponent extends React.Component{
       campNumero: "",
       campComplemento:"",
       campEngate: false,
+      erro_tipo_veiculo: false,
+      validacao_tipo_veiculo: false,
       campCadeirinhaPequena: false,
       campCadeirinhaGrande: false,
       campCadeiraRodas: false,
@@ -66,7 +69,8 @@ class empresarialComponent extends React.Component{
       listEstados:[],
       listaMarcas:[],
       listaModelos:[],
-      listSeguradoras:[],      
+      listSeguradoras:[],  
+      listTipoTransporte:[],     
         mensagem_carro: '',  
         mensagem_placa: '',  
         mensagem_cor: '',  
@@ -75,6 +79,7 @@ class empresarialComponent extends React.Component{
         mensagem_apolice: '',  
         mensagem_seguro: '',  
         mensagem_modelo: '', 
+        mensagem_tipo_veiculo: '',
       validate: {         
         carroState: '',          
         modeloState: '',          
@@ -87,6 +92,7 @@ class empresarialComponent extends React.Component{
       }    
     }
    
+    this.tipoChange = this.tipoChange.bind(this);
     this.carroChange = this.carroChange.bind(this);
     this.modeloChange = this.modeloChange.bind(this);
     this.corChange = this.corChange.bind(this);      
@@ -95,6 +101,7 @@ class empresarialComponent extends React.Component{
     this.anoDUTChange = this.anoDUTChange.bind(this);  
     this.apoliceChange = this.apoliceChange.bind(this);
     this.seguroChange = this.seguradoraChange.bind(this);  
+    this.verificaTipo_veiculo = this.verificaTipo_veiculo.bind(this);  
 
     this.engateChange = this.engateChange.bind(this);      
     this.cadeirinhapequenaChange = this.cadeirinhapequenaChange.bind(this);  
@@ -183,6 +190,20 @@ class empresarialComponent extends React.Component{
     })
 
   }
+  loadTipoTransporte() {
+    api.get('/tipoTransporte/list')
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listTipoTransporte:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+
+  }   
   load_modelo_banco(marca_id){
     const { validate } = this.state   
     api.get(`/modelo/get/${marca_id}`)
@@ -313,6 +334,7 @@ class empresarialComponent extends React.Component{
             campModeloId: res.data.data[0].modeloId,
             campApolice: res.data.data[0].apolice,
             campSeguradoraId: res.data.data[0].seguradoraId,
+            camptipo_veiculo: res.data.data[0].tipoTransporte,
             campPlaca: res.data.data[0].placa,
             campAnodut: res.data.data[0].anodut,            
             campAno: res.data.data[0].ano,
@@ -413,6 +435,9 @@ class empresarialComponent extends React.Component{
       })   
     }
  
+    tipoChange(e) {  
+      this.setState({ camptipo_veiculo: e.target.value })  
+    }
    carroChange(e) {             
     const { validate } = this.state
      console.log('carrochange value - '+e.target.value )          
@@ -467,6 +492,17 @@ class empresarialComponent extends React.Component{
         campSeguradoraId: event.target.value
     });    
   }
+  verificaTipo_veiculo(e) {
+    const { validate } = this.state
+    if (e.target.value.length == 0) {      
+      this.setState({ 
+        validate,
+        erro_tipo_veiculo: false,
+        validacao_tipo_veiculo: false,
+        mensagem_tipo_veiculo: ''  
+       })      
+    }      
+   }
   engateChange(e) {
     this.setState({ campEngate: e.target.checked })
   }
@@ -874,6 +910,7 @@ sendUpdate(){
     marca: localStorage.getItem('logMarca'), 
     modelo: localStorage.getItem('logModelo'),
     seguradoraId: this.state.campSeguradoraId,
+    tipoTransporte: this.state.camptipo_veiculo,
     apolice: this.state.campApolice,
     placa: this.state.campPlaca,
     ano: this.state.campAno,
@@ -912,6 +949,7 @@ sendUpdate(){
         })        
       } else {      
 
+        debugger;
         console.log(JSON.stringify(datapost, null, "    "));        
         api.put(`/veiculo/update/${localStorage.getItem('logid')}`, datapost)
           .then(response=>{
@@ -1029,7 +1067,7 @@ return (
     <div>     
     <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> Veículo </div>              
+              <div className="titulo_bemvindo"> Veículos </div>              
             </div>               
             
               <Container maxWidth="sm">

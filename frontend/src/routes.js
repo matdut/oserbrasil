@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
+
+import { isAuthenticated  } from './services/auth';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -66,6 +68,13 @@ import Inicio from './pages/inicio';
 
  import ListBancoMotorista from './pages/motorista/banco/list';
 
+ import Area_motorista_auxiliar from './pages/motorista_auxiliar/area_motorista_auxiliar';
+ import Motorista_aux_cadastro_incluir from './pages/motorista_auxiliar/incluir/motorista';
+ import Motorista_aux_endereco_incluir from './pages/motorista_auxiliar/incluir/endereco_motorista'; 
+ import Motorista_aux_documento_incluir from './pages/motorista_auxiliar/incluir/documentos';
+ import Motorista_aux_foto_incluir from './pages/motorista_auxiliar/incluir/foto';
+ import Motorista_aux_senha_incluir from './pages/motorista_auxiliar/incluir/senha_motorista';
+
  import Motorista_cadastro_incluir from './pages/motorista/incluir/motorista'; 
  import Motorista_veiculo_incluir from './pages/motorista/incluir/veiculo';
  import Motorista_senha_incluir from './pages/motorista/incluir/senha_motorista';
@@ -88,6 +97,8 @@ import Inicio from './pages/inicio';
  import alterar_documentos from './pages/motorista/veiculos/alterar_outro_doc';
 
  import Motorista_alterar_veiculo from './pages/motorista/alteracao_veiculo';
+
+ import Lista_Motorista_auxiliar from './pages/motorista_auxiliar/list';
 
  /* Funcionalidades */
  import Funcionalidades_list from './pages/funcionalidades/list';
@@ -158,121 +169,143 @@ function base64_encode(fileName){
   var bitmap = fs.readFileSync('tmp/uploads/'+fileName+'');
   return new Buffer (bitmap).toString('base64');
 }
-   
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      isAuthenticated() ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
+      )
+    }
+  />
+);
+  
 export default function Routes() {
     return (
         <BrowserRouter>
         <Switch>
-         <div className="App">                
-            <Route path="/" exact component={Inicio} />
+         <div className="App">    
+                  
+            <Route exact path="/" exact component={Inicio} />
           
-            <Route path="/login" component={Login} />
-            <Route path="/sobre" component={Sobre} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/sobre" component={Sobre} />
 
-            <Route path="/configuracao" component={Configuracao} />
+            <PrivateRoute exact path="/configuracao" component={Configuracao} />
 
-            <Route path="/auxiliares" component={Auxiliares} />
+            <PrivateRoute exact path="/auxiliares" component={Auxiliares} />
             
-            <Route path="/area_cliente_individual" component={Area_cliente_individual} />
-            <Route path="/area_cliente_empresarial" component={Area_cliente_empresarial} />
-            <Route path="/area_motorista" component={Area_motorista} />
-            <Route path="/area_administrador" component={Area_administrador} />
-            <Route path="/servicos" component={Servicos} />
-            <Route path="/contato" component={Contato} />
+            <PrivateRoute exact path="/area_cliente_individual" component={Area_cliente_individual} />
+            <PrivateRoute exact path="/area_cliente_empresarial" component={Area_cliente_empresarial} />
+            <PrivateRoute exact path="/area_motorista" component={Area_motorista} />
+            <PrivateRoute exact path="/area_motorista_auxiliar" component={Area_motorista_auxiliar} />
+            <PrivateRoute exact path="/area_administrador" component={Area_administrador} />
+            <Route exact path="/servicos" component={Servicos} />
+            <Route exact path="/contato" component={Contato} />
 
-            <Route path="/lista_adm_auxiliar" component={List_administrador_auxiliar} />                               
+            <PrivateRoute exact path="/lista_motorista_auxiliar" component={Lista_Motorista_auxiliar} />    
+            <PrivateRoute exact path="/lista_adm_auxiliar" component={List_administrador_auxiliar} />                               
             
-            <Route path="/listar" component={ListMotorista} />                   
+            <PrivateRoute exact path="/listar" component={ListMotorista} />                   
 
-            <Route path="/lista_individual" component={Lista_Individual} />     
-            <Route path="/lista_empresarial" component={Lista_Empresarial} />               
+            <PrivateRoute exact path="/lista_individual" component={Lista_Individual} />     
+            <PrivateRoute exact path="/lista_empresarial" component={Lista_Empresarial} />               
 
-             <Route path="/alterar_senha_motorista" component={Alterar_senha_Motorista} />                            
+             <PrivateRoute exact path="/alterar_senha_motorista" component={Alterar_senha_Motorista} />                            
 
-             <Route path="/criar_eventos/:id" component={Eventos_novo_cadastro} />              
+             <PrivateRoute exact path="/criar_eventos/:id" component={Eventos_novo_cadastro} />              
             
-             <Route path="/lista_evento_servico/:id" component={Listar_evento_servico} />                                         
+             <PrivateRoute exact path="/lista_evento_servico/:id" component={Listar_evento_servico} />                                         
 
-             <Route path="/matriz_criar" component={Matriz_tarifaria_criar} />
-             <Route path="/matriz_listar" component={Matriz_tarifaria_listar} />
-             <Route path="/matriz_editar/:id" component={Matriz_tarifaria_editar} />            
+             <PrivateRoute exact path="/matriz_criar" component={Matriz_tarifaria_criar} />
+             <PrivateRoute exact path="/matriz_listar" component={Matriz_tarifaria_listar} />
+             <PrivateRoute exact path="/matriz_editar/:id" component={Matriz_tarifaria_editar} />            
 
-             <Route path="/faixa_listar/:id" component={Faixa_tarifaria_listar} />
-             <Route path="/faixa_editar/:id" component={Faixa_tarifaria_editar} />
-             <Route path="/faixa_criar" component={Faixa_tarifaria_criar} />          
+             <PrivateRoute exact path="/faixa_listar/:id" component={Faixa_tarifaria_listar} />
+             <PrivateRoute exact path="/faixa_editar/:id" component={Faixa_tarifaria_editar} />
+             <PrivateRoute exact path="/faixa_criar" component={Faixa_tarifaria_criar} />          
 
-             <Route path="/empresa_incluir/:id" component={Representante_incluir} />
-             <Route path="/empresa_dados_incluir/:id" component={Empresa_dados_incluir} />
-             <Route path="/empresa_senha_incluir/:id" component={Empresa_senha_incluir} />     
+             <PrivateRoute exact path="/empresa_incluir/:id" component={Representante_incluir} />
+             <PrivateRoute exact path="/empresa_dados_incluir/:id" component={Empresa_dados_incluir} />
+             <PrivateRoute exact path="/empresa_senha_incluir/:id" component={Empresa_senha_incluir} />     
 
-             <Route path="/empresa_alterar/:id" component={Representante_alterar} />
-             <Route path="/empresa_dados_alterar/:id" component={Empresa_dados_alterar} />
-             <Route path="/empresa_senha_alterar/:id" component={Empresa_senha_alterar} />     
+             <PrivateRoute exact path="/empresa_alterar/:id" component={Representante_alterar} />
+             <PrivateRoute exact path="/empresa_dados_alterar/:id" component={Empresa_dados_alterar} />
+             <PrivateRoute exact path="/empresa_senha_alterar/:id" component={Empresa_senha_alterar} />     
 
-             <Route path="/tipo" component={Tipo_cliente} />             
-             <Route path="/empresa_endereco/:id" component={Empresa_endereco} />                          
-             <Route path="/incluir_operador/:id" component={incluir_Operador} />     
+             <PrivateRoute exact path="/tipo" component={Tipo_cliente} />             
+             <PrivateRoute exact path="/empresa_endereco/:id" component={Empresa_endereco} />                          
+             <PrivateRoute exact path="/incluir_operador/:id" component={incluir_Operador} />     
                      
-             <Route path="/lista_operador_email/:id" component={Operador_email_lista} />     
+             <PrivateRoute exact path="/lista_operador_email/:id" component={Operador_email_lista} />     
              
-             <Route path="/servicos_evento/:id" component={Servicos_incluir} />     
+             <PrivateRoute exact path="/servicos_evento/:id" component={Servicos_incluir} />     
 
-             <Route path="/funcionalidade/list" component={Funcionalidades_list} />          
-             <Route path="/funcionalidade/cadastrar" component={Funcionalidades_cadastrar} />          
+             <PrivateRoute exact path="/funcionalidade/list" component={Funcionalidades_list} />          
+             <PrivateRoute exact path="/funcionalidade/cadastrar" component={Funcionalidades_cadastrar} />          
              
-             <Route path="/lista_evento/list" component={Listar_evento_cliente} />           
-             <Route path="/cartao_credito/list" component={Cartao_credito} />                             
+             <PrivateRoute exact path="/lista_evento/list" component={Listar_evento_cliente} />           
+             <PrivateRoute exact path="/cartao_credito/list" component={Cartao_credito} />                             
              
-             <Route path="/cliente_incluir/:id" component={Cliente_incluir} />             
-             <Route path="/cliente_alterar/:id" component={Cliente_alterar} />             
-             <Route path="/cliente_senha_incluir/:id" component={cliente_senha_incluir} />             
-             <Route path="/cliente_senha_alterar/:id" component={cliente_senha_alterar} />             
+             <PrivateRoute exact path="/cliente_incluir/:id" component={Cliente_incluir} />             
+             <PrivateRoute exact path="/cliente_alterar/:id" component={Cliente_alterar} />             
+             <PrivateRoute exact path="/cliente_senha_incluir/:id" component={cliente_senha_incluir} />             
+             <PrivateRoute exact path="/cliente_senha_alterar/:id" component={cliente_senha_alterar} />             
 
-             <Route path="/cliente_endereco/:id" component={cliente_endereco} />                     
+             <PrivateRoute exact path="/cliente_endereco/:id" component={cliente_endereco} />                     
 
-             <Route path="/motorista_lista_banco/list" component={ListBancoMotorista} />
-             
-             <Route path="/motorista_incluir_convite/:email" component={Motorista_cadastro_incluir} />
-             <Route path="/motorista_incluir/:id" component={Motorista_cadastro_incluir} />             
-             <Route path="/veiculo_motorista_incluir/:id" component={Motorista_veiculo_incluir} />      
-             <Route path="/senha_motorista_incluir/:id" component={Motorista_senha_incluir} />      
-             <Route path="/documentos_motorista_incluir/:id" component={Motorista_documento_incluir} />
-             <Route path="/foto_motorista_incluir/:id" component={Motorista_foto_incluir} />              
-             <Route path="/endereco_motorista_incluir/:id" component={Motorista_endereco_incluir} />   
+             <PrivateRoute exact path="/motorista_lista_banco/list" component={ListBancoMotorista} />
 
-             <Route path="/motorista_alterar/:id" component={Motorista_cadastro_alterar} />             
-             <Route path="/veiculo_motorista_alterar/:id" component={Motorista_veiculo_alterar} />      
-             <Route path="/senha_motorista_alterar/:id" component={Motorista_senha_alterar} />      
-             <Route path="/foto_motorista_alterar/:id" component={Motorista_foto_alterar} />                   
-             <Route path="/endereco_motorista_alterar/:id" component={Motorista_endereco_alterar} />   
+             <PrivateRoute exact path="/motorista_aux_incluir_convite/:email" component={Motorista_aux_cadastro_incluir} />
+             <PrivateRoute exact path="/endereco_aux_motorista_incluir/:id" component={Motorista_aux_endereco_incluir} />
+             <PrivateRoute exact path="/documentos_aux_motorista_incluir/:id" component={Motorista_aux_documento_incluir} />
+             <PrivateRoute exact path="/foto_motorista_auxiliar_incluir/:id" component={Motorista_aux_foto_incluir} />     
+             <PrivateRoute exact path="/senha_motorista_aux_incluir/:id" component={Motorista_aux_senha_incluir} />  
+
+             <PrivateRoute exact path="/motorista_incluir_convite/:email" component={Motorista_cadastro_incluir} />
+             <PrivateRoute exact path="/motorista_incluir/:id" component={Motorista_cadastro_incluir} />             
+             <PrivateRoute exact path="/veiculo_motorista_incluir/:id" component={Motorista_veiculo_incluir} />      
+             <PrivateRoute exact path="/senha_motorista_incluir/:id" component={Motorista_senha_incluir} />      
+             <PrivateRoute exact path="/documentos_motorista_incluir/:id" component={Motorista_documento_incluir} />
+             <PrivateRoute exact path="/foto_motorista_incluir/:id" component={Motorista_foto_incluir} />              
+             <PrivateRoute exact path="/endereco_motorista_incluir/:id" component={Motorista_endereco_incluir} />   
+
+             <PrivateRoute exact path="/motorista_alterar/:id" component={Motorista_cadastro_alterar} />             
+             <PrivateRoute exact path="/veiculo_motorista_alterar/:id" component={Motorista_veiculo_alterar} />      
+             <PrivateRoute exact path="/senha_motorista_alterar/:id" component={Motorista_senha_alterar} />      
+             <PrivateRoute exact path="/foto_motorista_alterar/:id" component={Motorista_foto_alterar} />                   
+             <PrivateRoute exact path="/endereco_motorista_alterar/:id" component={Motorista_endereco_alterar} />   
                
-             <Route path="/veiculo_alterar_motorista/:id" component={Motorista_alterar_veiculo} />                   
-             <Route path="/documentos_motorista_alterar/:id" component={Motorista_doc_alterar} />
+             <PrivateRoute exact path="/veiculo_alterar_motorista/:id" component={Motorista_alterar_veiculo} />                   
+             <PrivateRoute exact path="/documentos_motorista_alterar/:id" component={Motorista_doc_alterar} />
              
-             <Route path="/listar_tipo_veiculo" component={Listar_Tipo_veiculo} />  
+             <PrivateRoute exact path="/listar_tipo_veiculo" component={Listar_Tipo_veiculo} />  
 
-             <Route path="/lista_veiculos/:id" component={lista_Veiculos_motorista} />
-             <Route path="/incluir_veiculos/:id" component={incluir_Veiculos} />                   
-             <Route path="/incluir_documentos/:id" component={incluir_documentos} />
-             <Route path="/alterar_veiculos/:id" component={alterar_Veiculos} />                   
-             <Route path="/alterar_documentos/:id" component={alterar_documentos} />
+             <PrivateRoute exact path="/lista_veiculos/:id" component={lista_Veiculos_motorista} />
+             <PrivateRoute exact path="/incluir_veiculos/:id" component={incluir_Veiculos} />                   
+             <PrivateRoute exact path="/incluir_documentos/:id" component={incluir_documentos} />
+             <PrivateRoute exact path="/alterar_veiculos/:id" component={alterar_Veiculos} />                   
+             <PrivateRoute exact path="/alterar_documentos/:id" component={alterar_documentos} />
           
-             <Route path="/operadores_incluir/:id/:email" component={Operador_cadastro_incluir} />
-             <Route path="/senha_operador_incluir/:id" component={Operador_senha_incluir} />         
+             <PrivateRoute exact path="/operadores_incluir/:id/:email" component={Operador_cadastro_incluir} />
+             <PrivateRoute exact path="/senha_operador_incluir/:id" component={Operador_senha_incluir} />         
 
-             <Route path="/operadores_alterar/:id" component={Operador_cadastro_alterar} />
-             <Route path="/senha_operador_alterar/:id" component={Operador_senha_alterar} />         
+             <PrivateRoute exact path="/operadores_alterar/:id" component={Operador_cadastro_alterar} />
+             <PrivateRoute exact path="/senha_operador_alterar/:id" component={Operador_senha_alterar} />         
 
-             <Route path="/operador_lista" component={Operador_lista} />                 
-             <Route path="/operador_lista_empresa/:id" component={Operador_lista_empresa} />
+             <PrivateRoute exact path="/operador_lista" component={Operador_lista} />                 
+             <PrivateRoute exact path="/operador_lista_empresa/:id" component={Operador_lista_empresa} />
 
-             <Route path="/tipo_transporte" component={Tipo_Transporte_create} />
+             <PrivateRoute exact path="/tipo_transporte" component={Tipo_Transporte_create} />
              
-             <Route path="/area_operador" component={Area_operador} />
+             <PrivateRoute exact path="/area_operador" component={Area_operador} />
 
-             <Route path="/esqueceu_senha" component={Esqueceu_Senha} />  
+             <PrivateRoute exact path="/esqueceu_senha" component={Esqueceu_Senha} />  
 
-             <Route path="/lista_cad_incompleto/:id" component={Lista_cad_Incompleto} />  
+             <PrivateRoute exact path="/lista_cad_incompleto/:id" component={Lista_cad_Incompleto} />  
              
          </div>
         </Switch>

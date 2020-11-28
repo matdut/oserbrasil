@@ -21,7 +21,7 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { codigo, banco, agencia, conta, logid, perfilId } = req.body;
+  const { codigo, banco, agencia, conta, conta_dv, logid, perfilId, operacao } = req.body;
   
   //console.log("ROle es ==>"+role)
   //create
@@ -31,7 +31,9 @@ controllers.create = async (req,res) => {
     agencia: agencia,
     conta: conta,  
     logid: logid, 
+    conta_dv: conta_dv,
     perfilId: perfilId,   
+    operacao: operacao,
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -61,7 +63,7 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { codigo, banco, agencia, conta, logid, perfilId } = req.body;
+  const { codigo, banco, agencia, conta, logid, perfilId, operacao, conta_dv } = req.body;
   //console.log('entrou aqui = '+id);
   // parameter post
   // update data
@@ -72,7 +74,9 @@ controllers.update = async (req, res) => {
     agencia: agencia,
     conta: conta,  
     logid: logid, 
-    perfilId: perfilId,     
+    perfilId: perfilId, 
+    operacao: operacao,    
+    conta_dv: conta_dv,
   },{
     where: { id: id}
   })

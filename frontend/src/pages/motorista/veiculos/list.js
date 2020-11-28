@@ -28,7 +28,8 @@ class listComponent extends React.Component  {
       perfil: perfil,
       mensagem: '',
       color: 'light',
-      listVeiculos:[]
+      listVeiculos:[],
+      listTipoTransporte:[],
     }
   }
 
@@ -39,6 +40,7 @@ class listComponent extends React.Component  {
 
 
     this.loadMotorista();  
+    this.loadTipoTransporte();
   }
 
  
@@ -58,6 +60,21 @@ class listComponent extends React.Component  {
       alert("Error server "+error)
     })
   }
+  
+  loadTipoTransporte() {
+    api.get('/tipoTransporte/list')
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listTipoTransporte:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+
+  }   
  
   handleClick = () => {
   

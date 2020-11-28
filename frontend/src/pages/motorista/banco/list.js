@@ -65,11 +65,11 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+    width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -90,7 +90,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -118,6 +118,9 @@ class BancoComponent extends React.Component  {
       campNome: '',
       campDeletarId: '',
       campconta: '',
+      campconta_dv: '',
+      campagencia_dv: '',
+      campoperacao: '',
       campdesccartao: '',
       campDescricao: "",   
       campagencia: '',
@@ -143,12 +146,20 @@ class BancoComponent extends React.Component  {
       error_agencia: false,
       error_conta: false,
       error_banco: false,
+      error_conta_dv: false,
+      error_agencia_dv: false,
+      error_operacao: false,
       mensagem_agencia: false,
       mensagem_conta: false,
       mensagem_banco: false,
+      mensagem_conta_dv: false,
+      mensagem_operacao: false,
       validacao_agencia: false,
       validacao_conta: false, 
       validacao_banco: false, 
+      validacao_conta_dv: false,
+      validacao_agencia_dv: false,
+      validacao_operacao: false,
       validate: {
         descricaoState: ''
       }    
@@ -160,7 +171,11 @@ class BancoComponent extends React.Component  {
     this.verificaDescricao = this.verificaDescricao.bind(this);       
     this.verificabanco = this.verificabanco.bind(this);       
     this.verificaagencia = this.verificaagencia.bind(this);       
-    this.verificaconta = this.verificaconta.bind(this);       
+    this.verificaconta = this.verificaconta.bind(this);      
+    this.verificaconta_dv = this.verificaconta_dv.bind(this);    
+    this.verificaagencia_dv = this.verificaagencia_dv.bind(this); 
+    this.verifica_operacao = this.verifica_operacao.bind(this);  
+    
 
     this.busca_descricao = this.busca_descricao.bind(this);          
 
@@ -182,8 +197,7 @@ class BancoComponent extends React.Component  {
        this.loadBancoMotorista();  
     }      
 
-    this.carrega_status();
- 
+    this.carrega_status(); 
   }  
 
   
@@ -203,7 +217,10 @@ class BancoComponent extends React.Component  {
       campDescricao: "",   
       campagencia: '',
       campcodigo: '',
+      campconta_dv: '',
+      campoperacao: '',
       mensagem_descricao: '',
+      mensagem_conta_dv: '',
       numero_disable: false,
       validade_disable: false,
       nome_disable: false,
@@ -214,12 +231,14 @@ class BancoComponent extends React.Component  {
       error_agencia: false,
       error_conta: false,
       error_banco: false,
+      error_conta_dv: false,
       mensagem_agencia: false,
       mensagem_conta: false,
       mensagem_banco: false,
       validacao_agencia: false,
       validacao_conta: false, 
-      validacao_banco: false,          
+      validacao_banco: false,      
+      validacao_conta_dv: false,    
     });
   }
 
@@ -236,12 +255,21 @@ class BancoComponent extends React.Component  {
           campBanco: res.data.data[0].banco,
           campagencia: res.data.data[0].agencia,
           campconta: res.data.data[0].conta,      
+          campconta_dv: res.data.data[0].conta_dv,
+          campoperacao: res.data.data[0].operacao,
           inicio: 2,    
           validacao_agencia: true,
           validacao_banco: true,
           validacao_conta: true,
           validacao_descricao: true,
-        })        
+          validacao_conta_dv: true,         
+        });
+        if (this.state.campoperacao.length > 0) {
+          this.setState({   
+            validacao_operacao: true
+          });
+        }
+
       }
     })
     .catch(error=>{
@@ -314,7 +342,7 @@ class BancoComponent extends React.Component  {
   loadagenciaData(){   
     return this.state.listaAgencias.map((data)=>{          
       return(
-        <MenuItem value={data.descricao}>{data.id} - {data.descricao}</MenuItem>              
+        <MenuItem value={data.descricao}>{data.codigo} - {data.descricao}</MenuItem>              
       )
     })     
   
@@ -322,7 +350,7 @@ class BancoComponent extends React.Component  {
 
    verifica_botao(inicio) {
  //   const { validate } = this.state   
-    console.log('validate - '+JSON.stringify(this.state, null, "    ")); 
+    console.log('validate 111 - '+JSON.stringify(this.state, null, "    ")); 
 
      if (inicio == 1) {
   
@@ -337,8 +365,8 @@ class BancoComponent extends React.Component  {
        
       } else {
 
-        if (this.state.validacao_agencia == true && this.state.validacao_banco == true 
-          && this.state.validacao_conta == true) { 
+        if (this.state.validacao_banco == true 
+          && this.state.validacao_conta == true && this.state.validacao_conta_dv == true) { 
             return (
         
               <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
@@ -377,8 +405,8 @@ verifica_botao_update(inicio) {
      
     } else {
 
-      if (this.state.validacao_agencia == true && this.state.validacao_banco == true 
-        && this.state.validacao_conta == true) { 
+      if (this.state.validacao_banco == true 
+        && this.state.validacao_conta == true && this.state.validacao_conta_dv == true) { 
           return (
       
             <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
@@ -406,11 +434,19 @@ verifica_botao_update(inicio) {
       validate.cpfState = ''
       this.setState({ 
         validate,
-        erro_descricao:false,
+        erro_descricao:true,
         validacao_descricao: false,               
         mensagem_cpf: ''  
        })            
-    } 
+    } else if (e.target.value.length > 0) {
+      validate.cpfState = ''
+      this.setState({ 
+        validate,
+        erro_descricao:false,
+        validacao_descricao: true,               
+        mensagem_cpf: ''  
+       })            
+    }
   }
 
   verificabanco(e) {
@@ -419,6 +455,7 @@ verifica_botao_update(inicio) {
         error_banco:true,
         validacao_banco: false,               
         mensagem_banco: '',
+        
         inicio: 1    
        })            
     } else if (this.state.campDescricao.length > 0) {
@@ -426,6 +463,7 @@ verifica_botao_update(inicio) {
         error_banco:false,
         validacao_banco: true,               
         mensagem_banco: '',
+       
         inicio: 2  
        })            
     }
@@ -464,6 +502,60 @@ verifica_botao_update(inicio) {
        })            
     } 
   }  
+  
+  verificaconta_dv(e) {
+    if (this.state.campconta_dv.length == 0) {
+      this.setState({ 
+        error_conta_dv:true,
+        validacao_conta_dv: false,               
+        mensagem_conta_dv: '',
+        inicio: 1    
+       })            
+    } else if (this.state.campconta_dv.length > 0) {
+      this.setState({ 
+        error_conta_dv:false,
+        validacao_conta_dv: true,               
+        mensagem_conta_dv: '',
+        inicio: 2  
+       })            
+    } 
+  }  
+
+  verificaagencia_dv(e) {
+    if (this.state.campagencia_dv.length == 0) {
+      this.setState({ 
+        error_agencia_dv:true,
+        validacao_agencia_dv: false,               
+        mensagem_agencia_dv: '',
+        inicio: 1    
+       })            
+    } else if (this.state.campagencia_dv.length > 0) {
+      this.setState({ 
+        error_agencia_dv:false,
+        validacao_agencia_dv: true,               
+        mensagem_agencia_dv: '',
+        inicio: 2  
+       })            
+    } 
+  }  
+
+  verifica_operacao(e) {
+    if (this.state.campoperacao.length == 0) {
+      this.setState({ 
+        error_operacao:true,
+        validacao_operacao: false,               
+        mensagem_operacao: '',
+        inicio: 1    
+       })            
+    } else if (this.state.campoperacao.length > 0) {
+      this.setState({ 
+        error_operacao:false,
+        validacao_operacao: true,               
+        mensagem_operacao: '',
+        inicio: 2  
+       })            
+    } 
+  }  
 
   validateDescricaoChange(e){
     const { validate } = this.state
@@ -494,6 +586,8 @@ verifica_botao_update(inicio) {
           codigo: rescodigo.data.data[0].codigo,
           banco: this.state.campDescricao,     
           agencia: this.state.campagencia,
+          conta_dv: this.state.campconta_dv,
+          operacao: this.state.campoperacao,
           conta: this.state.campconta,  
           logid: localStorage.getItem('logid'), 
           perfilId: localStorage.getItem('logperfil')  
@@ -526,9 +620,23 @@ verifica_botao_update(inicio) {
   sendSave(){                     
   //  debugger;
    // const codigo = this.busca_descricao();
+
+   debugger;
+   
+   this.setState({                   
+    error_agencia: false,
+    error_conta: false,
+    validacao_agencia: true,
+    validacao_conta: true,       
+  });   
   
-   api.get(`/agencia/getbusca/${this.state.campDescricao}`)
+  try {
+  
+    
+   api.get(`/agencia/getbusca/${this.state.campDescricao}`)  
    .then(rescodigo=>{      
+
+    debugger;
      if (rescodigo.data.success == true)  {  
     
         const datapost = {
@@ -536,6 +644,8 @@ verifica_botao_update(inicio) {
           banco: this.state.campDescricao,     
           agencia: this.state.campagencia,
           conta: this.state.campconta,  
+          conta_dv: this.state.campconta_dv,
+          operacao: this.state.campoperacao,
           logid: localStorage.getItem('logid'), 
           perfilId: localStorage.getItem('logperfil')  
         }                  
@@ -564,6 +674,10 @@ verifica_botao_update(inicio) {
       .catch(error=>{
         alert("Error server "+error)
       }) 
+
+    } catch (error) {
+      console.log("😱 Error: ", error);
+    }         
          
   }   
 
@@ -638,22 +752,23 @@ verificar_menu_lateral() {
 
           <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-              <div className="titulo_bemvindo"> Agência Bancária </div>
+              <div className="titulo_bemvindo"> Dados Bancários</div>
               </div>      
             </div>
-            <div className="container-fluid margem_left">                                         
-<br/>
-<div style={{ maxWidth: '100%',  maxHeight: '100%' }}>          
+            <div className="margem_left">                      
+       <div className="container-fluid">                                          
+<div>          
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%" }}     
+                        
                         columns={[
-                          { title: '', field: '#', width: '40px' },                        
-                          { title: 'Codigo', field: 'codigo', width: '200px'},                            
-                          { title: 'Banco', field: 'banco', width: '200px'},                          
-                          { title: 'Agencia', field: 'agencia', width: '100px'},                          
-                          { title: 'Conta', field: 'conta', width: '100px'},                            
-                          { title: '', field: '#', width: '50px' },                       
+                          { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px'  },                        
+                          { title: 'Codigo', field: 'codigo', width: '100px', minWidth: '100px', maxWidth: '100px' },                            
+                          { title: 'Banco', field: 'banco', width: '200px', minWidth: '200px', maxWidth: '200px' },                      
+                          { title: 'Agncia', field: 'agencia', width: '100px', minWidth: '100px', maxWidth: '100px' },                            
+                          { title: 'Conta', field: 'conta', width: '100px', minWidth: '100px', maxWidth: '100px' }, 
+                          { title: 'DV', field: 'conta_dv', width: '50px', minWidth: '50px', maxWidth: '50px' },                            
+                                             
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listaBanco}     
@@ -696,15 +811,15 @@ verificar_menu_lateral() {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,                                        
-                              maxBodyHeight: 430,
-                              minBodyHeight: 430, 
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
                               ///headerStyle: { position: 'sticky', top: 0 },
                               /*exportButton: true, */            
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 5,
+                              actionsColumnIndex: 6,
                               //pageSize: 7,
                               pageSizeOptions: [0],   
                         }}                        
@@ -797,6 +912,7 @@ verificar_menu_lateral() {
                           id="demo-simple-select-outlined"
                           value={this.state.campDescricao}
                           onFocus={this.verificabanco}
+                          onKeyUp={this.verificabanco}
                           //onClick={this.verificaTipo_veiculo}
                           onChange={(value)=> this.setState({campDescricao:value.target.value})}      
                           endAdornment={
@@ -810,54 +926,120 @@ verificar_menu_lateral() {
                         </Select>
                       </FormControl>      
                                                      
-                    </div> 
+                    </div>                    
                     <div class="p-2">   
-                    <div class="d-flex justify-content-start">
-                            <div>
-                            <FormControl variant="outlined">
-                                <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Agencia</InputLabel>
+                    <div class="d-flex justify-content-start">     
+                    <div>
+                    <FormControl variant="outlined">     
+                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Agência</InputLabel>                           
                                 <OutlinedInput 
                                     autoComplete="off"                                   
                                     type="text"                       
                                     error={this.state.error_agencia}
                                     helperText={this.state.mensagem_agencia}
-                                    className="text_cor_motorista"                       
+                                    className="text_opcao_motorista"                       
                                     id="cep_incluir"                      
                                     variant="outlined"
-                                    value={this.state.campagencia}                            
+                                    value={this.state.campagencia}        
+                                    onFocus={this.verificaagencia}                
                                     onKeyUp={this.verificaagencia}
-                                    onChange={(value)=> this.setState({campagencia:value.target.value})}                          
+                                    onChange={(value)=> this.setState({campagencia:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 7,
+                                      maxLength: 4,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
                                         {this.state.validacao_agencia? <CheckIcon />: ''}
                                     </InputAdornment>
                                   }
-                                  labelWidth={80}
+                                  labelWidth={100}
                                 />                  
                                 <FormHelperText error={this.state.error_agencia}>
                                       {this.state.mensagem_agencia}
                                 </FormHelperText>
-                              </FormControl>                          
-                            </div>
-                            <div>
-                            <FormControl variant="outlined">
-                                <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Conta</InputLabel>
+                              </FormControl>   
+                      </div>  
+                      <div>
+                              <FormControl variant="outlined">     
+                              <InputLabel className="label_conta_dv_text_motorista" htmlFor="filled-adornment-password">DV</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_agencia_dv}
+                                    helperText={this.state.mensagem_agencia_dv}
+                                    className="text_conta_dv_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campagencia_dv}                        
+                                    onKeyUp={this.verificaagencia_dv}
+                                    onChange={(value)=> this.setState({campagencia_dv:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 2,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_agencia_dv? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_agencia_dv}>
+                                      {this.state.mensagem_conta_dv}
+                                </FormHelperText>
+                              </FormControl>     
+                                        
+                            </div>    
+                    <div>
+                    <FormControl variant="outlined">     
+                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Operação</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_operacao}
+                                    helperText={this.state.mensagem_operacao}
+                                    className="text_opcao_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campoperacao}                        
+                                    onKeyUp={this.verificaoperacao}
+                                    onChange={(value)=> this.setState({campoperacao:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 3,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_operacao? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_operacao}>
+                                      {this.state.mensagem_operacao}
+                                </FormHelperText>
+                              </FormControl>   
+                      </div>                       
+                                                                
+                      </div>                      
+                    </div>  
+                    <div class="p-2">   
+                    <div class="d-flex justify-content-start">    
+
+                    <div>
+                              <FormControl variant="outlined">
+                                <InputLabel className="label_conta_text_motorista" htmlFor="filled-adornment-password">Conta</InputLabel>
                                 <OutlinedInput 
                                     autoComplete="off"                                   
                                     type="text"                       
                                     error={this.state.error_conta}
                                     helperText={this.state.mensagem_conta}
-                                    className="text_anodut_motorista"                       
+                                    className="text_conta_motorista"                       
                                     id="cep_incluir"                      
                                     variant="outlined"
                                     value={this.state.campconta}                        
                                     onKeyUp={this.verificaconta}
                                     onChange={(value)=> this.setState({campconta:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 9,
+                                      maxLength: 4,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
@@ -869,10 +1051,40 @@ verificar_menu_lateral() {
                                 <FormHelperText error={this.state.error_conta}>
                                       {this.state.mensagem_conta}
                                 </FormHelperText>
-                              </FormControl>                           
-                            </div>                                                       
-                      </div>                      
-                    </div>  
+                              </FormControl>  
+                              
+                              </div>                           
+                              <div>
+                              <FormControl variant="outlined">     
+                              <InputLabel className="label_conta_dv_text_motorista" htmlFor="filled-adornment-password">DV</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_conta_dv}
+                                    helperText={this.state.mensagem_conta_dv}
+                                    className="text_conta_dv_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campconta_dv}                        
+                                    onKeyUp={this.verificaconta_dv}
+                                    onChange={(value)=> this.setState({campconta_dv:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 2,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_conta_dv? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_conta_dv}>
+                                      {this.state.mensagem_conta_dv}
+                                </FormHelperText>
+                              </FormControl>     
+                                        
+                            </div>    
+                     </div></div>
                   
               <br/>
               <br/>
@@ -924,49 +1136,115 @@ verificar_menu_lateral() {
                                                      
                     </div> 
                     <div class="p-2">   
-                    <div class="d-flex justify-content-start">
-                            <div>
-                            <FormControl variant="outlined">
-                                <InputLabel className="label_cor_text_motorista" htmlFor="filled-adornment-password">Agencia</InputLabel>
+                    <div class="d-flex justify-content-start">     
+                    <div>
+                    <FormControl variant="outlined">     
+                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Agência</InputLabel>                           
                                 <OutlinedInput 
                                     autoComplete="off"                                   
                                     type="text"                       
                                     error={this.state.error_agencia}
                                     helperText={this.state.mensagem_agencia}
-                                    className="text_cor_motorista"                       
+                                    className="text_opcao_motorista"                       
                                     id="cep_incluir"                      
                                     variant="outlined"
-                                    value={this.state.campagencia}                            
-                                    onBlur={this.verificaagencia}
-                                    onChange={(value)=> this.setState({campagencia:value.target.value})}                          
+                                    value={this.state.campagencia}        
+                                    onFocus={this.verificaagencia}                
+                                    onKeyUp={this.verificaagencia}
+                                    onChange={(value)=> this.setState({campagencia:value.target.value})}                     
                                     inputProps={{
-                                      maxLength: 20,
+                                      maxLength: 4,
                                     }}        
                                   endAdornment={
                                     <InputAdornment position="end">
                                         {this.state.validacao_agencia? <CheckIcon />: ''}
                                     </InputAdornment>
                                   }
-                                  labelWidth={80}
+                                  labelWidth={100}
                                 />                  
                                 <FormHelperText error={this.state.error_agencia}>
                                       {this.state.mensagem_agencia}
                                 </FormHelperText>
-                              </FormControl>                          
-                            </div>
-                            <div>
-                            <FormControl variant="outlined">
-                                <InputLabel className="label_anodut_text_motorista" htmlFor="filled-adornment-password">Conta</InputLabel>
+                              </FormControl>   
+                      </div>  
+                      <div>
+                              <FormControl variant="outlined">     
+                              <InputLabel className="label_conta_dv_text_motorista" htmlFor="filled-adornment-password">DV</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_agencia_dv}
+                                    helperText={this.state.mensagem_agencia_dv}
+                                    className="text_conta_dv_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campagencia_dv}                        
+                                    onKeyUp={this.verificaagencia_dv}
+                                    onChange={(value)=> this.setState({campagencia_dv:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 2,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_agencia_dv? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_agencia_dv}>
+                                      {this.state.mensagem_conta_dv}
+                                </FormHelperText>
+                              </FormControl>     
+                                        
+                            </div>   
+                    <div>
+                    <FormControl variant="outlined">     
+                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Operação</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_operacao}
+                                    helperText={this.state.mensagem_operacao}
+                                    className="text_opcao_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campoperacao}                        
+                                    onKeyUp={this.verificaoperacao}
+                                    onChange={(value)=> this.setState({campoperacao:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 3,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_operacao? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_operacao}>
+                                      {this.state.mensagem_operacao}
+                                </FormHelperText>
+                              </FormControl>   
+                      </div>                       
+                                                                
+                      </div>                      
+                    </div>  
+                    <div class="p-2">   
+                    <div class="d-flex justify-content-start">    
+
+                    <div>
+                              <FormControl variant="outlined">
+                                <InputLabel className="label_conta_text_motorista" htmlFor="filled-adornment-password">Conta</InputLabel>
                                 <OutlinedInput 
                                     autoComplete="off"                                   
                                     type="text"                       
                                     error={this.state.error_conta}
                                     helperText={this.state.mensagem_conta}
-                                    className="text_anodut_motorista"                       
+                                    className="text_conta_motorista"                       
                                     id="cep_incluir"                      
                                     variant="outlined"
                                     value={this.state.campconta}                        
-                                    onBlur={this.verificaconta}
+                                    onKeyUp={this.verificaconta}
                                     onChange={(value)=> this.setState({campconta:value.target.value})}                     
                                     inputProps={{
                                       maxLength: 4,
@@ -981,10 +1259,41 @@ verificar_menu_lateral() {
                                 <FormHelperText error={this.state.error_conta}>
                                       {this.state.mensagem_conta}
                                 </FormHelperText>
-                              </FormControl>                           
-                            </div>                                                       
-                      </div>                      
-                    </div>  
+                              </FormControl>  
+                              
+                              </div>                           
+                              <div>
+                              <FormControl variant="outlined">     
+                              <InputLabel className="label_conta_dv_text_motorista" htmlFor="filled-adornment-password">DV</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_conta_dv}
+                                    helperText={this.state.mensagem_conta_dv}
+                                    className="text_conta_dv_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campconta_dv}                        
+                                    onKeyUp={this.verificaconta_dv}
+                                    onChange={(value)=> this.setState({campconta_dv:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 2,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_conta_dv? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_conta_dv}>
+                                      {this.state.mensagem_conta_dv}
+                                </FormHelperText>
+                              </FormControl>     
+                                        
+                            </div>    
+                     </div></div>
+                  
                   
               <br/>
               <br/>
@@ -1030,6 +1339,7 @@ verificar_menu_lateral() {
   }
       </div>   
     </div>  
+    </div>
     );
   }
 
@@ -1089,6 +1399,7 @@ verificar_menu_lateral() {
     });
     this.limpar_campos();   
     this.loadBancoMotorista();      
+  
   }
 
 

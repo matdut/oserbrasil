@@ -43,7 +43,7 @@ export const Preview = styled.div`
   background-image: url(${props => props.src});
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: 40% 40%;
+  background-position: 40% 10%;
   margin-right: 0px;  
   margin-left: 0px;
 `;

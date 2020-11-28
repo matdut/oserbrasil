@@ -622,15 +622,37 @@ verificaNome() {
         validacao_dataCNH: false,
         mensagem_datavalidade: ''  
        })      
-     } else {
+     } else if (this.state.campData_CNH.length == 10) {
 
-        validate.data_validadeState = 'has-success' ;        
-        this.setState({ 
-          erro_dataCNH: false,
-          validacao_dataCNH: true,
-          mensagem_datavalidade: ''
-        });     
-
+      let date_validar = this.state.campData_CNH;
+      var dia = date_validar.substr(0,2);
+      var mes = date_validar.substr(3,2);         
+  
+      if (dia > 31) {
+       this.setState({ 
+        erro_dataCNH: true,   
+        validacao_dataCNH: false,             
+        mensagem_datavalidade: 'Dia é inválido.' 
+        })  
+      } else if (mes > 12) {
+       this.setState({ 
+        erro_dataCNH: true,   
+        validacao_dataCNH: false,             
+        mensagem_datavalidade: 'Mês é inválido.' 
+        })  
+      } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+       this.setState({ 
+        erro_dataCNH: true,   
+        validacao_dataCNH: false,             
+        mensagem_datavalidade: 'Data de validade é inválido.' 
+        })  
+      } else {
+       this.setState({ 
+        erro_dataCNH: false,   
+        validacao_dataCNH: true,             
+        mensagem_datavalidade: '',
+       });   
+      }       
      }        
  }
 
@@ -1027,20 +1049,12 @@ return (
  {this.verificar_menu_lateral()}
 <div> 
     <div>     
-    <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-                <div className="titulo_bemvindo"> Dados do Perfil </div>           
-            </div>           
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Dados do Perfil </div>         
+              </div>      
+            </div> 
             
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div> 
-
             <div class="d-flex flex-column espacamento_caixa_texto">
                <div class="p-2"> 
                 <div class="d-flex justify-content-start">
@@ -1194,6 +1208,7 @@ return (
                         variant="outlined"
                         value={this.state.campData_CNH}
                         onBlur={this.verificaDataValidade}
+                        onKeyUp={this.verificaDataValidade}
                         onChange={ (e) => {
                           this.Data_validadeChange(e)                       
                           this.validaDataValidadeChange(e)

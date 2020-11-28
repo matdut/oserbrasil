@@ -215,6 +215,13 @@ class menu_motoristaComponent extends React.Component  {
                 </a>
                 </div>
               </li> 
+              <li  className="itens_menu">
+                    <a href={`/lista_motorista_auxiliar`} className="icon_centralizado_novo">
+                      <LightTooltip title="Motorista Auxiliar" placement="top">
+                          <i className="fas fa-users"></i>
+                      </LightTooltip>              
+                    </a>
+                  </li> 
               <li>
               <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">

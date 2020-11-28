@@ -40,6 +40,7 @@ class empresarialComponent extends React.Component{
       campModeloId: 0,
       campModelo: '',
       campModeloNovo: '',
+      camptipo_veiculo: '',
       campEngate: false,
       campCadeirinhaPequena: false,
       campCadeirinhaGrande: false,
@@ -61,6 +62,7 @@ class empresarialComponent extends React.Component{
       listaMarcas:[],
       listaModelos:[],
       listSeguradoras:[],      
+      listTipoTransporte:[],
       erro_carro: false,
       erro_modelo: false,
       erro_cor: false,
@@ -69,6 +71,7 @@ class empresarialComponent extends React.Component{
       erro_anodut: false,
       erro_apolice: false,
       erro_seguro: false,
+      erro_tipo_veiculo: false,
       validacao_carro: false,
       validacao_modelo: false,
       validacao_cor: false,
@@ -77,6 +80,7 @@ class empresarialComponent extends React.Component{
       validacao_anodut: false,
       validacao_apolice: false,
       validacao_seguro: false,
+      validacao_tipo_veiculo: false,
         mensagem_carro: '',  
         mensagem_placa: '',  
         mensagem_cor: '',  
@@ -85,9 +89,11 @@ class empresarialComponent extends React.Component{
         mensagem_apolice: '',  
         mensagem_seguro: '',  
         mensagem_modelo: '', 
+        mensagem_tipo_veiculo: '',
       validate: {         
         carroState: '',          
-        modeloState: '',          
+        modeloState: '',        
+        tipoState: '',  
         corState: '',     
         placaState: '',     
         anoState: '',     
@@ -109,7 +115,9 @@ class empresarialComponent extends React.Component{
     this.cadeirinhapequenaChange = this.cadeirinhapequenaChange.bind(this);  
     this.cadeirinhagrandeChange = this.cadeirinhagrandeChange.bind(this);  
     this.cadeirarodasChange = this.cadeirarodasChange.bind(this);  
-    
+    this.tipoChange = this.tipoChange.bind(this);
+   
+    this.verificaTipo_veiculo = this.verificaTipo_veiculo.bind(this);  
     this.verificaCarro = this.verificaCarro.bind(this);  
     this.verificaModelo = this.verificaModelo.bind(this);  
     this.verificaCor = this.verificaCor.bind(this);  
@@ -166,12 +174,28 @@ class empresarialComponent extends React.Component{
       progresso: 50
     });  
 
-    this.loadSeguradoras()
+    this.loadSeguradoras();
+    this.loadTipoTransporte();
    
    this.carrega_marca_banco()
     //}
     //this.verifica_botao(2)
   }
+
+  loadTipoTransporte() {
+    api.get('/tipoTransporte/list')
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listTipoTransporte:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+
+  }   
 
   carrega_marca_banco(){
     const { validate } = this.state   
@@ -344,6 +368,7 @@ class empresarialComponent extends React.Component{
             campModelo: res.data.data[0].modelo,
             campCarroId: res.data.data[0].marcaId,
             campModeloId: res.data.data[0].modeloId,
+            camptipo_veiculo: res.data.data[0].tipoTransporte,
             campApolice: res.data.data[0].apolice,
             campSeguradoraId: res.data.data[0].seguradoraId,
             campPlaca: res.data.data[0].placa,
@@ -363,6 +388,7 @@ class empresarialComponent extends React.Component{
             validacao_modelo: true, 
             validacao_placa: true,
             validacao_seguro: true,
+            validacao_tipo_veiculo: true,
           })            
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
@@ -464,6 +490,7 @@ class empresarialComponent extends React.Component{
           this.setState({   
             campCarro: res.data.data[0].marca,
             campModelo: res.data.data[0].modelo,
+            camptipo_veiculo: res.data.data[0].tipoTransporte,
             campCarroId: res.data.data[0].marcaId,
             campModeloId: res.data.data[0].modeloId,
             campApolice: res.data.data[0].apolice,
@@ -485,6 +512,7 @@ class empresarialComponent extends React.Component{
             validacao_modelo: true, 
             validacao_placa: true,
             validacao_seguro: true,
+            validacao_tipo_veiculo: true,
           })            
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
@@ -614,6 +642,9 @@ class empresarialComponent extends React.Component{
   corChange(e) {
     this.setState({ campCor: e.target.value })
   }
+  tipoChange(e) {  
+    this.setState({ camptipo_veiculo: e.target.value })  
+  }
   anoChange(e) {
     this.setState({ campAno: e.target.value })
   }
@@ -664,7 +695,8 @@ class empresarialComponent extends React.Component{
           validate,
           erro_carro: false,
           validacao_carro: false,
-          mensagem_carro: ''
+          mensagem_carro: '',
+          inicio: 2, 
          })      
        }        
    }
@@ -675,7 +707,8 @@ class empresarialComponent extends React.Component{
           validate,
           erro_modelo: false,
           validacao_modelo: false,
-          mensagem_modelo: ''  
+          mensagem_modelo: '',
+          inicio: 2,   
          })      
        }      
    }
@@ -686,7 +719,8 @@ class empresarialComponent extends React.Component{
           validate,
           erro_ano: false,
           validacao_ano: false,
-          mensagem_ano: ''  
+          mensagem_ano: '',
+          inicio: 2,   
          })      
        }      
    }
@@ -697,7 +731,8 @@ class empresarialComponent extends React.Component{
           validate,
           erro_anodut: false,
           validacao_anodut: false,
-          mensagem_anoDUT: ''  
+          mensagem_anoDUT: '',
+          inicio: 1,   
          })      
        }      
    }
@@ -708,9 +743,30 @@ class empresarialComponent extends React.Component{
         validate,
         erro_placa: false,
         validacao_placa: false,
-        mensagem_placa: ''  
+        mensagem_placa: '',
+        inicio: 2,   
        })      
-    }      
+    }   
+   }
+   verificaTipo_veiculo(e) {
+    const { validate } = this.state
+    if (this.state.camptipo_veiculo == '') {      
+      this.setState({ 
+        validate,
+        erro_tipo_veiculo: false,
+        validacao_tipo_veiculo: false,
+        mensagem_tipo_veiculo: '',
+        inicio: 1,   
+       })      
+    } else {
+      this.setState({ 
+        validate,
+        erro_tipo_veiculo: false,
+        validacao_tipo_veiculo: true,
+        mensagem_tipo_veiculo: '',
+        inicio: 2,   
+       })  
+    }     
    }
    verificaCor() {
     const { validate } = this.state
@@ -719,7 +775,8 @@ class empresarialComponent extends React.Component{
           validate,
           erro_cor: false,
           validacao_cor: false,
-          mensagem_cor: ''  
+          mensagem_cor: '',
+          inicio: 1,   
          })      
        }      
    }
@@ -730,9 +787,18 @@ class empresarialComponent extends React.Component{
           validate,
           erro_apolice: false,
           validacao_apolice: false,
-          mensagem_apolice: ''  
+          mensagem_apolice: '',
+          inicio: 2,   
          })      
-       }      
+       } else {
+        this.setState({ 
+          validate,
+          erro_apolice: false,
+          validacao_apolice: true,
+          mensagem_apolice: '',
+          inicio: 2,   
+         }) 
+       }     
    }
    verificaSeguro() {
     const { validate } = this.state
@@ -741,9 +807,18 @@ class empresarialComponent extends React.Component{
           validate,
           erro_seguro: false,
           validacao_seguro: false,
-          mensagem_seguro: ''  
+          mensagem_seguro: '',
+          inicio: 1,   
          })      
-       }      
+       } else {
+        this.setState({ 
+          validate,
+          erro_seguro: false,
+          validacao_seguro: true,
+          mensagem_seguro: '',
+          inicio: 2,   
+         }) 
+       }   
    }
 
    validaCarroChange(e){
@@ -755,14 +830,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_carro: false,
           validacao_carro: false,
-          mensagem_carro: '' 
+          mensagem_carro: '' ,
+          inicio: 1, 
         })  
       } else {
         validate.carroState = 'has-success'       
         this.setState({ 
           erro_carro: false,
           validacao_carro: true,
-          mensagem_carro: '' 
+          mensagem_carro: '',
+          inicio: 2,  
         })  
       }  
       this.setState({ validate })
@@ -776,14 +853,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_modelo: false,
           validacao_modelo: false,
-          mensagem_carro: '' 
+          mensagem_carro: '' ,
+          inicio: 1, 
         })          
       } else {
         validate.modeloState = 'has-success'       
         this.setState({ 
           erro_modelo: false,
           validacao_modelo: true,
-          mensagem_carro: '' 
+          mensagem_carro: '',
+          inicio: 2,  
         })  
       }  
       this.setState({ validate })
@@ -796,14 +875,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_cor: false,
           validacao_cor: false,
-          mensagem_cor: '' 
+          mensagem_cor: '',
+          inicio: 1,  
         })  
       } else {
         validate.corState = 'has-success'       
         this.setState({ 
           erro_cor: false,
           validacao_cor: true,
-          mensagem_cor: '' 
+          mensagem_cor: '',
+          inicio: 2,  
         })  
       }  
       this.setState({       
@@ -817,14 +898,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_placa: false,
           validacao_placa: false,
-          mensagem_placa: '' 
+          mensagem_placa: '',
+          inicio: 1,  
         })  
       } else if (e.target.value.length == 7) {
         validate.placaState = 'has-success'       
         this.setState({ 
           erro_placa: false,
           validacao_placa: true,
-          mensagem_placa: '' 
+          mensagem_placa: '',
+          inicio: 2,  
         })  
       }  
       this.setState({ validate })
@@ -837,14 +920,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_ano: false,
           validacao_ano: false,
-          mensagem_ano: '' 
+          mensagem_ano: '',
+          inicio: 1, 
         })  
       } else {
         validate.anoState = 'has-success'       
         this.setState({ 
           erro_ano: false,
           validacao_ano: true,
-          mensagem_ano: '' 
+          mensagem_ano: '',
+          inicio: 2,  
         })  
       }  
       this.setState({ validate })
@@ -857,14 +942,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_anodut: false,
           validacao_anodut: false,
-          mensagem_anoDUT: '' 
+          mensagem_anoDUT: '',
+          inicio: 1,  
         })  
       } else {
         validate.anoDUTState = 'has-success'       
         this.setState({ 
           erro_anodut: false,
           validacao_anodut: true,
-          mensagem_anoDUT: '' 
+          mensagem_anoDUT: '',
+          inicio: 2,  
         })  
       }  
       this.setState({ validate })
@@ -877,14 +964,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_apolice: false,
           validacao_apolice: false,
-          mensagem_telefone1: '' 
+          mensagem_telefone1: '' ,
+          inicio: 1, 
         })  
       } else {
         validate.apoliceState = 'has-success'       
         this.setState({ 
           erro_apolice: false,
           validacao_apolice: true,
-          mensagem_telefone1: '' 
+          mensagem_telefone1: '',
+          inicio: 2,  
         })  
       }  
       this.setState({ validate })
@@ -897,14 +986,16 @@ class empresarialComponent extends React.Component{
         this.setState({ 
           erro_seguro: false,
           validacao_seguro: false,
-          mensagem_seguro: '' 
+          mensagem_seguro: '',
+          inicio: 1,  
         })  
       } else {
         validate.seguroState = 'has-success'       
         this.setState({ 
           erro_seguro: false,
           validacao_seguro: true,
-          mensagem_seguro: '' 
+          mensagem_seguro: '',
+          inicio: 2, 
         })  
       }  
       this.setState({ validate })
@@ -1005,26 +1096,25 @@ loadFillData(){
     )
   })
 }
-
+loadtipoTransporte(){  
+  
+  return this.state.listTipoTransporte.map((data)=>{          
+    return(
+       <MenuItem value={data.descricao}>{data.descricao}</MenuItem>      
+    )
+  })
+}
 verifica_botao(inicio) {
   const { validate } = this.state  
-  if (inicio == 1) {
-    return (
-
-      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-              <div className="d-flex justify-content-center">
-              <label> Próximo </label>
-              </div>     
-        </Box>           
-    );   
-  } else {
+  console.log(' validate '+ JSON.stringify(validate)); 
     
    /*  if (this.state.validacao_carro == true && this.state.validacao_modelo == true
       && this.state.validacao_ano == true && this.state.validacao_apolice == true
       && this.state.validacao_seguro == true && this.state.validacao_cor == true
       && this.state.validacao_anodut == true) { */ 
-        if (this.state.validacao_ano == true && this.state.validacao_seguro == true 
-          && this.state.validacao_cor == true && this.state.validacao_anodut == true) {
+    if (this.state.validacao_ano == true && this.state.validacao_seguro == true 
+          && this.state.validacao_cor == true && this.state.validacao_anodut == true
+          && this.state.validacao_tipo_veiculo == true) {
         return ( 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados"  p={2} onClick={()=>this.sendUpdate()}>
                   <div className="d-flex justify-content-center">
@@ -1042,7 +1132,7 @@ verifica_botao(inicio) {
         </Box>           
       );
     }     
-  }
+  
 
   } 
 
@@ -1113,6 +1203,7 @@ sendUpdate(){
   //this.state.listaModelos[this.state.campModelo].name  
  // this.buscaSeguradoraNome(this.state.campSeguradoraNome);
 
+ debugger;
    this.buscaMarca(this.state.campCarroId);
    this.buscaModelo(this.state.campModeloId);
   const datapost = {
@@ -1120,6 +1211,7 @@ sendUpdate(){
     modeloId: this.state.campModeloId,
     marca: localStorage.getItem('logMarca'), 
     modelo: localStorage.getItem('logModelo'),
+    tipoTransporte: this.state.camptipo_veiculo,
     seguradoraId: this.state.campSeguradoraId,
     apolice: this.state.campApolice,
     placa: this.state.campPlaca,
@@ -1132,16 +1224,18 @@ sendUpdate(){
     cadeira_rodas: this.state.campCadeiraRodas,
     motoristaId: localStorage.getItem('logid')
   }          
+
   console.log('state- '+ JSON.stringify(this.state.incluir, null, "    "));       
   console.log('veiculo motorista - '+ JSON.stringify(datapost, null, "    "));       
-  
+  debugger;
       if (this.state.incluir == true) {        
 
         api.post("/veiculo/create", datapost)
         .then(response=>{
          // console.log('response - '+response);
-          if (response.data.success==true) {                        
+         // if (response.data.success==true) {                        
           
+            debugger;
           //   console.log('VEICULO SUCESSO ');
               localStorage.setItem('logVeiculo', response.data.data.id)
 
@@ -1152,12 +1246,10 @@ sendUpdate(){
               } else if (localStorage.getItem('logperfil') == 0) {                 
                 this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid'));                  
               }      
-          }
-          else {
-            alert("Error conexão ")              
-          }
+      //    }
+        
         }).catch(error=>{
-          alert("Erro verificar log  ")
+          alert("Erro verificar log  "+error)
         })        
       } else {      
 
@@ -1173,6 +1265,7 @@ sendUpdate(){
                 } else if (localStorage.getItem('logperfil') == 0) {                 
                   this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid'));                  
                 }      
+                
             }
             else {
               alert("Error conexão ")              
@@ -1180,7 +1273,15 @@ sendUpdate(){
           }).catch(error=>{
             alert("Erro verificar log  ")
           })        
-     }    
+     }   
+     
+     if (localStorage.getItem('logperfil') == 1) {
+      this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid')); 
+    } else if (localStorage.getItem('logperfil') == 3) {
+      this.props.history.push(`/area_motorista`);                
+    } else if (localStorage.getItem('logperfil') == 0) {                 
+      this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid'));                  
+    }   
 }  
 
 verificar_menu() {   
@@ -1289,15 +1390,42 @@ return (
               </div> 
               <div class="p-2">   
                   <div className="d-flex justify-content-start">
+                  <div>
+                       <FormControl variant="outlined">
+                              <InputLabel className="label_tipo_direita_motorista" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                              <Select
+                                className="text_tipo_direita_motorista"
+                                error={this.state.erro_tipo_veiculo} 
+                                helperText={this.state.mensagem_tipo_veiculo}
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={this.state.camptipo_veiculo}
+                                onFocus={this.verificaTipo_veiculo}
+                                //onClick={this.verificaTipo_veiculo}
+                                onChange={ (e) => {
+                                  this.tipoChange(e)
+                                }}   
+
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_tipo_veiculo? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }     
+                                label="Tipo Transporte"
+                              >
+                                {this.loadtipoTransporte()}                    
+                              </Select>
+                            </FormControl>  
+                       </div>
                        <div>
                        <FormControl variant="outlined">
-                          <InputLabel className="label_marca_direita_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
+                          <InputLabel className="label_placa_direita_motorista" htmlFor="filled-adornment-password">Placa</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
-                              error={this.state.erro_placap}
+                              error={this.state.erro_placa}
                               helperText={this.state.mensagem_placa}
-                              className="text_marca_direita_motorista"                       
+                              className="text_placa_direita_motorista"                       
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campPlaca}
@@ -1318,19 +1446,19 @@ return (
                           />                  
                           <FormHelperText error={this.state.erro_placa}>
                                 {this.state.mensagem_placa}
-                          </FormHelperText>
+                          </FormHelperText>    
                         </FormControl>                      
                        </div> 
                        
                        <div>
                        <FormControl variant="outlined">
-                          <InputLabel className="label_marca_esquerda_motorista" htmlFor="filled-adornment-password">Ano</InputLabel>
+                          <InputLabel className="label_placa_esquerda_motorista" htmlFor="filled-adornment-password">Ano</InputLabel>
                           <OutlinedInput 
                               autoComplete="off"                                   
                               type="text"                       
                               error={this.state.erro_ano}
                               helperText={this.state.mensagem_ano}
-                              className="text_marca_esquerda_motorista"                       
+                              className="text_placa_esquerda_motorista"                       
                               id="cep_incluir"                      
                               variant="outlined"
                               value={this.state.campAno}                        
@@ -1439,7 +1567,12 @@ return (
                                             onChange={ (e) => {
                                               this.seguradoraChange(e)                       
                                               this.validaSeguroChange(e)
-                                            }}                                                                                 
+                                            }}  
+                                            endAdornment={
+                                              <InputAdornment position="end">
+                                                  {this.state.validacao_seguro? <CheckIcon />: ''}
+                                              </InputAdornment>
+                                            }                                                                               
                                             labelWidth={110}   
                                           >          
                                           <MenuItem value={0}>Selecione a seguradora</MenuItem>                                         

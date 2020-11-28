@@ -251,6 +251,9 @@ controllers.busca_filho = async (req,res) => {
     where: { 
       servico_pai_id: eventoid,  logid: id, perfilId: perfilId,     
     }, 
+    order: [ 
+      ['data_servico', 'ASC'],
+    ]      
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -272,9 +275,8 @@ controllers.listaservicos = async (req,res) => {
     },  
    // group: 
     order: [ 
-      ['createdAt', 'DESC'],     
+     
       ['data_servico', 'ASC'],
-
     ]       
   })
   .then( function (data){
@@ -416,7 +418,7 @@ controllers.update = async (req, res) => {
   })
 
 }
-controllers.updatefilhos = async (req, res) => {  
+controllers.update_filhos = async (req, res) => {  
 
   const { id } = req.params;
   // parameter id get  
@@ -429,7 +431,7 @@ controllers.updatefilhos = async (req, res) => {
     valor_bilingue, valor_receptivo } = req.body; 
     
 
-  console.log('entrou aqui = '+id);  
+  //console.log('entrou aqui = '+id);  
   
   // update data  
   await Servicos.update({     
@@ -566,7 +568,7 @@ controllers.MaxDataEvento = async (req, res) => {
   const { eventoid,  id, perfilId } = req.params;
 
   const salesValue = await Servicos.max('data_servico', {
-    where: { eventoId: eventoid, logid: id, perfilId: perfilId, tipoEventoId: 1 }
+    where: { servico_pai_id: eventoid, logid: id, perfilId: perfilId, tipoEventoId: 1 }
   });
 
    return res.json({success:true, data: salesValue});

@@ -29,6 +29,7 @@ class empresarialComponent extends React.Component{
       campNome: "",
       campApolice: "",
       campSeguradoraNome: "",
+      camptipo_veiculo: '',
       perfillog: null,
       campSeguradoraId: 0,
       lista:[],
@@ -164,6 +165,7 @@ class empresarialComponent extends React.Component{
             campCarro: res.data.data[0].carro,
             campModelo: res.data.data[0].modelo,
             campPlaca: res.data.data[0].placa,
+
             campAno: res.data.data[0].ano,
             campCor: res.data.data[0].cor,
             campApolice: res.data.data[0].apolice,

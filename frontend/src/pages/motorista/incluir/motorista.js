@@ -665,16 +665,38 @@ class motoristaComponent extends React.Component{
           validacao_dataCNH: false,
           mensagem_datavalidade: ''  
          })      
-       } else {
+       } else if (this.state.campData_CNH.length == 10) {
 
-          validate.data_validadeState = 'has-success' ;        
-          this.setState({ 
-            erro_dataCNH: false,
-            validacao_dataCNH: true,
-            mensagem_datavalidade: ''
-          });     
-
-       }        
+        let date_validar = this.state.campData_CNH;
+        var dia = date_validar.substr(0,2);
+        var mes = date_validar.substr(3,2);         
+    
+        if (dia > 31) {
+         this.setState({ 
+          erro_dataCNH: true,   
+          validacao_dataCNH: false,             
+          mensagem_datavalidade: 'Dia é inválido.' 
+          })  
+        } else if (mes > 12) {
+         this.setState({ 
+          erro_dataCNH: true,   
+          validacao_dataCNH: false,             
+          mensagem_datavalidade: 'Mês é inválido.' 
+          })  
+        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+         this.setState({ 
+          erro_dataCNH: true,   
+          validacao_dataCNH: false,             
+          mensagem_datavalidade: 'Data de validade é inválido.' 
+          })  
+        } else {
+         this.setState({ 
+          erro_dataCNH: false,   
+          validacao_dataCNH: true,             
+          mensagem_datavalidade: '',
+         });   
+        }       
+       }         
    }
 
   validaEmailChange = async (event) => {
@@ -1233,6 +1255,7 @@ return (
                         variant="outlined"
                         value={this.state.campData_CNH}
                         onBlur={this.verificaDataValidade}
+                        onKeyUp={this.verificaDataValidade}
                         onChange={ (e) => {
                           this.Data_validadeChange(e)                       
                           this.validaDataValidadeChange(e)

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import {Form, Progress, Input, FormFeedback, Select, Button, Alert } from 'reactstrap';
+import {Form, Progress, Input, FormFeedback, Container, Row, Col, Select, Button, Alert } from 'reactstrap';
 import {Link} from 'react-router-dom';
 //import { cepMask } from '../../formatacao/cepmask';
 import api from '../../../services/api';
@@ -18,7 +18,6 @@ import Menu_cliente_individual from '../../cliente/menu_cliente_individual';
 import Menu_administrador from '../../administrador/menu_administrador';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
-import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@\$%\^&\*])(?=.{8,})");
@@ -843,82 +842,28 @@ handleMouseDownPassword = (event) => {
 };
 
 verificar_menu() {   
-
-  if (localStorage.getItem('logperfil') == 0) {
-   
+    
    return(
-    <div>
-    <div className="d-flex justify-content-around">
-             <div className="botao_navegacao">
-                <Link to={`/cliente_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-               </div>                  
-               <div>
-                 <div className="titulo_representante_cliente">                
-                  <label>{this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                     <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                  </div>   
-               </div>          
-       </div>      
-        <br/>    
+    <div className="barra_incluir">
+    <Row>
+    <Col xs={3} md={2} className="acerto_navegacao">
+    <Link to={`/cliente_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+    </Col>
+    <Col xs={6} md={8} className="titulo_representante_cliente">
+    <label>{this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>      
+    </Col>
+    <Col xs={3} md={2}>
+    <div className="botao_navegacao">    
+     
+    </div>
+    </Col>
+    <br/>    
         <div>
-           <Progress color="warning" value={this.state.progresso} className="progressbar"/>
+       
         </div>
-   </div>         
+  </Row> 
+  </div>    
    );
-
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
-    return(
-      <div>
-      <div className="d-flex justify-content-around">
-               <div className="botao_navegacao">
-               <Link to={`/cliente_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
-                 </div>                  
-                 <div>
-                   <div className="titulo_representante_cliente">                
-                    <label>{this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>       
-                   </div>
-                 </div>   
-                 
-                 <div>
-                    <div className="botao_navegacao">
-                       <Link to='/'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>                            
-                    </div>   
-                 </div>          
-         </div>      
-          <br/>    
-          <div>
-             <Progress color="warning" value={50} className="progressbar"/>
-          </div>
-     </div>    
-      );
-
-  } else if (localStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL             
-
-    return(
-      <div className="d-flex justify-content-around">
-          <div className="botao_navegacao">            
-               </div>                  
-               <div>
-                 <div className="titulo_representante_cliente">                
-                  <label>  {this.verifica_nome(this.state.campNome)}, altere a sua senha de acesso  </label>       
-                 </div>
-               </div>   
-               
-               <div>
-                  <div className="botao_navegacao">
-                  <div></div>                                            
-                  </div>   
-               </div>   
-      </div>
-      );
-
-  }
-
 
 }
 
@@ -986,19 +931,11 @@ return (
   {this.verificar_menu_lateral()}
 <div>  
    <div>               
-   <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-               <div className="titulo_bemvindo"> Senha </div>               
-            </div>              
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div>                                
+   <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Senha </div>         
+              </div>      
+            </div>                                    
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">

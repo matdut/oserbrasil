@@ -51,10 +51,10 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '60%',  
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100%',    
+    height                 : '100vh',    
     width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -77,7 +77,7 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '60%',  
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
@@ -298,22 +298,27 @@ class listComponent extends React.Component  {
   //  const classes = useStyles();
     return (
       <div>    
-
+ 
+    <div>   
+      <div>   
           <Menu_administrador />  
             <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
               <div className="titulo_bemvindo"> Tipo de Veículo </div>
               </div>      
             </div>
-            <div className="container-fluid margem_left">      
-            <div style={{ maxWidth: '100%' }}>
+            <div className="margem_left">       
+    
+            <div className="container-fluid">   
+            <div>
                
                <MaterialTable          
                    title=""
-                   style={ {width: "96%"}}                                  
+                                       
                    columns={[                          
-                     { title: '', field: '#', width: '40px' },
-                     { title: 'Descrição', field: 'descricao', width: '600px' },                                                     
+                    { title: '', field: '', width: '30px', minWidth: '30px', maxWidth: '30px'  },  
+                     { title: 'Descrição', field: 'descricao', width: '400px', minWidth: '400px', maxWidth: '400px'  },                                                     
+                     { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px'  },  
                      { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                    ]}
                    data={this.state.listaTipoVeiculo}     
@@ -346,28 +351,26 @@ class listComponent extends React.Component  {
                      },
                    }}        
                    options={{
-                     rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                         searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px" , color: "#0F074E"  },
-                         paginationPosition: 'bottom',  
-                         searchFieldAlignment: 'left', 
-                         exportFileName: 'Relatorio_tipo_veiculo',
-                         search: true,     
-                         exportAllData: true,                              
-                         searchFieldVariant: 'outlined', 
-                         toolbarButtonAlignment: 'right',                                    
-                         /*exportButton: true, */            
-                         exportButton: { pdf: true },          
-                         actionsColumnIndex: 2,
-                         paging: false,       
-                         maxBodyHeight: 450,
-                         minBodyHeight: 450, 
-                         padding: 'dense',   
-                         overflowY: 'scroll',
-                        // tableLayout: 'fixed', 
-                       //  maxBodyHeight: 400,
-                         //headerStyle: { position: 'sticky', top: 0 },    
-                         //pageSize: 7,
-                         pageSizeOptions: [0],   
+                    rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                    searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
+                    //paginationPosition: 'bottom',  
+                    searchFieldAlignment: 'left', 
+                    exportAllData: true,
+                    exportFileName: 'Rel_servicos_ativos',
+                    search: true,     
+                    searchFieldVariant: 'outlined', 
+                    toolbarButtonAlignment: 'right',           
+                    paging: false,          
+                    maxBodyHeight: '70vh',
+                    minBodyHeight: '70vh',                    
+                    padding: 'dense',   
+                    overflowY: 'scroll', 
+              
+                  //  tableLayout: 'fixed',                        
+                    exportButton: { pdf: true },          
+                    actionsColumnIndex: 2,
+                   // pageSize: 9,
+                    pageSizeOptions: [0],     
                    }}                        
                    actions={[                        
                     /* {
@@ -515,8 +518,10 @@ class listComponent extends React.Component  {
  // </div>
 }
    </div>   
-         
    </div>
+   </div>      
+   </div>
+</div>
     );       
   }
 

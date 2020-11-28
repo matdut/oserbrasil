@@ -45,17 +45,17 @@ const FotoStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    opacity: '85%',
+  //  opacity: '85%',
     //backgroundColor: 'rgba(255, 255, 255, 0.75)'
     backgroundColor: 'rgba(0, 0, 0, 0.65)'
   },
   content : {
     top                    : '10px',
-    left                   : '36%',    
+    left                   : '9%',    
     right                  : '50%',
     bottom                 : '80px',  
     height                 : '60%',    
-    width                  : '350px',    
+    width                  : '450px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -413,22 +413,13 @@ return (
  {this.verificar_menu_lateral()}
 <div> 
     <div>     
-    <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>           
-            </div>                
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div> 
-
-            <div class="d-flex flex-column espacamento_caixa_texto">                       
-                <div class="p-2">           
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Documentos </div>         
+              </div>      
+            </div> 
+            <div className="d-flex flex-column espacamento_caixa_texto">                       
+                <div className="p-2">           
                 <Grid item xs>
                 <Paper className="documento_motorista_cnh">
                        <div>
@@ -436,7 +427,7 @@ return (
                         <div className="descricaocnh">Carteira Nacional de Habilitação</div>                      
                         <Container>   
                    
-                                <div class="d-flex justify-content-start">
+                                <div className="d-flex justify-content-start">
                                    <div>
                                    <Content>
                                       <img src={this.state.camp_foto_CNH_url} variant="circle" 
@@ -448,7 +439,8 @@ return (
                                          <Upload onUpload={this.handleUploadCNH} />                                       
                                     </Content>                                            
                                    </div>
-                                 </div>    
+                                 </div>   
+                                  
                            </Container>                                
                             <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
                             <div className="d-flex justify-content-center">

@@ -878,24 +878,25 @@ sendSave(){
 verificar_menu() {   
   //console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
   return(   
-
-    <Row>
-    <Col xs={3} md={2}>
-    
-    </Col>
-    <Col xs={6} md={8} className="titulo_representante_cliente">
-    <label className="label_titulo">  Olá, Fale um pouco sobre você!</label>   
-    </Col>
-    <Col xs={3} md={2}>
-    <div className="botao_navegacao">    
-       <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>    
-    </div>
-    </Col>
-    <br/>    
-        <div className="barra_incluir">
-           <Progress color="warning" value={this.state.progresso} className="progressbar"/>
-        </div>
-  </Row>      
+    <div className="barra_incluir">
+      <Row>
+      <Col xs={3} md={2}>
+      
+      </Col>
+      <Col xs={6} md={8} className="titulo_representante_cliente">
+      <label className="label_titulo">  Olá, Fale um pouco sobre você!</label>   
+      </Col>
+      <Col xs={3} md={2}>
+      <div className="botao_navegacao">    
+        <Link to='/tipo'><img className="botao_close espacamento_seta" src="../close_black.png"/> </Link>    
+      </div>
+      </Col>
+      <br/>    
+          <div className="barra_incluir">
+            <Progress color="warning" value={this.state.progresso} className="progressbar"/>
+          </div>
+    </Row>   
+  </div>   
    );
 }
 

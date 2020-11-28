@@ -6,11 +6,10 @@ const ServicosController = require('../controllers/ServicosController');
 router.get('/listporevento/:id',ServicosController.listporevento);
 router.post('/create',ServicosController.create);
 router.put('/update/:id',ServicosController.update);
-router.put('/updatefilhos/:id',ServicosController.updatefilhos);
+router.put('/update_filhos/:id',ServicosController.update_filhos);
 router.get('/get/:id', ServicosController.get);
 router.get('/getEvento/:eventoid', ServicosController.getEvento);
 router.get('/getEventoPai/:eventoid/:paiId', ServicosController.getEventoPai);
-
 router.delete('/delete/:id',ServicosController.delete);
 router.delete('/deleteevento/:eventoid',ServicosController.deleteevento);
 router.delete('/deletePaieFilhos/:id/:logid/:perfilId/:eventoid/:nome_passageiro',ServicosController.deletePaieFilhos);

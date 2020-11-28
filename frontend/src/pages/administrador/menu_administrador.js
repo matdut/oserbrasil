@@ -128,7 +128,7 @@ class menu_administradorComponent extends React.Component  {
               </li>     
               <li>
               <div className="itens_menu">
-                <a href="/lista_evento/list" className="icon_centralizado_novo">                    
+                <a href="#" className="icon_centralizado_novo">                    
                    <LightTooltip title="Eventos" placement="top">                
                    <i className="fas fa-calendar-alt"></i>     
                    </LightTooltip>    
