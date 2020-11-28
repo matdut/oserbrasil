@@ -22,6 +22,11 @@ import './cartao.css';
 import { bandeira_cartao } from '../formatacao/bandeira_cartao';
 
 import NumberFormat from 'react-number-format';
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
 
 import { Input } from 'reactstrap';
 import Fab from '@material-ui/core/Fab';
@@ -619,6 +624,13 @@ if (cartao == null) {
 
 }
 
+opcao_tabChange = (event, newValue) => {   
+  this.setState({        
+      value: newValue 
+  });    
+};
+
+
   render()
   {
     const { cvc, focused, locale, name, placeholders } = this.props;
@@ -636,7 +648,15 @@ if (cartao == null) {
             </div>
             <div className="margem_left">       
     
-    <div className="container-fluid">         
+    <div className="container-fluid">  
+
+    <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                              
+              </TabList>
+            </AppBar>
+           
                     <MaterialTable          
                         title=""
                         isLoading={this.state.loading}
@@ -690,8 +710,8 @@ if (cartao == null) {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,                                        
-                              maxBodyHeight: '70vh',
-                              minBodyHeight: '70vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
@@ -734,7 +754,9 @@ if (cartao == null) {
                             }),
                         }} */
                       />      
-             </div>                
+            
+           </TabContext>         
+           </div> 
         <br/>
         <ReactModal 
         isOpen={this.state.showMensagemDelete}

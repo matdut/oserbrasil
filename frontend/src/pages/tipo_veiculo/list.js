@@ -9,6 +9,12 @@ import Box from '@material-ui/core/Box';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+
 //import { Input, Alert } from 'reactstrap';
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
@@ -120,6 +126,8 @@ class listComponent extends React.Component  {
       vertical: 'top',
       horizontal: 'left',
       open: false,
+      value: "1",
+
       mensagem_usuario: '',
       erro_descricao: false,
       validacao_descricao: false,
@@ -174,6 +182,13 @@ class listComponent extends React.Component  {
     this.props.history.push('/area_administrador'); 
 
   }
+
+  opcao_tabChange = (event, newValue) => {   
+    this.setState({        
+        value: newValue 
+    });    
+  };
+ 
 
   descricaochange(e) {
     this.setState({ campDescricao: e.target.value })
@@ -310,6 +325,14 @@ class listComponent extends React.Component  {
             <div className="margem_left">       
     
             <div className="container-fluid">   
+            <br/>      
+            <TabContext value={this.state.value} className="tabs_padrao">
+            <AppBar position="static" color="transparent">
+              <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
+                              
+              </TabList>
+            </AppBar>
+                  
             <div>
                
                <MaterialTable          
@@ -368,7 +391,7 @@ class listComponent extends React.Component  {
               
                   //  tableLayout: 'fixed',                        
                     exportButton: { pdf: true },          
-                    actionsColumnIndex: 2,
+                    actionsColumnIndex: 3,
                    // pageSize: 9,
                     pageSizeOptions: [0],     
                    }}                        
@@ -404,7 +427,10 @@ class listComponent extends React.Component  {
                        <AddIcon/> <div className="botao_incluir"> Adicionar Tipo Veiculos  </div>
                    </Fab>
                  </div>                        
-        </div>                
+        </div>  
+     
+
+        </TabContext>              
    <br/> 
    
 

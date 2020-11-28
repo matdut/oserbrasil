@@ -1223,13 +1223,13 @@ sendEnvioEmail(){
                                                  
                             title=""
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                  
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                                  
                             ]}
                             data={this.state.listCliente}   
                             localization={{
@@ -1264,8 +1264,8 @@ sendEnvioEmail(){
                               paging: false,   
                             //  minBodyHeight: 450,       
                              // maxBodyHeight: 600,   
-                             maxBodyHeight: '59vh',
-                             minBodyHeight: '59vh',   
+                             maxBodyHeight: '60vh',
+                             minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',                               
@@ -1289,13 +1289,13 @@ sendEnvioEmail(){
                          //   className="resize_table"
                             title=""
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                                
                             ]}
                             data={this.state.listClienteExcluidos}   
                             localization={{
@@ -1329,8 +1329,8 @@ sendEnvioEmail(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                           //    tableLayout: 'fixed',
@@ -1360,13 +1360,13 @@ sendEnvioEmail(){
                          //   className="resize_table"
                             title=""
                             columns={[
-                              { title: '', field: '#', width: "18px" },
+                              { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },
                               { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                                
                             ]}
                             data={this.state.listClienteCadIncompletos}   
                             localization={{
@@ -1400,8 +1400,8 @@ sendEnvioEmail(){
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,   
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',             
@@ -1435,9 +1435,9 @@ sendEnvioEmail(){
                         title=""
                                                     
                         columns={[
-                          { title: '', field: '#', width: '20px' },
-                          { title: 'Status', field: 'status.descricao', width: '200px' },               
-                          { title: 'Email', field: 'email', width: '420px' },                                           
+                          { title: '', field: '#', width: '30px', minWidth: '30px', maxWidth: '30px' },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },               
+                          { title: 'Email', field: 'email', width: '420px', minWidth: '420px', maxWidth: '420px' },                                           
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listMotoristaConvite}   
@@ -1481,13 +1481,13 @@ sendEnvioEmail(){
                               toolbarButtonAlignment: 'right',  
                               //resizable: false,
                               paging: false,          
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',   
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',   
                               padding: 'dense',   
                               overflowY: 'scroll',
                            //   tableLayout: 'fixed',     
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 4,
+                              actionsColumnIndex: 5,
                               //pageSize: 7,
                               pageSizeOptions: [0],       
                         }}
@@ -1727,7 +1727,7 @@ sendEnvioEmail(){
         isOpen={this.state.showModalEnvio}
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
-        ><div className="editar_titulo_inclusao"> Convidar Adm Auxiliar
+        ><div className="editar_titulo_inclusao"> Adicionar Adm Auxiliar
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalEnvio()} className="botao_close_modal_motorista">
               <CloseOutlinedIcon />
             </IconButton></div>       

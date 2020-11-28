@@ -216,6 +216,7 @@ class BancoComponent extends React.Component  {
       campdesccartao: '',
       campDescricao: "",   
       campagencia: '',
+      campagencia_dv: '',
       campcodigo: '',
       campconta_dv: '',
       campoperacao: '',
@@ -254,6 +255,7 @@ class BancoComponent extends React.Component  {
           campDescricao: res.data.data[0].banco,
           campBanco: res.data.data[0].banco,
           campagencia: res.data.data[0].agencia,
+          campagencia_dv: res.data.data[0].agencia_dv,
           campconta: res.data.data[0].conta,      
           campconta_dv: res.data.data[0].conta_dv,
           campoperacao: res.data.data[0].operacao,
@@ -261,14 +263,25 @@ class BancoComponent extends React.Component  {
           validacao_agencia: true,
           validacao_banco: true,
           validacao_conta: true,
-          validacao_descricao: true,
-          validacao_conta_dv: true,         
+          validacao_descricao: true,     
+             
         });
         if (this.state.campoperacao.length > 0) {
           this.setState({   
             validacao_operacao: true
           });
         }
+        if (this.state.campagencia_dv.length > 0) {
+          this.setState({   
+            validacao_agencia_dv: true,     
+          });
+        }
+        if (this.state.campconta_dv.length > 0) {
+          this.setState({   
+            validacao_conta_dv: true,     
+          });
+        }
+
 
       }
     })
@@ -366,7 +379,7 @@ class BancoComponent extends React.Component  {
       } else {
 
         if (this.state.validacao_banco == true 
-          && this.state.validacao_conta == true && this.state.validacao_conta_dv == true) { 
+          && this.state.validacao_conta == true && this.state.validacao_agencia == true) { 
             return (
         
               <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
@@ -406,7 +419,7 @@ verifica_botao_update(inicio) {
     } else {
 
       if (this.state.validacao_banco == true 
-        && this.state.validacao_conta == true && this.state.validacao_conta_dv == true) { 
+        && this.state.validacao_conta == true && this.state.validacao_agencia == true) { 
           return (
       
             <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
@@ -586,6 +599,7 @@ verifica_botao_update(inicio) {
           codigo: rescodigo.data.data[0].codigo,
           banco: this.state.campDescricao,     
           agencia: this.state.campagencia,
+          agencia_dv: this.state.campagencia_dv,
           conta_dv: this.state.campconta_dv,
           operacao: this.state.campoperacao,
           conta: this.state.campconta,  
@@ -643,6 +657,7 @@ verifica_botao_update(inicio) {
           codigo: rescodigo.data.data[0].codigo,
           banco: this.state.campDescricao,     
           agencia: this.state.campagencia,
+          agencia_dv: this.state.campagencia_dv,
           conta: this.state.campconta,  
           conta_dv: this.state.campconta_dv,
           operacao: this.state.campoperacao,
@@ -765,9 +780,10 @@ verificar_menu_lateral() {
                           { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px'  },                        
                           { title: 'Codigo', field: 'codigo', width: '100px', minWidth: '100px', maxWidth: '100px' },                            
                           { title: 'Banco', field: 'banco', width: '200px', minWidth: '200px', maxWidth: '200px' },                      
-                          { title: 'Agncia', field: 'agencia', width: '100px', minWidth: '100px', maxWidth: '100px' },                            
-                          { title: 'Conta', field: 'conta', width: '100px', minWidth: '100px', maxWidth: '100px' }, 
-                          { title: 'DV', field: 'conta_dv', width: '50px', minWidth: '50px', maxWidth: '50px' },                            
+                          { title: 'Agência', field: 'agencia', width: '100px', minWidth: '100px', maxWidth: '100px',
+                          render: rowData => rowData.agencia == "" ? '' : rowData.agencia_dv == "" ? rowData.agencia: rowData.agencia + '-'+ rowData.agencia_dv  },                            
+                          { title: 'Conta', field: 'conta', width: '100px', minWidth: '100px', maxWidth: '100px',
+                          render: rowData => rowData.conta == "" ? '' : rowData.conta_dv == "" ? rowData.conta : rowData.conta + '-'+ rowData.conta_dv }, 
                                              
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}

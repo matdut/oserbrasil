@@ -4570,7 +4570,15 @@ verifica_rota(inicio) {
             </InfoWindow>
             </Map>            
 
-                   
+            <DistanceMatrixService          
+              options={{                      
+                        destinations: [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}],
+                        origins: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}],                    
+                        travelMode: "DRIVING",                                      
+                      }}
+              callback={this.distanceCallback}
+          /> 
+    
 
             {
             //this.chamada_directmatrix()
@@ -4815,7 +4823,7 @@ debugger;
 
    // const origins = this.state.camplocalembarque;
     //const destinations = this.state.camplocaldesembarque;  
-debugger;
+/*debugger;
     var origin = new window.google.maps.LatLng(this.state.embarque_latitude, this.state.embarque_longitude);
     var destination = new window.google.maps.LatLng(this.state.desembarque_latitude, this.state.desembarque_longitude);
     var selecao_tipo = this.state.tabIndex;
@@ -4873,24 +4881,55 @@ debugger;
        
       });
 
-      debugger;
-      this.setState({
-        campdistancia: campdistancia1,
-        camptempovalue: camptempovalue1,
-        camptempo: camptempo1,
+      */
+    // var campdistancia1 = 0;
+   ///  var camptempovalue1 = 0;
+   //  var camptempo1 = '';
+   debugger;
+     if (this.state.embarque_latitude !== '' && this.state.desembarque_latitude !== '') {
+        
+
+      var destinations = [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}];
+      var origins = [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}];
+     // var origins = [this.state.camplocalembarque,`${this.state.embarque_latitude}, ${this.state.embarque_longitude}`];
+     // var destinations = [this.state.camplocaldesembarque,`${this.state.desembarque_latitude}, ${this.state.desembarque_longitude}`];
+     // var origins = new window.google.maps.LatLng(this.state.embarque_latitude, this.state.embarque_longitude);
+     // var destinations = new window.google.maps.LatLng(this.state.desembarque_latitude, this.state.desembarque_longitude);
+       
+      distance.key('AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4');
+      //distance.units('metric');
+       
+      distance.matrix(origins, destinations, function (err, distances) {
+          if (err) {
+              return console.log(err);
+          }
+          if(!distances) {
+              return console.log('no distances');
+          }
+          if (distances.status == 'OK') {
+
+             if (distances.rows[0].elements[0].status === "OK") {         
+            
+                  if (this.state.tabIndex == 2) {
+                    this.setState({     
+                      controle: 1,
+                      campdistancia: (distances.rows[0].elements[0].distance.value / 1000).toFixed(0), 
+                      camptempovalue: (distances.rows[0].elements[0].duration.value / 60).toFixed(0),
+                      camptempo: this.formatar_valor(distances.rows[0].elements[0].duration.text)            
+                      });
+                    } else if (this.state.tabIndex == 1) {
+                      this.setState({      
+                        controle: 1,
+                        campdistancia: 0, 
+                        camptempovalue: 0,
+                        camptempo: ''           
+                      });
+                    }
+               }
+          }
       });
-     
-     /* distance.matrix(
-        {
-            origins: [origins],
-            destinations: [destinations],
-            travelMode: google.maps.TravelMode.DRIVING,
-            unitSystem: google.maps.UnitSystem.IMPERIAL,
-            avoidHighways: false,
-            avoidTolls: false
-        }, 
-        this.distanceCallback()
-      );*/
+
+        
 
     }  
   }
@@ -5187,7 +5226,7 @@ debugger;
   calcular_trajeto() {   
 debugger;
 
-    this.calcular_distancia();
+  //  this.calcular_distancia();
 
     let contagem_tarifa=0;
     let contagem_tarifaEspecial=0;
@@ -5253,12 +5292,8 @@ debugger;
                 camptempovalue: 0,
                 camptempo: ''           
               });
-            }
-          
-           // if (this.state.campdistancia !== 0 && this.state.camptempo !== 0) {        
-       
-           // }
-
+            }          
+        
         } else  {
             this.setState({ 
               mensagem_error_mapa: 'Erro encontrado'
@@ -5269,6 +5304,9 @@ debugger;
             console.log("response: ", response);
           }
      }
+
+
+
   //  }
   };
 
@@ -5308,7 +5346,15 @@ debugger;
           </InfoWindow>
           </Map>               
           
-        
+          <DistanceMatrixService          
+              options={{                      
+                        destinations: [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}],
+                        origins: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}],                    
+                        travelMode: "DRIVING",                                      
+                      }}
+              callback={this.distanceCallback}
+          /> 
+
 
            {
            //this.chamada_directmatrix()
@@ -5513,7 +5559,9 @@ debugger;
       validacao_localembarque: true
       //mudar_estilo: customStyles,
     }); 
-    this.calcular_trajeto();
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+      this.calcular_trajeto();
+   }
   //  this.obtendo_latitude_longitude();
   }
 
@@ -5534,7 +5582,9 @@ debugger;
       validacao_localdesembarque: true,
     });  
     
-    this.calcular_trajeto();
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+      this.calcular_trajeto();
+   }
    //debugger;
     //this.obtendo_latitude_longitude();
   }

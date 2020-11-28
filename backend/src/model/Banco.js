@@ -24,16 +24,20 @@ var Banco = sequelize.define(nametable,{
     allowNull: false,    
   }, 
   agencia:  {  
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(6),
     allowNull: false,     
+  }, 
+  agencia_dv:  {  
+    type: Sequelize.STRING(1),
+    allowNull: true,     
   },
   conta:  {  
-    type: Sequelize.STRING(7),
+    type: Sequelize.STRING(12),
     allowNull: false,     
   }, 
   conta_dv:  {  
-    type: Sequelize.STRING(4),
-    allowNull: false,     
+    type: Sequelize.STRING(1),
+    allowNull: true,     
   },
   operacao:  {  
     type: Sequelize.INTEGER,

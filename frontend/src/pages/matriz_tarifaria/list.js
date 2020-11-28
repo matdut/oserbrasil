@@ -1163,7 +1163,10 @@ verifica_botao_especial_E(inicio) {
               <div className="titulo_bemvindo"> Tarifas </div>
               </div>      
             </div>
-      <div className="container-fluid margem_left">                                         
+
+      <div className="margem_left">       
+    
+    <div className="container-fluid">                                       
             <br/>      
             <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
@@ -1176,7 +1179,7 @@ verifica_botao_especial_E(inicio) {
           <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%" }}     
+                   
                         columns={[                                                    
                           { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px', },
                           { title: 'Transporte', field: 'tipoTransporte', width: '250px', minWidth: '250px', maxWidth: '250px',
@@ -1189,11 +1192,11 @@ verifica_botao_especial_E(inicio) {
                           render: rowData =>  valorMask(rowData.valor_km) },                        
                           { title: 'Tempo (R$)', field: 'valor_tempo', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right',
                           render: rowData =>  valorMask(rowData.valor_tempo) },                          
-                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '130px', minWidth: '130px', maxWidth: '130px', align: 'right',
+                          { title: 'Bandeirada (R$)', field: 'bandeira', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                           render: rowData =>  valorMask(rowData.bandeira) },                          
-                          { title: 'Receptivo (R$)', field: 'receptivo', width: '150px', minWidth: '150px', maxWidth: '150px', align: 'right',
+                          { title: 'Receptivo (R$)', field: 'receptivo', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                           render: rowData =>  valorMask(rowData.receptivo) }, 
-                          { title: 'Bilingue (%)', field: 'bilingue', width: '120px', minWidth: '120px', maxWidth: '100px', align: 'center' },                                            
+                          { title: 'Bilingue (%)', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'center' },                                            
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                         ]}
                         data={this.state.listaMatriz}     
@@ -1236,8 +1239,8 @@ verifica_botao_especial_E(inicio) {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,    
-                          maxBodyHeight: '60vh',
-                          minBodyHeight: '60vh',   
+                          maxBodyHeight: '57vh',
+                          minBodyHeight: '57vh',   
                            padding: 'dense',   
                            overflowY: 'scroll',
                           // tableLayout: 'fixed',         
@@ -1290,9 +1293,9 @@ verifica_botao_especial_E(inicio) {
             <div>
                     <MaterialTable          
                         title=""
-                        style={ {width: "96%" }}     
+                     
                         columns={[
-                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px', },
+                          { title: '', field: '#', width: "35px", minWidth: '35px', maxWidth: '35px' },
                           { title: 'Transporte', field: 'tipoTransporte', width: '150px', minWidth: '150px', maxWidth: '150px', 
                           render: rowData => rowData.tipoTransporte.substr(0,20) },                                     
                           { title: 'Km Inicial', field: 'faixa_inicial', width: '88px', minWidth: '88px', maxWidth: '88px', align: 'right',
@@ -1301,7 +1304,7 @@ verifica_botao_especial_E(inicio) {
                           render: rowData => rowData.faixa_final}, 
                           { title: 'Dt Inicial', field: 'data_inicial', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'center',  
                           render: rowData => dateFormat(rowData.data_inicial, "UTC:dd/mm/yyyy") },
-                          { title: 'Dt Final', field: 'data_final', width: '104px', minWidth: '104px', maxWidth: '104px', align: 'center',
+                          { title: 'Dt Final', field: 'data_final', width: '90px', minWidth: '90px', maxWidth: '90px', align: 'center',
                           render: rowData => dateFormat(rowData.data_final, "UTC:dd/mm/yyyy") },
                           { title: 'Hr Inicial', field: 'hora_inicial', width: '85px', minWidth: '85px', maxWidth: '85px' ,
                           render: rowData => rowData.hora_inicial.substring(0,5)},
@@ -1349,7 +1352,7 @@ verifica_botao_especial_E(inicio) {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px", color: "#0F074E"  },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "0px", color: "#0F074E"  },
                           //paginationPosition: 'bottom',  
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
@@ -1358,11 +1361,11 @@ verifica_botao_especial_E(inicio) {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,       
-                          maxBodyHeight: '60vh',
-                          minBodyHeight: '60vh',   
+                          maxBodyHeight: '59vh',
+                          minBodyHeight: '59vh',   
                           padding: 'dense',   
                           overflowY: 'scroll',
-                        //  tableLayout: 'fixed',
+                          //tableLayout: 'fixed',
                           /*exportButton: true, */            
                           exportButton: { pdf: true },          
                           actionsColumnIndex: 13,
@@ -3040,6 +3043,7 @@ verifica_botao_especial_E(inicio) {
        }
         </div>
       </div>         
+      </div>
     );
   }
 

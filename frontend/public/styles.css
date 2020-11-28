@@ -892,12 +892,16 @@
   }
 
   .margem_left_ajustar {
-    margin-left: 10px !important;
+    margin-left: 10px !important; 
+  }
+
+  .teste_css{
+    margin-right: 9px !important;
   }
   
   .margem_left {
     margin-left: 90px !important;
- 
+    margin-right: -9px !important;
   }
   .tamanho_height{
     height: 60vh !important;
