@@ -5224,6 +5224,7 @@ debugger;
   }
 
   calcular_trajeto() {   
+
 debugger;
 
   //  this.calcular_distancia();
@@ -5239,8 +5240,6 @@ debugger;
     } else {
       campdistancia_inicio = this.state.campdistancia;
     }
-     
-    debugger;
 
      this.setState({                            
          possui_tarifa:false,
@@ -5292,7 +5291,11 @@ debugger;
                 camptempovalue: 0,
                 camptempo: ''           
               });
-            }          
+            }       
+            
+            if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+                this.calcular_trajeto();
+            }            
         
         } else  {
             this.setState({ 
@@ -5303,6 +5306,7 @@ debugger;
           } else {
             console.log("response: ", response);
           }
+
      }
 
 
@@ -5346,14 +5350,7 @@ debugger;
           </InfoWindow>
           </Map>               
           
-          <DistanceMatrixService          
-              options={{                      
-                        destinations: [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}],
-                        origins: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}],                    
-                        travelMode: "DRIVING",                                      
-                      }}
-              callback={this.distanceCallback}
-          /> 
+      
 
 
            {
@@ -5559,9 +5556,9 @@ debugger;
       validacao_localembarque: true
       //mudar_estilo: customStyles,
     }); 
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-      this.calcular_trajeto();
-   }
+   // if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+     // this.calcular_trajeto();
+  // }
   //  this.obtendo_latitude_longitude();
   }
 
@@ -5582,9 +5579,9 @@ debugger;
       validacao_localdesembarque: true,
     });  
     
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-      this.calcular_trajeto();
-   }
+  //  if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+  //    this.calcular_trajeto();
+  // }
    //debugger;
     //this.obtendo_latitude_longitude();
   }

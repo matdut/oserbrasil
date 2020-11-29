@@ -179,9 +179,7 @@ class BancoComponent extends React.Component  {
     this.verificaconta = this.verificaconta.bind(this);      
     this.verificaconta_dv = this.verificaconta_dv.bind(this);    
     this.verificaagencia_dv = this.verificaagencia_dv.bind(this); 
-    this.verifica_operacao = this.verifica_operacao.bind(this);  
-    
-
+    this.verifica_operacao = this.verifica_operacao.bind(this); 
     this.busca_descricao = this.busca_descricao.bind(this);          
 
     //this.descricaofocus = this.descricaofocus.bind(this);     
