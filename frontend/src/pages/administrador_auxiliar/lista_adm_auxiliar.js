@@ -453,7 +453,7 @@ class listaClienteComponent extends React.Component  {
        }        
    }
 
-  validaEmailChange = async (event) => {
+   validaEmailChange = async (event) => {
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
@@ -472,16 +472,44 @@ class listaClienteComponent extends React.Component  {
             validate.emailState = 'has-danger'
             this.setState({ 
                 validate,
-                erro_datanascimento: true,
-                validacao_datanascimento: false,
+                erro_email: true,
+                validacao_email: false,
                 mensagem_email: 'Email já cadastrado.'  
             })                            
-        }      
+        } else {
+          console.log(`valida email - ${email}`);
+          api.get(`/emailOperador/getEmail/${email}`)
+          .then(response=>{       
+            console.log(' resultado - '+JSON.stringify(response.data, null, "    "));        
+            console.log(' resultado length - '+JSON.stringify(response.data.data.length, null, "    "));        
+              if (response.data.data.length > 0) {                                  
+              validate.emailState = '';
+              this.setState({      
+                  erro_email: true,   
+                  validacao_email: false,                             
+                  mensagem_email: 'Convite já foi enviado para este email',                    
+                  validate,
+              });                
+
+              } else {      
+
+                  this.setState({         
+                    erro_email: false,   
+                    validacao_email: true,    
+                    mensagem_email: ''  
+                })
+              } 
+            })        
+            .catch(error=>{
+              alert("Erro de conexão "+error)
+            })           
+        }        
       })        
       .catch(error=>{
         alert("Erro de conexão "+error)
       })                   
     }
+      
     
     validateEmail(e) {
       const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -491,28 +519,20 @@ class listaClienteComponent extends React.Component  {
             validate.emailState = 'has-success'     
             //console.log(' valida email - '+e.target.value);   
             //console.log(' valida email - '+this.state.campEmail);   
-            if (this.state.campEmailAnterior !== e.target.value) {
-              this.busca_email_ja_cadastrado(e.target.value)                
-              } else {
-                this.setState({ 
-                  validate,
-                  erro_email: false,
-                  validacao_email: true,
-                  mensagem_email: '' 
-                })          
-              }             
+            this.busca_email_ja_cadastrado(e.target.value)                
                     
             
         } else {
           validate.emailState = 'has-danger'
           this.setState({ 
             validate,
+            erro_email: false,
+            validacao_email: false,
             mensagem_email: '' })  
         }
 
         this.setState({ validate })
-    }       
-    
+    }      
     validaCpfChange(e){
       const { validate } = this.state
       
@@ -967,7 +987,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
   
       return (
   
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_scroll"  p={2}>
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_evento_modal"  p={2}>
                 <div className="d-flex justify-content-center">
                 <label> Enviar </label>
                 </div>     
@@ -979,7 +999,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
         if (this.state.validacao_email == true) { 
             return (
         
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitado_modal_scroll"  p={2} onClick={()=>this.sendEnvioEmail()}>
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitado_evento_modal"  p={2} onClick={()=>this.sendEnvioEmail()}>
                       <div className="d-flex justify-content-center">
                       <label> Enviar </label>
                       </div>     
@@ -988,7 +1008,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
         } else {
           return (
         
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_scroll"  p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_evento_modal"  p={2}>
                     <div className="d-flex justify-content-center">
                     <label> Enviar </label>
                     </div>     
@@ -1761,8 +1781,9 @@ sendEnvioEmail(){
                         <FormHelperText error={this.state.erro_email}>
                               {this.state.mensagem_email}
                         </FormHelperText>
-
-                        <div className="posicao_1">               
+                      </FormControl>   
+                  </div>        
+               <div className="posicao_1">               
                 <div class="p-2">                        
                     <div className="checkbox_titulo">Permissões de Acesso </div>
                 </div>
@@ -1901,8 +1922,8 @@ sendEnvioEmail(){
                            </div>
                         </div>                      
                      </div>
-              </div>      
-                      </FormControl>             
+                 
+                 
                           </div>
                         </div>   
                                      

@@ -244,7 +244,7 @@ class listaeventosComponent extends React.Component  {
     //let userId = this.props.match.params.id;  
 
    // localStorage.setItem('logid',userId)
-   //this.interval = setInterval(() => this.tick(), 1000);
+   this.interval = setInterval(() => this.tick(), 1000);
     this.setState({
       perfil: localStorage.getItem('logperfil'),
       id: localStorage.getItem('logid')   
@@ -252,8 +252,8 @@ class listaeventosComponent extends React.Component  {
 
     if (localStorage.getItem('logperfil') > 1) {       
        this.loadlistEventos();  
-       this.loadOperadores();  
-       this.loadTodosOperadores();
+      // this.loadOperadores();  
+      // this.loadTodosOperadores();
        this.loadeventosexcluidos();
       // this.atualiza_evento();
     } else {
@@ -265,12 +265,12 @@ class listaeventosComponent extends React.Component  {
 
   tick() {
     this.loadlistEventos();  
-    this.loadOperadores();  
-    this.loadTodosOperadores();
+   // this.loadOperadores();  
+   // this.loadTodosOperadores();
   }
 
   componentWillUnmount() {
-  //  clearInterval(this.interval);
+    clearInterval(this.interval);
    }
 
   loadservicoseventos(userId) {
@@ -1089,7 +1089,7 @@ verificaData_Evento(e) {
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
                               { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
                             ]}
                             data={this.state.listEventos}   
@@ -1182,7 +1182,7 @@ verificaData_Evento(e) {
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
                               { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '',  align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },          
                             ]}
                             data={this.state.listClienteExcluidos}   
@@ -1231,7 +1231,7 @@ verificaData_Evento(e) {
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
+                              actionsColumnIndex: 8,
                              // pageSize: 7,
                               pageSizeOptions: [0],                    
                             }}
@@ -1262,7 +1262,7 @@ verificaData_Evento(e) {
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
                               { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                
+                              { title: '', field: '',  align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' },                                
                              },   
                             ]}
                             data={this.state.listaeventosexcluidos}   

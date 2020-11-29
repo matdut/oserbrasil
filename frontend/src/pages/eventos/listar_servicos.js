@@ -478,7 +478,7 @@ class listaservicosComponent extends React.Component  {
  //  let eventoId = this.props.match.params.id;    
    // console.log('eventoId'+ eventoId);
 
-  // this.interval = setInterval(() => this.tick(), 5000);
+   this.interval = setInterval(() => this.tickservico(), 1000);
 //debugger;
     this.setState({
       perfil: localStorage.getItem('logperfil'),
@@ -550,17 +550,17 @@ class listaservicosComponent extends React.Component  {
     console.log(numeroFormatado);
   } 
 */ 
- tick() {
-  this.loadServicos();    
+ tickservico() {
+  //this.loadServicos();    
   this.loadlistServicos();
-  this.loadTarifaespecial();
-  this.loadTarifa();
-  this.valor_total_servicos();
-  this.valor_total_viagens();
+  //this.loadTarifaespecial();
+  //this.loadTarifa();
+  //this.valor_total_servicos();
+  //this.valor_total_viagens();
  }
 
  componentWillUnmount() {
-  //clearInterval(this.interval);
+  clearInterval(this.interval);
  }
 
   valor_total_servicos(){
@@ -609,8 +609,7 @@ class listaservicosComponent extends React.Component  {
     //debugger;
     api.get(`/servicos/listaservicosevento/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
      .then(res=>{
-       if (res.data.success == true) {
-         debugger;
+       if (res.data.success == true) {       
          const data = res.data.data    
          this.setState({
            listservicoseventos:data,
@@ -2170,6 +2169,7 @@ verifica_rota(inicio) {
               </div>         
           </div> 
         </div>
+        
       <div className="margem_left">   
       <div className="container-fluid">   
       <TabContext value={this.state.value} className="tabs_padrao">
@@ -2189,7 +2189,7 @@ verifica_rota(inicio) {
                             isLoading={this.state.loading}       
                             //style=""                     
                             columns={[
-                              { title: '', field: '', width: '1px', minWidth: '1px', maxWidth: '1px' }, 
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                             cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? rowData.tipoEventoId == 1 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : '' : ''}, 
@@ -4991,9 +4991,6 @@ debugger;
      }
      
      debugger;
-
-
-
      const pos_hora_inicial = this.state.camphora_inicial.indexOf(":", 0);
      const pos_hora_final = this.state.camphora_final.indexOf(":", 0);
 

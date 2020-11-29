@@ -1282,7 +1282,8 @@ class listComponent extends React.Component  {
             </div>
           </div>     
         <br/>  
-          <div className="margem_left">       
+
+   <div className="margem_left">       
     
     <div className="container-fluid">   
     
@@ -1292,7 +1293,7 @@ class listComponent extends React.Component  {
                               
               </TabList>
             </AppBar>
-        <div>
+        <div className="tirar_espaco">
 
            <MaterialTable          
                             title=""
@@ -2185,6 +2186,7 @@ class listComponent extends React.Component  {
 
                   </div>
           </ReactModal>  
+         
         <ReactModal 
         isOpen={this.state.showModalFoto}
         style={FotoStyles}

@@ -80,7 +80,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -2089,7 +2089,11 @@ opcao_tabChange = (event, newValue) => {
             </div>      
           </TabPanel>              
         </TabContext>          
-         
+        <div className="botao_lista_incluir">
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalEnvio()}>
+                            <AddIcon/> <div className="botao_incluir"> Adicionar Motorista Auxiliar  </div>
+                        </Fab>
+                      </div>  
         <ReactModal 
             isOpen={this.state.showModal}
             style={customStyles}
