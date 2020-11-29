@@ -711,6 +711,43 @@ loadStatus(){
 
  }
 
+ verifica_operacao(banco) {
+
+  if (banco == "Caixa Econômica Federal") {
+
+  return (
+
+    <FormControl variant="outlined">     
+                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Operação</InputLabel>                           
+                                <OutlinedInput 
+                                    autoComplete="off"                                   
+                                    type="text"                       
+                                    error={this.state.error_operacao}
+                                    helperText={this.state.mensagem_operacao}
+                                    className="text_opcao_motorista"                       
+                                    id="cep_incluir"                      
+                                    variant="outlined"
+                                    value={this.state.campoperacao}                        
+                                    onKeyUp={this.verificaoperacao}
+                                    onChange={(value)=> this.setState({campoperacao:value.target.value})}                     
+                                    inputProps={{
+                                      maxLength: 3,
+                                    }}        
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                        {this.state.validacao_operacao? <CheckIcon />: ''}
+                                    </InputAdornment>
+                                  }
+                                  labelWidth={100}
+                                />                  
+                                <FormHelperText error={this.state.error_operacao}>
+                                      {this.state.mensagem_operacao}
+                                </FormHelperText>
+                              </FormControl>   
+
+  );
+     }
+ }
  carrega_status(){
   
   //const baseUrl = "http://34.210.56.22:3333"
@@ -785,6 +822,7 @@ verificar_menu_lateral() {
               </TabList>
             </AppBar>                                         
 
+        <div className="tirar_espaco"> 
                     <MaterialTable          
                         title=""
                         
@@ -882,7 +920,8 @@ verificar_menu_lateral() {
                               }, 1000)
                             }),
                         }} */
-                      />               
+                      />            
+                      </div>   
          </TabContext>
         <br/>
         <ReactModal 
@@ -1018,33 +1057,7 @@ verificar_menu_lateral() {
                                         
                             </div>    
                     <div>
-                    <FormControl variant="outlined">     
-                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Operação</InputLabel>                           
-                                <OutlinedInput 
-                                    autoComplete="off"                                   
-                                    type="text"                       
-                                    error={this.state.error_operacao}
-                                    helperText={this.state.mensagem_operacao}
-                                    className="text_opcao_motorista"                       
-                                    id="cep_incluir"                      
-                                    variant="outlined"
-                                    value={this.state.campoperacao}                        
-                                    onKeyUp={this.verificaoperacao}
-                                    onChange={(value)=> this.setState({campoperacao:value.target.value})}                     
-                                    inputProps={{
-                                      maxLength: 3,
-                                    }}        
-                                  endAdornment={
-                                    <InputAdornment position="end">
-                                        {this.state.validacao_operacao? <CheckIcon />: ''}
-                                    </InputAdornment>
-                                  }
-                                  labelWidth={100}
-                                />                  
-                                <FormHelperText error={this.state.error_operacao}>
-                                      {this.state.mensagem_operacao}
-                                </FormHelperText>
-                              </FormControl>   
+                     { this.verifica_operacao(this.state.campDescricao) }
                       </div>                       
                                                                 
                       </div>                      
@@ -1226,33 +1239,7 @@ verificar_menu_lateral() {
                                         
                             </div>   
                     <div>
-                    <FormControl variant="outlined">     
-                              <InputLabel className="label_opcao_text_motorista" htmlFor="filled-adornment-password">Operação</InputLabel>                           
-                                <OutlinedInput 
-                                    autoComplete="off"                                   
-                                    type="text"                       
-                                    error={this.state.error_operacao}
-                                    helperText={this.state.mensagem_operacao}
-                                    className="text_opcao_motorista"                       
-                                    id="cep_incluir"                      
-                                    variant="outlined"
-                                    value={this.state.campoperacao}                        
-                                    onKeyUp={this.verificaoperacao}
-                                    onChange={(value)=> this.setState({campoperacao:value.target.value})}                     
-                                    inputProps={{
-                                      maxLength: 3,
-                                    }}        
-                                  endAdornment={
-                                    <InputAdornment position="end">
-                                        {this.state.validacao_operacao? <CheckIcon />: ''}
-                                    </InputAdornment>
-                                  }
-                                  labelWidth={100}
-                                />                  
-                                <FormHelperText error={this.state.error_operacao}>
-                                      {this.state.mensagem_operacao}
-                                </FormHelperText>
-                              </FormControl>   
+                         { this.verifica_operacao(this.state.campDescricao) }
                       </div>                       
                                                                 
                       </div>                      

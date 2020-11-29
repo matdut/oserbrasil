@@ -57,10 +57,10 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',  
+    left                   : '66%',      
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100vh',    
+    height                 : '100%',    
     width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
@@ -69,6 +69,7 @@ const customStyles = {
     border: '1px solid #ccc',   
   }
 };
+
 
 const ConfirmacaodelStyles = {
   overlay: {
@@ -332,8 +333,8 @@ class listComponent extends React.Component  {
                               
               </TabList>
             </AppBar>
-                  
-            <div>
+         
+            <div className="tirar_espaco">         
                
                <MaterialTable          
                    title=""
@@ -375,7 +376,7 @@ class listComponent extends React.Component  {
                    }}        
                    options={{
                     rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                    searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
+                    searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px", color: "#0F074E"  },
                     //paginationPosition: 'bottom',  
                     searchFieldAlignment: 'left', 
                     exportAllData: true,

@@ -1295,7 +1295,7 @@ verifica_botao_especial_E(inicio) {
                         title=""
                      
                         columns={[
-                          { title: '', field: '#', width: "35px", minWidth: '35px', maxWidth: '35px' },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px', },
                           { title: 'Transporte', field: 'tipoTransporte', width: '150px', minWidth: '150px', maxWidth: '150px', 
                           render: rowData => rowData.tipoTransporte.substr(0,20) },                                     
                           { title: 'Km Inicial', field: 'faixa_inicial', width: '88px', minWidth: '88px', maxWidth: '88px', align: 'right',
@@ -1352,8 +1352,8 @@ verifica_botao_especial_E(inicio) {
                         }}        
                         options={{
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra" },
-                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "0px", color: "#0F074E"  },
-                          //paginationPosition: 'bottom',  
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
+                          //paginationPosition: 'bottom',                       
                           searchFieldAlignment: 'left', 
                           exportAllData: true,
                           exportFileName: 'Rel_adm_tarifas_especial',

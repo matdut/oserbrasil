@@ -434,7 +434,7 @@ class CartaoCreditoComponent extends React.Component  {
   
       return (
   
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_cartao"  p={2}>
                 <div className="d-flex justify-content-center">
                 <label> Incluir </label>
                 </div>     
@@ -446,7 +446,7 @@ class CartaoCreditoComponent extends React.Component  {
         if (this.state.cvc !== '' && this.state.name !== '' && this.state.expiry !== '' && this.state.number !== '' ) { 
             return (
         
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendSave()}>
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal_cartao"  p={2} onClick={()=>this.sendSave()}>
                       <div className="d-flex justify-content-center">
                       <label> Incluir </label>
                       </div>     
@@ -455,7 +455,7 @@ class CartaoCreditoComponent extends React.Component  {
         } else {
           return (
         
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_cartao"  p={2}>
                     <div className="d-flex justify-content-center">
                     <label> Incluir </label>
                     </div>     
@@ -473,7 +473,7 @@ botao_modal_update(inicio) {
 
     return (
 
-      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_cartao"  p={2}>
               <div className="d-flex justify-content-center">
               <label> Salvar Alterações </label>
               </div>     
@@ -485,7 +485,7 @@ botao_modal_update(inicio) {
       if (this.state.cvc !== '' && this.state.name !== '' && this.state.expiry !== '' && this.state.number !== '') { 
           return (
       
-            <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendUpdate()}>
+            <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal_cartao"  p={2} onClick={()=>this.sendUpdate()}>
                     <div className="d-flex justify-content-center">
                     <label> Salvar Alterações </label>
                     </div>     
@@ -494,7 +494,7 @@ botao_modal_update(inicio) {
      } else {
         return (
       
-          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal"  p={2}>
+          <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_modal_cartao"  p={2}>
                   <div className="d-flex justify-content-center">
                   <label> Salvar Alterações </label>
                   </div>     
@@ -646,6 +646,7 @@ opcao_tabChange = (event, newValue) => {
               <div className="titulo_bemvindo"> Cartão de Crédito </div>         
               </div>      
             </div>
+          <br/>  
             <div className="margem_left">       
     
     <div className="container-fluid">  
@@ -656,20 +657,20 @@ opcao_tabChange = (event, newValue) => {
                               
               </TabList>
             </AppBar>
-           
+       <div className="tirar_espaco"> 
                     <MaterialTable          
                         title=""
                         isLoading={this.state.loading}
                         columns={[
-                                               
-                          { title: 'Bandeira', field: 'bandeira', width: "65px", minWidth: '65px', maxWidth: '65px', align: 'right', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
+                                                    
+                          { title: 'Bandeira', field: 'bandeira', width: "100px", minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
+                          { title: '', field: '#', width: "20px", minWidth: '20px', maxWidth: '20px' },    
+                          { title: 'Número', field: 'numero', width: "156px", minWidth: '156px', maxWidth: '156px', align: 'left', render: rowData => <div style={{ textAlign: 'right'}}>{this.verifica_formatacao(rowData.bandeira, rowData)}</div> },  
                           { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px' },    
-                          { title: 'Número', field: 'numero', width: "156px", minWidth: '156px', maxWidth: '156px', align: 'right', render: rowData => this.verifica_formatacao(rowData.bandeira, rowData) },  
-                          { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px' },    
-                          { title: 'Nome', field: 'nome', width: "406px", minWidth: '406px', maxWidth: '406px' },                               
+                          { title: 'Nome', field: 'nome', width: "456px", minWidth: '456px', maxWidth: '456px' },                               
                           { title: 'Data Validade', field: 'data_vencimento', width: "156px", minWidth: '156px', maxWidth: '156px', render: rowData => dateFormat(rowData.data_vencimento, "UTC:mm/yyyy") },                            
                                             
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '',  align: 'left', width: '450px', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listaCartao}     
                         localization={{
@@ -716,10 +717,10 @@ opcao_tabChange = (event, newValue) => {
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
-                              ///headerStyle: { position: 'sticky', top: 0 },
+                             // headerStyle: { alignmentBaseline: 'left' },
                               /*exportButton: true, */            
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 6,
+                              actionsColumnIndex: 7,
                               //pageSize: 7,
                               pageSizeOptions: [0],   
                         }}                        
@@ -755,7 +756,7 @@ opcao_tabChange = (event, newValue) => {
                             }),
                         }} */
                       />      
-            
+            </div>    
            </TabContext>         
            </div> 
         <br/>
@@ -808,7 +809,7 @@ opcao_tabChange = (event, newValue) => {
                </div>                    
              </div>
            </div>                 
-            <div className="container_modal_alterado">
+            <div className="container_modal_alterado_cartao">
                <div className="d-flex justify-content">        
                  <div className="App-payment">  
                  <div class="d-flex flex-column espacamento_caixa_modal_cartao">              
@@ -898,7 +899,7 @@ opcao_tabChange = (event, newValue) => {
             <IconButton aria-label="editar" onClick={()=>this.handleCloseModalAlteracao()} className="botao_close_modal_cartao">
               <CloseOutlinedIcon />
             </IconButton></div>       
-            <div className="container_alterado">
+            <div className="container_modal_alterado_cartao">
                <div className="d-flex justify-content">        
                <div className="App-payment">  
                  <div class="d-flex flex-column espacamento_caixa_modal_cartao">              

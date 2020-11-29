@@ -1862,14 +1862,14 @@ opcao_tabChange = (event, newValue) => {
                            
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
-                              { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'Status', field: 'status.descricao', width: '175px', minWidth: '175px', maxWidth: '175px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
                               { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px', fontSize: 5 },  
                               { title: '', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },                               
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },              
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                             ]}
                             data={this.state.listMotorista}   
                             localization={{
@@ -1903,8 +1903,8 @@ opcao_tabChange = (event, newValue) => {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                              // tableLayout: 'fixed',
@@ -1937,12 +1937,14 @@ opcao_tabChange = (event, newValue) => {
                                                            
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
-                              { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'Status', field: 'status.descricao', width: '175px', minWidth: '175px', maxWidth: '175px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
-                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px', fontSize: 5 },  
+                              { title: '', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },                               
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },         
                             ]}
                             data={this.state.listMotoristaExcluidos}   
                             localization={{
@@ -1979,8 +1981,8 @@ opcao_tabChange = (event, newValue) => {
                               padding: 'dense',   
                               overflowY: 'scroll',
                             //  tableLayout: 'fixed',
-                            maxBodyHeight: '59vh',
-                            minBodyHeight: '59vh',    
+                            maxBodyHeight: '60vh',
+                            minBodyHeight: '60vh',  
                               exportButton: { pdf: true },          
                               actionsColumnIndex: 6,
                              // pageSize: 9,
@@ -2007,12 +2009,14 @@ opcao_tabChange = (event, newValue) => {
                                                     
                             columns={[
                               { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
-                              { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                              { title: 'Status', field: 'status.descricao', width: '175px', minWidth: '175px', maxWidth: '175px' },
                               { title: 'CPF', field: 'cpf', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => rowData.cpf}, 
                               { title: 'Nome', field: 'nome', width: '313px', minWidth: '313px', maxWidth: '313px', render: rowData => rowData.nome.substr(0,35)},                             
                               { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
-                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                              { title: 'Telefone', field: 'celular', width: '100px', minWidth: '100px', maxWidth: '100px', fontSize: 5 },  
+                              { title: '', field: 'bilingue', width: '100px', minWidth: '100px', maxWidth: '100px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },                               
+                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },        
                             ]}
                             data={this.state.listMotoristaCadIncompletos}   
                             localization={{
@@ -2046,8 +2050,8 @@ opcao_tabChange = (event, newValue) => {
                               searchFieldVariant: 'outlined', 
                               toolbarButtonAlignment: 'right',           
                               paging: false,
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',    
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',    
                               padding: 'dense',   
                               overflowY: 'scroll',
                           //    tableLayout: 'fixed',                            
@@ -2084,7 +2088,7 @@ opcao_tabChange = (event, newValue) => {
                           { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
                           { title: 'Status', field: 'status.descricao', width: '200px' },               
                           { title: 'Email', field: 'email', width: '420px' },                                           
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listMotoristaConvite}   
                         localization={{
@@ -2127,8 +2131,8 @@ opcao_tabChange = (event, newValue) => {
                               toolbarButtonAlignment: 'right',  
                               //resizable: false,
                               paging: false,          
-                              maxBodyHeight: '59vh',
-                              minBodyHeight: '59vh',     
+                              maxBodyHeight: '60vh',
+                              minBodyHeight: '60vh',  
                               padding: 'dense',   
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',     

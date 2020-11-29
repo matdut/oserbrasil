@@ -762,6 +762,25 @@
     position: static;     */
   }
 
+  .container_modal_alterado_cartao {
+    width: 90% !important;
+    margin-left: -104px !important;
+    text-align: left !important;
+    font: normal normal Effra !important;
+    letter-spacing: 0px !important;
+    color: #0F074E !important;
+    opacity: 1 !important;
+    font-size: 14px !important;    
+    font-weight: bold !important;
+    margin-left: -20px !important; 
+   /* padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto; 
+    max-width: 85%;    
+    position: static;     */
+  }
+
   .font_modal_padrao {
     font: normal normal normal Effra !important;
     color: #707070 !important;
@@ -968,6 +987,32 @@
     position: absolute !important;    
     bottom: 0px !important;  
   }
+
+  .botoes_desabilitado_modal_cartao {
+    margin-top: 28px !important;
+    width: 244px !important;
+    /*line-height: 26px !important; */   
+    height: 64px !important; 
+    border: 2px solid #C9C9C9 !important; 
+    background: #C9C9C9 0% 0% no-repeat padding-box !important;
+    opacity: 1 !important;
+    margin-left: 150px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
+  .botoes_habilitados_modal_cartao {
+    margin-top: 28px !important;
+    width: 244px !important;  
+    height: 64px !important; 
+    border: 2px solid #FF840A !important;
+    background: #FF840A 0% 0% no-repeat padding-box !important;
+    opacity: 1 !important;
+    margin-left: 150px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
 
   .botoes_desabilitado_evento_modal {
     margin-top: 28px !important;
