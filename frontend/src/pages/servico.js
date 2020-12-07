@@ -3,6 +3,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Cabecalho from './cabecalho';
+import api from '../services/api';
 
 const Servicos = props => {
 //class servicosComponent extends React.Component  {
@@ -17,7 +18,8 @@ const Servicos = props => {
 
   render()
   { */
-    return (
+
+   return (
       <div>
         <Cabecalho />
         <br/>
@@ -35,6 +37,7 @@ const Servicos = props => {
                 <p>Reuniões</p>              
             </div>           
         </div>
+        <button onClick={this.chamar()} />
         <br /><br />        
       </div>  
     </div>

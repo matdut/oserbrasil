@@ -209,7 +209,7 @@ class menu_motoristaComponent extends React.Component  {
               <li>
               <div className="itens_menu">
                  <a href={`/motorista_lista_banco/list`} className="icon_centralizado_novo">
-                <LightTooltip title="Agência Bancária" placement="top">
+                <LightTooltip title="Dados Bancários" placement="top">
                    <i className="fas fa-fw fa-th"></i>
                 </LightTooltip>              
                 </a>

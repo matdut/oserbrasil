@@ -1455,10 +1455,15 @@ sendEnvioEmail(){
                         title=""
                                                     
                         columns={[
-                          { title: '', field: '#', width: '30px', minWidth: '30px', maxWidth: '30px' },
-                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },               
-                          { title: 'Email', field: 'email', width: '420px', minWidth: '420px', maxWidth: '420px' },                                           
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
+                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                          { title: 'Email', field: 'email', width: '260px', minWidth: '200px',  maxWidth: '200px', render: rowData => rowData.email.substr(0,30) }, 
+                          { title: '', field: '', width: '135px', minWidth: '135px', maxWidth: '135px' }, 
+                          { title: '', field: '', width: '290px', minWidth: '290px', maxWidth: '290px' },
+                          { title: '', field: '', width: '200px', minWidth: '200px', maxWidth: '200px' },
+                       
+                          { title: '', field: '', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },             
                         ]}
                         data={this.state.listMotoristaConvite}   
                         localization={{
@@ -1507,7 +1512,7 @@ sendEnvioEmail(){
                               overflowY: 'scroll',
                            //   tableLayout: 'fixed',     
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 5,
+                              actionsColumnIndex: 7,
                               //pageSize: 7,
                               pageSizeOptions: [0],       
                         }}

@@ -57,11 +57,11 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',      
+    left                   : '64%',      
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-    width                  : '40%',    
+  //  width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -88,7 +88,7 @@ const ConfirmacaodelStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+ //   width                  : '560px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -128,7 +128,6 @@ class listComponent extends React.Component  {
       horizontal: 'left',
       open: false,
       value: "1",
-
       mensagem_usuario: '',
       erro_descricao: false,
       validacao_descricao: false,
@@ -323,10 +322,11 @@ class listComponent extends React.Component  {
               <div className="titulo_bemvindo"> Tipo de Veículo </div>
               </div>      
             </div>
+            <br/>
             <div className="margem_left">       
     
             <div className="container-fluid">   
-            <br/>      
+      
             <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
               <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
@@ -339,11 +339,17 @@ class listComponent extends React.Component  {
                <MaterialTable          
                    title=""
                                        
-                   columns={[                          
-                    { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px'  },  
-                     { title: 'Descrição', field: 'descricao', width: '400px', minWidth: '400px', maxWidth: '400px'  },                                                     
-                     { title: '', field: '', width: '20px', minWidth: '20px', maxWidth: '20px'  },  
-                     { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                   columns={[       
+                    { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
+                    { title: 'Descrição', field: 'descricao', width: '165px', minWidth: '165px', maxWidth: '165px' },
+                    { title: '', field: '', width: '260px', minWidth: '200px',  maxWidth: '200px' }, 
+                    { title: '', field: '', width: '135px', minWidth: '135px', maxWidth: '135px' }, 
+                    { title: '', field: '', width: '290px', minWidth: '290px', maxWidth: '290px' },
+                    { title: '', field: '', width: '200px', minWidth: '200px', maxWidth: '200px' },
+                 
+                    { title: '', field: '', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
+                    { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },  
+                           
                    ]}
                    data={this.state.listaTipoVeiculo}     
                    localization={{
@@ -392,7 +398,7 @@ class listComponent extends React.Component  {
               
                   //  tableLayout: 'fixed',                        
                     exportButton: { pdf: true },          
-                    actionsColumnIndex: 3,
+                    actionsColumnIndex: 7,
                    // pageSize: 9,
                     pageSizeOptions: [0],     
                    }}                        

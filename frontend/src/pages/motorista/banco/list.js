@@ -70,11 +70,11 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '40%',    
+  //  width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -95,11 +95,11 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-    width                  : '40%',    
+    //width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -825,14 +825,17 @@ verificar_menu_lateral() {
                         title=""
                         
                         columns={[
-                          { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px'  },                        
-                          { title: 'Codigo', field: 'codigo', width: '100px', minWidth: '100px', maxWidth: '100px' },                            
-                          { title: 'Banco', field: 'banco', width: '200px', minWidth: '200px', maxWidth: '200px' },                      
+                          { title: '', field: '#', width: '1px', minWidth: '1px', maxWidth: '1px'  },                        
+                          { title: 'Codigo', field: 'codigo', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                
+                          { title: 'Banco', field: 'banco', width: '380px', minWidth: '380px', maxWidth: '380px' },                      
                           { title: 'Agência', field: 'agencia', width: '100px', minWidth: '100px', maxWidth: '100px',
                           render: rowData => rowData.agencia == "" ? '' : rowData.agencia_dv == "" ? rowData.agencia: rowData.agencia + '-'+ rowData.agencia_dv  },                            
                           { title: 'Conta', field: 'conta', width: '100px', minWidth: '100px', maxWidth: '100px',
                           render: rowData => rowData.conta == "" ? '' : rowData.conta_dv == "" ? rowData.conta : rowData.conta + '-'+ rowData.conta_dv }, 
-                                             
+                          { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px' },   
+                          { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px' },
+                          { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px' },   
+                          { title: '', field: '', width: '150px', minWidth: '150px', maxWidth: '150px' },                    
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listaBanco}     
@@ -883,7 +886,7 @@ verificar_menu_lateral() {
                               ///headerStyle: { position: 'sticky', top: 0 },
                               /*exportButton: true, */            
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 6,
+                              actionsColumnIndex: 10,
                               //pageSize: 7,
                               pageSizeOptions: [0],   
                         }}                        

@@ -81,11 +81,11 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100vh',  
-    width                  : '40%',    
+ //   width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -111,7 +111,7 @@ const FotoStyles = {
     right                  : '50%',
     bottom                 : '80px',  
     height                 : '60%',    
-    width                  : '450px',    
+   // width                  : '450px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -133,11 +133,11 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+  //  width                  : '560px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -415,7 +415,7 @@ class listComponent extends React.Component  {
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
            this.load_modelo_banco(this.state.campCarroId)
-           localStorage.setItem('lognome', this.state.campNome);  
+         //  localStorage.setItem('lognome', this.state.campNome);  
 
 
           if (this.state.campCarro == null) {
@@ -1353,7 +1353,7 @@ class listComponent extends React.Component  {
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 6,
+                              actionsColumnIndex: 5,
                               //pageSize: 7,
                               pageSizeOptions: [0],    
                             }}

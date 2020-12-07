@@ -1163,11 +1163,11 @@ verifica_botao_especial_E(inicio) {
               <div className="titulo_bemvindo"> Tarifas </div>
               </div>      
             </div>
-
+<br/>
       <div className="margem_left">       
     
     <div className="container-fluid">                                       
-            <br/>      
+       
             <TabContext value={this.state.value} className="tabs_padrao">
             <AppBar position="static" color="transparent">
               <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">           
@@ -1214,7 +1214,7 @@ verifica_botao_especial_E(inicio) {
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
-                            searchPlaceholder: 'buscar tarifario',        
+                            searchPlaceholder: 'Buscar Tarifa',        
                           },
                           pagination: {
                             labelRowsSelect: 'linhas',
@@ -1239,8 +1239,8 @@ verifica_botao_especial_E(inicio) {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,    
-                          maxBodyHeight: '57vh',
-                          minBodyHeight: '57vh',   
+                          maxBodyHeight: '60vh',
+                          minBodyHeight: '60vh',   
                            padding: 'dense',   
                            overflowY: 'scroll',
                           // tableLayout: 'fixed',         
@@ -1336,7 +1336,7 @@ verifica_botao_especial_E(inicio) {
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
-                            searchPlaceholder: 'buscar tarifario',        
+                            searchPlaceholder: 'Buscar Tarifa Especial',        
                           },
                           pagination: {
                             labelRowsSelect: 'linhas',
@@ -1361,8 +1361,8 @@ verifica_botao_especial_E(inicio) {
                           searchFieldVariant: 'outlined', 
                           toolbarButtonAlignment: 'right',           
                           paging: false,       
-                          maxBodyHeight: '59vh',
-                          minBodyHeight: '59vh',   
+                          maxBodyHeight: '60vh',
+                          minBodyHeight: '60vh',    
                           padding: 'dense',   
                           overflowY: 'scroll',
                           //tableLayout: 'fixed',

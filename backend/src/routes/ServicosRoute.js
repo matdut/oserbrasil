@@ -23,7 +23,9 @@ router.get('/totalViagensEventos/:id/:perfilId',ServicosController.totalViagensE
 router.get('/TotalTodosvalorServicoADM',ServicosController.TotalTodosvalorServicoADM);
 router.get('/totalviagensAdm',ServicosController.totalViagensADM);
 router.get('/busca_filho/:eventoid/:id/:perfilId',ServicosController.busca_filho);
-router.get('/MaxDataEvento/:eventoid/:id/:perfilId',ServicosController.MaxDataEvento);
+router.get('/busca_ultimo_filho/:eventoid/:id/:perfilId',ServicosController.busca_ultimo_filho);
+router.get('/MaxDataServicoFilho/:eventoid/:id/:perfilId',ServicosController.MaxDataServicoFilho);
+router.get('/teste_max/:eventoid',ServicosController.teste_max);
 
 
 

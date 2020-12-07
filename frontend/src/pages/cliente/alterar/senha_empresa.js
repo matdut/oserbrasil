@@ -935,7 +935,8 @@ return (
               <div className="unnamed-character-style-4 descricao_admministrador">          
               <div className="titulo_bemvindo">Senha </div>         
               </div>      
-            </div>                                    
+            </div>      
+                                          
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">

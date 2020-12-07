@@ -41,10 +41,7 @@ import Inicio from './pages/inicio';
 
  /* SERVIÇOS */
  import Servicos_incluir from './pages/servicos/servicos';
-
-
- //import Modal_Cliente_Individual from './pages/cliente/modal/representante';
- 
+ //import Modal_Cliente_Individual from './pages/cliente/modal/representante'; 
 
 /** OPERADORES */
  import Operador_cadastro_incluir from './pages/operadores/incluir/operadores';
@@ -141,7 +138,7 @@ import Esqueceu_Senha from './pages/esqueceu_senha';
 */
 //import Sobre from './pages/maps4';
  import Menu_bootstrap from './pages/teste_menu';
- import Sobre from './pages/sobre';
+ import Sobre from './pages/teste_pedagio';
  import Login from './pages/login'; 
  import Rodape from './pages/rodape';
  import Servicos from './pages/servico';

@@ -263,6 +263,49 @@ controllers.busca_filho = async (req,res) => {
   })
 }
 
+controllers.busca_ultimo_filho = async (req,res) => {
+  const { eventoid, id, perfilId } = req.params;
+
+  console.log('entrou aqui busca_ultimo_filho = '+id+ ' eventoid '+ eventoid);  
+  
+  await Servicos.findAll({
+    where: { 
+      servico_pai_id: eventoid,  logid: id, perfilId: perfilId,     
+    }, 
+    order: [ 
+      ['data_servico', 'ASC'],
+    ]      
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
+controllers.teste_max = async (req,res) => {
+
+  const { eventoid, id, perfilId } = req.params;
+
+   await Servicos.findAll({
+    attributes: [
+      sequelize.fn('MAX', sequelize.col('data_servico'))
+    ],
+    where: {
+       eventoId: eventoid, logid: 41, perfilId: 7  
+    }
+  }).then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+
+
+}
+
+
 controllers.listaservicos = async (req,res) => {
   const { eventoid, id, perfilId } = req.params;
   
@@ -295,10 +338,13 @@ controllers.create = async (req,res) => {
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
     logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, desembarque_latitude, desembarque_longitude,
-    valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, distancia_value, tempo_value, servico_pai_id } = req.body;
+    valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, 
+    distancia_value, tempo_value, servico_pai_id } = req.body;
   //console.log("ROle es ==>"+role)
 
   //console.log(req.body);      
+
+  //console.log('criando os filhos - '+JSON.stringify(req.body, null, "    ")); 
 
   //create
   await Servicos.create({       
@@ -343,7 +389,7 @@ controllers.create = async (req,res) => {
     statusId: statusId 
   })
   .then( function (data){
-    return res.json({success:true, data: data, message:"Translados criado com sucesso"});
+    return res.json({success:true, data: data});
   })
   .catch(error => {
     return res.json({success:false, message: error});
@@ -563,9 +609,13 @@ controllers.totalViagensADM = async (req, res) => {
   
 }
 
-controllers.MaxDataEvento = async (req, res) => {
+controllers.MaxDataServicoFilho = async (req, res) => {
  
   const { eventoid,  id, perfilId } = req.params;
+
+   console.log('entrou aqui = '+id+ ' eventoid '+ eventoid);  
+
+   
 
   const salesValue = await Servicos.max('data_servico', {
     where: { servico_pai_id: eventoid, logid: id, perfilId: perfilId, tipoEventoId: 1 }

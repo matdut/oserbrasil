@@ -84,7 +84,7 @@ const customStyles = {
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-    width                  : '40%',    
+   // width                  : '40%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -110,7 +110,7 @@ const FotoStyles = {
     right                  : '50%',
     bottom                 : '80px',  
     height                 : '60%',    
-    width                  : '450px',    
+   // width                  : '450px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -132,11 +132,11 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
-    width                  : '560px',    
+  //  width                  : '560px',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -2005,9 +2005,14 @@ opcao_tabChange = (event, newValue) => {
                                             
                         columns={[
                           { title: '', field: '#', width: "50px", minWidth: '50px', maxWidth: '50px' },
-                          { title: 'Status', field: 'status.descricao', width: '200px' },               
-                          { title: 'Email', field: 'email', width: '420px' },                                           
-                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: 'Status', field: 'status.descricao', width: '175px', minWidth: '175px', maxWidth: '175px' },
+                          { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,35) }, 
+
+                          { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px'}, 
+                          { title: '', field: '', width: '313px', minWidth: '313px', maxWidth: '313px'},                             
+                          { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px'},  
+                          { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px' },                               
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },          
                         ]}
                         data={this.state.listMotoristaConvite}   
                         localization={{
@@ -2056,7 +2061,7 @@ opcao_tabChange = (event, newValue) => {
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',     
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 4,
+                              actionsColumnIndex: 6,
                               //pageSize: 7,
                               pageSizeOptions: [0],       
                         }}

@@ -82,11 +82,11 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '66%',    
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-    width                  : '40%',    
+  //  width                  : '49%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -107,7 +107,7 @@ const customStyles_2 = {
   }, 
   content : {
     top                    : '0px',
-    left                   : '64%', 
+    left                   : '66%', 
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -134,7 +134,7 @@ const ConfirmacaodelStyles = {
   },
   content : {
     top                    : '50%',
-    left                   : '64%',  
+    left                   : '66%',   
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '50%',    
