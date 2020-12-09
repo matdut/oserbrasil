@@ -1,15 +1,17 @@
 import React, { useEffect, useState }  from 'react';
-
+import ReactDOM from "react-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import {Alert, Input } from 'reactstrap';
 //import { Tabs, Tab } from 'react-bootstrap';
 import MaterialTable from 'material-table';
+import Maps_place from '../../pages/maps_place';
 //import GoogleMapReact from 'google-map-react';
 import GooglePlacesAutocomplete, {geocodeByPlaceId} from 'react-google-places-autocomplete';
 
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import {Container, Row, Col } from 'reactstrap';
+
 
 import "@reach/combobox/styles.css";
 
@@ -93,6 +95,7 @@ import { cartaoDinersMask } from '../formatacao/cartaoDinersMask';
 import Cards from 'react-credit-cards';
 import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData } from './utils';
 import { cyan } from '@material-ui/core/colors';
+import { isThisHour } from 'date-fns';
 
 //const service = new window.google.maps.DistanceMatrixService();
 var dateFormat = require('dateformat');
@@ -100,7 +103,8 @@ var dateFormat = require('dateformat');
 //const distanceMatrix = require('distance-matrix-endpoint')
 //var distance = require('google-distance');
 var distance  = require('google-distance-matrix');
-
+var nome_motorista_1 = ''
+var telefone_motorista_1 = ''
 
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
@@ -114,6 +118,22 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
 }));
+
+const busca_motorista = async () => {
+
+  debugger;
+  api.get(`/motorista/get/${this.state.campMotoristaId}`)
+   .then(res=>{
+
+    const data = res.data.data;
+    nome_motorista_1 = data.nome;
+    telefone_motorista_1 = data.celular;
+         
+   })  
+
+}
+
+
 //var ultima_data = '';
 //const [ultima_data, setUtima_data] = useState('');
  // com Async Await
@@ -235,6 +255,30 @@ const customrotaStyles = {
   }
 };
 
+const MotoristaStyles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)'
+   // backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  content : {
+    top                    : '50%',
+    left                   : '64%',   
+    right                  : '0%',
+    bottom                 : 'auto',  
+    height                 : '50%',    
+   // width                  : '560px',    
+    padding                : '0px !important',      
+    overflow               : 'hidden',
+    WebkitOverflowScrolling: 'hidden',
+    position               : 'absolute',
+    border: '1px solid #ccc',   
+  }
+};
 
 const ConfirmacaodelStyles = {
   overlay: {
@@ -261,6 +305,7 @@ const ConfirmacaodelStyles = {
     border: '1px solid #ccc',   
   }
 };
+
 
 function formatar_valor2 (texto) {
 
@@ -316,6 +361,8 @@ class listaservicosComponent extends React.Component  {
       campqtdpassageiro: '',
       camphora_inicial: '',
       camphora_final: '',
+      campMotoristaId: '',
+      quantidade_diarias: false,
       campTelefone1: '',
       campservico_pai_id: '',
       camptipoevento: '',
@@ -347,6 +394,7 @@ class listaservicosComponent extends React.Component  {
       loading: true,
       valor_motorista: '',
       erro_nome: false,
+      estado_selecionado_mapa: '',
       erro_telefone: false,      
       erro_data_servico: false,
       erro_qtdpassageiro: false,
@@ -362,6 +410,7 @@ class listaservicosComponent extends React.Component  {
       erro_nome_motorista: false,
       erro_telefone_motorista: false,
       erro_qtd_diarias: false,
+      novo_motorista_incluir: false,
       max_data_filho: '',
       mensagem_servico: '',
       erro_inclusao: '',
@@ -429,6 +478,7 @@ class listaservicosComponent extends React.Component  {
       listaFilhos:[],
       listaservicosexcluidos:[],
       listaCartao:[],
+      listTodosMotoristasAtivos:[],
       erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
@@ -449,6 +499,7 @@ class listaservicosComponent extends React.Component  {
 
     this.nomeChange = this.nomeChange.bind(this);
     this.tipoChange = this.tipoChange.bind(this);
+    this.motoristaChange = this.motoristaChange.bind(this);
     this.cartaoChange = this.cartaoChange.bind(this);
     this.telefone1change = this.telefone1change.bind(this);  
     this.verificaTelefone1 = this.verificaTelefone1.bind(this);  
@@ -516,12 +567,54 @@ class listaservicosComponent extends React.Component  {
     this.valor_total_servicos();
     this.valor_total_viagens();
     this.loadlistServicosExcluidos();  
+    
   //  this.atualiza_evento();
    // this.teste();
-   // this.calculo_rota_total();
+   // this.calculo_rota_total();;
   }
 
+  motoristaChange(e) {
+    this.setState({ campMotoristaId: e.target.value });
+    debugger;
+    this.busca_motorista_novo(e.target.value);
+  }
+
+  busca_motorista_novo(valor1) {
+    debugger;
+    this.state.listTodosMotoristasAtivos.map((data1)=>{          
+       if (data1.id === valor1 ) {
+        this.setState({
+          camptelefonemotorista: data1.celular,
+          campnomemotorista: data1.nome
+        })
+       }
+    })
+  }
+ 
+
+  loadMotoristaData(){  
   
+    return this.state.listTodosMotoristasAtivos.map((data)=>{          
+      return(
+      <MenuItem value={data.id}>{data.nome}</MenuItem>      
+      )
+    })
+  }
+
+  loadTodosMotoristasAtivos() {
+    api.get(`/motorista/list`)
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listTodosMotoristasAtivos:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+  }   
+
   refreshPage() {
     window.location.reload(false);
   }
@@ -718,7 +811,8 @@ class listaservicosComponent extends React.Component  {
            campbilingue: res.data.data[0].motorista_bilingue,
            campreceptivo: res.data.data[0].motorista_receptivo,
            valor_bilingue: res.data.data[0].valor_bilingue,
-           valor_receptivo: res.data.data[0].valor_receptivo,       
+           valor_receptivo: res.data.data[0].valor_receptivo, 
+           campMotoristaId: res.data.data[0].motorista_id,      
            campnomemotorista: res.data.data[0].nome_motorista, 
            camptelefonemotorista: res.data.data[0].telefone_motorista, 
            campdistancia: res.data.data[0].km_translado,                     
@@ -765,12 +859,13 @@ class listaservicosComponent extends React.Component  {
    }
 
   
-   handleEmbarqueChange = camplocalembarque => {
-  
+   handleEmbarqueChange = camplocalembarque => {     
+    
     geocodeByPlaceId(camplocalembarque.value.place_id)
     .then((results)=>{     
-  
+      
       this.setState({     
+        estado_selecionado_mapa: results[0].address_components[3].short_name,
         camplocalembarque: camplocalembarque.label,
         embarque_latitude: results[0].geometry.location.lat(),
         embarque_longitude: results[0].geometry.location.lng(),  
@@ -813,6 +908,29 @@ qtdpassageiroschange(e) {
   this.setState({ campqtdpassageiro: e.target.value })
 }
 
+load_motorista(motorista_id){
+  const { validate } = this.state   
+  debugger;
+  api.get(`/motorista/get/${motorista_id}`)
+  .then((val)=>{
+
+    //if (val.data.data !== null) {
+      const data = val.data.data
+      this.setState({ 
+        campnomemotorista: data.nome,
+        camptelefonemotorista: data.celular   
+      });  
+   // }  
+
+   }).catch(error=>{
+      validate.cnpjState = 'has-danger'
+      this.setState({           
+          mensagem_carro: 'Lista não encontrada' 
+      })  
+  })
+
+}
+
 verificahora_inicial(e) {  
   debugger;
   if (e.target.value.trim().length == 0) {  
@@ -838,6 +956,9 @@ verificahora_inicial(e) {
 
   }            
 }
+
+
+
 
 verificahora_final(e) {  
   if (e.target.value.trim().length == 0) {  
@@ -1296,7 +1417,7 @@ validatelefone1Change(e){
   atualizando_o_pai() {
 
   }
-  maior_data_filho() {
+  maior_data_filho = async () => {
     //  e.preventDefault()
      debugger;
       api.get(`/servicos/MaxDataServicoFilho/${this.state.campservicoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)                    
@@ -1326,7 +1447,7 @@ validatelefone1Change(e){
       })  
    } 
 
- criar_filhos = async e => {
+ criar_filhos = async () => {
    debugger;
   let data_filho = '';
   const url = `/servicos/busca_filho/${this.state.campservicoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`;
@@ -1366,8 +1487,8 @@ validatelefone1Change(e){
                             quantidade_diarias: this.state.campqtddiarias, 
                             hora_inicial: this.state.camphora_inicial,  
                             hora_final: this.state.camphora_final,  
-                            local_embarque: '', 
-                            local_desembarque: '', 
+                          //  local_embarque: '', 
+                            //local_desembarque: '', 
                             embarque_latitude: this.state.embarque_latitude, 
                             embarque_longitude: this.state.embarque_longitude, 
                             desembarque_latitude: this.state.desembarque_latitude, 
@@ -1400,7 +1521,7 @@ validatelefone1Change(e){
   }
   
  
-  atualiza_pai() {
+  atualiza_pai = async () => {
 
     const datapost_alterar_pai = {     
       tipoEventoId: this.state.tabIndex, 
@@ -1428,6 +1549,7 @@ validatelefone1Change(e){
       numero_voo: this.state.campNumero_voo, 
       motorista_bilingue: this.state.campbilingue, 
       motorista_receptivo: this.state.campreceptivo, 
+      motorista_id: this.state.campMotoristaId,   
       nome_motorista: this.state.campnomemotorista, 
       telefone_motorista: this.state.camptelefonemotorista, 
       km_translado: this.state.campdistancia, 
@@ -1443,16 +1565,26 @@ validatelefone1Change(e){
       
       debugger;
       console.log('Update pai - '+JSON.stringify(datapost_alterar_pai, null, "    ")); 
-      api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar_pai);     
+      
+      try {
+         await api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar_pai)
+         .then(response=>{
+          if (response.data.success==true) {      
+            console.log('atualizando o pai ');
 
+          }
+         })   
+      } catch(err) {
+          console.log('erro '+ err);
+      }
+        
   } 
 
 
   cria_filhos() {
 
-                       let valor_total_filhos = (parseFloat(valorDoublemask(this.state.campvalor))/ parseInt(this.state.campqtddiarias)).toFixed(2);
+                      let valor_total_filhos = (parseFloat(valorDoublemask(this.state.campvalor))/ parseInt(this.state.campqtddiarias)).toFixed(2);
                       let adicionafilho = Number(this.state.campqtddiarias) - Number(this.state.qtddiarias_old);   
-                           debugger;
                       let data_alteracao_servico_v = dateFormat(this.state.ultima_data_filho, "UTC:dd/mm/yyyy");
                            data_alteracao_servico_v = moment(data_alteracao_servico_v, "DD MM YYYY");
                   
@@ -1462,7 +1594,7 @@ validatelefone1Change(e){
                                 debugger;
                                   
                               ///  this.setState({
-                                data_alteracao_servico_v = data_alteracao_servico_v.add(1, "days")
+                                         data_alteracao_servico_v = data_alteracao_servico_v.add(1, "days")
                             ///    })                        
                                           const datapost_filho = {
                                               tipoEventoId: this.state.tabIndex, 
@@ -1474,9 +1606,7 @@ validatelefone1Change(e){
                                               data_servico: moment(data_alteracao_servico_v, "DD MM YYYY"),
                                               quantidade_diarias: this.state.campqtddiarias, 
                                               hora_inicial: this.state.camphora_inicial,  
-                                              hora_final: this.state.camphora_final,  
-                                              local_embarque: '', 
-                                              local_desembarque: '', 
+                                              hora_final: this.state.camphora_final,                                                
                                               embarque_latitude: this.state.embarque_latitude, 
                                               embarque_longitude: this.state.embarque_longitude, 
                                               desembarque_latitude: this.state.desembarque_latitude, 
@@ -1488,6 +1618,7 @@ validatelefone1Change(e){
                                               numero_voo: this.state.campNumero_voo, 
                                               motorista_bilingue: this.state.campbilingue, 
                                               motorista_receptivo: this.state.campreceptivo, 
+                                              motorista_id: this.state.campMotoristaId,   
                                               nome_motorista: this.state.campnomemotorista, 
                                               telefone_motorista: this.state.camptelefonemotorista, 
                                               km_translado: this.state.km_total_filho, 
@@ -1502,14 +1633,24 @@ validatelefone1Change(e){
                                               perfilId: 7,               
                                           }                                
                                         
-                                        console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
-                                        api.post('/servicos/create',datapost_filho);                                      
+                                          try {
+                                            api.post('/servicos/create',datapost_filho)
+                                            .then(response=>{
+                                              if (response.data.success==true) {      
+                                                console.log('criando o filho ');
+                                    
+                                              }
+                                             })     
+                                         } catch(err) {
+                                             console.log('erro '+ err);
+                                         }                                    
+                                                                                                              
                   
                                     }    
   }
 
 
-  atualizar_todos_filhos() {
+  atualizar_todos_filhos = async () => {
  
   //  let saida = false;
       const datapost_filho_alteracao_1 = {
@@ -1520,9 +1661,7 @@ validatelefone1Change(e){
           quantidade_passageiro:this.state.campqtdpassageiro,                              
           quantidade_diarias: this.state.campqtddiarias, 
           hora_inicial: this.state.camphora_inicial,  
-          hora_final: this.state.camphora_final,  
-          local_embarque: '', 
-          local_desembarque: '', 
+          hora_final: this.state.camphora_final,         
           local_embarque: this.state.camplocalembarque, 
           local_desembarque: this.state.camplocaldesembarque, 
           embarque_latitude: this.state.embarque_latitude, 
@@ -1533,6 +1672,7 @@ validatelefone1Change(e){
           numero_voo: this.state.campNumero_voo, 
           motorista_bilingue: this.state.campbilingue, 
           motorista_receptivo: this.state.campreceptivo, 
+          motorista_id: this.state.campMotoristaId,   
           nome_motorista: this.state.campnomemotorista, 
           telefone_motorista: this.state.camptelefonemotorista, 
           cartaoId: this.state.campcartaoid,                                                            
@@ -1540,8 +1680,20 @@ validatelefone1Change(e){
       }       
      debugger;
 
+      try {
+         await api.put(`/servicos/update_filhos/${this.state.campservicoId}`, datapost_filho_alteracao_1)
+         .then(response=>{
+          if (response.data.success==true) {      
+            console.log('atualizando os filhos ');
+
+          }
+         })     
+      } catch(err) {
+          console.log('erro '+ err);
+      }
+
       console.log('Update filho - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
-      api.put(`/servicos/update_filhos/${this.state.campservicoId}`, datapost_filho_alteracao_1);
+     
       
    // return saida;  
   }
@@ -1555,7 +1707,7 @@ validatelefone1Change(e){
   }
 
  
-
+ 
  
   async getUsers(){
     return new Promise((resolve, reject) => {
@@ -1646,10 +1798,13 @@ validatelefone1Change(e){
 
     if (this.state.incluir == true) {
 
+      debugger;
           // this.calculo_bilingue();
-          // this.calculo_receptivo();                
-
-           const datapost_incluir = {
+          // this.calculo_receptivo();   
+        
+        // busca_motorista();
+         
+            const datapost_incluir = {
               tipoEventoId: this.state.tabIndex, 
               eventoId: localStorage.getItem('logeventoservico'), 
               tipoTransporte: this.state.camptipoId,
@@ -1675,6 +1830,7 @@ validatelefone1Change(e){
               valor_bilingue: this.state.valor_bilingue,
               valor_receptivo: this.state.valor_receptivo,
               motorista_receptivo: this.state.campreceptivo, 
+              motorista_id: this.state.campMotoristaId,    
               nome_motorista: this.state.campnomemotorista, 
               telefone_motorista: this.state.camptelefonemotorista, 
               km_translado: this.state.campdistancia, 
@@ -1719,8 +1875,6 @@ validatelefone1Change(e){
                                 quantidade_diarias: this.state.campqtddiarias, 
                                 hora_inicial: this.state.camphora_inicial,  
                                 hora_final: this.state.camphora_final,  
-                                local_embarque: '', 
-                                local_desembarque: '', 
                                 embarque_latitude: this.state.embarque_latitude, 
                                 embarque_longitude: this.state.embarque_longitude, 
                                 desembarque_latitude: this.state.desembarque_latitude, 
@@ -1732,6 +1886,7 @@ validatelefone1Change(e){
                                 numero_voo: this.state.campNumero_voo, 
                                 motorista_bilingue: this.state.campbilingue, 
                                 motorista_receptivo: this.state.campreceptivo, 
+                                motorista_id: this.state.campMotoristaId,   
                                 nome_motorista: this.state.campnomemotorista, 
                                 telefone_motorista: this.state.camptelefonemotorista, 
                                 km_translado: this.state.km_total_filho, 
@@ -1812,166 +1967,28 @@ validatelefone1Change(e){
               }).catch(error=>{
                alert("Erro sevico log  "+ error)
              })               
-   
+             
+
        //  console.log(' logperfil '+localStorage.getItem('logperfil'));   
       
    } else { //Alteração
-     
+    
+    
     if (this.state.campservico_pai_id == 0) {          
 
-
-      const datapost_alterar_pai = {     
-        tipoEventoId: this.state.tabIndex, 
-       // eventoId: this.state.campeventoId, 
-        tipoTransporte: this.state.camptipoId,
-        nome_passageiro: this.state.campNome, 
-        telefone_passageiro: this.state.campTelefone1,
-        quantidade_passageiro: this.state.campqtdpassageiro,  
-        data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
-        quantidade_diarias: this.state.campqtddiarias, 
-        hora_inicial: this.state.camphora_inicial,  
-        hora_final: this.state.camphora_final,  
-        local_embarque: this.state.camplocalembarque, 
-        local_desembarque: this.state.camplocaldesembarque, 
-        embarque_latitude: this.state.embarque_latitude, 
-        embarque_longitude: this.state.embarque_longitude, 
-        desembarque_latitude: this.state.desembarque_latitude, 
-        desembarque_longitude: this.state.desembarque_longitude, 
-        distancia_value: this.state.campdistancia, 
-        tempo_value: this.state.camptempovalue,
-        valor_bilingue: this.state.valor_bilingue,
-        valor_receptivo: this.state.valor_receptivo,
-        //motorista_alocado: this.state.motorista_alocado, 
-        companhia_aerea: this.state.campCompanhia_aerea,
-        numero_voo: this.state.campNumero_voo, 
-        motorista_bilingue: this.state.campbilingue, 
-        motorista_receptivo: this.state.campreceptivo, 
-        nome_motorista: this.state.campnomemotorista, 
-        telefone_motorista: this.state.camptelefonemotorista, 
-        km_translado: this.state.campdistancia, 
-        tempo_translado: this.state.camptempo,
-        cartaoId: this.state.campcartaoid,        
-        valor_estimado: valorDoublemask(this.state.campvalor),    
-        valor_oser: (parseFloat('0.192') * valorDoublemask(this.state.campvalor)).toFixed(2),
-        valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
-        //motivo_cancelamento: this.state.campNome,
-        logid: localStorage.getItem('logid'),
-        perfilId: 7,               
-        } 
-        
-        debugger;
-        console.log('Update pai - '+JSON.stringify(datapost_alterar_pai, null, "    ")); 
-        api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar_pai);   
-  
-        const datapost_filho_alteracao_1 = {
-          //tipoEventoId:  this.state.camptipoId,                             
-          tipoTransporte: this.state.camptipoId,
-          nome_passageiro: this.state.campNome, 
-          telefone_passageiro: this.state.campTelefone1,
-          quantidade_passageiro:this.state.campqtdpassageiro,                              
-          quantidade_diarias: this.state.campqtddiarias, 
-          hora_inicial: this.state.camphora_inicial,  
-          hora_final: this.state.camphora_final,  
-          local_embarque: '', 
-          local_desembarque: '', 
-          local_embarque: this.state.camplocalembarque, 
-          local_desembarque: this.state.camplocaldesembarque, 
-          embarque_latitude: this.state.embarque_latitude, 
-          embarque_longitude: this.state.embarque_longitude, 
-          desembarque_latitude: this.state.desembarque_latitude, 
-          desembarque_longitude: this.state.desembarque_longitude,                             
-          companhia_aerea: this.state.campCompanhia_aerea,
-          numero_voo: this.state.campNumero_voo, 
-          motorista_bilingue: this.state.campbilingue, 
-          motorista_receptivo: this.state.campreceptivo, 
-          nome_motorista: this.state.campnomemotorista, 
-          telefone_motorista: this.state.camptelefonemotorista, 
-          cartaoId: this.state.campcartaoid,                                                            
-        // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
-      }       
-     debugger;
-
-      console.log('Update filho - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
-      api.put(`/servicos/update_filhos/${this.state.campservicoId}`, datapost_filho_alteracao_1);
+      debugger;
+        this.atualiza_pai();
+     
+        this.atualizar_todos_filhos();       
   
       /* pegar os filhos e atualizar */
     //  this.atualizar_todos_filhos();          
               
       if (this.state.campqtddiarias > this.state.qtddiarias_old) {                          
           
-            debugger;
-                    
-       // this.maior_data_filho();
-
-         //this.maior_data_filho(); 
-        
-        // api.get(`/servicos/MaxDataServicoFilho/${localStorage.getItem('logservicoid')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
-       //  .then(respevento1=>{
-       //   if (respevento1.data.success==true) {          
-          
-        // getmaxDataServico();
-        //this.cria_filhos();  
-        // this.maior_data_filho();
-
-         let valor_total_filhos = (parseFloat(valorDoublemask(this.state.campvalor))/ parseInt(this.state.campqtddiarias)).toFixed(2);
-         let adicionafilho = Number(this.state.campqtddiarias) - Number(this.state.qtddiarias_old);   
-         let data_alteracao_servico_v = dateFormat(this.state.ultima_data_filho, "UTC:dd/mm/yyyy");
-              data_alteracao_servico_v = moment(data_alteracao_servico_v, "DD MM YYYY");
-     
-                 
-               // criar os filhos se tiver
-                 for(let i=0; i < adicionafilho; i++){
-                   debugger;
-                     
-                 ///  this.setState({
-                  // data_alteracao_servico_v = 
-               ///    })                        
-                             const datapost_filho = {
-                                 tipoEventoId: this.state.tabIndex, 
-                                 eventoId: localStorage.getItem('logeventoservico'), 
-                                 tipoTransporte: this.state.camptipoId,
-                                 nome_passageiro: this.state.campNome, 
-                                 telefone_passageiro: this.state.campTelefone1,
-                                 quantidade_passageiro: this.state.campqtdpassageiro,  
-                                 data_servico: moment(data_alteracao_servico_v.add(1, "days"), "DD MM YYYY"),
-                                 quantidade_diarias: this.state.campqtddiarias, 
-                                 hora_inicial: this.state.camphora_inicial,  
-                                 hora_final: this.state.camphora_final,  
-                                 local_embarque: '', 
-                                 local_desembarque: '', 
-                                 embarque_latitude: this.state.embarque_latitude, 
-                                 embarque_longitude: this.state.embarque_longitude, 
-                                 desembarque_latitude: this.state.desembarque_latitude, 
-                                 desembarque_longitude: this.state.desembarque_longitude, 
-                                 //motorista_alocado: this.state.motorista_alocado, 
-                                 distancia_value: this.state.km_total_filho, 
-                               // tempo_value: this.state.tempo_total_filho,
-                                 companhia_aerea: this.state.campCompanhia_aerea,
-                                 numero_voo: this.state.campNumero_voo, 
-                                 motorista_bilingue: this.state.campbilingue, 
-                                 motorista_receptivo: this.state.campreceptivo, 
-                                 nome_motorista: this.state.campnomemotorista, 
-                                 telefone_motorista: this.state.camptelefonemotorista, 
-                                 km_translado: this.state.km_total_filho, 
-                                 tempo_translado: this.state.tempo_total_filho,
-                                 cartaoId: this.state.campcartaoid,        
-                                 valor_estimado: valorDoublemask(valor_total_filhos),    
-                               //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
-                               //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
-                                 //motivo_cancelamento: this.state.campNome,
-                                 servico_pai_id: this.state.campservicoId,
-                                 logid: localStorage.getItem('logid'),
-                                 perfilId: 7,               
-                             }                                
-                           
-                           console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
-                           api.post('/servicos/create',datapost_filho);                                      
-     
-                       }   
+        this.cria_filhos();
                        
-               //       }
-            //        })           
-         
+               
            }        
             this.setState({                
               mensagem_usuario: 'Serviço Alterado com sucesso!'
@@ -1982,7 +1999,7 @@ validatelefone1Change(e){
              this.refreshPage();
              this.envia_mensagemClick();      
         
-      } else {
+    } else {
 
         const datapost_filho_alteracao_1 = {
           //tipoEventoId:  this.state.camptipoId,                             
@@ -1994,8 +2011,6 @@ validatelefone1Change(e){
           quantidade_diarias: this.state.campqtddiarias, 
           hora_inicial: this.state.camphora_inicial,  
           hora_final: this.state.camphora_final,  
-          local_embarque: '', 
-          local_desembarque: '', 
           local_embarque: this.state.camplocalembarque, 
           local_desembarque: this.state.camplocaldesembarque, 
           embarque_latitude: this.state.embarque_latitude, 
@@ -2006,6 +2021,7 @@ validatelefone1Change(e){
           numero_voo: this.state.campNumero_voo, 
           motorista_bilingue: this.state.campbilingue, 
           motorista_receptivo: this.state.campreceptivo, 
+          motorista_id: this.state.campMotoristaId,   
           nome_motorista: this.state.campnomemotorista, 
           telefone_motorista: this.state.camptelefonemotorista, 
           cartaoId: this.state.campcartaoid,                                                            
@@ -2022,7 +2038,7 @@ validatelefone1Change(e){
  
        this.refreshPage();                 
        this.handleCloseModalAlteracaoServico();
-       this.refreshPage();
+      // this.refreshPage();
        this.envia_mensagemClick();   
 
       }          
@@ -2292,7 +2308,92 @@ delay() {
 
   }
   */
-  
+  novo_motorista() {
+    debugger;
+    if (this.state.novo_motorista_incluir === true) {
+   return ( 
+     <div>
+        <div className="p-2">
+                    <div className="d-flex justify-content-start">
+                        <div className="checkbox_modal_dados_voo">Motorista Preferido</div>
+                    </div>
+        </div>
+        <div className="p-2">
+                    
+            <div className="d-flex justify-content-start">
+                  <div>
+                  <FormControl className="input_modal_direita" variant="outlined">
+                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
+                  <OutlinedInput    
+                      type="text"       
+                      autoComplete="off"                       
+                      error={this.state.erro_nome_motorista}
+                      helperText={this.state.mensagem_nome_motorista}
+                      className="input_modal_direita"                 
+                      id="outlined-basic"                   
+                      variant="outlined"
+                      value={this.state.campnomemotorista}                                    
+                      onChange={ (e) => {
+                        this.nomemotoristaChange(e)                                                                 
+                      }}                                    
+                      inputProps={{
+                        maxLength: 10,
+                      }} 
+                    endAdornment={
+                      <InputAdornment position="end">
+                          {this.state.validacao_nome_motorista? <CheckIcon />: ''}
+                      </InputAdornment>
+                    }
+                    labelWidth={180}                      
+                  />
+                <FormHelperText error={this.state.erro_nome_motorista}>
+                      {this.state.mensagem_nome_motorista}
+                </FormHelperText>
+              </FormControl>  
+                  </div>
+                  <div>
+                  <FormControl className="input_modal_esquerda" variant="outlined">
+                  <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                  <OutlinedInput         
+                      type="text"  
+                      autoComplete="off"                       
+                      error={this.state.erro_telefone_motorista}
+                      helperText={this.state.mensagem_telefone_motorista}
+                      className="input_modal_esquerda"
+                      id="outlined-basic"                   
+                      variant="outlined"
+                      value={this.state.camptelefonemotorista}                                     
+                      onChange={ (e) => {
+                        this.telefonemotoristaChange(e)                                                                 
+                      }}                                    
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      inputProps={{
+                        maxLength: 10,
+                       
+                      }} 
+                    endAdornment={
+                      <InputAdornment position="end">
+                          {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
+                      </InputAdornment>
+                    }
+                    labelWidth={180}                      
+                  />
+                <FormHelperText error={this.state.erro_telefone_motorista}>
+                      {this.state.mensagem_telefone_motorista}
+                </FormHelperText>
+              </FormControl>  
+                  </div>
+             </div> 
+
+        </div>
+           
+ 
+  </div>
+   )  
+                  }
+  }
 
  selecione_tipo_servico(index){
     
@@ -3014,13 +3115,102 @@ delay() {
             </Box>      
 
             </div>
-         </ReactModal>  
+         </ReactModal>
+         <ReactModal 
+        isOpen={this.state.showmorotistadados}
+        style={MotoristaStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div> 
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseMotorista()} className="botao_close_modal_deletar">
+              <CloseOutlinedIcon />
+            </IconButton></div>       
+          
+            <div className="container_alterado">
+              
+            <table style={{width: '70%'}}>
+                      <tr><td> 
+                           <div className="checkbox_modal_dados_voo">Motorista Preferencial</div>
+                           </td>   
+                           </tr>                       
+                     </table>     
+                     <br/>
+                     <table style={{width: '70%'}}>      
+                       <tr>
+                          <td className="input_modal_voo">
+                          <FormControl className="input_modal_direita" variant="outlined">
+                                    <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome</InputLabel>
+                                    <OutlinedInput    
+                                        type="text"       
+                                        autoComplete="off"                       
+                                        error={this.state.erro_nome_motorista}
+                                        helperText={this.state.mensagem_nome_motorista}
+                                        className="input_modal_direita"                 
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        value={this.state.campnomemotorista}                                    
+                                        onChange={ (e) => {
+                                          this.nomemotoristaChange(e)                                                                 
+                                        }}                                    
+                                        inputProps={{
+                                          maxLength: 10,
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_nome_motorista? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_nome_motorista}>
+                                        {this.state.mensagem_nome_motorista}
+                                  </FormHelperText>
+                                </FormControl>  
+                           </td>
+                           <td className="input_modal_voo">
+                           <FormControl className="input_modal_esquerda" variant="outlined">
+                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                                    <OutlinedInput         
+                                        type="text"  
+                                        autoComplete="off"                       
+                                        error={this.state.erro_telefone_motorista}
+                                        helperText={this.state.mensagem_telefone_motorista}
+                                        className="input_modal_esquerda"
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        value={this.state.camptelefonemotorista}                                     
+                                        onChange={ (e) => {
+                                          this.telefonemotoristaChange(e)                                                                 
+                                        }}                                    
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        inputProps={{
+                                          maxLength: 15,
+                                         
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_telefone_motorista}>
+                                        {this.state.mensagem_telefone_motorista}
+                                  </FormHelperText>
+                                </FormControl>  
+                           </td>
+                         </tr>   
+                    </table>     
+
+            </div>
+         </ReactModal>   
          <ReactModal 
         isOpen={this.state.showMostraMotorista}
         style={ConfirmacaodelStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div> 
-            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalMotorista()} className="botao_close_modal_deletar">
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseMotorista()} className="botao_close_modal_deletar">
               <CloseOutlinedIcon />
             </IconButton></div>                  
             <div className="container_alterado">                 
@@ -3488,7 +3678,8 @@ delay() {
                                     <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Qtd de Diárias</InputLabel>
                                     <OutlinedInput         
                                         type="text"  
-                                        autoComplete="off"                       
+                                        autoComplete="off"        
+                                        readOnly={this.state.quantidade_diarias}               
                                         error={this.state.erro_qtd_diarias}
                                         helperText={this.state.mensagem_qtd_diarias}
                                         className="input_modal_esquerda"
@@ -3665,81 +3856,36 @@ delay() {
                     </div>               
 
                     <div className="p-2">                      
-                      <table style={{width: '70%'}}>
-                      <tr><td> 
-                           <div className="checkbox_modal_dados_voo">Motorista Preferencial</div>
-                           </td>   
-                           </tr>                       
-                     </table>     
-                     <br/>
-                     <table style={{width: '70%'}}>      
-                       <tr>
-                          <td className="input_modal_voo">
-                          <FormControl className="input_modal_direita" variant="outlined">
-                                    <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome</InputLabel>
-                                    <OutlinedInput    
-                                        type="text"       
-                                        autoComplete="off"                       
-                                        error={this.state.erro_nome_motorista}
-                                        helperText={this.state.mensagem_nome_motorista}
-                                        className="input_modal_direita"                 
-                                        id="outlined-basic"                   
-                                        variant="outlined"
-                                        value={this.state.campnomemotorista}                                    
+                    <div class="d-flex justify-content-start">
+                                 <div>                  
+                                    <FormControl variant="outlined" className="select_evento_operador">
+                                      <InputLabel id="demo-simple-select-outlined-label">Motoristas</InputLabel>
+                                      <Select
+                                        error={this.state.erro_tipo} 
+                                        helperText={this.state.mensagem_tipoId}
+                                        labelId="demo-simple-select-outlined-label"
+                                        id="demo-simple-select-outlined"
+                                        value={this.state.campMotoristaId}                                    
                                         onChange={ (e) => {
-                                          this.nomemotoristaChange(e)                                                                 
-                                        }}                                    
-                                        inputProps={{
-                                          maxLength: 10,
-                                        }} 
-                                      endAdornment={
-                                        <InputAdornment position="end">
-                                            {this.state.validacao_nome_motorista? <CheckIcon />: ''}
-                                        </InputAdornment>
-                                      }
-                                      labelWidth={180}                      
-                                    />
-                                  <FormHelperText error={this.state.erro_nome_motorista}>
-                                        {this.state.mensagem_nome_motorista}
-                                  </FormHelperText>
-                                </FormControl>  
-                           </td>
-                           <td className="input_modal_voo">
-                           <FormControl className="input_modal_esquerda" variant="outlined">
-                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                                    <OutlinedInput         
-                                        type="text"  
-                                        autoComplete="off"                       
-                                        error={this.state.erro_telefone_motorista}
-                                        helperText={this.state.mensagem_telefone_motorista}
-                                        className="input_modal_esquerda"
-                                        id="outlined-basic"                   
-                                        variant="outlined"
-                                        value={this.state.camptelefonemotorista}                                     
-                                        onChange={ (e) => {
-                                          this.telefonemotoristaChange(e)                                                                 
-                                        }}                                    
-                                        InputLabelProps={{
-                                          shrink: true,
-                                        }}
-                                        inputProps={{
-                                          maxLength: 15,
-                                         
-                                        }} 
-                                      endAdornment={
-                                        <InputAdornment position="end">
-                                            {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
-                                        </InputAdornment>
-                                      }
-                                      labelWidth={180}                      
-                                    />
-                                  <FormHelperText error={this.state.erro_telefone_motorista}>
-                                        {this.state.mensagem_telefone_motorista}
-                                  </FormHelperText>
-                                </FormControl>  
-                           </td>
-                         </tr>   
-                    </table>    
+                                          this.motoristaChange(e)
+                                        }}                  
+                                        labelWidth={140}          
+                                      >
+                                        <MenuItem value={0}></MenuItem>      
+                                        {this.loadMotoristaData()}                    
+                                      </Select>
+                                    </FormControl>                                                                
+                                 </div>
+                                 <div>
+                                 <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
+                                            onClick={()=>this.handleOpenMotorista()}>
+                                    Adicionar Motorista  <i class="fas fa-users"></i>
+                                 </Button>    
+                                 </div>
+                             </div>      
+                    </div>
+                    <div className="">
+                      {this.novo_motorista()}
                     </div>
                     <div className="p-2">
                       <div className="d-flex justify-content-start">
@@ -4267,7 +4413,7 @@ delay() {
                               <FormControl className="input_modal_esquerda" variant="outlined">
                                     <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Qtd de Diárias</InputLabel>
                                     <OutlinedInput         
-                                        type="text"  
+                                        type="text"                                         
                                         autoComplete="off"                       
                                         error={this.state.erro_qtd_diarias}
                                         helperText={this.state.mensagem_qtd_diarias}
@@ -4444,83 +4590,39 @@ delay() {
                     </table>      
                     </div>               
 
-                    <div className="p-2">                      
-                      <table style={{width: '70%'}}>
-                      <tr><td> 
-                           <div className="checkbox_modal_dados_voo">Motorista Preferencial</div>
-                           </td>   
-                           </tr>                       
-                     </table>     
-                     <br/>
-                     <table style={{width: '70%'}}>      
-                       <tr>
-                          <td className="input_modal_voo">
-                          <FormControl className="input_modal_direita" variant="outlined">
-                                    <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome</InputLabel>
-                                    <OutlinedInput    
-                                        type="text"       
-                                        autoComplete="off"                       
-                                        error={this.state.erro_nome_motorista}
-                                        helperText={this.state.mensagem_nome_motorista}
-                                        className="input_modal_direita"                 
-                                        id="outlined-basic"                   
-                                        variant="outlined"
-                                        value={this.state.campnomemotorista}                                    
+                    <div className="p-2">    
+                         <div class="d-flex justify-content-start">
+                                 <div>                  
+                                    <FormControl variant="outlined" className="select_evento_operador">
+                                      <InputLabel id="demo-simple-select-outlined-label">Motoristas</InputLabel>
+                                      <Select
+                                        error={this.state.erro_tipo} 
+                                        helperText={this.state.mensagem_tipoId}
+                                        labelId="demo-simple-select-outlined-label"
+                                        id="demo-simple-select-outlined"
+                                        value={this.state.campMotoristaId}                                    
                                         onChange={ (e) => {
-                                          this.nomemotoristaChange(e)                                                                 
-                                        }}                                    
-                                        inputProps={{
-                                          maxLength: 10,
-                                        }} 
-                                      endAdornment={
-                                        <InputAdornment position="end">
-                                            {this.state.validacao_nome_motorista? <CheckIcon />: ''}
-                                        </InputAdornment>
-                                      }
-                                      labelWidth={180}                      
-                                    />
-                                  <FormHelperText error={this.state.erro_nome_motorista}>
-                                        {this.state.mensagem_nome_motorista}
-                                  </FormHelperText>
-                                </FormControl>  
-                           </td>
-                           <td className="input_modal_voo">
-                           <FormControl className="input_modal_esquerda" variant="outlined">
-                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                                    <OutlinedInput         
-                                        type="text"  
-                                        autoComplete="off"                       
-                                        error={this.state.erro_telefone_motorista}
-                                        helperText={this.state.mensagem_telefone_motorista}
-                                        className="input_modal_esquerda"
-                                        id="outlined-basic"                   
-                                        variant="outlined"
-                                        value={this.state.camptelefonemotorista}                                     
-                                        onChange={ (e) => {
-                                          this.telefonemotoristaChange(e)                                                                 
-                                        }}                                    
-                                        InputLabelProps={{
-                                          shrink: true,
-                                        }}
-                                        inputProps={{
-                                          maxLength: 15,
-                                         
-                                        }} 
-                                      endAdornment={
-                                        <InputAdornment position="end">
-                                            {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
-                                        </InputAdornment>
-                                      }
-                                      labelWidth={180}                      
-                                    />
-                                  <FormHelperText error={this.state.erro_telefone_motorista}>
-                                        {this.state.mensagem_telefone_motorista}
-                                  </FormHelperText>
-                                </FormControl>  
-                           </td>
-                         </tr>   
-                    </table>    
+                                          this.motoristaChange(e)
+                                        }}                  
+                                        labelWidth={140}          
+                                      >
+                                        <MenuItem value={0}></MenuItem>      
+                                        {this.loadMotoristaData()}                    
+                                      </Select>
+                                    </FormControl>                                                                
+                                 </div>
+                                 <div>
+                                 <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
+                                            onClick={()=>this.handleOpenMotorista()}>
+                                    Adicionar Motorista  <i class="fas fa-users"></i>
+                                 </Button>    
+                                 </div>
+                             </div>                      
+                     
                     </div>
+                    <div className="p-2">
+                      { this.novo_motorista() }
+                      </div>
                     <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
@@ -4698,7 +4800,7 @@ delay() {
                <div className="d-flex justify-content">        
                  <div>  
                  <div className="d-flex flex-column espacamento_modal_motorista">                                   
-                      <div className="p-2">   
+                      <div className="p-2">  
                       <GooglePlacesAutocomplete                                                                                  
                                 apiKey="AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4"                                                                 
                                 country="br"
@@ -4878,10 +4980,14 @@ delay() {
 
   }
 
+ 
+  
+
   mostrar_mapa_embarque() {
     //if (this.state.controle == 0) {
-     // debugger;
-      if (this.state.camplocalembarque !== "") {     
+   debugger;
+
+    if (this.state.camplocalembarque !== "") {     
         if (this.state.embarque_latitude !== null && this.state.embarque_longitude !== null) {
     
         return (
@@ -4892,22 +4998,24 @@ delay() {
               lat: this.state.embarque_latitude,
               lng: this.state.embarque_longitude
             }}
-            style={containerStyle}                                        
+            style={containerStyle}  
             zoom={11}
+          //  onLoad={onMapLoad}
+            //centerAroundCurrentLocation={true}
            // onClick={this.onMapClicked}            
             >
-          
+      
             <Marker
-              title={this.state.camplocalembarque}
-              name={this.state.camplocalembarque}
-              position={{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}}                                      
+              key={`${this.state.embarque_latitude}-${this.state.embarque_longitude}`}
+              position={{ lat: this.state.embarque_latitude, lng: this.state.embarque_longitude }}
+              
               icon={{
-                url: `/location-thumbnail.png`,
+                url: `/favicon.ico`,
                 origin: new window.google.maps.Point(0, 0),
                 anchor: new window.google.maps.Point(15, 15),
                 scaledSize: new window.google.maps.Size(30, 30),
               }}
-            />
+            />        
 
             <InfoWindow onClose={this.onInfoWindowClose}>
             <div>
@@ -5086,6 +5194,39 @@ delay() {
     });    
 
     this.loadlistServicos();
+     
+  }
+
+  handleOpenMotorista() { 
+
+    if (this.state.novo_motorista_incluir === false) {
+    this.setState({ 
+      //showmorotistadados: true,
+      campnomemotorista: '',
+      camptelefonemotorista: '',
+      validacao_nome_motorista: false,
+      validacao_telefone_motorista: false,
+      novo_motorista_incluir: true
+     
+    })
+  } else {
+    this.setState({ 
+      //showmorotistadados: true,
+      novo_motorista_incluir: false
+     
+    })
+
+  }
+     
+    
+  }
+  
+  handleCloseMotorista() {
+    this.setState({ 
+      showmorotistadados: false
+    });    
+
+ 
      
   }
 
@@ -5572,8 +5713,10 @@ debugger;
   mostrar_mapa_desembarque() {
 
   //if (this.state.controle == 0) {
-  // debugger;
-    if (this.state.camplocaldesembarque !== "") {      
+  debugger;
+
+ 
+  if (this.state.camplocaldesembarque !== "") {      
       if (this.state.desembarque_latitude !== null && this.state.desembarque_longitude !== null) {
 
              
@@ -5728,6 +5871,7 @@ debugger;
       campservicoId: data.id,  
       campservico_pai_id: data.servico_pai_id,      
       possui_tarifa_especial: false,
+      quantidade_diarias: true,
       mensagem_aguarde: '',
       mensagem_qtd_diarias: false,
       erro_qtd_diarias: false,
@@ -5754,7 +5898,10 @@ debugger;
    this.loadTipoTransporte();     
    this.loadCartaoCliente();
    this.carrega_servico(data);
+   this.loadTodosMotoristasAtivos();
+  // this.busca_motorista_alterar(data.nome_motorista);
    this.maior_data_filho_teste(data.id);
+  
     
   }
   
@@ -5827,9 +5974,9 @@ debugger;
       validacao_localembarque: true
       //mudar_estilo: customStyles,
     }); 
-   // if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-     // this.calcular_trajeto();
-  // }
+   if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+     this.calcular_trajeto();
+  }
   //  this.obtendo_latitude_longitude();
   }
 
@@ -5910,6 +6057,7 @@ debugger;
       campTelefone1: '',
       camplocalembarque: '',
       camplocaldesembarque: '',
+      campMotoristaId: '',
       campqtddiarias: '',
       campbilingue: false,
       campreceptivo: false,
@@ -5967,6 +6115,7 @@ debugger;
       validacao_nome: false,     
       validacao_data_servico: false,
       validacao_qtdpassageiro: false,
+      validacao_qtd_diarias: false,
       validacao_hora_inicial: false,
       validacao_hora_final: false,
       validacao_telefone1: false,
@@ -5996,7 +6145,9 @@ debugger;
       showModalInclusao: true,  
       campeventoId: localStorage.getItem('logeventoservico'),
       incluir: true,      
+      quantidade_diarias: false,
       possui_tarifa_especial: false,
+      campMotoristaId:'',
       mensagem_aguarde: '',
       possui_tarifa: false,
       qtddiarias_old: 0,
@@ -6009,6 +6160,7 @@ debugger;
     this.loadTarifaespecial();
     this.loadTarifa();
     this.loadTipoTransporte();
+    this.loadTodosMotoristasAtivos();
   //  this.limpar_campos();     
     
   }
@@ -6352,5 +6504,7 @@ debugger;
 
 export default GoogleApiWrapper({
   apiKey: ('AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4'), 
+  
 })(listaservicosComponent)
+
 

@@ -255,7 +255,7 @@ class listaeventosComponent extends React.Component  {
       // this.loadOperadores();  
       // this.loadTodosOperadores();
        this.loadeventosexcluidos();
-      // this.atualiza_evento();
+       this.atualiza_evento();
     } else {
         this.loadlistEventosADM();
     }  
@@ -267,6 +267,43 @@ class listaeventosComponent extends React.Component  {
     this.loadlistEventos();  
    // this.loadOperadores();  
    // this.loadTodosOperadores();
+  }
+
+  atualiza_evento() {
+    debugger;
+    let totalservicos = 0;
+    let totalviagens = 0;
+    api.get(`/servicos/totalservicos/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    .then(resservico=>{
+      if (resservico.data.success == true) {
+        totalservicos = resservico.data.data;  
+
+        api.get(`/servicos/totalviagens/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+        .then(resviagem=>{
+          if (resviagem.data.success == true) {       
+            
+           totalviagens = resviagem.data.data;   
+
+           const datapost_alterar_valores = {                
+            viagens_total: totalviagens,
+            valor_total: totalservicos,              
+          }           
+      
+           api.put(`/eventos/update/${localStorage.getItem('logeventoservico')}`, datapost_alterar_valores);
+
+          }
+        })
+        .catch(error=>{
+          alert("Error server valor_total_viagens"+error)
+        })
+
+      }
+    })
+    .catch(error=>{
+      alert("Error server valor_total_servicos "+error)
+    })
+  
+  
   }
 
   componentWillUnmount() {

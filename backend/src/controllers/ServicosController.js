@@ -337,9 +337,9 @@ controllers.create = async (req,res) => {
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
-    logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, desembarque_latitude, desembarque_longitude,
+    logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, desembarque_latitude, desembarque_longitude,
     valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, 
-    distancia_value, tempo_value, servico_pai_id } = req.body;
+    distancia_value, tempo_value, servico_pai_id, motorista_id } = req.body;
   //console.log("ROle es ==>"+role)
 
   //console.log(req.body);      
@@ -363,13 +363,14 @@ controllers.create = async (req,res) => {
     local_embarque: local_embarque, 
     local_desembarque: local_desembarque, 
     embarque_latitude: embarque_latitude, 
-    embarque_logitude: embarque_logitude, 
+    embarque_longitude: embarque_longitude, 
     valor_bilingue: valor_bilingue, 
     valor_receptivo: valor_receptivo,
     desembarque_latitude: desembarque_latitude, 
     desembarque_longitude: desembarque_longitude, 
     motorista_bilingue: motorista_bilingue, 
     motorista_receptivo: motorista_receptivo, 
+    motorista_id: motorista_id,
     nome_motorista: nome_motorista,     
     telefone_motorista: telefone_motorista, 
     km_translado: km_translado, 
@@ -403,9 +404,10 @@ controllers.update = async (req, res) => {
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
-    motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, 
+    motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, 
     desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId,
-    valor_bilingue, valor_receptivo, distancia_value, tempo_value, servico_pai_id} = req.body;
+    valor_bilingue, valor_receptivo, distancia_value, tempo_value, servico_pai_id,
+    motorista_id} = req.body;
 
   console.log('entrou aqui = '+data_servico);
 
@@ -431,11 +433,12 @@ controllers.update = async (req, res) => {
     local_embarque: local_embarque, 
     local_desembarque: local_desembarque, 
     embarque_latitude: embarque_latitude, 
-    embarque_logitude: embarque_logitude, 
+    embarque_longitude: embarque_longitude, 
     desembarque_latitude: desembarque_latitude, 
     desembarque_longitude: desembarque_longitude, 
     motorista_bilingue: motorista_bilingue, 
     motorista_receptivo: motorista_receptivo, 
+    motorista_id: motorista_id,
     nome_motorista: nome_motorista,     
     telefone_motorista: telefone_motorista, 
     km_translado: km_translado, 
@@ -472,9 +475,9 @@ controllers.update_filhos = async (req, res) => {
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
-    motivo_cancelamento, embarque_latitude, embarque_logitude, 
+    motivo_cancelamento, embarque_latitude, embarque_longitude, 
     desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, 
-    valor_bilingue, valor_receptivo } = req.body; 
+    valor_bilingue, valor_receptivo, motorista_id } = req.body; 
     
 
   //console.log('entrou aqui = '+id);  
@@ -496,11 +499,12 @@ controllers.update_filhos = async (req, res) => {
     local_embarque: local_embarque, 
     local_desembarque: local_desembarque, 
     embarque_latitude: embarque_latitude, 
-    embarque_logitude: embarque_logitude, 
+    embarque_longitude: embarque_longitude, 
     desembarque_latitude: desembarque_latitude, 
     desembarque_longitude: desembarque_longitude, 
     motorista_bilingue: motorista_bilingue, 
     motorista_receptivo: motorista_receptivo, 
+    motorista_id: motorista_id,
     nome_motorista: nome_motorista,     
     telefone_motorista: telefone_motorista, 
     km_translado: km_translado, 

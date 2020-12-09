@@ -138,7 +138,7 @@ import Esqueceu_Senha from './pages/esqueceu_senha';
 */
 //import Sobre from './pages/maps4';
  import Menu_bootstrap from './pages/teste_menu';
- import Sobre from './pages/teste_pedagio';
+ import Sobre from './pages/maps_place';
  import Login from './pages/login'; 
  import Rodape from './pages/rodape';
  import Servicos from './pages/servico';

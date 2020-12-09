@@ -106,6 +106,10 @@ var Servicos = sequelize.define(nametable,{
   motorista_alocado: {
     type: Sequelize.BOOLEAN, 
     allowNull: true,
+  },  
+  motorista_id: {
+    type: Sequelize.INTEGER, 
+    allowNull: true,
   },
   nome_motorista: {
     type: Sequelize.STRING(160), 

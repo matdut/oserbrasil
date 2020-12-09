@@ -261,6 +261,8 @@ class empresarialComponent extends React.Component{
     })
 
   }
+
+ 
   verifica_nome_motorista(nome){
     let nome_titulo = nome.substring(0,nome.indexOf(" ")) 
     if (nome_titulo == "") {

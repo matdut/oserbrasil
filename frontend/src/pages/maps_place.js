@@ -106,6 +106,7 @@ export default function App() {
               setSelected(null);
             }}
           >
+           
             <div>
               <h2>
                 <span role="img" aria-label="bear">
@@ -184,7 +185,7 @@ function Search({ panTo }) {
           onChange={handleInput}
           disabled={!ready}
           placeholder="Procurando sua localização"
-          style={{width: "400px"}}
+          style={{width: "500px"}}
         />
         <ComboboxPopover>
           <ComboboxList>
