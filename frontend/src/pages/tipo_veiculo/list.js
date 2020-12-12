@@ -57,11 +57,11 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',      
+    left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
-  //  width                  : '40%',    
+  //  width                  : '49%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -69,6 +69,7 @@ const customStyles = {
     border: '1px solid #ccc',   
   }
 };
+
 
 
 const ConfirmacaodelStyles = {

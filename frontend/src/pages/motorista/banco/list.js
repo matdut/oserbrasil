@@ -593,6 +593,11 @@ verifica_botao_update(inicio) {
    
   sendUpdate(){        
 
+    this.setState({                   
+       validacao_agencia: false,
+       validacao_banco: false,        
+    }); 
+    
 
     api.get(`/agencia/getbusca/${this.state.campDescricao}`)
     .then(rescodigo=>{      
@@ -639,14 +644,15 @@ verifica_botao_update(inicio) {
    // const codigo = this.busca_descricao();
 
    debugger;
-   
-   this.setState({                   
+
+   this.setState({       
     error_agencia: false,
-    error_conta: false,
-    validacao_agencia: true,
-    validacao_conta: true,       
-  });   
-  
+    error_conta: false,            
+    validacao_agencia: false,
+    validacao_banco: false,        
+   }); 
+   
+   
   try {
   
     
@@ -825,9 +831,10 @@ verificar_menu_lateral() {
                         title=""
                         
                         columns={[
-                          { title: '', field: '#', width: '1px', minWidth: '1px', maxWidth: '1px'  },                        
+                          { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px'  },                        
                           { title: 'Codigo', field: 'codigo', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                
-                          { title: 'Banco', field: 'banco', width: '380px', minWidth: '380px', maxWidth: '380px' },                      
+                          { title: 'Banco', field: 'banco', width: '380px', minWidth: '380px', maxWidth: '380px',  
+                          render: rowData => rowData.banco.substr(0,55) },                      
                           { title: 'Agência', field: 'agencia', width: '100px', minWidth: '100px', maxWidth: '100px',
                           render: rowData => rowData.agencia == "" ? '' : rowData.agencia_dv == "" ? rowData.agencia: rowData.agencia + '-'+ rowData.agencia_dv  },                            
                           { title: 'Conta', field: 'conta', width: '100px', minWidth: '100px', maxWidth: '100px',
@@ -853,7 +860,7 @@ verificar_menu_lateral() {
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
-                            searchPlaceholder: 'Buscar tipo de veículo',        
+                            searchPlaceholder: 'Buscar Dados Bancários',        
                           },
                           pagination: {
                             labelRowsSelect: 'linhas',

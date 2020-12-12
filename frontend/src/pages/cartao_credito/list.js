@@ -312,7 +312,13 @@ class CartaoCreditoComponent extends React.Component  {
   }
 
   
-  sendSave(){        
+  sendSave(){      
+    
+    this.setState({                   
+      expiry: '',
+      name: '',
+      cvc: '',
+  });    
 /*
     if (visaRegex.test('4509 9535 6623 3704')) {       
       this.setState({ 
@@ -361,7 +367,14 @@ class CartaoCreditoComponent extends React.Component  {
     
   }  
 
-  sendUpdate(){                 
+  sendUpdate(){             
+    
+    
+    this.setState({                   
+      expiry: '',
+      name: '',
+      cvc: '',
+  });    
 
    /* console.log('numero - '+this.state.number);
     if (visaRegex.test('4509 9535 6623 3704')) {       
@@ -663,14 +676,14 @@ opcao_tabChange = (event, newValue) => {
                         isLoading={this.state.loading}
                         columns={[
                                                     
-                          { title: 'Bandeira', field: 'bandeira', width: "100px", minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
+                          { title: 'Bandeira', field: 'bandeira', width: "30px", minWidth: '30px', maxWidth: '30px', align: 'right', render: rowData =>  this.verifica_bandeira(rowData.bandeira) },                          
                           { title: '', field: '#', width: "20px", minWidth: '20px', maxWidth: '20px' },    
                           { title: 'Número', field: 'numero', width: "156px", minWidth: '156px', maxWidth: '156px', align: 'left', render: rowData => <div style={{ textAlign: 'right'}}>{this.verifica_formatacao(rowData.bandeira, rowData)}</div> },  
                           { title: '', field: '#', width: "10px", minWidth: '10px', maxWidth: '10px' },    
-                          { title: 'Nome', field: 'nome', width: "456px", minWidth: '456px', maxWidth: '456px' },                               
+                          { title: 'Nome', field: 'nome', width: "356px", minWidth: '356px', maxWidth: '356px' },                               
                           { title: 'Data Validade', field: 'data_vencimento', width: "156px", minWidth: '156px', maxWidth: '156px', render: rowData => dateFormat(rowData.data_vencimento, "UTC:mm/yyyy") },                            
                                             
-                          { title: '', field: '',  align: 'left', width: '450px', lookup: { 1: 'sadas', 2: 'asdas' }, },            
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },            
                         ]}
                         data={this.state.listaCartao}     
                         localization={{
@@ -687,7 +700,7 @@ opcao_tabChange = (event, newValue) => {
                           },
                           toolbar: {
                             searchTooltip: 'Pesquisar',
-                            searchPlaceholder: 'Buscar tipo de veículo',        
+                            searchPlaceholder: 'Buscar Cartão de Crédito',        
                           },
                           pagination: {
                             labelRowsSelect: 'linhas',
@@ -797,12 +810,12 @@ opcao_tabChange = (event, newValue) => {
         style={customStyles}
         contentLabel="Inline Styles Modal Example"                                  
         ><div className="editar_titulo_inclusao"> 
-        <div className="container-fluid">
+             <div className="container-fluid">
              <div className="row">
-               <div className="col-9 altura_titulo">
+               <div className="col-8 altura_titulo">
                Incluir Cartão Crédito
                </div>
-               <div className="col-1">
+               <div className="col-3">
                <IconButton aria-label="editar" onClick={()=>this.handleCloseModalInclusao()}>
               <CloseOutlinedIcon />
             </IconButton></div>                    

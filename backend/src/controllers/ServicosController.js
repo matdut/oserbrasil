@@ -400,6 +400,7 @@ controllers.create = async (req,res) => {
 
 controllers.update = async (req, res) => {
   // parameter id get  
+  
   const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,

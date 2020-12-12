@@ -28,6 +28,7 @@ class Map extends Component {
   render() {
     const markers = this.props.markers || []
     console.log("reload");
+    
     return (
         <GoogleMap
           ref={this.mapLoaded.bind(this)}

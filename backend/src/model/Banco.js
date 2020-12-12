@@ -16,7 +16,7 @@ var Banco = sequelize.define(nametable,{
     autoIncrement:true
   },
   codigo: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(100),
     allowNull: true,     
   },
   banco: {

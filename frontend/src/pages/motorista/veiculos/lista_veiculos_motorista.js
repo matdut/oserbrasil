@@ -84,8 +84,8 @@ const customStyles = {
     left                   : '64%',    
     right                  : '0%',
     bottom                 : 'auto',  
-    height                 : '100vh',  
- //   width                  : '40%',    
+    height                 : '100%',    
+  //  width                  : '49%',    
     padding                : '0px !important',      
     overflow               : 'auto',
     WebkitOverflowScrolling: 'touch',
@@ -93,6 +93,7 @@ const customStyles = {
     border: '1px solid #ccc',   
   }
 };
+
 
 const FotoStyles = {
   overlay: {    
@@ -1322,7 +1323,7 @@ class listComponent extends React.Component  {
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar motorista',        
+                                searchPlaceholder: 'Buscar Veículos',        
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',

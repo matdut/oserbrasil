@@ -875,26 +875,18 @@ verifica_horario(){
 render(){  
 
 return (
+ 
 <div>    
 <div>
-{this.verificar_menu_lateral()}  
-
+ {this.verificar_menu_lateral()}
 <div> 
-   <div>               
-   <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-              <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
-              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
-            </div>      
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
-
-              <br/>
-              <br/>
-              <br/>
-          </div>           
+    <div>     
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Senha </div>         
+              </div>      
+            </div>       
+        
           <div class="d-flex flex-column espacamento_caixa_texto_senha">
               <div class="p-2">    
               <FormControl variant="filled">

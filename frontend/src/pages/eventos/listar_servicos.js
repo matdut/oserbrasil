@@ -5,8 +5,9 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 //import {Alert, Input } from 'reactstrap';
 //import { Tabs, Tab } from 'react-bootstrap';
 import MaterialTable from 'material-table';
+import TextField from '@material-ui/core/TextField';
 import Maps_place from '../../pages/maps_place';
-//import GoogleMapReact from 'google-map-react';
+import GoogleMapReact from 'google-map-react';
 import GooglePlacesAutocomplete, {geocodeByPlaceId} from 'react-google-places-autocomplete';
 
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
@@ -42,6 +43,7 @@ import { GoogleMap, DistanceMatrixService } from "@react-google-maps/api";
 
 import { buscaLocal } from '../maps_place';
 import { dataMask } from '../formatacao/datamask';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import ReactModal from 'react-modal';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
@@ -97,6 +99,7 @@ import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData
 import { cyan } from '@material-ui/core/colors';
 import { isThisHour } from 'date-fns';
 
+
 //const service = new window.google.maps.DistanceMatrixService();
 var dateFormat = require('dateformat');
 
@@ -112,12 +115,29 @@ const perfil = localStorage.getItem('logperfil');
 
 const libraries = ["places"];
 
+const AnyReactComponent = ({ text }) => (
+  <div style={{
+    color: 'white', 
+    background: 'grey',
+    padding: '15px 10px',
+    display: 'inline-flex',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '100%',
+    transform: 'translate(-50%, -50%)'
+  }}>
+    {text}
+  </div>
+);
+
 const useStyles = makeStyles((theme) => ({
   icon: {
     color: theme.palette.text.secondary,
     marginRight: theme.spacing(2),
   },
 }));
+
 
 const busca_motorista = async () => {
 
@@ -162,21 +182,6 @@ const containerStyle = {
   height: '45%'
 }
 
-const AnyReactComponent = ({ text }) => (
-  <div style={{
-    color: 'white', 
-    background: 'grey',
-    padding: '15px 10px',
-    display: 'inline-flex',
-    textAlign: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '100%',
-    transform: 'translate(-50%, -50%)'
-  }}>
-    {text}
-  </div>
-);
 //var dateFormat = require('dateformat');
 //const baseUrl = "http://34.210.56.22:3333";
 
@@ -242,9 +247,9 @@ const customrotaStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '60%',              
+    left                   : '64%',              
     right                  : '0%',
-    width                  : '40%',   
+   // width                  : '40%',   
     bottom                 : 'auto',  
     height                 : '100vh',        
     padding                : '0px !important',      
@@ -371,6 +376,8 @@ class listaservicosComponent extends React.Component  {
       campqtddiarias: '',
       campnomemotorista:  '',
       camptelefonemotorista:  '',
+      nome_motorista_visualizacao: false,
+      telefone_motorista_visualizacao: false,
       campbilingue: false,
       campreceptivo: false,
       campdistancia: 0,
@@ -545,9 +552,9 @@ class listaservicosComponent extends React.Component  {
     
     this.validaDataServicoChange = this.validaDataServicoChange.bind(this);          
   }
-  
+   
   componentDidMount(){
-    
+        
  //  let eventoId = this.props.match.params.id;    
    // console.log('eventoId'+ eventoId);
 
@@ -574,9 +581,23 @@ class listaservicosComponent extends React.Component  {
   }
 
   motoristaChange(e) {
-    this.setState({ campMotoristaId: e.target.value });
-    debugger;
-    this.busca_motorista_novo(e.target.value);
+   
+    this.setState({ 
+      campMotoristaId: e.target.value,    
+    });
+
+    if (e.target.value == 0) {
+      this.setState({ 
+        campnomemotorista: '',
+        camptelefonemotorista: '', 
+        nome_motorista_visualizacao: true,
+        telefone_motorista_visualizacao: true,    
+        validacao_telefone_motorista: false,
+        validacao_nome_motorista: false,    
+      });
+    } else {
+      this.busca_motorista_novo(e.target.value);
+    }  
   }
 
   busca_motorista_novo(valor1) {
@@ -859,6 +880,32 @@ class listaservicosComponent extends React.Component  {
    }
 
   
+   handleEmbarqueFocusChange = camplocalembarque => {     
+          
+      this.setState({     
+        estado_selecionado_mapa: '',
+        camplocalembarque: '',
+        embarque_latitude: '',
+        embarque_longitude: '',  
+        inicio: 1,  
+      });  
+
+       
+  };
+   
+
+  handleDesembarqueFocusChange = camplocaldesembarque => {     
+          
+    this.setState({     
+       estado_selecionado_mapa: '',
+       camplocaldesembarque: '',
+       desembarque_latitude: '',
+       desembarque_longitude: '',  
+      inicio: 1,  
+    });  
+
+     
+};
    handleEmbarqueChange = camplocalembarque => {     
     
     geocodeByPlaceId(camplocalembarque.value.place_id)
@@ -867,12 +914,12 @@ class listaservicosComponent extends React.Component  {
       this.setState({     
         estado_selecionado_mapa: results[0].address_components[3].short_name,
         camplocalembarque: camplocalembarque.label,
-        embarque_latitude: results[0].geometry.location.lat(),
-        embarque_longitude: results[0].geometry.location.lng(),  
+        embarque_latitude: results[0].geometry.location.lat().toString(),
+        embarque_longitude: results[0].geometry.location.lng().toString(),  
         inicio: 1,  
       });  
 
-     // console.log(' resultado '+JSON.stringify(this.state, null, "    ")); 
+      console.log(' resultado geocodeByPlaceId '+JSON.stringify(this.state, null, "    ")); 
 
     })
     .catch(error => console.error(error));
@@ -886,8 +933,8 @@ class listaservicosComponent extends React.Component  {
       //console.log(' resultado '+JSON.stringify(results[0], null, "    ")); 
       this.setState({
         camplocaldesembarque: camplocaldesembarque.label, 
-        desembarque_latitude: results[0].geometry.location.lat(),
-        desembarque_longitude: results[0].geometry.location.lng(),                
+        desembarque_latitude: results[0].geometry.location.lat().toString(),
+        desembarque_longitude: results[0].geometry.location.lng().toString(),                
         inicio: 1,
       });  
    //   console.log(' resultado '+JSON.stringify(this.state, null, "    ")); 
@@ -956,9 +1003,6 @@ verificahora_inicial(e) {
 
   }            
 }
-
-
-
 
 verificahora_final(e) {  
   if (e.target.value.trim().length == 0) {  
@@ -1408,6 +1452,8 @@ validatelefone1Change(e){
 
   sendAtualizar(){      
    
+   /// debugger;
+   /// this.obtendo_distancia_rota();
 
      this.handleCloseModalEmbarque();
      this.handleCloseModalDesembarque();
@@ -1459,6 +1505,7 @@ validatelefone1Change(e){
   ).catch((error) => 
     console.log('error - '+error)
   )
+ 
 
   //var data1 = this.maior_data_filho();
 
@@ -1521,8 +1568,8 @@ validatelefone1Change(e){
   }
   
  
-  atualiza_pai = async () => {
-
+  atualiza_pai = async () => {  
+    
     const datapost_alterar_pai = {     
       tipoEventoId: this.state.tabIndex, 
      // eventoId: this.state.campeventoId, 
@@ -1567,8 +1614,9 @@ validatelefone1Change(e){
       console.log('Update pai - '+JSON.stringify(datapost_alterar_pai, null, "    ")); 
       
       try {
-         await api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar_pai)
-         .then(response=>{
+     
+       api.put(`/servicos/update/${this.state.campservicoId}`, datapost_alterar_pai)
+       .then(response=>{
           if (response.data.success==true) {      
             console.log('atualizando o pai ');
 
@@ -1606,7 +1654,9 @@ validatelefone1Change(e){
                                               data_servico: moment(data_alteracao_servico_v, "DD MM YYYY"),
                                               quantidade_diarias: this.state.campqtddiarias, 
                                               hora_inicial: this.state.camphora_inicial,  
-                                              hora_final: this.state.camphora_final,                                                
+                                              hora_final: this.state.camphora_final,      
+                                              local_embarque: this.state.camplocalembarque, 
+                                              local_desembarque: this.state.camplocaldesembarque,                                           
                                               embarque_latitude: this.state.embarque_latitude, 
                                               embarque_longitude: this.state.embarque_longitude, 
                                               desembarque_latitude: this.state.desembarque_latitude, 
@@ -1659,11 +1709,11 @@ validatelefone1Change(e){
           nome_passageiro: this.state.campNome, 
           telefone_passageiro: this.state.campTelefone1,
           quantidade_passageiro:this.state.campqtdpassageiro,                              
-          quantidade_diarias: this.state.campqtddiarias, 
+          quantidade_diarias: 1, 
           hora_inicial: this.state.camphora_inicial,  
           hora_final: this.state.camphora_final,         
-          local_embarque: this.state.camplocalembarque, 
-          local_desembarque: this.state.camplocaldesembarque, 
+          local_embarque: 'a combinar', 
+          local_desembarque: 'a combinar', 
           embarque_latitude: this.state.embarque_latitude, 
           embarque_longitude: this.state.embarque_longitude, 
           desembarque_latitude: this.state.desembarque_latitude, 
@@ -1681,16 +1731,16 @@ validatelefone1Change(e){
      debugger;
 
       try {
-         await api.put(`/servicos/update_filhos/${this.state.campservicoId}`, datapost_filho_alteracao_1)
-         .then(response=>{
+        api.put(`/servicos/update_filhos/${this.state.campservicoId}`, datapost_filho_alteracao_1)
+        .then(response=>{
           if (response.data.success==true) {      
-            console.log('atualizando os filhos ');
+            console.log('atualizando o pai ');
 
           }
-         })     
+         })   
       } catch(err) {
           console.log('erro '+ err);
-      }
+      }    
 
       console.log('Update filho - '+JSON.stringify(datapost_filho_alteracao_1, null, "    ")); 
      
@@ -1705,9 +1755,6 @@ validatelefone1Change(e){
       }, 2000);
     });
   }
-
- 
- 
  
   async getUsers(){
     return new Promise((resolve, reject) => {
@@ -1788,13 +1835,14 @@ validatelefone1Change(e){
       validacao_nome: false,   
       validacao_data_evento: false, 
       mensagem_aguarde: 'Aguarde, alterando os dados...',     
+      validacao_telefone1: false,
     //  valor_oser: '0.192',
     //  valor_motorista: '0.768',         
     });
   
-    this.verifica_botao(1);     
+  ///  this.verifica_botao(1);     
 
-  //  debugger;
+  debugger;
 
     if (this.state.incluir == true) {
 
@@ -1872,9 +1920,11 @@ validatelefone1Change(e){
                                 telefone_passageiro: this.state.campTelefone1,
                                 quantidade_passageiro: this.state.campqtdpassageiro,  
                                 data_servico: moment(data_alteracao_servico, "DD MM YYYY"),
-                                quantidade_diarias: this.state.campqtddiarias, 
+                                quantidade_diarias: 1, 
                                 hora_inicial: this.state.camphora_inicial,  
                                 hora_final: this.state.camphora_final,  
+                                local_embarque: 'a combinar', 
+                                local_desembarque: 'a combinar', 
                                 embarque_latitude: this.state.embarque_latitude, 
                                 embarque_longitude: this.state.embarque_longitude, 
                                 desembarque_latitude: this.state.desembarque_latitude, 
@@ -1973,23 +2023,24 @@ validatelefone1Change(e){
       
    } else { //Alteração
     
-    
+    if (this.state.tabIndex == 1) {
+
+   
     if (this.state.campservico_pai_id == 0) {          
 
       debugger;
-        this.atualiza_pai();
-     
-        this.atualizar_todos_filhos();       
+       this.atualiza_pai();       
+          
+       this.atualizar_todos_filhos();             
   
       /* pegar os filhos e atualizar */
     //  this.atualizar_todos_filhos();          
               
       if (this.state.campqtddiarias > this.state.qtddiarias_old) {                          
           
-        this.cria_filhos();
-                       
+        this.cria_filhos();                       
                
-           }        
+      }        
             this.setState({                
               mensagem_usuario: 'Serviço Alterado com sucesso!'
              });
@@ -2042,7 +2093,45 @@ validatelefone1Change(e){
        this.envia_mensagemClick();   
 
       }          
-               
+    } else {
+
+          const datapost_filho_alteracao_1 = {
+            //tipoEventoId:  this.state.camptipoId,                             
+            tipoTransporte: this.state.camptipoId,
+            nome_passageiro: this.state.campNome, 
+            data_servico: moment( this.state.campdata_servico, "DD MM YYYY"),
+            telefone_passageiro: this.state.campTelefone1,
+            quantidade_passageiro:this.state.campqtdpassageiro,                              
+            quantidade_diarias: this.state.campqtddiarias, 
+            hora_inicial: this.state.camphora_inicial,  
+            hora_final: this.state.camphora_final,  
+            local_embarque: this.state.camplocalembarque, 
+            local_desembarque: this.state.camplocaldesembarque, 
+            embarque_latitude: this.state.embarque_latitude, 
+            embarque_longitude: this.state.embarque_longitude, 
+            desembarque_latitude: this.state.desembarque_latitude, 
+            desembarque_longitude: this.state.desembarque_longitude,                             
+            companhia_aerea: this.state.campCompanhia_aerea,
+            numero_voo: this.state.campNumero_voo, 
+            motorista_bilingue: this.state.campbilingue, 
+            motorista_receptivo: this.state.campreceptivo, 
+            motorista_id: this.state.campMotoristaId,   
+            nome_motorista: this.state.campnomemotorista, 
+            telefone_motorista: this.state.camptelefonemotorista, 
+            cartaoId: this.state.campcartaoid,                                                            
+          // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
+        }     
+        api.put(`/servicos/update/${this.state.campservicoId}`, datapost_filho_alteracao_1); 
+        
+        this.setState({                
+          mensagem_usuario: 'Serviço Alterado com sucesso!'
+         });
+   
+         this.refreshPage();                 
+         this.handleCloseModalAlteracaoServico();
+        // this.refreshPage();
+         this.envia_mensagemClick();   
+    }          
   }
 
 }  
@@ -2277,12 +2366,126 @@ delay() {
 
   }  
 
+  
+  obtendo_distancia_rota() {
+    debugger
 
+    var service = new window.google.maps.DistanceMatrixService();
+    service.getDistanceMatrix(
+      {
+        origins: [this.state.embarque_latitude, this.state.embarque_longitude],
+        destinations: [this.state.desembarque_latitude, this.state.desembarque_longitude],
+        travelMode: 'DRIVING',
+      //  unitSystem: 'metric',    
+       }, 
+       (response, status) => {
+        if (status !== "OK") {
+          alert("Error was: " + status);
+        } else {
+          const originList = response.originAddresses;
+          const destinationList = response.destinationAddresses;
+         // const outputDiv = document.getElementById("output");
+        //  outputDiv.innerHTML = "";
+         // deleteMarkers(markersArray);
+  
+          const showGeocodedAddressOnMap = function (asDestination) {
+           // const icon = asDestination ? destinationIcon : originIcon;
+  
+            return function (results, status) {
+              if (status === "OK") {
+               
+                console.log('this.state.tabIndex '+this.state.tabIndex);
+                if (this.state.tabIndex == 2) {
+                 this.setState({     
+                    controle: 1,
+                    campdistancia: (response.rows[0].elements[0].distance.value / 1000).toFixed(0), 
+                    camptempovalue: (response.rows[0].elements[0].duration.value / 60).toFixed(0),
+                    camptempo: this.formatar_valor(response.rows[0].elements[0].duration.text)            
+                   });
+                 } else if (this.state.tabIndex == 1) {
+                   this.setState({      
+                     controle: 1,
+                  //   campdistancia: 0, 
+                  //   camptempovalue: 0,
+                     camptempo: ''           
+                   });
+                 }       
+                 
+                 if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+                   console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
+                     this.calcular_trajeto();
+                 }            
 
+              } else {
+                alert("Geocode was not successful due to: " + status);
+              }
+            };
+          };
+        }
+       })
+  }
+
+  /*
+  callback = (response) => {
+    //console.log("Hello");
+    //console.log(response);  
+
+    debugger;
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' ) {
+   //     if (status == window.google.maps.DistanceMatrixStatus.OK) {  
+          const origin = response.originAddresses[0];
+          const destination = response.destinationAddresses[0];
+
+        if (response.rows[0].elements[0].status === "ZERO_RESULTS") {
+          
+          this.setState({ 
+            mensagem_error_mapa: `É melhor entrar em um avião. Não há estradas entre `+ origin +` e `+ destination
+          });
+                
+        } else if (response.rows[0].elements[0].status === "OK") {         
+            
+          console.log('this.state.tabIndex '+this.state.tabIndex);
+           if (this.state.tabIndex == 2) {
+            this.setState({     
+               controle: 1,
+               campdistancia: (response.rows[0].elements[0].distance.value / 1000).toFixed(0), 
+               camptempovalue: (response.rows[0].elements[0].duration.value / 60).toFixed(0),
+               camptempo: this.formatar_valor(response.rows[0].elements[0].duration.text)            
+              });
+            } else if (this.state.tabIndex == 1) {
+              this.setState({      
+                controle: 1,
+             //   campdistancia: 0, 
+             //   camptempovalue: 0,
+                camptempo: ''           
+              });
+            }       
+            
+            if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+              console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
+                this.calcular_trajeto();
+            }            
+        
+        } else  {
+            this.setState({ 
+              mensagem_error_mapa: 'Erro encontrado'
+            });
+        } 
+
+       //   } else {
+       //     console.log("response: ", response);
+      //    }
+
+     }
+
+  //  }
+  };
+    */
 
   /*
   obtendo_distancia_rota() {
   
+    debugger;
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
    
       this.setState({ 
@@ -2290,115 +2493,57 @@ delay() {
         camptempovalue: 0,
         camptempo: '',                   
       });    
-      var service = new google.maps.DistanceMatrixService();
+      var service = new window.google.maps.DistanceMatrixService();
       service.apiKey = 'AIzaSyBcFfTH-U8J-i5To2vZ3V839pPaeZ59bQ4';
       service.getDistanceMatrix(
         {
-          origin: this.state.camplocalembarque.label,
-          destination: this.state.camplocaldesembarque.label,
-          mode: 'driving',
-          units: 'metric',
-          language : 'pt-BR',          
+          destinations: [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}],
+          origins: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}],                    
+          travelMode: "DRIVING",       
         },          
-      callback={this.distanceCallback})
+        (response, status) => { 
+          if (status !== "OK") {
+            alert("Error was: " + status);
+          } else {
+           // const originList = response.originAddresses;
+          //  const destinationList = response.destinationAddresses;
+            debugger
+            console.log('response.rows[0].elements[0] - '+JSON.stringify(response.rows[0].elements[0], null, "    ")); 
+            if (this.state.tabIndex == 2) {
+              this.setState({     
+                 controle: 1,
+                 campdistancia: (response.rows[0].elements[0].distance.value / 1000).toFixed(0), 
+                 camptempovalue: (response.rows[0].elements[0].duration.value / 60).toFixed(0),
+                 camptempo: this.formatar_valor(response.rows[0].elements[0].duration.text)            
+                });
+              } else if (this.state.tabIndex == 1) {
+                this.setState({      
+                  controle: 1,
+               //   campdistancia: 0, 
+               //   camptempovalue: 0,
+                  camptempo: ''           
+                });
+              }       
+              
+              if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+                   console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
+             
+                  this.calcular_trajeto();
+              }    
+          }  
+         })
       
            
 
     } 
 
   }
+  
   */
-  novo_motorista() {
-    debugger;
-    if (this.state.novo_motorista_incluir === true) {
-   return ( 
-     <div>
-        <div className="p-2">
-                    <div className="d-flex justify-content-start">
-                        <div className="checkbox_modal_dados_voo">Motorista Preferido</div>
-                    </div>
-        </div>
-        <div className="p-2">
-                    
-            <div className="d-flex justify-content-start">
-                  <div>
-                  <FormControl className="input_modal_direita" variant="outlined">
-                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
-                  <OutlinedInput    
-                      type="text"       
-                      autoComplete="off"                       
-                      error={this.state.erro_nome_motorista}
-                      helperText={this.state.mensagem_nome_motorista}
-                      className="input_modal_direita"                 
-                      id="outlined-basic"                   
-                      variant="outlined"
-                      value={this.state.campnomemotorista}                                    
-                      onChange={ (e) => {
-                        this.nomemotoristaChange(e)                                                                 
-                      }}                                    
-                      inputProps={{
-                        maxLength: 10,
-                      }} 
-                    endAdornment={
-                      <InputAdornment position="end">
-                          {this.state.validacao_nome_motorista? <CheckIcon />: ''}
-                      </InputAdornment>
-                    }
-                    labelWidth={180}                      
-                  />
-                <FormHelperText error={this.state.erro_nome_motorista}>
-                      {this.state.mensagem_nome_motorista}
-                </FormHelperText>
-              </FormControl>  
-                  </div>
-                  <div>
-                  <FormControl className="input_modal_esquerda" variant="outlined">
-                  <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                  <OutlinedInput         
-                      type="text"  
-                      autoComplete="off"                       
-                      error={this.state.erro_telefone_motorista}
-                      helperText={this.state.mensagem_telefone_motorista}
-                      className="input_modal_esquerda"
-                      id="outlined-basic"                   
-                      variant="outlined"
-                      value={this.state.camptelefonemotorista}                                     
-                      onChange={ (e) => {
-                        this.telefonemotoristaChange(e)                                                                 
-                      }}                                    
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      inputProps={{
-                        maxLength: 10,
-                       
-                      }} 
-                    endAdornment={
-                      <InputAdornment position="end">
-                          {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
-                      </InputAdornment>
-                    }
-                    labelWidth={180}                      
-                  />
-                <FormHelperText error={this.state.erro_telefone_motorista}>
-                      {this.state.mensagem_telefone_motorista}
-                </FormHelperText>
-              </FormControl>  
-                  </div>
-             </div> 
-
-        </div>
-           
- 
-  </div>
-   )  
-                  }
-  }
-
  selecione_tipo_servico(index){
     
   this.setState({ 
-   tabIndex: index
+      tabIndex: this.state.tabIndex
   });
 
   if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
@@ -2647,7 +2792,7 @@ delay() {
                               { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '220px', minWidth: '220px', maxWidth: '220px',  render: rowData => rowData.nome_passageiro.substring(0,30)  },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
                               { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
-                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final == '00:00:00' ? '' : rowData.hora_final.substring(0,5) },                                                                
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
@@ -2677,7 +2822,7 @@ delay() {
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar evento',        
+                                searchPlaceholder: 'Buscar Serviço',        
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -2751,7 +2896,8 @@ delay() {
                         <MaterialTable          
                             title=""
                             columns={[
-                              { title: '', field: '', width: '30px', minWidth: '30px', maxWidth: '30px' }, 
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
+                              { title: 'Dt Finalização', field: 'createdAt', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                             cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : ''}, 
@@ -2774,7 +2920,7 @@ delay() {
                            
                               { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
+                          
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                 
                              },                 
                             ]}
@@ -2793,7 +2939,7 @@ delay() {
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar evento',        
+                                searchPlaceholder: 'Buscar Serviço',        
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -2827,7 +2973,7 @@ delay() {
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 16,
+                              actionsColumnIndex: 17,
                              // pageSize: 9,
                               pageSizeOptions: [0],                     
                             }}
@@ -2850,7 +2996,8 @@ delay() {
                         <MaterialTable          
                             title=""
                             columns={[
-                              { title: '', field: '', width: '30px', minWidth: '30px', maxWidth: '30px' }, 
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
+                              { title: 'Dt Excluídos', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                             cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : ''}, 
@@ -2873,9 +3020,9 @@ delay() {
                            
                               { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                             
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                            
-                             },                     
+                           
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                 
+                             },                 
                             ]}
                             data={this.state.listaservicosexcluidos}   
                             localization={{
@@ -2892,7 +3039,7 @@ delay() {
                               },
                               toolbar: {
                                 searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar evento',        
+                                searchPlaceholder: 'Buscar Serviço',        
                               },
                               pagination: {
                                 labelRowsSelect: 'linhas',
@@ -2926,7 +3073,7 @@ delay() {
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 16,
+                              actionsColumnIndex: 17,
                              // pageSize: 9,
                               pageSizeOptions: [0],                     
                             }}           
@@ -3884,9 +4031,83 @@ delay() {
                                  </div>
                              </div>      
                     </div>
-                    <div className="">
-                      {this.novo_motorista()}
+                    <div className="p-2">
+                    <div className="d-flex justify-content-start">
+                        <div className="checkbox_modal_dados_voo">Motorista Preferido</div>
                     </div>
+        </div>
+        <div className="p-2">
+                    
+            <div className="d-flex justify-content-start">
+                  <div>
+                  <FormControl className="input_modal_direita" variant="outlined">
+                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
+                  <OutlinedInput    
+                      type="text"       
+                      autoComplete="off"    
+                      disabled={this.state.nome_motorista_visualizacao}                   
+                      error={this.state.erro_nome_motorista}
+                      helperText={this.state.mensagem_nome_motorista}
+                      className="input_modal_direita"                 
+                      id="outlined-basic"                   
+                      variant="outlined"
+                      value={this.state.campnomemotorista}                                    
+                      onChange={ (e) => {
+                        this.nomemotoristaChange(e)                                                                 
+                      }}                                    
+                      inputProps={{
+                        maxLength: 40,
+                      }} 
+                    endAdornment={
+                      <InputAdornment position="end">
+                          {this.state.validacao_nome_motorista? <CheckIcon />: ''}
+                      </InputAdornment>
+                    }
+                    labelWidth={180}                      
+                  />
+                <FormHelperText error={this.state.erro_nome_motorista}>
+                      {this.state.mensagem_nome_motorista}
+                </FormHelperText>
+              </FormControl>  
+                  </div>
+                  <div>
+                  <FormControl className="input_modal_esquerda" variant="outlined">
+                  <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                  <OutlinedInput         
+                      type="text"  
+                      autoComplete="off"   
+                      disabled={this.state.telefone_motorista_visualizacao}                             
+                      error={this.state.erro_telefone_motorista}
+                      helperText={this.state.mensagem_telefone_motorista}
+                      className="input_modal_esquerda"
+                      id="outlined-basic"                   
+                      variant="outlined"
+                      value={this.state.camptelefonemotorista}                                     
+                      onChange={ (e) => {
+                        this.telefonemotoristaChange(e)                                                                 
+                      }}                                    
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      inputProps={{
+                        maxLength: 15,
+                       
+                      }} 
+                    endAdornment={
+                      <InputAdornment position="end">
+                          {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
+                      </InputAdornment>
+                    }
+                    labelWidth={180}                      
+                  />
+                <FormHelperText error={this.state.erro_telefone_motorista}>
+                      {this.state.mensagem_telefone_motorista}
+                </FormHelperText>
+              </FormControl>  
+                  </div>
+             </div> 
+
+        </div>
                     <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
@@ -4592,8 +4813,8 @@ delay() {
 
                     <div className="p-2">    
                          <div class="d-flex justify-content-start">
-                                 <div>                  
-                                    <FormControl variant="outlined" className="select_evento_operador">
+                                 <div>  
+                                 <FormControl variant="outlined" className="select_evento_operador">
                                       <InputLabel id="demo-simple-select-outlined-label">Motoristas</InputLabel>
                                       <Select
                                         error={this.state.erro_tipo} 
@@ -4609,7 +4830,8 @@ delay() {
                                         <MenuItem value={0}></MenuItem>      
                                         {this.loadMotoristaData()}                    
                                       </Select>
-                                    </FormControl>                                                                
+                                    </FormControl>   
+                                                                                                
                                  </div>
                                  <div>
                                  <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
@@ -4621,8 +4843,77 @@ delay() {
                      
                     </div>
                     <div className="p-2">
-                      { this.novo_motorista() }
-                      </div>
+                    
+                    <div className="d-flex justify-content-start">
+                          <div>
+                          <FormControl className="input_modal_direita" variant="outlined">
+                          <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
+                          <OutlinedInput    
+                              type="text"       
+                              disabled={this.state.nome_motorista_visualizacao}
+                              autoComplete="off"                       
+                              error={this.state.erro_nome_motorista}
+                              helperText={this.state.mensagem_nome_motorista}
+                              className="input_modal_direita"                 
+                              id="outlined-basic"                   
+                              variant="outlined"
+                              value={this.state.campnomemotorista}                                    
+                              onChange={ (e) => {
+                                this.nomemotoristaChange(e)                                                                 
+                              }}                                    
+                              inputProps={{
+                                maxLength: 40,
+                              }} 
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_nome_motorista? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={180}                      
+                          />
+                        <FormHelperText error={this.state.erro_nome_motorista}>
+                              {this.state.mensagem_nome_motorista}
+                        </FormHelperText>
+                      </FormControl>  
+                          </div>
+                          <div>
+                          <FormControl className="input_modal_esquerda" variant="outlined">
+                          <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                          <OutlinedInput         
+                              type="text"  
+                              disabled={this.state.telefone_motorista_visualizacao}
+                              autoComplete="off"                       
+                              error={this.state.erro_telefone_motorista}
+                              helperText={this.state.mensagem_telefone_motorista}
+                              className="input_modal_esquerda"
+                              id="outlined-basic"                   
+                              variant="outlined"
+                              value={this.state.camptelefonemotorista}                                     
+                              onChange={ (e) => {
+                                this.telefonemotoristaChange(e)                                                                 
+                              }}                                    
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              inputProps={{
+                                maxLength: 15,
+                               
+                              }} 
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={180}                      
+                          />
+                        <FormHelperText error={this.state.erro_telefone_motorista}>
+                              {this.state.mensagem_telefone_motorista}
+                        </FormHelperText>
+                      </FormControl>  
+                          </div>
+                     </div> 
+        
+                </div>
                     <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
@@ -4812,6 +5103,7 @@ delay() {
                                   autoFocus:true,
                                   placeholder: "Qual o endereço?",                                  
                                   value: this.state.camplocalembarque,
+                                  onKeyDown: this.handleEmbarqueFocusChange,
                                   onChange: this.handleEmbarqueChange,                                 
                                   styles: {                                  
                                     input: (provided) => ({
@@ -4879,6 +5171,7 @@ delay() {
                                   autoFocus:true,
                                   placeholder: "Qual o endereço?",                                  
                                   value: this.state.camplocaldesembarque,
+                                  onKeyDown: this.handleDesembarqueFocusChange,
                                   onChange: this.handlelocalDesembarqueChange,                                
                                   styles: {                                  
                                     input: (provided) => ({
@@ -4980,61 +5273,138 @@ delay() {
 
   }
 
- 
+ /*
+  calculando_distancia_api() {
+   
+    if (this.state.camplocalembarque !== "" && this.state.camplocaldesembarque !== "") {
+
+      if (this.state.embarque_latitude !== "" && this.state.embarque_longitude !== "" &&
+          this.state.desembarque_latitude !== "" && this.state.desembarque_longitude !== "") {      
+         
+        
+         var embarque_latitude = this.state.embarque_latitude;
+         var embarque_longitude = this.state.embarque_longitude;  
+         var desembarque_latitude = this.state.desembarque_latitude;
+         var desembarque_longitude = this.state.desembarque_longitude;  
+
+         var link_api = `http://rotasbrasil.com.br/apiRotas/coordenadas/?pontos=${embarque_longitude},${embarque_latitude};${desembarque_longitude},${desembarque_latitude}&veiculo=auto&eixo=2&paradas=true&token=50a2b61bdd69bba0adba3e5f8160dcd7`
   
+         debugger;
+          api.get(link_api)
+          .then((val)=>{
+
+            console.log('guia rotas  - '+JSON.stringify(val.rotas, null, "    "));            
+
+          }).catch(error=>{           
+            console.log('error '+error)
+        })
+   
+    } 
+  }
+}
+*/
+  displayMarkers = () => {
+    //return this.state.embarque_latitude.map((store, index) => {
+      return <Marker key={0} id={0} position={{
+      lat: this.state.embarque_latitude,
+      lng: this.state.embarque_longitude
+    }
+  }
+
+    icon={{
+      url: `/location-thumbnail.png`,
+      origin: new window.google.maps.Point(0, 0),
+      anchor: new window.google.maps.Point(15, 15),
+      scaledSize: new window.google.maps.Size(30, 30),
+    }}
+   />
+   // })
+  }
+
+  static defaultProps = {
+    center: {
+      lat: 59.95,
+      lng: 30.33
+    },
+    zoom: 11
+  };
 
   mostrar_mapa_embarque() {
     //if (this.state.controle == 0) {
+   console.log('origin - '+origin);   
+   console.log('destination - '+destination);   
    debugger;
+   var origin = `${this.state.embarque_latitude},${this.state.embarque_longitude}`;
+   var destination = `${this.state.desembarque_latitude},${this.state.desembarque_longitude}`;
 
     if (this.state.camplocalembarque !== "") {     
         if (this.state.embarque_latitude !== null && this.state.embarque_longitude !== null) {
-    
+   
+          debugger;
+    // this.calculando_distancia_api();
+      // this.obtendo_distancia_rota();
+
         return (
           <div style={{width: '70%'}}>
-            <Map google={this.props.google}
+          <Map google={this.props.google}
             id="map-canvas"            
             initialCenter={{
               lat: this.state.embarque_latitude,
               lng: this.state.embarque_longitude
-            }}
+            }} 
             style={containerStyle}  
-            zoom={11}
-          //  onLoad={onMapLoad}
-            //centerAroundCurrentLocation={true}
-           // onClick={this.onMapClicked}            
-            >
-      
-            <Marker
-              key={`${this.state.embarque_latitude}-${this.state.embarque_longitude}`}
-              position={{ lat: this.state.embarque_latitude, lng: this.state.embarque_longitude }}
-              
-              icon={{
-                url: `/favicon.ico`,
-                origin: new window.google.maps.Point(0, 0),
-                anchor: new window.google.maps.Point(15, 15),
-                scaledSize: new window.google.maps.Size(30, 30),
-              }}
-            />        
+            zoom={16}         
+          >
+
+        <Marker
+          title={this.state.camplocalembarque}
+          name={this.state.camplocalembarque}
+          position={{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}}                                      
+          icon={{
+            url: `/location-thumbnail.png`,
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(15, 15),
+            scaledSize: new window.google.maps.Size(30, 30),
+          }}
+             />         
 
             <InfoWindow onClose={this.onInfoWindowClose}>
             <div>
               <h1>{this.state.camplocalembarque}</h1>
             </div>
-            </InfoWindow>
+            </InfoWindow>                 
 
-            <DistanceMatrixService          
-              options={{                      
-                        destinations: [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}],
-                        origins: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}],                    
-                        travelMode: "DRIVING",                                      
-                      }}
-              callback={this.distanceCallback}
-          /> 
-            </Map>               
             
+            <DistanceMatrixService
+              options={{
+                origins: origin, 
+                destinations: destination, 
+                travelMode: "DRIVING",
+              }}
+            callback={(res) => {
 
+              console.log("RESPONSE", res);        
+              
+              this.setState({     
+                controle: 1,
+                campdistancia: (res.rows[0].elements[0].distance.value / 1000).toFixed(0), 
+                camptempovalue: (res.rows[0].elements[0].duration.value / 60).toFixed(0),
+                camptempo: this.formatar_valor(res.rows[0].elements[0].duration.text)                
+               });
 
+               if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+                console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
+          
+                 this.calcular_trajeto();
+               }   
+
+            }}
+          />
+         
+         </Map>  
+        
+         
+   
             {
          //     this.calcular_distancia()
             }
@@ -5199,24 +5569,30 @@ delay() {
 
   handleOpenMotorista() { 
 
-    if (this.state.novo_motorista_incluir === false) {
+    //if (this.state.novo_motorista_incluir == false) {
     this.setState({ 
       //showmorotistadados: true,
       campnomemotorista: '',
       camptelefonemotorista: '',
+      campMotoristaId: '',
+      nome_motorista_visualizacao: false,
+      telefone_motorista_visualizacao: false,
       validacao_nome_motorista: false,
       validacao_telefone_motorista: false,
       novo_motorista_incluir: true
      
     })
-  } else {
+ /* } else {
     this.setState({ 
       //showmorotistadados: true,
-      novo_motorista_incluir: false
+      novo_motorista_incluir: false,
+      nome_motorista_visualizacao: true,
+      telefone_motorista_visualizacao: true,
      
     })
-
-  }
+     }
+*/
+ 
      
     
   }
@@ -5609,7 +5985,9 @@ debugger;
 
   calcular_trajeto() {   
 
- //  debugger;
+  debugger;
+
+  console.log('entrou no calcular_trajeto')
 
    // this.calcular_distancia();
 
@@ -5623,7 +6001,7 @@ debugger;
       campdistancia_inicio = 50;      
 
       this.setState({  
-        campdistancia: 0, 
+        campdistancia: parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio), 
         camptempovalue: 0,
         camptempo: ''   
      });
@@ -5653,13 +6031,13 @@ debugger;
    
   }
 
-  
+  /*
   distanceCallback = (response) => {
-    //console.log("Hello");
+  console.log("Hello");
     //console.log(response);  
-
+   debugger;
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' ) {
-        if (response !== null && response.rows[0].elements[0].distance !== this.state.distance) {
+      if (response !== null && response.rows[0].elements[0].distance !== this.state.distance) {
           const origin = response.originAddresses[0];
           const destination = response.destinationAddresses[0];
 
@@ -5671,7 +6049,8 @@ debugger;
                 
         } else if (response.rows[0].elements[0].status === "OK") {         
             
-          console.log('this.state.tabIndex '+this.state.tabIndex);
+        //  console.log('this.state.tabIndex '+this.state.tabIndex);
+        debugger;
            if (this.state.tabIndex == 2) {
             this.setState({     
                controle: 1,
@@ -5689,7 +6068,8 @@ debugger;
             }       
             
             if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
-              console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
+                 console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
+           
                 this.calcular_trajeto();
             }            
         
@@ -5708,7 +6088,7 @@ debugger;
   //  }
   };
   
-
+*/
 
   mostrar_mapa_desembarque() {
 
@@ -5719,7 +6099,8 @@ debugger;
   if (this.state.camplocaldesembarque !== "") {      
       if (this.state.desembarque_latitude !== null && this.state.desembarque_longitude !== null) {
 
-             
+      //this.calculando_distancia_api();     
+      
       return (
         <div style={{width: '80%'}}>
           <Map google={this.props.google}                              
@@ -5728,7 +6109,7 @@ debugger;
             lng: this.state.desembarque_longitude
           }}                    
           style={containerStyle}                                        
-          zoom={11}          
+          zoom={16}       
          // onClick={this.onMapClicked}
           >
                      
@@ -5747,19 +6128,35 @@ debugger;
           <InfoWindow onClose={this.onInfoWindowClose}>
 
           </InfoWindow>
+            
+          <DistanceMatrixService
+            options={{
+              origins:  [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}], 
+              destinations: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}], 
+              travelMode: "DRIVING",
+            }}
+            callback={(res) => {
 
-          <DistanceMatrixService          
-              options={{                      
-                        destinations: [{lat: this.state.embarque_latitude, lng: this.state.embarque_longitude}],
-                        origins: [{lat: this.state.desembarque_latitude, lng: this.state.desembarque_longitude}],                    
-                        travelMode: "DRIVING",                                      
-                      }}
-              callback={this.distanceCallback}
-          /> 
+              console.log("RESPONSE", res);        
+              
+              this.setState({     
+                controle: 1,
+                campdistancia: (res.rows[0].elements[0].distance.value / 1000).toFixed(0), 
+                camptempovalue: (res.rows[0].elements[0].duration.value / 60).toFixed(0),
+                camptempo: this.formatar_valor(res.rows[0].elements[0].duration.text)                
+               });
 
-          </Map>               
+               if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {
+                console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
           
-         
+                 this.calcular_trajeto();
+               }   
+
+            }}
+          />
+           
+          </Map>               
+              
 
 
            {
@@ -5877,22 +6274,27 @@ debugger;
       erro_qtd_diarias: false,
       qtddiarias_old: 0,
       possui_tarifa: false,  
-      incluir: false,
-      diaria: false,
-      translado: false,
-    });  
+      nome_motorista_visualizacao: true,
+      telefone_motorista_visualizacao: true,          
+      incluir: false,    
+    });     
 
     if (this.state.tabIndex == 1) {
       this.setState({ 
-        diaria: true
+        diaria: true,
+        translado: false, 
       });
-    } else if (this.state.tabIndex == 2) {
+    }
+    if (this.state.tabIndex == 2) {
       this.setState({ 
-        translado: true
+        translado: true,
+        diaria: false, 
       });
-    }  
+  }
+      
+    debugger;
 
-   this.limpar_campos();     
+   this.limpar_campos();   
    this.loadTarifaespecial();
    this.loadTarifa();
    this.loadTipoTransporte();     
@@ -6150,6 +6552,8 @@ debugger;
       campMotoristaId:'',
       mensagem_aguarde: '',
       possui_tarifa: false,
+      nome_motorista_visualizacao: true,
+      telefone_motorista_visualizacao: true,
       qtddiarias_old: 0,
       inicio: 1,
       tabIndex: "2",
