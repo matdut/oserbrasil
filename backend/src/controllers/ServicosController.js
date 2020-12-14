@@ -319,7 +319,7 @@ controllers.listaservicos = async (req,res) => {
    // group: 
     order: [ 
      
-      ['data_servico', 'ASC'],
+      ['data_servico', 'DESC'],
     ]       
   })
   .then( function (data){
