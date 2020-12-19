@@ -1115,7 +1115,7 @@ verificaData_Evento(e) {
                             isLoading={this.state.loading}
                            // style={{ maxBodyHeight: '60vh', minBodyHeight: '60vh' }}                      
                             columns={[
-                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px' },
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                              
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
@@ -1209,8 +1209,8 @@ verificaData_Evento(e) {
                             title=""
                               
                             columns={[
-                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px' },
-                              { title: 'Dt Finalização', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' },
+                              { title: 'Dt Finalização', field: 'createdAt', width: '130px', minWidth: '130px', maxWidth: '130px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
                               { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
@@ -1250,7 +1250,7 @@ verificaData_Evento(e) {
                                 lastTooltip: 'Última página'
                               },
                               header: {
-                                actions: 'Ação',
+                                actions: '',
                               },
                             }}        
                             options={{
@@ -1290,7 +1290,7 @@ verificaData_Evento(e) {
                             title=""
                               
                             columns={[
-                              { title: '', field: '', width: '50px', minWidth: '50px', maxWidth: '50px' },
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' },
                               { title: 'Dt Exclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },

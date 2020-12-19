@@ -1,12 +1,12 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-var Evento = require('./Eventos');
+var Servico = require('./servicos');
 var Motorista = require('./Motorista');
 var Status = require('./Status');
 
-var nametable = 'email_operador';
+var nametable = 'motorista_servico';
 
-var Motorista_evento = sequelize.define(nametable,{
+var Motorista_servico = sequelize.define(nametable,{
 
   id:{
     type:Sequelize.INTEGER,
@@ -21,10 +21,10 @@ var Motorista_evento = sequelize.define(nametable,{
       key: 'id'
     }   
   },
-  eventoId: {
+  servicoId: {
     type: Sequelize.INTEGER,
     refences: {
-      model: Evento,
+      model: Servico,
       key: 'id'
     }  
   },
@@ -42,8 +42,8 @@ var Motorista_evento = sequelize.define(nametable,{
   timestamps:false
 })
 
-Motorista_evento.belongsTo(Evento);
-Motorista_evento.belongsTo(Motorista);
-Motorista_evento.belongsTo(Status);
+Motorista_servico.belongsTo(Servico);
+Motorista_servico.belongsTo(Motorista);
+Motorista_servico.belongsTo(Status);
 
-module.exports = Email_operador
+module.exports = Motorista_servico

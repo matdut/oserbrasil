@@ -48,7 +48,7 @@ var Empresa = sequelize.define(nametable,{
     type: Sequelize.INTEGER,
     // this is a refence to another model
     refences: {
-      model: Estado,
+      model: Cliente,
       key: 'id'
     } 
   },

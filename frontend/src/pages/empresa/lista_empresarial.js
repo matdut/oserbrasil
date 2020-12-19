@@ -1447,7 +1447,7 @@ busca_cpf(e){
                               { title: 'Representante Legal', field: 'cliente.nome', width: '220px', minWidth: '220px', maxWidth: '220px', render: rowData => rowData.cliente.nome.substr(0,30) },
                               { title: 'Email', field: 'cliente.email', width: '220px', minWidth: '220px',  maxWidth: '220px', render: rowData => rowData.cliente.email.substr(0,25) }, 
                               { title: 'Telefone', field: 'cliente.celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                       
+                              { title: '', field: '',  lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                       
                             ]}
                             data={this.state.listEmpresasExcluidos}        
                             localization={{
@@ -1475,7 +1475,7 @@ busca_cpf(e){
                                 lastTooltip: 'Última página'
                               },
                               header: {
-                                actions: 'Ação',
+                                actions: ' ',
                               },
                             }}        
                             options={{                                                        
@@ -1526,7 +1526,7 @@ busca_cpf(e){
                               { title: 'Representante Legal', field: 'cliente.nome', width: '220px', minWidth: '220px', maxWidth: '220px', render: rowData => rowData.cliente.nome.substr(0,30) },
                               { title: 'Email', field: 'cliente.email', width: '220px', minWidth: '220px',  maxWidth: '220px', render: rowData => rowData.cliente.email.substr(0,25) }, 
                               { title: 'Telefone', field: 'cliente.celular', width: '100px', minWidth: '100px', maxWidth: '100px' },                                                                                                                 
-                              { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                        
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },                                                                                                                                                                                                                                                                        
                             ]}
                             data={this.state.listEmpresasCadIncompletos}        
                             localization={{
@@ -1554,7 +1554,7 @@ busca_cpf(e){
                                 lastTooltip: 'Última página'
                               },
                               header: {
-                                actions: 'Ação',
+                                actions: ' ',
                               },
                             }}        
                             options={{                                                        

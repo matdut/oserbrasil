@@ -816,6 +816,17 @@
     padding-left: 49px !important;
     margin-left: -261px !important;
   }
+  .container_alterado_4 {
+    width: 100% !important;
+    margin-left: 10px !important;
+    text-align: left !important;
+    font: normal normal bold Effra !important;
+    letter-spacing: 0px !important;
+    color: #0F074E !important;
+    opacity: 1 !important;   
+  
+  }
+
   .container_alterado {
     width: 100% !important;
     margin-left: -104px !important;
@@ -823,13 +834,8 @@
     font: normal normal bold Effra !important;
     letter-spacing: 0px !important;
     color: #0F074E !important;
-    opacity: 1 !important;    
-   /* padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto; 
-    max-width: 85%;    
-    position: static;     */
+    opacity: 1 !important;   
+  
   }
 
   .container_matriz {
@@ -1144,7 +1150,7 @@
   }
 
   .botao_close_modal_deletar {  
-    left: 70%;
+    left: 85%;
   }
 
   .botao_close_modal_motorista {

@@ -318,8 +318,9 @@ controllers.listaservicos = async (req,res) => {
     },  
    // group: 
     order: [ 
-     
+      ['createdAt', 'DESC'],
       ['data_servico', 'DESC'],
+      
     ]       
   })
   .then( function (data){

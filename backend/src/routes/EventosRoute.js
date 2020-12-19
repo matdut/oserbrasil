@@ -5,7 +5,7 @@ const EventosController = require('../controllers/EventosController');
 
 router.get('/list',EventosController.list);
 router.get('/listaeventocliente/:id/:perfilId',EventosController.listaevento);
-
+router.get('/listaeventoADM',EventosController.listaeventoADM);
 router.post('/create',EventosController.create);
 router.get('/get/:id', EventosController.get);
 router.get('/getcliente/:id', EventosController.getcliente);

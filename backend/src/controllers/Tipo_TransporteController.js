@@ -26,7 +26,7 @@ controllers.delete = async (req,res) => {
 }
 
 controllers.list = async (req,res) => {
-  await Tipo.findAll({    
+  await Tipo.findAll({   
   })
   .then( function (data){
     return res.json({success:true, data: data});

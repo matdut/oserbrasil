@@ -6,6 +6,7 @@ const controllers = {}
 
 var sequelize = require('../model/database');
 var Eventos = require('../model/Eventos');
+var Empresa = require('../model/Empresa');
 //var Tipo = require('../model/Tipo_transporte');
 var Servicos = require('../model/servicos');
 
@@ -99,6 +100,27 @@ controllers.listaevento = async (req,res) => {
     order: [
       ['createdAt', 'DESC']
     ]
+  })
+  .then( function (data){
+    return res.json({success:true, data: data});
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+}
+
+controllers.listaeventoADM = async (req,res) => {
+ // const { id, perfilId } = req.params;
+  
+  await Eventos.findAll({
+    include: [
+      { 
+       model: Empresa,
+           where: { 
+             clienteId: logid          
+           },         
+      }],
+  //   where: { logid: id, perfilId: perfilId},
   })
   .then( function (data){
     return res.json({success:true, data: data});

@@ -97,7 +97,7 @@ controllers.lista_veiculos = async (req,res) => {
  }
 
 controllers.list = async (req,res) => {
-  await Veiculo.findAll({
+  await Veiculo.findAll({  
   })
   .then( function (data){
     return res.json({success:true, data: data});
