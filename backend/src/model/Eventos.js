@@ -33,6 +33,22 @@ var Eventos = sequelize.define(nametable,{
       key: 'id'
     } 
   },
+  cpf: {
+    type: Sequelize.STRING(23),
+    allowNull: true,     
+  },
+  nome: {
+    type: Sequelize.STRING(230),
+    allowNull: true,     
+  },
+  cnpj: {
+    type: Sequelize.STRING(23),
+    allowNull: true,     
+  },
+  razao_social: {
+    type: Sequelize.STRING(230),
+    allowNull: true,     
+  },
   ordem_servico:  {  
     type: Sequelize.STRING(30),
     allowNull: false,     

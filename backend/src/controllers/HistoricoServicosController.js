@@ -44,9 +44,10 @@ controllers.listaservicosExcluidos = async (req,res) => {
         [Op.In]: [null,0]             
       } a*/
     },  
-    order: [
-      ['createdAt', 'DESC']
-    ]  
+    order: [ 
+      ['createdAt', 'DESC'],
+      ['data_servico', 'ASC'],      
+    ]    
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -120,9 +121,10 @@ controllers.listaeventosservicos = async (req,res) => {
            },         
       }],
     where: { eventoId: eventoid,  logid: id, perfilId: perfilId },  
-    order: [
-      ['createdAt', 'DESC']
-    ]  
+    //group: ['createdAt', 'DESC'],
+    order:[ 
+      ['createdAt',  'ASC']      
+    ]      
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -143,7 +145,8 @@ controllers.listaservicos = async (req,res) => {
       } */
     },  
     order: [
-      ['createdAt', 'DESC']
+      ['createdAt', 'DESC'],
+      ['data_servico', 'ASC'],
     ]  
   })
   .then( function (data){
@@ -157,7 +160,7 @@ controllers.listaservicos = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
+  const { id, tipoEventoId, eventoId, nome_responsavel, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
@@ -169,8 +172,10 @@ controllers.create = async (req,res) => {
 
   //create
   await HistoricoServicos.create({       
+    id: id,
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
+    nome_responsavel: nome_responsavel,
     nome_passageiro: nome_passageiro, 
     telefone_passageiro: telefone_passageiro,
     quantidade_passageiro: quantidade_passageiro, 
@@ -220,7 +225,7 @@ controllers.create = async (req,res) => {
 
 controllers.update = async (req, res) => {
   // parameter id get  
-  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
+  const { tipoEventoId, eventoId, nome_responsavel, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
@@ -238,6 +243,7 @@ controllers.update = async (req, res) => {
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
     nome_passageiro: nome_passageiro, 
+    nome_responsavel: nome_responsavel,
     telefone_passageiro: telefone_passageiro,
     quantidade_passageiro: quantidade_passageiro, 
     quantidade_diarias: quantidade_diarias,

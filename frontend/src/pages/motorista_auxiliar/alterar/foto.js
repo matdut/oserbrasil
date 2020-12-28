@@ -5,7 +5,7 @@ import {Form, Progress, Input, FormFeedback, Select, Button, Alert } from 'react
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import Menu_motorista from '../menu_motorista';
+import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
 import Menu_administrador from '../../administrador/menu_administrador';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
@@ -124,7 +124,7 @@ class empresarialComponent extends React.Component{
             campAno: res.data.data[0].ano,
             campCor: res.data.data[0].cor,            
           })            
-          api.get(`/motorista/get/${res.data.data[0].motoristaId}`)
+          api.get(`/motoristaAuxiliar/get/${res.data.data[0].motoristaId}`)
           .then(res=>{
             console.log(JSON.stringify(res.data, null, "    ")); 
             if (res.data.success) {
@@ -212,7 +212,7 @@ class empresarialComponent extends React.Component{
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {   
@@ -325,7 +325,7 @@ async sendUpdate(){
       perfilId: 3,
       statusId: 16
     }          
-      api.put(`/motorista/update/${localStorage.getItem('logid')}`, data1)      
+      api.put(`/motoristaAuxiliar/update/${localStorage.getItem('logid')}`, data1)      
 
       api.put(`/login/update/${localStorage.getItem('logid')}`,data1)
    }
@@ -344,7 +344,7 @@ async sendUpdate(){
       }
      console.log(' base64 o arquivo 1 - '+JSON.stringify(formData, null, "    "));
     
-      api.put(`/motorista/foto/update/${localStorage.getItem('logid')}`, formData)      
+      api.put(`/motoristaAuxiliar/foto/update/${localStorage.getItem('logid')}`, formData)      
   
               if (localStorage.getItem('logperfil') == 1) {
                 this.props.history.push(`/senha_motorista/`+localStorage.getItem('logid'));                    
@@ -471,9 +471,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (localStorage.getItem('logperfil') == 9) {
    return( 
-     <Menu_motorista />     
+     <menu_motorista_auxiliar />     
    );
   }
 

@@ -404,6 +404,24 @@ handleCloseModalFoto  () {
  
 }
 
+verifica_mensagem() {
+  if (localStorage.getItem('statusid') == 16) {
+    //const classes = useStyles();
+    return (
+      <div className="mensagem_motorista">     
+         Documentação em análise, favor aguardar. Liberadas apenas as funções de alteração de dados cadastrais!!   
+      </div>
+    );
+  } else {
+    return (
+      <Container maxWidth="sm">
+           <Typography component="div" style={{ backgroundColor: '#white', height: '12vh' }} />
+      </Container>
+    );
+  }
+  
+}
+
 render(){  
   const { uploadedCNH } = this.state; 
   
@@ -416,7 +434,8 @@ return (
     <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
               <div className="titulo_bemvindo">Documentos </div>         
-              </div>      
+              </div>  
+              {this.verifica_mensagem()}        
             </div> 
             <div className="d-flex flex-column espacamento_caixa_texto">                       
                 <div className="p-2">           

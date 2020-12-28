@@ -252,8 +252,6 @@ class listaeventosComponent extends React.Component  {
 
     if (localStorage.getItem('logperfil') > 1) {       
        this.loadlistEventos();  
-      // this.loadOperadores();  
-      // this.loadTodosOperadores();
        this.loadeventosexcluidos();
        this.atualiza_evento();
     } else {
@@ -738,6 +736,10 @@ class listaeventosComponent extends React.Component  {
       if (this.state.incluir == true) {
 
              const datapost_incluir = {
+               cpf: localStorage.getItem('logcpf'), 
+               nome: localStorage.getItem('lognome'), 
+               cnpj: localStorage.getItem('logcnpj'),
+               razao_social: localStorage.getItem('lograzao_social'),
                logid: localStorage.getItem('logid'),
                perfilId: localStorage.getItem('logperfil'),    
                ordem_servico: this.state.campordem_servico, 
@@ -747,7 +749,9 @@ class listaeventosComponent extends React.Component  {
                statusId: 1,          
               }           
            
+             
               console.log('criar evento - '+JSON.stringify(datapost_incluir, null, "    ")); 
+              debugger;
                api.post('/eventos/create',datapost_incluir)
                .then(respevento=>{    
                  if (respevento.data.success == true) {          
@@ -991,45 +995,81 @@ class listaeventosComponent extends React.Component  {
     } 
 }  
 
-verificaData_Evento(e) {    
-  if (e.target.value.length == 0) {        
-   this.setState({                   
-     inicio: 1,
-     erro_data_evento: false,   
-     validacao_data_evento: false,    
-    })            
-  } else if (e.target.value.length == 10) {        
+verificaData_Evento(e) {
 
-    let date_validar = e.target.value;
-    var dia = date_validar.substr(0,2);
-    var mes = date_validar.substr(3,2);         
+     let date_validar = e.target.value;
+     var dia = date_validar.substr(0,2);
+     var mes = date_validar.substr(3,2);   
+     var ano = date_validar.substr(6,4);    
 
-    if (dia > 31) {
-     this.setState({ 
-      erro_data_evento: true,   
-      validacao_data_evento: false,             
-       mensagem_data_evento: 'Dia é inválido.' 
-      })  
-    } else if (mes > 12) {
-     this.setState({ 
-      erro_data_evento: true,   
-      validacao_data_evento: false,             
-       mensagem_data_evento: 'Mês é inválido.' 
-      })  
-    } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
-     this.setState({ 
-      erro_data_evento: true,   
-      validacao_data_evento: false,             
-      mensagem_data_evento: 'Data do serviço é inválido.' 
-      })  
-    } else {
-     this.setState({ 
-      erro_data_evento: false,   
-      validacao_data_evento: true,             
-      mensagem_data_evento: '',
-     });   
-    }             
-  } 
+       if (e.target.value.length == 0) {     
+        this.setState({ 
+          erro_data_evento: true,   
+          validacao_data_evento: false,      
+          mensagem_data_evento: '' 
+         })      
+       } else if (e.target.value.length == 10) {
+
+        debugger;       
+      
+        if ( mes == '02' && dia == 29 && (!Number.isInteger(ano / 4)) ){
+         
+            this.setState({ 
+              erro_data_evento: true,   
+              validacao_data_evento: false,      
+              mensagem_data_evento: 'Dia é inválido.' 
+             
+             })  
+
+        } else if ( mes == '02' && dia == 30) {
+
+          this.setState({ 
+            erro_data_evento: true,   
+              validacao_data_evento: false,      
+              mensagem_data_evento: 'Dia é inválido.' 
+           })  
+
+        } else if ( mes == '02' && dia == 31) {
+
+            this.setState({ 
+              erro_data_evento: true,   
+              validacao_data_evento: false,      
+              mensagem_data_evento: 'Dia é inválido.' 
+             })  
+
+        }  
+        else {
+      
+          dia = date_validar.substr(0,2);
+          mes = date_validar.substr(3,2);         
+
+         if (dia > 31) {
+          this.setState({ 
+            erro_data_evento: true,   
+            validacao_data_evento: false,      
+            mensagem_data_evento: 'Dia é inválido.'             
+           })  
+         } else if (mes > 12) {
+          this.setState({ 
+            erro_data_evento: true,   
+            validacao_data_evento: false,      
+            mensagem_data_evento: 'Dia é inválido.'     
+           })  
+         } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+          this.setState({ 
+            erro_data_evento: true,   
+            validacao_data_evento: false,             
+            mensagem_data_evento: 'Data do serviço é inválido.' 
+           })  
+         } else {
+          this.setState({ 
+            erro_data_evento: false,   
+            validacao_data_evento: true,      
+            mensagem_data_evento: '',
+          });   
+         }
+        }
+    } 
 }  
 
   verifica_titulo() {
@@ -1287,11 +1327,11 @@ verificaData_Evento(e) {
         <TabPanel value="3" className="tirar_espaco">
         <div>
                         <MaterialTable          
-                            title=""
-                              
+                            title=""                              
                             columns={[
                               { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' },
                               { title: 'Dt Exclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                              { title: 'Responsável exclusão', field: 'nome_responsavel', width: '180px', minWidth: '180px', maxWidth: '180px'  },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Ordem de Serviço', field: 'ordem_servico', width: '150px', minWidth: '150px', maxWidth: '150px'  },
                               { title: 'Nome do Evento', field: 'nome_evento', width: '350px', minWidth: '350px', maxWidth: '350px', 
@@ -1302,7 +1342,7 @@ verificaData_Evento(e) {
                               render: rowData => rowData.viagens_total == "" ? '0' : rowData.viagens_total  }, 
                               { title: 'Valor Total', field: 'valor_total', width: '110px', minWidth: '110px', maxWidth: '110px', align: 'right',
                               render: rowData => rowData.valor_total == null? '0,00' : valorMask(rowData.valor_total) },
-                              { title: '', field: '',  align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' },                                
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                
                              },   
                             ]}
                             data={this.state.listaeventosexcluidos}   
@@ -1887,10 +1927,10 @@ verificaData_Evento(e) {
   // this.loadservicoseventos(userId);
   // this.loadeventodelete(userId);
    
- // debugger;
+   debugger;
    api.get(`/servicos/getEvento/${userId}`)
     .then(res =>{
-debugger;
+    debugger;
      if (res.data.success == true) {
        debugger;
       const servicos = res.data.data; 
@@ -1904,6 +1944,7 @@ debugger;
           eventoId: this.state.listservicosevento[i].eventoId, 
           tipoTransporte: this.state.listservicosevento[i].tipoTransporte,
           nome_passageiro: this.state.listservicosevento[i].nome_passageiro, 
+          nome_responsavel: localStorage.getItem('lognome'),
           telefone_passageiro: this.state.listservicosevento[i].telefone_passageiro,
           quantidade_passageiro: this.state.listservicosevento[i].quantidade_passageiro,  
           data_servico: this.state.listservicosevento[i].data_servico,
@@ -1934,7 +1975,8 @@ debugger;
           valor_motorista: this.state.listservicosevento[i].valor_motorista,  
           logid: this.state.listservicosevento[i].logid,
           servico_pai_id: this.state.listservicosevento[i].servico_pai_id,
-          perfilId: this.state.listservicosevento[i].perfilId,               
+          perfilId: this.state.listservicosevento[i].perfilId,  
+
         }  
         api.post('/historicoServicos/create', datapost_incluir);
       }  
@@ -1947,12 +1989,13 @@ debugger;
 
             if (res.data.success == true) {
               const eventos = res.data.data         
-           console.log('criando loadeventodelete 123 - '+JSON.stringify(res.data, null, "    "));     
+           console.log('criando loadeventodelete - '+JSON.stringify(res.data, null, "    "));     
             debugger;
                 const datapost_evento_incluir = {
                   id: eventos[0].id,
                   eventoId: eventos[0].id,
                   logid: eventos[0].logid,
+                  nome_responsavel: localStorage.getItem('lognome'),
                   perfilId: eventos[0].perfilId,    
                   ordem_servico: eventos[0].ordem_servico, 
                   nome_evento: eventos[0].nome_evento, 
@@ -1964,13 +2007,12 @@ debugger;
                 
                 api.post('/historicoEventos/create',datapost_evento_incluir);
               //   this.setState({listaeventodelete: data});             
-              debugger;
+              //debugger;
              
                 api.delete(`/eventos/delete/${userId}`)
                 .then(response =>{
                   if (response.data.success) {       
-                    debugger;
-                   
+                    debugger;                   
 
                     this.loadlistEventos();
                     this.loadeventosexcluidos();
@@ -1998,73 +2040,8 @@ debugger;
     })
     .catch ( error => {
       alert("Error loadservicoseventos "+error)
-    })    
-    
-   
- 
-    //debugger;
- 
- /*   this.state.listservicosevento.map((servicos)=>{          
-      
-      const datapost_incluir = {
-        tipoEventoId: servicos.tabIndex, 
-        eventoId: servicos.campeventoId, 
-        tipoTransporte: servicos.camptipoId,
-        nome_passageiro: servicos.campNome, 
-        telefone_passageiro: servicos.campTelefone1,
-        quantidade_passageiro: servicos.campqtdpassageiro,  
-        data_servico: servicos.campdata_servico,
-        quantidade_diarias: servicos.campqtddiarias, 
-        hora_inicial: servicos.camphora_inicial,  
-        hora_final: servicos.camphora_final,  
-        local_embarque: servicos.camplocalembarque, 
-        local_desembarque: servicos.camplocaldesembarque, 
-        embarque_latitude: servicos.embarque_latitude, 
-        embarque_longitude: servicos.embarque_longitude, 
-        desembarque_latitude: servicos.desembarque_latitude, 
-        desembarque_longitude: servicos.desembarque_longitude,      
-        distancia_value: servicos.campdistancia, 
-        tempo_value: servicos.camptempovalue,
-        companhia_aerea: servicos.campCompanhia_aerea,
-        numero_voo: servicos.campNumero_voo, 
-        motorista_bilingue: servicos.campbilingue, 
-        valor_bilingue: servicos.valor_bilingue,
-        valor_receptivo: servicos.valor_receptivo,
-        motorista_receptivo: servicos.campreceptivo, 
-        nome_motorista: servicos.campnomemotorista, 
-        telefone_motorista: servicos.camptelefonemotorista, 
-        km_translado: servicos.campdistancia, 
-        tempo_translado: servicos.camptempo,
-        cartaoId: servicos.campcartaoid,        
-        valor_estimado: servicos.campvalor,    
-        valor_oser: servicos.campvalor,
-        valor_motorista: servicos.campvalor,  
-        logid: servicos.logid,
-        servico_pai_id: servicos.servico_pai_id,
-        perfilId: servicos.perfilId,               
-      }  
-      api.post('/historicoServicos/create',datapost_incluir)
-   
-    })
-*/
-    /*
-    this.state.listaeventodelete.map((eventos)=>{   
-
-      const datapost_evento_incluir = {
-        logid: eventos.logid,
-        perfilId: eventos.perfilId,    
-        ordem_servico: eventos.ordem_servico, 
-        nome_evento: eventos.nome_evento, 
-        viagens_total: eventos.viagens_total,
-        data_evento: eventos.data_evento, 
-        statusId: eventos.statusId,          
-      }           
-      
-      api.post('/historicoEeventos/create',datapost_evento_incluir);
-
-    })    
-*/
-    //api.delete(`/servicos/deleteevento/${userId}`)
+    })     
+  
     
     
   }

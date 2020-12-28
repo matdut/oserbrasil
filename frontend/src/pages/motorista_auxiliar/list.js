@@ -1186,8 +1186,8 @@ cadeirarodasChange(e) {
 
   busca_motorista() {
     const { validate } = this.state   
-    console.log(`/motorista/get/${localStorage.getItem('logeditid')}`);
-    api.get(`/motorista/get/${localStorage.getItem('logeditid')}`)
+    console.log(`/motoristaAuxiliar/get/${localStorage.getItem('logeditid')}`);
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logeditid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -1647,11 +1647,11 @@ sendEnvioEmail(){
         statusId: 1,
         perfilId: 9
       }    
-      
+      debugger
       api.get(`/emailOperador/getemail/${this.state.campEmail}`)
       .then(res1=>{             
-
-        if (res1.data.data.length == 0) {    
+        debugger
+        if (res1.data.success == false) {    
       
           api.post(`/emailOperador/create`, operadordata)
           .then(res=>{             
@@ -1662,9 +1662,9 @@ sendEnvioEmail(){
         
               const params_email = {    
                 email: email_envio,         
-             //  url: `http://localhost:3000/operadores_incluir/${res.data.data.id}/${res.data.data.email}`, 
-             //   url: `http://www.oser.app.br:21497/motorista_incluir_convite/${res.data.data.email}`,    
-                url: `http://www.oser.app.br:21497/motorista_aux_incluir_convite/${res.data.data.email}`,     
+             //  url: `http://localhost:3000/motorista_aux_incluir_convite/${res.data.data.email}`, 
+                url: `http://www.oser.app.br:21497/motorista_incluir_convite/${res.data.data.email}`,    
+              //  url: `http://www.oser.app.br:21497/motorista_aux_incluir_convite/${res.data.data.email}`,     
                 texto: `Sr(a), Motorista(a) \n Seu link de acesso ao sistema è `, 
               }      
             // console.log(' resultado - '+JSON.stringify(params_email, null, "    "));    

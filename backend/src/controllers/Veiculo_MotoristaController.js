@@ -221,6 +221,26 @@ controllers.getVeiculo = async (req, res) => {
   
 }
 
+controllers.getVeiculoSelecionado = async (req, res) => {
+  const { tipoTransporte, id } = req.params;
+  
+  await Veiculo.findAll({   
+   //  where: { motoristaId: id, tipoTransporte: tipoTransporte }      
+   where: { motoristaId: id, tipoTransporte: tipoTransporte }      
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
 controllers.getMotoristaVeiculos = async (req, res) => {
   const { id } = req.params;
   

@@ -418,6 +418,20 @@
   padding: 0px !important;  
 }
 
+.tabs_titulo_lista_tarifas {
+  text-align: left;
+  font-family: Effra !important;
+  font-size: 12px !important;
+  /* font-weight: var(--unnamed-font-weight-medium)  !important; 
+  font-weight: bolder !important;*/
+  letter-spacing: 0px !important;
+  color: #4F4F4F !important;
+  opacity: 1 !important;  
+  margin-left: 0px !important;  
+  padding: 0px !important;  
+  width: 10px !important;
+}
+
 .tabs_titulo_lista_2 {
   text-align: left;
   font-family: Effra !important;

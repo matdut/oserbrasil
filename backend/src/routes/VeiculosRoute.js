@@ -17,6 +17,8 @@ router.delete('/deleteMotorista/:id',VeiculoController.deleteMotorista);
 router.get('/getMotoristaVeiculos/:id', VeiculoController.getMotoristaVeiculos);
 //router.put("/documentoCRVL/update/:id", multer(multerConfig).single('file'), VeiculoController.uploadCRVLFiles);
 router.put("/documentoCRVL/update/:id/:motoristaId", VeiculoController.uploadCRVLFiles);
+router.get('/getVeiculoSelecionado/:id/:tipoTransporte', VeiculoController.getVeiculoSelecionado);
+
 /*
 router.put('/documentoCRVL/update/:id', multer(multerConfig).single('file'), async (req, res) => {
 //    console.log('req.file documentoCRVL/update - '+JSON.stringify(req.file, null, "    "));  

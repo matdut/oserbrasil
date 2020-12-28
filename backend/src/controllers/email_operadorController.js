@@ -142,7 +142,11 @@ controllers.getemail = async (req, res) => {
     where: { email: email}   
   })
   .then( function (data){
-    return res.json({success:true, data: data});
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
   })
   .catch(error => {
     return res.json({success:false, message: error});

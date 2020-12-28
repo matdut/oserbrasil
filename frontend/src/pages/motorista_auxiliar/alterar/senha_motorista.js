@@ -17,7 +17,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
-import Menu_motorista from '../menu_motorista';
+import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
@@ -188,7 +188,7 @@ class empresarialComponent extends React.Component{
   
   carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -672,7 +672,7 @@ sendUpdate(){
   //console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
   //console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
   
-        api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/motoristaAuxiliar/update/${localStorage.getItem('logid')}`, datapost)
         
         .then(response=>{
           if (response.data.success==true) {                        
@@ -882,9 +882,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (localStorage.getItem('logperfil') == 9) {
    return( 
-     <Menu_motorista />     
+     <menu_motorista_auxiliar />     
    );
   }
 

@@ -12,7 +12,7 @@ import Container from '@material-ui/core/Container';
 import api from '../../../services/api';
 import { dataMask } from '../../formatacao/datamask';
 import '../documentos.css';
-import Menu_motorista from '../menu_motorista';
+import Menu_motorista_auxiliar from '../menu_motorista_auxiliar';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 //FOTO
@@ -123,7 +123,7 @@ class empresarialComponent extends React.Component{
             campAno: res.data.data[0].ano,
             campCor: res.data.data[0].cor,            
           })            
-          api.get(`/motorista/get/${res.data.data[0].motoristaId}`)
+          api.get(`/motoristaAuxiliar/get/${res.data.data[0].motoristaId}`)
           .then(res=>{
             console.log(JSON.stringify(res.data, null, "    ")); 
             if (res.data.success) {
@@ -203,7 +203,7 @@ class empresarialComponent extends React.Component{
   carrega_motorista() {   
     
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
     .then(res=>{
         //console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success == true) {
@@ -336,7 +336,7 @@ sendUpdate(){
         statusId: 16
       }
 
-      api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/motoristaAuxiliar/update/${localStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -443,8 +443,8 @@ sendUpdate(){
 
       if (localStorage.getItem('logperfil') == 1) {
         this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));
-      } else if (localStorage.getItem('logperfil') == 3) {
-        this.props.history.push(`/area_motorista`);                   
+      } else if (localStorage.getItem('logperfil') == 9) {
+        this.props.history.push(`/area_motorista_auxiliar`);                   
       } else if (localStorage.getItem('logperfil') == 0) {
         this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));
       }          
@@ -589,9 +589,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (localStorage.getItem('logperfil') == 9) {
    return( 
-     <Menu_motorista />     
+     <Menu_motorista_auxiliar />     
    );
   }
 

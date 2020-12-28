@@ -505,45 +505,86 @@ class empresarialComponent extends React.Component{
    }
   verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {  
-        this.setState({ 
-          validate,
-          erro_datanascimento: false,
-          validacao_datanascimento: false,
-          mensagem_data_nascimento: ''  
-         })      
+    let date_validar = this.state.campData_nascimento;
+    var dia = date_validar.substr(0,2);
+    var mes = date_validar.substr(3,2);   
+    var ano = date_validar.substr(6,4);   
+
+       if (this.state.campData_nascimento.length == 0) {     
+         this.setState({ 
+             validate,
+            erro_datanascimento: false, 
+            validacao_datanascimento: false,    
+            mensagem_data_nascimento: '' 
+         })    
+         
        } else if (this.state.campData_nascimento.length == 10) {
 
-        let date_validar = this.state.campData_nascimento;
-        var dia = date_validar.substr(0,2);
-        var mes = date_validar.substr(3,2);         
+
+        if ( mes == '02' && dia == 29 && (!Number.isInteger(ano / 4)) ){
+         
+            this.setState({ 
+              validate,
+              erro_datanascimento: true,   
+              validacao_datanascimento: false,      
+              mensagem_data_nascimento: 'Dia é inválido.' 
+             })  
+
+        } else if ( mes == '02' && dia == 30) {
+
+          this.setState({ 
+            validate,
+            erro_datanascimento: true,   
+            validacao_datanascimento: false,      
+            mensagem_data_nascimento: 'Dia é inválido.' 
+           })  
+
+        } else if ( mes == '02' && dia == 31) {
+
+            this.setState({ 
+              validate,
+              erro_datanascimento: true,   
+              validacao_datanascimento: false,      
+              mensagem_data_nascimento: 'Dia é inválido.' 
+             })  
+
+        }  
+        else {
+          
     
         if (dia > 31) {
          this.setState({ 
+          validate,
           erro_datanascimento: true,   
           validacao_datanascimento: false,             
           mensagem_data_nascimento: 'Dia é inválido.' 
           })  
         } else if (mes > 12) {
          this.setState({ 
+          validate,
           erro_datanascimento: true,   
           validacao_datanascimento: false,             
           mensagem_data_nascimento: 'Mês é inválido.' 
           })  
         } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
          this.setState({ 
+          validate,
           erro_datanascimento: true,   
           validacao_datanascimento: false,             
           mensagem_data_nascimento: 'Data do serviço é inválido.' 
           })  
         } else {
+          validate.datanascimentoState = 'has-success' ;      
          this.setState({ 
+          validate,
           erro_datanascimento: false,   
           validacao_datanascimento: true,             
           mensagem_data_nascimento: '',
          });   
-        }    
-     }    
+        }     
+
+       }
+    }     
    }
 
   validaEmailChange = async (event) => {
@@ -1008,7 +1049,7 @@ return (
                         variant="outlined"                      
                         value={this.state.campData_nascimento}
                         onFocus={this.verificaDataNascimento}
-                        onBlur={this.verificaDataNascimentoonblur}
+                      //  onBlur={this.verificaDataNascimentoonblur}
                         onKeyUp={this.verificaDataNascimento}
                         onChange={ (e) => {
                           this.data_nascimentochange(e)                       

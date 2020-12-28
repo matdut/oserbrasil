@@ -890,24 +890,86 @@ sendEnvioEmail(){
    }
   verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {
-        validate.datanascimentoState = 'has-danger'
-        this.setState({ 
-          validate,
-          erro_datanascimento: false,
-          validacao_datanascimento: false,
-          mensagem_data_nascimento: ''  
-         })      
-       } else {
+    let date_validar = this.state.campData_nascimento;
+    var dia = date_validar.substr(0,2);
+    var mes = date_validar.substr(3,2);   
+    var ano = date_validar.substr(6,4);   
 
-          validate.datanascimentoState = 'has-success' ;        
+       if (this.state.campData_nascimento.length == 0) {     
+         this.setState({ 
+             validate,
+            erro_datanascimento: false, 
+            validacao_datanascimento: false,    
+            mensagem_data_nascimento: '' 
+         })    
+         
+       } else if (this.state.campData_nascimento.length == 10) {
+
+
+        if ( mes == '02' && dia == 29 && (!Number.isInteger(ano / 4)) ){
+         
+            this.setState({ 
+              validate,
+              erro_datanascimento: true,   
+              validacao_datanascimento: false,      
+              mensagem_data_nascimento: 'Dia é inválido.' 
+             })  
+
+        } else if ( mes == '02' && dia == 30) {
+
           this.setState({ 
-            erro_datanascimento: false,
-            validacao_datanascimento: true,
-            mensagem_data_nascimento: ''
-          });     
+            validate,
+            erro_datanascimento: true,   
+            validacao_datanascimento: false,      
+            mensagem_data_nascimento: 'Dia é inválido.' 
+           })  
 
-       }        
+        } else if ( mes == '02' && dia == 31) {
+
+            this.setState({ 
+              validate,
+              erro_datanascimento: true,   
+              validacao_datanascimento: false,      
+              mensagem_data_nascimento: 'Dia é inválido.' 
+             })  
+
+        }  
+        else {
+          
+    
+        if (dia > 31) {
+         this.setState({ 
+          validate,
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Dia é inválido.' 
+          })  
+        } else if (mes > 12) {
+         this.setState({ 
+          validate,
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Mês é inválido.' 
+          })  
+        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+         this.setState({ 
+          validate,
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,             
+          mensagem_data_nascimento: 'Data do serviço é inválido.' 
+          })  
+        } else {
+          validate.datanascimentoState = 'has-success' ;      
+         this.setState({ 
+          validate,
+          erro_datanascimento: false,   
+          validacao_datanascimento: true,             
+          mensagem_data_nascimento: '',
+         });   
+        }     
+
+       }
+    }         
    }
 
   validaEmailChange = async (event) => {
@@ -1303,7 +1365,7 @@ carrega_status(){
             <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
               <h5> {localStorage.getItem('lograzao_social')} </h5>                                         
-                  <div className="titulo_bemvindo"> Operador </div>                     
+                  <div className="titulo_bemvindo"> Operador 1 </div>                     
               </div>      
             </div>
           </div>
@@ -1409,14 +1471,14 @@ carrega_status(){
                         title=""
                                                   
                         columns={[
-                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
-                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px' },
+                          { title: 'Status', field: 'status.descricao', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
                           { title: 'Representante Legal', field: 'nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.nome.substr(0,30) },
                           { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,30) }, 
                           { title: 'Telefone', field: 'celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
-                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },   
+                          { title: '', field: '',  lookup: { 1: 'sadas', 2: 'asdas' }, },   
                         ]}
                         data={this.state.listOperadoresExcluidos}   
                         localization={{
@@ -1495,14 +1557,14 @@ carrega_status(){
                         title=""
                                             
                         columns={[
-                          { title: '', field: '#', width: "58px", minWidth: '58px', maxWidth: '58px' },
-                          { title: 'Status', field: 'status.descricao', width: '165px', minWidth: '165px', maxWidth: '165px', render: rowData => rowData.status.descricao.substr(0,35) },
+                          { title: '', field: '#', width: "55px", minWidth: '55px', maxWidth: '55px' },
+                          { title: 'Status', field: 'status.descricao', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => rowData.status.descricao.substr(0,35) },
                           { title: 'CNPJ', field: 'empresa.cnpj', width: '135px', minWidth: '135px', maxWidth: '135px', render: rowData =>  cnpjMask(rowData.empresa.cnpj) }, 
                           { title: 'Razão Social', field: 'empresa.razao_social', width: '290px', minWidth: '290px', maxWidth: '290px', render: rowData => rowData.empresa.razao_social.substr(0,30) },
                           { title: 'Representante Legal', field: 'nome', width: '200px', minWidth: '200px', maxWidth: '200px', render: rowData => rowData.nome.substr(0,30) },
                           { title: 'Email', field: 'email', width: '260px', minWidth: '260px',  maxWidth: '260px', render: rowData => rowData.email.substr(0,30) }, 
                           { title: 'Telefone', field: 'celular', width: '120px', minWidth: '120px', maxWidth: '120px' },                                                                                                                 
-                          { title: '', field: '', align: 'left', width: '150px', lookup: { 1: 'sadas', 2: 'asdas' }, },   
+                          { title: '', field: '',  lookup: { 1: 'sadas', 2: 'asdas' }, },   
                         ]}
                         data={this.state.listOperadoresCadIncompletos}   
                         localization={{

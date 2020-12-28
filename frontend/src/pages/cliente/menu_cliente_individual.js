@@ -65,6 +65,10 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('lognome');       
     localStorage.removeItem('logid');  
     localStorage.removeItem('logperfil'); 
+    localStorage.removeItem('logcnpj'); 
+    localStorage.removeItem('logcpf');
+    localStorage.removeItem('logservicoid');     
+    localStorage.removeItem('logempresaid');  
     localStorage.removeItem('logcep');      
     localStorage.removeItem('logclienteId');
     localStorage.removeItem('logcpfrep');
@@ -74,7 +78,7 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logMarca');
     localStorage.removeItem('logmatrizId');
     localStorage.removeItem('logModelo');    
-
+    localStorage.removeItem('logeventoservico');
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);
     this.props.history.push("/");

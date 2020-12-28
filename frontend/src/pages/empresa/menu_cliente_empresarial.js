@@ -80,11 +80,14 @@ class menu_clienteComponent extends React.Component  {
   handleClick = () => {
     localStorage.removeItem('logemail');
     localStorage.removeItem('lognome');       
+    localStorage.removeItem('logcpf');
+    localStorage.removeItem('logservicoid');    
     localStorage.removeItem('logid');  
     localStorage.removeItem('logperfil');  
     localStorage.removeItem('logprogress');
     localStorage.removeItem('logcep');   
     localStorage.removeItem('logcepbanco');       
+    localStorage.removeItem('logcnpj'); 
     localStorage.removeItem('lograzao_social');  
     localStorage.removeItem('lograzaosocial');  
     localStorage.removeItem('logclienteId');
@@ -95,7 +98,9 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logMarca');
     localStorage.removeItem('logmatrizId');
     localStorage.removeItem('logModelo');
-    localStorage.removeItem('logrepresentante')
+    localStorage.removeItem('logrepresentante');
+    localStorage.removeItem('logeventoservico');    
+    localStorage.removeItem('logempresaid');      
     localStorage.setItem('logperfil', 0);
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);

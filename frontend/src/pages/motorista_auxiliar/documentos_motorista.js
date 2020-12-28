@@ -24,6 +24,7 @@ import FileList from "../FilelistDocumento";
 //import Upload from "../Upload";
 //import FileList from "../Filelist";
 import { Container, Content } from "../style";
+import menu_motorista_auxiliar from './menu_motorista_auxiliar';
 
 const andamento_cadastro = localStorage.getItem('logprogress');     
 //const cep_empresa = localStorage.getItem('logcep');     
@@ -110,7 +111,7 @@ class empresarialComponent extends React.Component{
   carrega_motorista() {   
     
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
     .then(res=>{
         //console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success == true) {
@@ -154,9 +155,9 @@ class empresarialComponent extends React.Component{
      return( 
        <Menu_administrador />     
      );
-    } else if (localStorage.getItem('logperfil') == 3) {
+    } else if (localStorage.getItem('logperfil') == 9) {
      return( 
-       <Menu_motorista />     
+       <menu_motorista_auxiliar />     
      );
     }
   
@@ -229,7 +230,7 @@ verifica_botao(inicio) {
          }
 
          
-          api.put(`/motorista/documentoCNH/update/${localStorage.getItem('logid')}`, formData)
+          api.put(`/motoristaAuxiliar/documentoCNH/update/${localStorage.getItem('logid')}`, formData)
           .then(response=>{
            // console.log(JSON.stringify(response.data, null, "    ")); 
 
@@ -248,8 +249,8 @@ verifica_botao(inicio) {
 
       if (localStorage.getItem('logperfil') == 1) {
         this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));
-      } else if (localStorage.getItem('logperfil') == 3) {
-        this.props.history.push(`/area_motorista`);                   
+      } else if (localStorage.getItem('logperfil') == 9) {
+        this.props.history.push(`/area_motorista_auxiliar`);                   
       } else if (localStorage.getItem('logperfil') == 0) {
         this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));
       }          

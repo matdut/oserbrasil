@@ -14,10 +14,10 @@ var Tarifa = sequelize.define(nametable,{
     type: Sequelize.STRING(150) 
   }, 
   faixa_inicial:  {  
-    type: Sequelize.STRING(10) 
+    type: Sequelize.INTEGER(10) 
   },
   faixa_final:  {  
-    type: Sequelize.STRING(10) 
+    type: Sequelize.INTEGER(10) 
   },
   valor_km:  {  
     type: Sequelize.DECIMAL(20,2)  

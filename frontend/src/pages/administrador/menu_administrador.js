@@ -73,7 +73,7 @@ class menu_administradorComponent extends React.Component  {
     localStorage.removeItem('logcepbanco');       
     localStorage.removeItem('lograzao_social');  
     localStorage.removeItem('lograzaosocial');  
-
+    localStorage.removeItem('logeventoservico');
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);
     this.props.history.push("/");
@@ -162,7 +162,7 @@ class menu_administradorComponent extends React.Component  {
                 </a>
                 </div>
               </li>
-                 
+             
               <li data-toggle="collapse" data-target="#service" className="collapsed">
                 <LightTooltip title="Auxiliares" placement="top">
                   <a href="#" className="icon_centralizado">                   
@@ -205,7 +205,15 @@ class menu_administradorComponent extends React.Component  {
                 </a>
                 </div>
               </li>
-              
+              <li>
+              <div className="itens_menu">
+                <a href={'/lista_mensagens_site'} className="icon_centralizado_novo" >
+                <LightTooltip title="Mensagens" placement="top">  
+                <i className="fas fa-comments"></i>
+                </LightTooltip>              
+                </a>
+                </div>
+              </li>   
               <li>
               <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">

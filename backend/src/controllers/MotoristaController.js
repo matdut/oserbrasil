@@ -5,6 +5,7 @@ const Op = Sequelize.Op;
 
 // import model and sequelize
 var sequelize = require('../model/database');
+const Estado = require('../model/Estado');
 var Motorista = require('../model/Motorista');
 var Status = require('../model/Status');
 var Veiculo = require('../model/veiculo_motorista');
@@ -329,6 +330,33 @@ controllers.getMotVeiculo = async (req, res) => {
     where: { id: id}
     //,
     //include: [ Role ]
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getMotoristaServico = async (req, res) => {
+ const { estado_motorista, bilingue, tipoTransporte } = req.params;
+ // const { bilingue } = req.params;
+  await Motorista.findAll({
+ //  include: [{ model: Status, where: {id: 1}  }],
+   include: [{ model: Estado, where: {nome: estado_motorista}  }],
+  // include: [{ model: Veiculo, where: {motoristaId: Motorista.id} }],
+    where: { 
+      bilingue: bilingue, 
+      statusId: 1
+    //  receptivo: receptivo 
+    }
+   
   })
   .then( function (data){
     if (data.length > 0) {

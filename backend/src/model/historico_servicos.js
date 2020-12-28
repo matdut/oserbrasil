@@ -13,7 +13,7 @@ var Historico_servicos = sequelize.define(nametable,{
   id:{
     type:Sequelize.INTEGER,
     primaryKey:true,
-    autoIncrement:true
+  //  autoIncrement:true
   },  
   eventoId:{
     type:Sequelize.INTEGER,    
@@ -163,9 +163,13 @@ var Historico_servicos = sequelize.define(nametable,{
     type: Sequelize.INTEGER,
     allowNull: false,     
   },
-  perfilId:{
+  perfilId: {
     type:Sequelize.INTEGER,    
     allowNull: true,
+  },
+  nome_responsavel: {  
+    type: Sequelize.STRING(250),
+    allowNull: false,     
   },
 })
 

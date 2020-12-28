@@ -34,7 +34,11 @@ controllers.delete = async (req,res) => {
 }
 
 controllers.list = async (req,res) => {
-  await Matriz_tarifaria_especial.findAll({         
+  await Matriz_tarifaria_especial.findAll({   
+    order: 
+    [ 
+     [sequelize.literal('tipoTransporte, faixa_inicial'), 'asc']   
+    ]         
   })
   .then( function (data){
     return res.json({success:true, data: data});

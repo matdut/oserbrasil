@@ -16,7 +16,8 @@ import Resizer from 'react-image-file-resizer';
 
 //FOTO
 import filesize from "filesize";
-import Upload from "../../UploadDocumentosModal";
+import Upload from "../../UploadDocumentos";
+//import Upload from "../../UploadDocumentosModal";
 //import FileList from "../../FilelistDocInclusao";
 import FileList from "../../FilelistDocumento";
 import { Container, Content } from "../../style";
@@ -78,9 +79,9 @@ class empresarialComponent extends React.Component{
     
     if (localStorage.getItem('logVeiculo') > 0) {
       this.carrega_doc_veiculo();  
-    } else {
+  //  } else {
 
-      this.load_veiculo();
+   ///   this.load_veiculo();
     }
     
   }
@@ -129,19 +130,10 @@ class empresarialComponent extends React.Component{
 
 verifica_botao(inicio) {
 
-  if (inicio == 1) {
-    return (
-
-      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
-              <div className="d-flex justify-content-center">
-              <label> Próximo </label>
-              </div>     
-        </Box>           
-    );   
-  } else {
+  
       //console.log(JSON.stringify(this.state, null, "    "));
       //  console.log(JSON.stringify(' validacao campo ', null, "    "));
-        if (this.state.foto1State == 'has-success' && this.state.foto2State == 'has-success') {
+      //  if (this.state.foto1State == 'has-success' && this.state.foto2State == 'has-success') {
 
           return (
             <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
@@ -149,8 +141,9 @@ verifica_botao(inicio) {
             <label> Próximo </label>
             </div>     
             </Box>           
-          );         
-      } else {
+          );   
+
+     /* } else {
         return (
 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
@@ -159,8 +152,8 @@ verifica_botao(inicio) {
                   </div>     
             </Box>           
         );   
-      }         
-  }  
+      }    */     
+ // }  
   }  
 
   /*
@@ -173,6 +166,7 @@ handleDelete = async id => {
     });
  };
 */
+
 onChange = async (file) => { 
   const image = await resizeFile(file);
   return image;

@@ -37,6 +37,7 @@ app.use((req, res, next) => {
 const AdminAuxiliarRoutes = require('./routes/AdministradorAuxiliarRoute');
 const AgenciaRoutes = require('./routes/AgenciaRoute');
 const BancoRoutes = require('./routes/BancoRoute');
+const EnvioServicoMotoristaRoutes = require('./routes/Envio_servico_motoristaRoute');
 const clienteRouters = require('./routes/ClienteRoute');
 const empresaRouters = require('./routes/EmpresaRoute');
 const emailoperadorRoutes = require('./routes/EmailoperadorRoute');
@@ -57,6 +58,12 @@ const HistoricoServicosRoutes = require('./routes/HistoricoServicosRoute');
 const FuncionalidadeRouters = require('./routes/FuncionalidadeRoute');
 const Matriz_tarifariaRouters = require('./routes/Matriz_tarifariaRoute');
 const Matriz_tarifaria_especialRoutes = require('./routes/Matriz_tarifaria_especialRoute');
+const Motivo_cancelamentoRouters = require('./routes/Motivos_cancelamentoRoute');
+const DiariaRouters = require('./routes/DiariaRoute');
+const Diaria_especialRoutes = require('./routes/Diaria_especialRoute');
+const MensagensClienteRouters = require('./routes/MensagensClienteRoute');
+const MensagensMotoristaRouters = require('./routes/MensagensMotoristaRoute');
+
 const EventosRouters = require('./routes/EventosRoute');
 const HistoricoEventosRouters = require('./routes/HistoricoEventosRoute');
 const OperadorEventoRouters = require('./routes/OperadorEventoRoute');
@@ -69,6 +76,10 @@ const VeiculoRouters = require('./routes/VeiculosRoute');
 const MarcaRouters = require('./routes/MarcaRoute');
 const ModeloRouters = require('./routes/ModeloRoute');
 const EmailRouters = require('./routes/EmailRoute');
+const DescontosRouters = require('./routes/DescontosRoute');
+const TaxasRouters = require('./routes/TaxasRoute');
+const Mensagens_cliente = require('./model/Mensagens_Cliente');
+const Mensagens_motorista = require('./model/Mensagens_motorista');
 
 app.use(
   "/files",
@@ -76,6 +87,12 @@ app.use(
 ); 
 
 //Route
+app.use('/mensagens_cliente', MensagensClienteRouters);
+app.use('/mensagens_motorista', MensagensMotoristaRouters);
+app.use('/descontos', DescontosRouters);
+app.use('/taxas', TaxasRouters);
+app.use('/motivo_cancelamento', Motivo_cancelamentoRouters);
+app.use('/envioservicoMotorista', EnvioServicoMotoristaRoutes);
 app.use('/administradorAuxiliar', AdminAuxiliarRoutes);
 app.use('/agencia', AgenciaRoutes);
 app.use('/banco', BancoRoutes);
@@ -105,6 +122,8 @@ app.use('/historicoEventos', HistoricoEventosRouters);
 app.use('/funcionalidade', FuncionalidadeRouters);
 app.use('/matriz', Matriz_tarifariaRouters);
 app.use('/matrizEspecial', Matriz_tarifaria_especialRoutes);
+app.use('/diaria', DiariaRouters);
+app.use('/diariaEspecial', Diaria_especialRoutes);
 app.use('/eventos', EventosRouters);
 app.use('/operadorevento', OperadorEventoRouters);
 app.use('/file', FileRouters);

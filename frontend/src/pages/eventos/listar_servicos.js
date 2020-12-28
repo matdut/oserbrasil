@@ -15,8 +15,6 @@ import GooglePlacesAutocomplete, {geocodeByPlaceId} from 'react-google-places-au
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 
 import {Container, Row, Col } from 'reactstrap';
-
-
 import "@reach/combobox/styles.css";
 
 import PlacesAutocomplete, {
@@ -84,7 +82,7 @@ import Box from '@material-ui/core/Box';
 import { valorMask } from '../formatacao/valormask';
 import { valorDoublemask } from '../formatacao/valorDoublemask';
 import { numeroMask } from '../formatacao/numeromask';
-import creditCardType from 'credit-card-type'
+import creditCardType from 'credit-card-type';
 
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -101,23 +99,19 @@ import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData
 import { cyan } from '@material-ui/core/colors';
 import { isThisHour } from 'date-fns';
 
-var campdistancia_global = ''
-var camptempovalue_global = ''
-var camptempo_global = '' 
+var campdistancia_global = '';
+var camptempovalue_global = '';
+var camptempo_global = '';
 
 //const service = new window.google.maps.DistanceMatrixService();
 var dateFormat = require('dateformat');
-
-//const distanceMatrix = require('distance-matrix-endpoint')
-//var distance = require('google-distance');
-var distance  = require('google-distance-matrix');
-var nome_motorista_1 = ''
-var telefone_motorista_1 = ''
+var distance = require('google-distance-matrix');
+var nome_motorista_1 = '';
+var telefone_motorista_1 = '';
 
 //import { Alert } from 'reactstrap';
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
-
 const libraries = ["places"];
 
 const AnyReactComponent = ({ text }) => (
@@ -182,6 +176,10 @@ useEffect(() => {
   getmaxDataServico();
 }, []);
 8*/
+
+var campseltipoveiculo = '';
+var possui_tarifa_nova = false;
+var possui_tarifa_especial_nova = false;
 
 const containerStyle = {
   position: 'relative',  
@@ -357,8 +355,11 @@ class listaservicosComponent extends React.Component  {
       inicio: 0,
       tabIndex: "2",
       processo: 1,
+      visualizar: '',
+      campselecaotipo: false,
       //tabAlteracaoIndex: '2',
      // tabInclusaoIndex: '2',
+      obter_rota_nova: false,
       address: '',
       campeventoId: '',
       campDeletarId: '',
@@ -383,6 +384,7 @@ class listaservicosComponent extends React.Component  {
       campqtddiarias: '',
       campnomemotorista:  '',
       camptelefonemotorista:  '',
+      campNomeresponsavel: '',
       nome_motorista_visualizacao: false,
       telefone_motorista_visualizacao: false,
       campbilingue: false,
@@ -460,6 +462,8 @@ class listaservicosComponent extends React.Component  {
       tempo_total_filho: 0,
       listTarifas:[],
       listTarifasEspeciais:[],
+      listDiarias:[],
+      listDiariaEspeciais:[],
       listservicosfilho: [],
       translado:false,
       diaria: false,
@@ -497,6 +501,8 @@ class listaservicosComponent extends React.Component  {
       listaservicosexcluidos:[],
       listaCartao:[],
       listTodosMotoristasAtivos:[],
+      listaFilhosAlteracao:[],
+      listaMotoristasPreferencial:[],
       erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
@@ -558,13 +564,6 @@ class listaservicosComponent extends React.Component  {
     this.data_servicochange = this.data_servicochange.bind(this);    
     this.hora_inicialchange = this.hora_inicialchange.bind(this);
     this.hora_finalchange = this.hora_finalchange.bind(this);
-    //this.obtendo_distancia_rota = this.obtendo_distancia_rota.bind(this);
-
-  //  this.calcular_distancia = this.calcular_distancia.bind(this);
-    
-
-    //this.mostrar_endereco_selecionado_embarque = this.mostrar_endereco_selecionado_embarque.bind(this);
-    //this.mostrar_endereco_selecionado_desembarque = this.mostrar_endereco_selecionado_desembarque.bind(this);
     this.verificaData_Evento = this.verificaData_Evento.bind(this);      
     
     this.validaDataServicoChange = this.validaDataServicoChange.bind(this);          
@@ -588,6 +587,8 @@ class listaservicosComponent extends React.Component  {
     this.loadlistServicos();
     this.loadTarifaespecial();
     this.loadTarifa();
+    this.loadDiarias();
+    this.loadDiariaespecial();
     this.valor_total_servicos();
     this.valor_total_viagens();
     this.loadlistServicosExcluidos();  
@@ -633,20 +634,20 @@ class listaservicosComponent extends React.Component  {
 
   loadMotoristaData(){  
   
-    return this.state.listTodosMotoristasAtivos.map((data)=>{          
+    return this.state.listaMotoristasPreferencial.map((data)=>{          
       return(
       <MenuItem value={data.id}>{data.nome}</MenuItem>      
       )
     })
   }
 
-  loadTodosMotoristasAtivos() {
+  loadMotoristasPreferencial() {
     api.get(`/motorista/list`)
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
 
-        this.setState({listTodosMotoristasAtivos:data})
+     //   this.setState({listaMotoristasPreferencial:data})
       }     
     })
     .catch(error=>{
@@ -816,7 +817,32 @@ class listaservicosComponent extends React.Component  {
     }
     
    }
-
+   carrega_servico_visualizacao(data){
+     debugger;
+    api.get(`/historicoServicos/get/${data.id}`)
+    .then(res=>{
+      if (res.data.success == true) {
+        debugger;
+        this.setState({   
+           campNomeresponsavel: res.data.data[0].nome_responsavel,
+           campNome: res.data.data[0].nome_passageiro,
+           campTelefone1: res.data.data[0].telefone_passageiro,
+           campqtdpassageiro: res.data.data[0].quantidade_passageiro,
+           campdata_servico: dateFormat(res.data.data[0].data_servico, "UTC:dd/mm/yyyy"),
+           campbilingue: res.data.data[0].motorista_bilingue,
+           campreceptivo: res.data.data[0].motorista_receptivo,
+           valor_bilingue: res.data.data[0].valor_bilingue,
+           valor_receptivo: res.data.data[0].valor_receptivo, 
+           campMotoristaId: res.data.data[0].motorista_id,  
+           campdistancia: res.data.data[0].km_translado,                     
+           camptempovalue: res.data.data[0].tempo_value,
+           camptempo: res.data.data[0].tempo_translado,
+           campvalor_estimado: res.data.data[0].valor_estimado,        
+           campvalor: res.data.data[0].valor_estimado, 
+        });  
+      }
+    }); 
+   }
 
   carrega_servico(data){
     // const url = baseUrl+"/cliente/list"   
@@ -917,7 +943,7 @@ class listaservicosComponent extends React.Component  {
   handleDesembarqueFocusChange = camplocaldesembarque => {     
           
     this.setState({     
-       estado_selecionado_mapa: '',
+      
        camplocaldesembarque: '',
        desembarque_latitude: '',
        desembarque_longitude: '',  
@@ -931,13 +957,16 @@ class listaservicosComponent extends React.Component  {
     geocodeByPlaceId(camplocalembarque.value.place_id)
     .then((results)=>{     
       
+      debugger
       this.setState({     
-        estado_selecionado_mapa: results[0].address_components[3].short_name,
+        estado_selecionado_mapa: results[0].address_components[2].short_name,
         camplocalembarque: camplocalembarque.label,
         embarque_latitude: results[0].geometry.location.lat().toString(),
         embarque_longitude: results[0].geometry.location.lng().toString(),  
         inicio: 1,  
       });  
+
+      console.log(' estado_selecionado_mapa '+JSON.stringify(results[0], null, "    ")); 
 
       console.log(' resultado geocodeByPlaceId '+JSON.stringify(this.state, null, "    ")); 
 
@@ -952,7 +981,7 @@ class listaservicosComponent extends React.Component  {
     .then((results)=>{
       //console.log(' resultado '+JSON.stringify(results[0], null, "    ")); 
       this.setState({
-       // estado_selecionado_mapa: results[0].address_components[3].short_name,
+    
         camplocaldesembarque: camplocaldesembarque.label, 
         desembarque_latitude: results[0].geometry.location.lat().toString(),
         desembarque_longitude: results[0].geometry.location.lng().toString(),                
@@ -1103,6 +1132,11 @@ verificaqtddiaria(e) {
 
 validaDataServicoChange(e) {    
  //   const { validate } = this.state
+    let date_validar = e.target.value;
+    var dia = date_validar.substr(0,2);
+    var mes = date_validar.substr(3,2);   
+    var ano = date_validar.substr(6,4);    
+
        if (e.target.value.length == 0) {     
         this.setState({ 
           erro_data_servico: true,   
@@ -1111,9 +1145,37 @@ validaDataServicoChange(e) {
          })      
        } else if (e.target.value.length == 10) {
 
-         let date_validar = e.target.value;
-         var dia = date_validar.substr(0,2);
-         var mes = date_validar.substr(3,2);         
+        debugger;       
+      
+        if ( mes == '02' && dia == 29 && (!Number.isInteger(ano / 4)) ){
+         
+            this.setState({ 
+              erro_data_servico: true,   
+              validacao_data_servico: false,      
+              mensagem_data_servico: 'Dia é inválido.' 
+             })  
+
+        } else if ( mes == '02' && dia == 30) {
+
+          this.setState({ 
+            erro_data_servico: true,   
+            validacao_data_servico: false,      
+            mensagem_data_servico: 'Dia é inválido.' 
+           })  
+
+        } else if ( mes == '02' && dia == 31) {
+
+            this.setState({ 
+              erro_data_servico: true,   
+              validacao_data_servico: false,      
+              mensagem_data_servico: 'Dia é inválido.' 
+             })  
+
+        }  
+        else {
+      
+          dia = date_validar.substr(0,2);
+          mes = date_validar.substr(3,2);         
 
          if (dia > 31) {
           this.setState({ 
@@ -1140,8 +1202,8 @@ validaDataServicoChange(e) {
             mensagem_data_servico: '',
           });   
          }
-         
-         
+        }
+    }    
 /*
          if (date_validar.length!=10||barra1!="/"||barra2!="/"||isNaN(dia)||isNaN(mes)||isNaN(ano)||dia>31||mes>12) {
           this.setState({ 
@@ -1209,7 +1271,7 @@ validaDataServicoChange(e) {
 
         }
          */
-    }   
+      
 }
 
 verificaNomeonfocus(e) {
@@ -1274,13 +1336,17 @@ verificaTipo_veiculo(e) {
      erro_tipo: false,  
      validacao_tipo: true,
      inicio: 1,        
+     campselecaotipo: true,
+     mensagem_servico: '',
      mensagem_tipoId: ""  
-    })           
+    })        
     
+    debugger;   
+    console.log('verificaTipo_veiculo ');
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
-      Promise.all([
-        this.calcular_trajeto()
-      ])    
+      //Promise.all([
+       this.calcular_trajeto();
+    //  ])    
     }
    // this.verifica_botao(this.state.inicio) 
   }     
@@ -1300,9 +1366,9 @@ data_servicochange(e) {
   this.setState({ campdata_servico: dataMask(e.target.value) })
 
   if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
-    Promise.all([
+   // Promise.all([
       this.calcular_trajeto()
-    ])    
+    //])    
   }
 }
 hora_inicialchange(e) {
@@ -1319,6 +1385,7 @@ hora_inicialchange(e) {
     }
  
 }
+
 hora_finalchange(e) {
   this.setState({ camphora_final: e.target.value });
   hora_final= e.target.value;
@@ -1345,10 +1412,10 @@ verificaTelefone1onfocus(e){
           validacao_telefone1: false, 
           mensagem_telefone1: ''  
       })                    
- } 
+} 
 
 
-validatelefone1Change(e){
+validatelefone1Change(e) {
   //  const { validate } = this.state
      
       if (e.target.value.length == 0) {
@@ -1376,11 +1443,12 @@ validatelefone1Change(e){
      // this.setState({ validate })
     // this.verifica_botao(this.state.inicio)
 
-  }
+}
 
-  verificaTelefone1(e) {   
+
+verificaTelefone1(e) {   
     //const { validate } = this.state
-       if (e.target.value.length < 15) {              
+      if (e.target.value.length < 15) {              
         this.setState({ 
         //  validate,
           inicio: 1,
@@ -1388,7 +1456,7 @@ validatelefone1Change(e){
           validacao_telefone1: false,
           mensagem_telefone1: ''
          })      
-       } else {       
+      } else {       
 
         if (e.target.value.length == 15) {
        //     validate.telefone1State = 'has-success' ;                
@@ -1400,10 +1468,10 @@ validatelefone1Change(e){
           });          
         }
 
-       }        
-   }
+      }        
+}
 
-  loadEvento(){
+loadEvento(){
     // const url = baseUrl+"/cliente/list"
     let userId = this.props.match.params.id;  
  
@@ -1431,22 +1499,35 @@ validatelefone1Change(e){
      })
      .catch(error=>{
        alert("Error server"+error)
-     })
-   }
+     });
+}
   
-  handleClick = () => {
+
+handleClick = () => {
   
     this.props.history.push('/area_administrador'); 
 
-  }
+}
   
-  tipoChange(e) {  
-    this.setState({ camptipoId: e.target.value })      
-  }
 
-  cartaoChange(e) {  
+tipoChange(e) {  
+    this.setState({ camptipoId: e.target.value })      
+/*
+    debugger;
+    //console.log('tipoChange ');    
+    
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
+      //Promise.all([
+       this.calcular_trajeto();
+    //  ])    
+    } 
+    */
+    
+}
+
+cartaoChange(e) {  
     this.setState({ campcartaoid: e.target.value })  
-  }
+}
 
   nomeChange(e) {  
     this.setState({ campNome: e.target.value })  
@@ -1468,7 +1549,7 @@ validatelefone1Change(e){
     this.setState({ campNumero_voo: e.target.value })  
   }
 
-  verifica_menu() {
+verifica_menu() {
 
     if (this.state.perfil == 1) {
       return ( 
@@ -1494,7 +1575,7 @@ validatelefone1Change(e){
         );
   
     }          
-  }     
+}     
 
   verifica_titulo() {
     if ( this.state.perfil == 1) {
@@ -1508,11 +1589,111 @@ validatelefone1Change(e){
     }            
   }
 
-  procurar_motorista_servico() {
+  procurar_motorista_servico = async () => { 
+    //bloquear_cartao com o valor total mais a porcentagem de acrescimo
+    debugger;
+    var encontrou = false; 
+    // se cartao ok 
+         var bilingue = this.state.campbilingue;
+     //    var receptivo = this.state.receptivo;tipoTransporte
+         var estado_motorista = this.state.estado_selecionado_mapa;
+         var tipoTransporte = this.state.camptipoId;
 
-    var estado_motorista = this.state.estado_selecionado_mapa;
-    var bilingue_sel = this.state.bilingue;
-    var receptivo_sel = this.state.receptivo;
+        api.get(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`)                    
+        .then(respMotorista=>{
+             
+          debugger;
+          if (respMotorista.data.success == true) {                     
+            var data = respMotorista.data.data;
+            debugger;
+            data.map((motoristas)=>{
+              debugger;
+
+              const datapost_motorista = {     
+                motorista_id: motoristas.id,
+                tipoEventoId: motoristas.tipoEventoId, 
+                eventoId: motoristas.eventoId, 
+                tipoTransporte: motoristas.tipoTransporte,
+                nome_passageiro: motoristas.nome_passageiro, 
+                telefone_passageiro: motoristas.telefone_passageiro,
+                quantidade_passageiro: motoristas.quantidade_passageiro,  
+                data_servico: moment(motoristas.data_servico, "DD MM YYYY"),
+                quantidade_diarias: motoristas.quantidade_diarias, 
+                hora_inicial: motoristas.hora_inicial,                
+                local_embarque: motoristas.local_embarque,                
+                embarque_latitude: motoristas.embarque_latitude, 
+                embarque_longitude: motoristas.embarque_longitude,              
+                distancia_value: motoristas.distancia_value, 
+                tempo_value: motoristas.tempo_value,
+                km_translado: motoristas.km_translado, 
+                tempo_translado: motoristas.tempo_translado,
+                companhia_aerea: motoristas.companhia_aerea,
+                numero_voo: motoristas.numero_voo, 
+                motorista_bilingue: motoristas.motorista_bilingue, 
+                valor_bilingue: motoristas.valor_bilingue,
+                valor_receptivo: motoristas.valor_receptivo,
+                motorista_receptivo: motoristas.motorista_receptivo,                
+                nome_motorista: motoristas.nome_motorista, 
+                telefone_motorista: motoristas.telefone_motorista,    
+              }  
+                  //verificar se o motorista tem o veiculo selecionado 
+                  console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
+                  api.get(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`)                    
+                  .then(respveiculo=>{
+                      
+                    debugger;   
+                    if (respveiculo.data.success == true) {        
+
+                      api.post('/envioservicoMotorista/create',datapost_motorista)                         
+                      .then(respfilho=>{    
+                    
+                          if (respfilho.data.success == true) {       
+                              const data1 = respfilho.data.data;
+                              encontrou = true;                        
+                            
+                          }  
+                    
+                      })                        
+                      .catch(error=>{
+                        alert("Error server 2 "+error)
+                      })  
+
+                    }  
+
+                  });    
+                });       
+              
+          }
+
+          return encontrou;
+        });    
+        //selecionar motorista ativos com o estado do local embarque / tipo veiculo / bilingue e receptivo
+         //verificar se ja existe algum cancelamento deste motorista
+             
+            // gravar o registro na tabela envio_servico_motorista 
+
+            //checar se algum motorista aceitou o servico 
+            // se aceitou 
+               ///parar a busca e carregar o motorista que aceitou na tabela motorista_servico 
+               // e apagar os servicos da tabela envio_servico_motorista  
+
+             
+    // se cartao error
+       //nao grava o servico 
+          //
+   
+    //var tipo_veiculo = this.state.camptipoId;
+   // var bilingue_sel = this.state.bilingue; // true ou false
+   // var receptivo_sel = this.state.receptivo; // true ou false
+
+    //criar tabela motorista_servico   campos motoristaId e ServicoId
+    // criar tabela com motoristas_cancelados_servicos campos motoristaId servicoId motivoId
+
+    // criar tabela motivos_cancelamentos 
+
+
+    // criar funcao para verificar se algum motorista aceitou o serviço
+
 
 
 
@@ -1567,7 +1748,7 @@ validatelefone1Change(e){
    debugger;
     api.get(`/servicos/MaxDataServicoFilho/${data}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)                    
     .then(respMaxdata=>{
-           debugger;
+     debugger;
       if (respMaxdata.data.success == true) {
            this.setState({ ultima_data_filho: respMaxdata.data.data});
       }      
@@ -1642,7 +1823,7 @@ validatelefone1Change(e){
                             //motivo_cancelamento: this.state.campNome,
                             servico_pai_id: this.state.campservicoId,
                             logid: localStorage.getItem('logid'),
-                            perfilId: 7,               
+                            perfilId: localStorage.getItem('logperfil'),               
                         }                                
                       
                       console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
@@ -1692,7 +1873,7 @@ validatelefone1Change(e){
       valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
       //motivo_cancelamento: this.state.campNome,
       logid: localStorage.getItem('logid'),
-      perfilId: 7,               
+      perfilId: localStorage.getItem('logperfil'),               
       } 
       
       debugger;
@@ -1765,7 +1946,7 @@ debugger
                                               //motivo_cancelamento: this.state.campNome,
                                               servico_pai_id: this.state.campservicoId,
                                               logid: localStorage.getItem('logid'),
-                                              perfilId: 7,               
+                                              perfilId: localStorage.getItem('logperfil'),               
                                           }                                
                                         
                                           try {
@@ -1918,15 +2099,48 @@ debugger
  
    var data_alteracao_servico_filho = moment(this.state.campdata_servico, "DD MM YYYY");
 
-   var alterardatafilhos = this.state.quantidade_diarias;
+  // var alterardatafilhos = this.state.quantidade_diarias;
+  
+   api.get(`/servicos/busca_filho/${this.state.campservicoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+   .then(response=>{
 
-    for(let i=0; i < alterardatafilhos - 1; i++){
+    
+    if (response.data.success==true) {      
+
+      const data = response.data.data
+
+      this.setState({listaFilhosAlteracao:data})
+      
+    }
+
+    this.state.listaFilhosAlteracao.map((filhos)=>{
+
       data_alteracao_servico_filho = data_alteracao_servico_filho.add(1, "days");
+      
+      const data_filho = {           
+        data_servico: moment(data_alteracao_servico_filho, "DD MM YYYY"),
+      }  
 
-        console.log('filhos - '+i+'data servico '+moment(data_alteracao_servico_filho, "DD MM YYYY"));
-    }  
+      api.put(`/servicos/update/${filhos.id}`, data_filho)
+      .then(resppai=>{    
 
+        debugger;
+        if (resppai.data.success == true) {              
 
+           console.log('filhos - data servico '+moment(data_alteracao_servico_filho, "DD MM YYYY"));            
+        }
+
+      }).catch(error=>{
+        alert("Error server 2 "+error)
+      })        
+    
+      })  
+ 
+    });
+ }
+
+ sendFecha() {
+  this.handleCloseModalVisualizacao();
  }
 
   sendSave(){             
@@ -1952,175 +2166,176 @@ debugger
           // this.calculo_receptivo();   
         
         // busca_motorista();
+         var retorno = this.procurar_motorista_servico();
          
-            const datapost_incluir = {
-              tipoEventoId: this.state.tabIndex, 
-              eventoId: localStorage.getItem('logeventoservico'), 
-              tipoTransporte: this.state.camptipoId,
-              nome_passageiro: this.state.campNome, 
-              telefone_passageiro: this.state.campTelefone1,
-              quantidade_passageiro: this.state.campqtdpassageiro,  
-              data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
-              quantidade_diarias: this.state.campqtddiarias, 
-              hora_inicial: this.state.camphora_inicial,  
-              hora_final: this.state.camphora_final,  
-              local_embarque: this.state.camplocalembarque, 
-              local_desembarque: this.state.camplocaldesembarque, 
-              embarque_latitude: this.state.embarque_latitude, 
-              embarque_longitude: this.state.embarque_longitude, 
-              desembarque_latitude: this.state.desembarque_latitude, 
-              desembarque_longitude: this.state.desembarque_longitude, 
-              //motorista_alocado: this.state.motorista_alocado, 
-              distancia_value: this.state.campdistancia, 
-              tempo_value: this.state.camptempovalue,
-              km_translado: this.state.campdistancia, 
-              tempo_translado: this.state.camptempo,
-              companhia_aerea: this.state.campCompanhia_aerea,
-              numero_voo: this.state.campNumero_voo, 
-              motorista_bilingue: this.state.campbilingue, 
-              valor_bilingue: this.state.valor_bilingue,
-              valor_receptivo: this.state.valor_receptivo,
-              motorista_receptivo: this.state.campreceptivo, 
-              motorista_id: this.state.campMotoristaId,    
-              nome_motorista: this.state.campnomemotorista, 
-              telefone_motorista: this.state.camptelefonemotorista, 
-             
-              cartaoId: this.state.campcartaoid,        
-              valor_estimado: valorDoublemask(this.state.campvalor),    
-              valor_oser: (parseFloat('0.192') * valorDoublemask(this.state.campvalor)).toFixed(2),
-              valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
-              //motivo_cancelamento: this.state.campNome,
-              logid: localStorage.getItem('logid'),
-              servico_pai_id: 0,
-              perfilId: 7,               
-            }           
-         
-            // console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
-             api.post('/servicos/create',datapost_incluir)
-             .then(respevento=>{    
+        if (retorno == true) { 
+                const datapost_incluir = {
+                  tipoEventoId: this.state.tabIndex, 
+                  eventoId: localStorage.getItem('logeventoservico'), 
+                  tipoTransporte: this.state.camptipoId,
+                  nome_passageiro: this.state.campNome, 
+                  telefone_passageiro: this.state.campTelefone1,
+                  quantidade_passageiro: this.state.campqtdpassageiro,  
+                  data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
+                  quantidade_diarias: this.state.campqtddiarias, 
+                  hora_inicial: this.state.camphora_inicial,  
+                  hora_final: this.state.camphora_final,  
+                  local_embarque: this.state.camplocalembarque, 
+                  local_desembarque: this.state.camplocaldesembarque, 
+                  embarque_latitude: this.state.embarque_latitude, 
+                  embarque_longitude: this.state.embarque_longitude, 
+                  desembarque_latitude: this.state.desembarque_latitude, 
+                  desembarque_longitude: this.state.desembarque_longitude, 
+                  distancia_value: this.state.campdistancia, 
+                  tempo_value: this.state.camptempovalue,
+                  km_translado: this.state.campdistancia, 
+                  tempo_translado: this.state.camptempo,
+                  companhia_aerea: this.state.campCompanhia_aerea,
+                  numero_voo: this.state.campNumero_voo, 
+                  motorista_bilingue: this.state.campbilingue, 
+                  valor_bilingue: this.state.valor_bilingue,
+                  valor_receptivo: this.state.valor_receptivo,
+                  motorista_receptivo: this.state.campreceptivo, 
+                  motorista_id: this.state.campMotoristaId,    
+                  nome_motorista: this.state.campnomemotorista, 
+                  telefone_motorista: this.state.camptelefonemotorista, 
+                
+                  cartaoId: this.state.campcartaoid,        
+                  valor_estimado: valorDoublemask(this.state.campvalor),    
+                  valor_oser: (parseFloat('0.192') * valorDoublemask(this.state.campvalor)).toFixed(2),
+                  valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
+                  //motivo_cancelamento: this.state.campNome,
+                  logid: localStorage.getItem('logid'),
+                  servico_pai_id: 0,
+                  perfilId: localStorage.getItem('logperfil'),               
+                }           
+            
+                // console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
+                api.post('/servicos/create',datapost_incluir)
+                .then(respevento=>{    
 
-               if (respevento.data.success == true) {          
+                  if (respevento.data.success == true) {          
 
-            //    debugger;
-                const data = respevento.data.data;
-                const pai_servico = data.id;
+                //    debugger;
+                    const data = respevento.data.data;
+                    const pai_servico = data.id;
 
-                let valor_total_filhos = (parseFloat(data.valor_estimado) / parseInt(this.state.campqtddiarias)).toFixed(2);
-              
-                if (this.state.campqtddiarias > 1) {
-                    let data_alteracao_servico = moment(this.state.campdata_servico, "DD MM YYYY");                   
+                    let valor_total_filhos = (parseFloat(data.valor_estimado) / parseInt(this.state.campqtddiarias)).toFixed(2);
+                  
+                    if (this.state.campqtddiarias > 1) {
+                        let data_alteracao_servico = moment(this.state.campdata_servico, "DD MM YYYY");                   
 
-                    debugger;
-                    for(let i=0; i < this.state.campqtddiarias - 1; i++){
+                        debugger;
+                        for(let i=0; i < this.state.campqtddiarias - 1; i++){
 
-                           data_alteracao_servico = data_alteracao_servico.add(1, "days");
-                            const datapost_filho = {
-                                tipoEventoId: this.state.tabIndex, 
-                                eventoId: localStorage.getItem('logeventoservico'), 
-                                tipoTransporte: this.state.camptipoId,
-                                nome_passageiro: this.state.campNome, 
-                                telefone_passageiro: this.state.campTelefone1,
-                                quantidade_passageiro: this.state.campqtdpassageiro,  
-                                data_servico: moment(data_alteracao_servico, "DD MM YYYY"),
-                                quantidade_diarias: 1, 
-                                hora_inicial: this.state.camphora_inicial,  
-                                hora_final: this.state.camphora_final,  
-                                local_embarque: 'a combinar', 
-                                local_desembarque: 'a combinar', 
-                                embarque_latitude: this.state.embarque_latitude, 
-                                embarque_longitude: this.state.embarque_longitude, 
-                                desembarque_latitude: this.state.desembarque_latitude, 
-                                desembarque_longitude: this.state.desembarque_longitude, 
-                                //motorista_alocado: this.state.motorista_alocado, 
-                                distancia_value: this.state.km_total_filho, 
-                               // tempo_value: this.state.tempo_total_filho,
-                                companhia_aerea: this.state.campCompanhia_aerea,
-                                numero_voo: this.state.campNumero_voo, 
-                                motorista_bilingue: this.state.campbilingue, 
-                                motorista_receptivo: this.state.campreceptivo, 
-                                motorista_id: this.state.campMotoristaId,   
-                                nome_motorista: this.state.campnomemotorista, 
-                                telefone_motorista: this.state.camptelefonemotorista, 
-                                km_translado: this.state.km_total_filho, 
-                                tempo_translado: this.state.tempo_total_filho,
-                                cartaoId: this.state.campcartaoid,        
-                                valor_estimado: valorDoublemask(valor_total_filhos),    
-                              //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
-                              //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
-                                //motivo_cancelamento: this.state.campNome,
-                                servico_pai_id: pai_servico,
-                                logid: localStorage.getItem('logid'),
-                                perfilId: 7,               
-                             }                                
-                          
-                      //   console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
-                          api.post('/servicos/create',datapost_filho)                         
-                          .then(respfilho=>{    
+                              data_alteracao_servico = data_alteracao_servico.add(1, "days");
+                                const datapost_filho = {
+                                    tipoEventoId: this.state.tabIndex, 
+                                    eventoId: localStorage.getItem('logeventoservico'), 
+                                    tipoTransporte: this.state.camptipoId,
+                                    nome_passageiro: this.state.campNome, 
+                                    telefone_passageiro: this.state.campTelefone1,
+                                    quantidade_passageiro: this.state.campqtdpassageiro,  
+                                    data_servico: moment(data_alteracao_servico, "DD MM YYYY"),
+                                    quantidade_diarias: 1, 
+                                    hora_inicial: this.state.camphora_inicial,  
+                                    hora_final: this.state.camphora_final,  
+                                    local_embarque: 'a combinar', 
+                                    local_desembarque: 'a combinar', 
+                                    embarque_latitude: this.state.embarque_latitude, 
+                                    embarque_longitude: this.state.embarque_longitude, 
+                                    desembarque_latitude: this.state.desembarque_latitude, 
+                                    desembarque_longitude: this.state.desembarque_longitude, 
+                                    //motorista_alocado: this.state.motorista_alocado, 
+                                    distancia_value: this.state.km_total_filho, 
+                                  // tempo_value: this.state.tempo_total_filho,
+                                    companhia_aerea: this.state.campCompanhia_aerea,
+                                    numero_voo: this.state.campNumero_voo, 
+                                    motorista_bilingue: this.state.campbilingue, 
+                                    motorista_receptivo: this.state.campreceptivo, 
+                                    motorista_id: this.state.campMotoristaId,   
+                                    nome_motorista: this.state.campnomemotorista, 
+                                    telefone_motorista: this.state.camptelefonemotorista, 
+                                    km_translado: this.state.km_total_filho, 
+                                    tempo_translado: this.state.tempo_total_filho,
+                                    cartaoId: this.state.campcartaoid,        
+                                    valor_estimado: valorDoublemask(valor_total_filhos),    
+                                  //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
+                                  //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
+                                    //motivo_cancelamento: this.state.campNome,
+                                    servico_pai_id: pai_servico,
+                                    logid: localStorage.getItem('logid'),
+                                    perfilId: localStorage.getItem('logperfil'),               
+                                }                                
+                              
+                          //   console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
+                              api.post('/servicos/create',datapost_filho)                         
+                              .then(respfilho=>{    
 
-                            if (respfilho.data.success == true) {       
-                              const data1 = respfilho.data.data;
-                              data_alteracao_servico = moment(data1.data_servico, "DD MM YYYY");                            
-                            }  
+                                if (respfilho.data.success == true) {       
+                                  const data1 = respfilho.data.data;
+                                  data_alteracao_servico = moment(data1.data_servico, "DD MM YYYY");                            
+                                }  
 
-                          })                        
-                          .catch(error=>{
-                            alert("Error server 2 "+error)
-                          })     
+                              })                        
+                              .catch(error=>{
+                                alert("Error server 2 "+error)
+                              })     
+                          }
+
+
                       }
+                  // debugger;
+                    //console.log(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`); 
 
-
-                   }
-              // debugger;
-                //console.log(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`); 
-
-                //api.get(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
-                //  .then(res=>{
-                    
-                  //  if (res.data.success == true) {
-                    const total_estimado =  data.valor_estimado;
-                    const valortotalviagens = valorDoublemask(this.state.valortotalviagens);
-                    const total_visgens =  parseFloat(this.state.totalviagens) + parseFloat(1);
-                    const valor_total = parseFloat(total_estimado) + parseFloat(valortotalviagens)
-
-                      const datapost_alterar = {
-                         logid: localStorage.getItem('logid'),
-                         perfilId: 7,    
-                         viagens_total: total_visgens,
-                         valor_total: valor_total, 
-                      }
-
-                      
-                      api.put(`/eventos/update/${this.state.campeventoId}`, datapost_alterar)
-                      .then(respevento1=>{
-                        if (respevento1.data.success==true) {    
-
-                          this.setState({                
-                            mensagem_usuario: 'Serviço incluído com sucesso!'
-                           });
+                    //api.get(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+                    //  .then(res=>{
                         
-                           debugger;
-                           this.verifica_botao(1);
-                           this.handleCloseModalInclusao();
-                           this.loadlistServicos();
-                           this.valor_total_servicos();
-                           this.valor_total_viagens();
-                           this.envia_mensagemClick();  
-                           this.atualiza_evento();
-                           this.refreshPage();  
+                      //  if (res.data.success == true) {
+                        const total_estimado =  data.valor_estimado;
+                        const valortotalviagens = valorDoublemask(this.state.valortotalviagens);
+                        const total_visgens =  parseFloat(this.state.totalviagens) + parseFloat(1);
+                        const valor_total = parseFloat(total_estimado) + parseFloat(valortotalviagens)
 
-                         // this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);  
+                          const datapost_alterar = {
+                            logid: localStorage.getItem('logid'),
+                            perfilId: localStorage.getItem('logperfil'),    
+                            viagens_total: total_visgens,
+                            valor_total: valor_total, 
+                          }
 
-                        } 
-                        })                        
-                        .catch(error=>{
-                          alert("Error server 2 "+error)
-                        })                    
-                }              
-              }).catch(error=>{
-               alert("Erro sevico log  "+ error)
-             })               
+                          
+                          api.put(`/eventos/update/${this.state.campeventoId}`, datapost_alterar)
+                          .then(respevento1=>{
+                            if (respevento1.data.success==true) {    
+
+                              this.setState({                
+                                mensagem_usuario: 'Serviço incluído com sucesso!'
+                              });
+                            
+                              debugger;
+                              this.verifica_botao(1);
+                              this.handleCloseModalInclusao();
+                              this.loadlistServicos();
+                              this.valor_total_servicos();
+                              this.valor_total_viagens();
+                              this.envia_mensagemClick();  
+                              this.atualiza_evento();
+                              this.refreshPage();  
+
+                            // this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);  
+
+                            } 
+                            })                        
+                            .catch(error=>{
+                              alert("Error server 2 "+error)
+                            })                    
+                    }              
+                  }).catch(error=>{
+                  alert("Erro sevico log  "+ error)
+                })               
              
-
+              } 
        //  console.log(' logperfil '+localStorage.getItem('logperfil'));   
       
    } else { //Alteração
@@ -2168,13 +2383,13 @@ debugger
         valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
         //motivo_cancelamento: this.state.campNome,
         logid: localStorage.getItem('logid'),
-        perfilId: 7,               
+        perfilId: localStorage.getItem('logperfil'),               
         }      
 
         debugger;
         //console.log('valor_total_filhos_2 '+ valor_total_filhos_2);
        //console.log('tempo_value '+ this.state.camptempovalue);       
-        if (this.state.data_servico_pai_old !== this.state.data_servico) {
+        if (this.state.data_servico_pai_old !== this.state.campdata_servico) {
              this.atualiza_filhos_data_servico();
         }
        //alterando a data_servico do pai, criar funcao atualizando data_servico dos filhos 
@@ -2509,6 +2724,17 @@ delay() {
   });
 }
 
+  fechar_botao() {
+
+    return (
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.sendFecha()}>
+              <div className="d-flex justify-content-center">
+              <label> Fechar </label>
+              </div>     
+        </Box>           
+    );   
+
+  }
   verifica_botao(inicio) {
     const { validate } = this.state 
 
@@ -2520,7 +2746,7 @@ delay() {
             || this.state.validacao_qtdpassageiro == true
             || this.state.validacao_Telefone1 == true
        */
-        if (this.state.validacao_tipo == true && this.state.validacao_qtdpassageiro == true && this.state.validacao_data_servico == true 
+        if (this.state.validacao_qtdpassageiro == true && this.state.validacao_data_servico == true 
           && this.state.validacao_nome == true && this.state.validacao_telefone1 == true && 
           this.state.validacao_hora_inicial == true && this.state.validacao_localembarque == true && 
           this.state.validacao_localdesembarque == true && this.state.campcartaoid !== '' && this.state.mensagem_servico === "") { 
@@ -2655,13 +2881,17 @@ delay() {
     } 
 
   }  
-   
+
+  
   obtendo_distancia_rota_nova = () => { 
     debugger 
 
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '') {    
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && this.state.obter_rota_nova == false) {    
       var origem = this.state.camplocalembarque;
       var destino = this.state.camplocaldesembarque;   
+      this.setState({                
+       obter_rota_nova: true,
+      });
    
       function CalculaDistancia(origem, destino) {
         return new Promise(function(resolve, reject) {
@@ -2686,10 +2916,11 @@ delay() {
         .then(function(response) {
          
           debugger
-          campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
-          camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
-          camptempo_global = response.rows[0].elements[0].duration.text 
-      
+          if (response.rows[0].elements[0].status !== "NOT_FOUND" && response.rows[0].elements[0].status !== "ZERO_RESULTS") {
+              campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
+              camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
+              camptempo_global = response.rows[0].elements[0].duration.text 
+          }
          }, function(status) {
            console.log('Não foi possível realizar a operação! Status: ' + status);
       });
@@ -2859,7 +3090,55 @@ delay() {
   }
   
   */
- selecione_tipo_servico(index){
+ seleciona_data() {
+  if (this.state.visualizar == 'exclusao' )  { 
+    return ( 
+      <FormControl variant="outlined" className="input_modal_direita">
+      <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data Exclusão</InputLabel>
+      <OutlinedInput   
+              autoComplete="off"
+              type="text" 
+              readOnly="true"        
+              className="input_modal_direita"                           
+              id="nome_incluir"                   
+              variant="outlined"
+              value={this.state.campdata_servico}                                     
+           
+            labelWidth={150}
+          />                                    
+    </FormControl> 
+         
+    );
+   } else { 
+      return (
+        <FormControl variant="outlined" className="input_modal_direita">
+        <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data Finalização</InputLabel>
+        <OutlinedInput   
+                autoComplete="off"
+                type="text" 
+                readOnly="true"        
+                className="input_modal_direita"                           
+                id="nome_incluir"                   
+                variant="outlined"
+                value={this.state.campdata_servico}                                     
+             
+              labelWidth={150}
+            />                                    
+      </FormControl> 
+         );
+   }
+ }
+ visualizacao_servico_tipo(){
+
+   if (this.state.translado == true )  { 
+    return ( <div style={{fontSize: 15, textAlign: 'center', backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> );
+   } else { 
+      return ( <div style={{fontSize: 15,  textAlign: 'center', backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Diária</div> );
+   }
+
+ }
+
+ selecione_tipo_servico(index) {
     
   this.setState({ 
       tabIndex: this.state.tabIndex
@@ -2904,6 +3183,28 @@ delay() {
         );        
     }
   }
+
+  handleTipoTranspChange = (event, newValue) => {
+    this.setState({     
+      camptipoId: event.target.value, 
+      erro_tipo: false,  
+      validacao_tipo: true,
+    });  
+
+    campseltipoveiculo = event.target.value;
+  //  setAge(event.target.value);
+
+    debugger;
+    //console.log('tipoChange ');    
+    
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
+      //Promise.all([
+      this.calcular_trajeto();
+    //  ])    
+    } 
+    
+  };
+   
   opcao_tabChange = (event, newValue) => {   
     this.setState({        
         value: newValue 
@@ -2914,29 +3215,8 @@ delay() {
 
     if (this.state.mensagem_servico !== "") {
       return (
-        <div className="p-2 font_mensagem_erro"> 
-          <Collapse in={this.state.mensagem_error}>
-          <Alert
-            severity="error" 
-            action={
-              <IconButton
-                aria-label="close"
-                color="primary"
-                size="small"
-                onClick={() => {
-                  this.setState({        
-                    mensagem_error: false
-                  });
-                }}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            }
-          >
-          {this.state.mensagem_servico}
-          </Alert>
-        </Collapse>        
-      </div>        
+        <Alert severity="error">{this.state.mensagem_servico}</Alert>
+             
       );   
     }
   }
@@ -3075,13 +3355,13 @@ delay() {
                       </div>
                       <div className="p-2"> 
                       <div className="servico_titulo">Custos</div>       
-                       <div className="servico_descricao_evento">R$ {this.state.valortotalviagens}</div>  
+                       <div className="servico_descricao_evento">R$ {valorMask(this.state.valortotalviagens)}</div>  
                       </div>
                   </div>  
               </div>         
           </div> 
         </div>
-        
+     
       <div className="margem_left">   
       <div className="container-fluid">   
       <TabContext value={this.state.value} className="tabs_padrao">
@@ -3295,7 +3575,11 @@ delay() {
                               pageSizeOptions: [0],                     
                             }}
                             actions={[
-                             
+                              {             
+                                icon: 'edit',
+                                tooltip: 'Editar',
+                              //  onClick: (evt, data) => this.handleOpenModal(data)
+                              }
                               /*,
                               {
                                 icon: 'add',                                                             
@@ -3314,8 +3598,9 @@ delay() {
                             title=""
                             columns={[
                               { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
-                              { title: 'Dt Excluídos', field: 'createdAt', width: '110px', minWidth: '110px', maxWidth: '110px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                              { title: 'Dt Exclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                               { title: 'Responsável exclusão', field: 'nome_responsavel', width: '153px', minWidth: '153px', maxWidth: '153px', render: rowData => rowData.nome_responsavel !== null ? rowData.nome_responsavel.substr(0,22): ''  },
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                             cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : ''}, 
                 
@@ -3323,13 +3608,13 @@ delay() {
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '250px', minWidth: '250px', maxWidth: '250px' },
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '170px', minWidth: '170px', maxWidth: '170px', render: rowData => rowData.nome_passageiro.substr(0,22) },
                               { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
                               { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
-                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final.substring(0,5) },                                                                
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final == '00:00:00' ? '' : rowData.hora_final.substring(0,5) },                                                                  
                               { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
-                              { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
-                              { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
+                              { title: 'Distância', field: 'km_translado', width: '70px', minWidth: '70px', maxWidth: '70px', align: 'right' },                                                                                  
+                              { title: 'Tempo', field: 'tempo_translado', width: '70px', minWidth: '70px', maxWidth: '70px', align: 'right' },
                               { title: 'Valor Total', field: 'valor_estimado', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
                              
                               { title: '', field: 'motorista_bilingue', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
@@ -3338,7 +3623,7 @@ delay() {
                               { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
                            
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                 
+                              { title: '', field: '',  lookup: { 1: 'sadas', 2: 'asdas' },                                 
                              },                 
                             ]}
                             data={this.state.listaservicosexcluidos}   
@@ -3367,9 +3652,12 @@ delay() {
                                 lastTooltip: 'Última página'
                               },
                               header: {
-                                actions: '',
+                                actions: 'Ação',
                               },
-                            }}        
+                            }}   
+
+                            parentChildData={(row, rows) => rows.find(a => a.id === row.servico_pai_id) }   
+                            
                             options={{                             
                               rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
                               searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
@@ -3390,14 +3678,15 @@ delay() {
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 17,
+                              actionsColumnIndex: 16,
                              // pageSize: 9,
-                              pageSizeOptions: [0],                     
+                             // pageSizeOptions: [0],                     
                             }}           
                             actions={[
                               {             
-                                icon: '',
-                                tooltip: '',                              
+                                icon: 'edit',
+                                tooltip: 'Editar',
+                              onClick: (evt, data) => this.handleOpenModalVisualizacao(data)
                               }
                             ]}                      
                             
@@ -3572,7 +3861,7 @@ delay() {
               </div>     
             </Box>      
             <Box 
-               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId)}>
+               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.sendDelete(this.state.campDeletarId, this.state.eventoId)}>
               <div className="d-flex justify-content-center">
               <label> Excluir </label>
               </div>     
@@ -3670,6 +3959,8 @@ delay() {
             </div>
          </ReactModal>   
 
+         
+
          <ReactModal 
         isOpen={this.state.showMostraMotorista}
         style={ConfirmacaodelStyles}
@@ -3734,12 +4025,11 @@ delay() {
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
                           value={this.state.camptipoId}
-                          onFocus={this.verificaTipo_veiculo}
-                          onClick={this.verificaTipo_veiculo}
-                          onChange={ (e) => {
-                            this.tipoChange(e)
-                          }}   
-                          
+                           
+                        //  onSelect={this.verificaTipo_veiculo}
+                       //   onFocus={this.verificaTipo_veiculo}
+                        //  onClick={this.verificaTipo_veiculo}
+                          onChange={ this.handleTipoTranspChange }                             
                           endAdornment={
                             <InputAdornment position="end">
                                  {this.state.validacao_tipo? <CheckIcon />: ''}
@@ -3879,7 +4169,7 @@ delay() {
                                   <FormHelperText error={this.state.erro_data_servico}>
                                         {this.state.mensagem_data_servico}
                                   </FormHelperText>                       
-                        </FormControl>                                
+                        </FormControl>                                 
                               </div>    
                               <div>
                               <FormControl className="input_modal_esquerda" variant="outlined">
@@ -4049,13 +4339,13 @@ delay() {
               <div className="p-2">    
                         <div className="d-flex justify-content-start">
                               <div>
-                          <FormControl variant="outlined" className="input_modal_direita">
+                              <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
                           <OutlinedInput   
                                   autoComplete="off"
                                   type="text"                       
                                   error={this.state.erro_data_servico}
-                                  helperText={this.state.mensagem_data_inicio}
+                                  helperText={this.state.mensagem_data_servico}
                                   className="input_modal_direita"                           
                                   id="nome_incluir"                   
                                   variant="outlined"
@@ -4073,7 +4363,10 @@ delay() {
                                   </InputAdornment>
                                 }
                                 labelWidth={150}
-                              />                                                
+                              />  
+                                  <FormHelperText error={this.state.erro_data_servico}>
+                                        {this.state.mensagem_data_servico}
+                                  </FormHelperText>                       
                         </FormControl>               
                               </div>    
                               <div>
@@ -4502,6 +4795,105 @@ delay() {
         </div>   
        </ReactModal>  
 
+       <ReactModal 
+        isOpen={this.state.showModalVisualizacaoServico}
+        style={customFixoStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div className="editar_titulo_inclusao"> 
+              <div className="container-fluid">
+                  <div className="row">
+                    <div className="col-9 altura_titulo">
+                         Visualizar Serviços          
+                    </div>
+                    <div className="col-3">
+                      <IconButton aria-label="editar" onClick={()=>this.handleCloseModalVisualizacao()} >
+                        <CloseOutlinedIcon />
+                      </IconButton></div>        
+                      {this.teste_mensagem()}  
+                    </div>                               
+                  </div>
+                </div>            
+          <div>
+          <div className="row modal-body">    
+          
+              <div className="p-2">  
+               
+               { 
+                 this.visualizacao_servico_tipo()              
+               } 
+              
+               <br/>
+                <div className="p-2">  
+                <FormControl variant="outlined" disabled={this.state.ordem_servico_disabled}>
+                        <InputLabel className="label_text" htmlFor="filled-adornment-password">Número de ordem</InputLabel>
+                        <OutlinedInput
+                            autoComplete="off"         
+                            readOnly="true"                       
+                            error={this.state.erro_ordem_servico}
+                            helperText={this.state.mensagem_ordem_servico}
+                            className="data_operador"                    
+                            id="outlined-basic"                      
+                            variant="outlined"
+                            value={this.state.campordem_servico} 
+                        
+                          labelWidth={140}
+                        />
+                      <FormHelperText error={this.state.erro_ordem_servico}>
+                            {this.state.mensagem_ordem_servico}
+                      </FormHelperText>
+                      </FormControl>                                                                   
+               </div>  
+               <div className="p-2">  
+               {
+                 this.seleciona_data()
+               }
+
+               </div>   
+               <div className="p-2">  
+               <FormControl variant="outlined" className="input_modal_direita">
+                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data Inclusão</InputLabel>
+                  <OutlinedInput   
+                    autoComplete="off"
+                    type="text" 
+                    readOnly="true"        
+                    className="input_modal_direita"                           
+                    id="nome_incluir"                   
+                    variant="outlined"
+                    value={this.state.campdata_servico}                                     
+                
+                  labelWidth={150}
+                />                                    
+              </FormControl> 
+               </div>
+               <div className="p-2">  
+               <FormControl variant="outlined" disabled={this.state.ordem_servico_disabled}>
+                        <InputLabel className="label_text" htmlFor="filled-adornment-password">Responsável Exclusão</InputLabel>
+                        <OutlinedInput
+                            autoComplete="off"         
+                            readOnly="true"                       
+                            error={this.state.erro_ordem_servico}
+                            helperText={this.state.mensagem_ordem_servico}
+                            className="data_operador"                    
+                            id="outlined-basic"                      
+                            variant="outlined"
+                            value={this.state.campNomeresponsavel} 
+                           
+                        
+                          labelWidth={140}
+                        />
+                     
+                      </FormControl>    
+               </div>
+          
+              </div>
+
+              
+              </div>
+              {this.fechar_botao()}        
+        </div>   
+       </ReactModal> 
+
+
 
        <ReactModal 
         isOpen={this.state.showModalInclusao}
@@ -4546,12 +4938,12 @@ delay() {
                           helperText={this.state.mensagem_tipoId}
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
-                          value={this.state.camptipoId}
-                          onFocus={this.verificaTipo_veiculo}
-                          //onClick={this.verificaTipo_veiculo}
-                          onChange={ (e) => {
-                            this.tipoChange(e)
-                          }}   
+                          value={this.state.camptipoId}                        
+                         // onSelect={this.verificaTipo_veiculo}
+                         // onFocus={this.verificaTipo_veiculo}
+                         // onMouseUp={this.verificaTipo_veiculo}
+                         // onClick={this.verificaTipo_veiculo}
+                          onChange={ this.handleTipoTranspChange }                            
                           
                           endAdornment={
                             <InputAdornment position="end">
@@ -4861,13 +5253,13 @@ delay() {
               <div className="p-2">    
                         <div className="d-flex justify-content-start">
                               <div>
-                          <FormControl variant="outlined" className="input_modal_direita">
+                              <FormControl variant="outlined" className="input_modal_direita">
                           <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
                           <OutlinedInput   
                                   autoComplete="off"
                                   type="text"                       
                                   error={this.state.erro_data_servico}
-                                  helperText={this.state.mensagem_data_inicio}
+                                  helperText={this.state.mensagem_data_servico}
                                   className="input_modal_direita"                           
                                   id="nome_incluir"                   
                                   variant="outlined"
@@ -4885,8 +5277,11 @@ delay() {
                                   </InputAdornment>
                                 }
                                 labelWidth={150}
-                              />                                                
-                        </FormControl>               
+                              />  
+                                  <FormHelperText error={this.state.erro_data_servico}>
+                                        {this.state.mensagem_data_servico}
+                                  </FormHelperText>                       
+                        </FormControl>                
                               </div>    
                               <div>
                               <FormControl className="input_modal_esquerda" variant="outlined">
@@ -5665,7 +6060,7 @@ delay() {
     //if (this.state.controle == 0) {  
 
     if (this.state.camplocalembarque !== "") {     
-        if (this.state.embarque_latitude !== null && this.state.embarque_longitude !== null) {
+        if (this.state.embarque_latitude !== '' && this.state.embarque_longitude !== '') {
   
           return (
      
@@ -5923,6 +6318,35 @@ delay() {
     })
   }   
 
+
+  loadDiarias() {
+    api.get(`/diaria/list`)
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listDiarias:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+  }   
+
+  loadDiariaespecial() {
+    api.get(`/diariaEspecial/list`)
+    .then(res=>{
+      if (res.data.success == true) {
+        const data = res.data.data
+
+        this.setState({listDiariaEspeciais:data})
+      }     
+    })
+    .catch(error=>{
+      alert("Error server "+error)
+    })
+  }  
+
   calculo_bilingue(e) {
     /*  Y = X * % bilíngue   */
   //  debugger;
@@ -6077,10 +6501,122 @@ debugger;
     let entrou = false;
     debugger;
  /* senao encontrar o registro na tarifa especial ele procura na tarifa  */
- if (this.state.possui_tarifa_especial == false && this.state.mensagem_error == false) { 
+ if (possui_tarifa_especial_nova == false) { 
+    let contagem = 0
+  
+
+    this.state.listTarifas.map((data)=>{
+  // console.log(JSON.stringify(data, null, "    "));         
+    let valor_total_alterado = 0;
+    let valor_total = 0; 
+    let valor_distancia_1 = 0; 
+    let valor_tempo_1 = 0;
+    let valor_bandeirada = 0;
+    let distanciapai = 0;        
+    contagem = contagem + 1;
+    debugger;
+    let camptempovalue = camptempovalue_global;
+    if (camptempovalue === 0) {
+      camptempovalue = this.state.camptempovalue         
+    }
+
+    // if (this.state.possui_tarifa == false) {
+    //  debugger;
+          if (campseltipoveiculo == data.tipoTransporte &&                
+            campdistancia_inicio >= Number(data.faixa_inicial) &&  
+            campdistancia_inicio <= Number(data.faixa_final)) {
+
+       //       debugger; 
+              /*  X = (QTD Km * valor Km) + (tempo do Serviço * valor tempo) + valor Bandeirada  */      
+       
+              if (this.state.tabIndex == 1) {
+                this.incrementState();
+
+                this.calcula_hora();
+
+                debugger;
+                camptempovalue = camptempovalue_global;                 
+
+                distanciapai = parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio);
+                console.log(' distanciapai - '+distanciapai);
+
+                valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km).toFixed(1)
+                console.log(' valor_distancia_1 - '+valor_distancia_1);
+
+                valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo).toFixed(1); 
+                console.log(' valor_tempo_1 - '+valor_tempo_1);
+
+                valor_bandeirada = parseInt(this.state.campqtddiarias) * parseFloat(data.bandeira);
+                console.log(' valor_bandeirada - '+valor_bandeirada);
+
+
+              } else {
+              
+                distanciapai = parseInt(campdistancia_inicio);
+
+                valor_distancia_1 = (campdistancia_inicio * data.valor_km).toFixed(1);
+              
+                valor_tempo_1 = (camptempovalue * data.valor_tempo).toFixed(1); 
+
+                valor_bandeirada = parseFloat(data.bandeira);
+              }    
+
+              valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
+              entrou = true;   
+
+              possui_tarifa_nova = true;
+            
+              this.setState((state) => {
+                state.possui_tarifa = true
+                state.campvalor = valorMask(valor_total.toFixed(2))
+                state.campvalor_estimado = valorMask(valor_total.toFixed(2))
+                state.valor_bilingue = data.bilingue
+                state.valor_receptivo = data.receptivo
+                state.campdistancia = distanciapai                     
+                state.camptempovalue = camptempovalue // this.state.camptempopaivalue
+                state.processo = 1
+                state.mensagem_error = false
+                state.mensagem_servico = ''
+              //  state.camptempo= this.formatar_valor(valor_tempo_1)
+              })  
+              //console.log(' formula - '+JSON.stringify((this.state.campdistancia * data.valor_km) + (this.state.camptempovalue * data.valor_tempo) + data.bandeira, null, "    ")); 
+          } else if (contagem == contagem_tarifa && possui_tarifa_nova == false && entrou == false)  {
+            this.setState((state) => {                       
+              state.campvalor = '0,00';      
+              state.mensagem_error = true
+              state.mensagem_servico = 'Tarifas para esse percurso não definida. Contatar Administrador !'   
+              state.validacao_cartao = false
+              state.inicio = 1
+              state.processo = 2
+            // campcartaoid: '',            
+            // valor_bilingue: 0,
+            // valor_receptivo: 0,                                                                      
+            });     
+            this.teste_mensagem();                            
+      }
+  //    }    
+
+
+    })   
+
+}
+  }
+
+
+  incrementState() {
+    this.setState((state) => {             
+      return {campqtddiarias: state.campqtddiarias}
+    });
+  }
+
+  verifica_diaria(contagem_tarifa, campdistancia_inicio){
+    let entrou = false;
+    debugger;
+ /* senao encontrar o registro na tarifa especial ele procura na tarifa  */
+ if (possui_tarifa_especial_nova == false) { 
     let contagem = 0
    
-    this.state.listTarifas.map((data)=>{
+    this.state.listDiarias.map((data)=>{
   // console.log(JSON.stringify(data, null, "    "));         
     let valor_total_alterado = 0;
     let valor_total = 0; 
@@ -6138,6 +6674,7 @@ debugger;
               valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
               entrou = true;   
             
+              possui_tarifa_nova = true;
               this.setState((state) => {
                 state.possui_tarifa = true
                 state.campvalor = valorMask(valor_total.toFixed(2))
@@ -6152,9 +6689,9 @@ debugger;
               //  state.camptempo= this.formatar_valor(valor_tempo_1)
               })  
               //console.log(' formula - '+JSON.stringify((this.state.campdistancia * data.valor_km) + (this.state.camptempovalue * data.valor_tempo) + data.bandeira, null, "    ")); 
-          } else if (contagem == contagem_tarifa && this.state.possui_tarifa == false && entrou == false)  {
+          } else if (contagem == contagem_tarifa && possui_tarifa_nova == false && entrou == false)  {
             this.setState((state) => {                       
-              //campvalor: '0,00',        
+              state.campvalor = '0,00';      
               state.mensagem_error = true
               state.mensagem_servico = 'Tarifas para esse percurso não definida. Contatar Administrador !'   
               state.validacao_cartao = false
@@ -6172,11 +6709,6 @@ debugger;
     })   
 
 }
-  }
-  incrementState() {
-    this.setState((state) => {             
-      return {campqtddiarias: state.campqtddiarias}
-    });
   }
   
   verifica_tarifa_especial(contagem_tarifaEspecial, campdistancia_inicio) {
@@ -6251,6 +6783,9 @@ debugger;
 
                      valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
           
+                     
+                      possui_tarifa_especial_nova = true;
+
                      this.setState((state) => {        
                       state.possui_tarifa_especial = true
                       state.processo = 1
@@ -6264,9 +6799,10 @@ debugger;
                       state.mensagem_error = false
                       state.mensagem_servico = ''
                      })  
-                   } else if (this.state.possui_tarifa_especial == false)  {
+                   } else if (possui_tarifa_especial_nova == false)  {
                         this.setState((state) => {                              
-                           //campvalor: '0,00',       
+                           //campvalor: '0,00',    
+                           state.campvalor = '0,00';      
                            state.mensagem_error = true
                            state.mensagem_servico = 'Tarifas Especial para esse percurso não definida. Contatar Administrador !'   
                            state.validacao_cartao = false
@@ -6289,62 +6825,199 @@ debugger;
      })   
   }
 
-  calcular_trajeto = () => {   
+  verifica_diaria_especial(contagem_tarifaEspecial, campdistancia_inicio) {
+    let contagemespecial = 0;
 
-  debugger;
+    this.state.listDiariaEspeciais.map((data)=>{   
+      
+      const teste_data = moment(this.state.campdata_servico, "DD/MM/YYYY");
+      const formatar_data = teste_data.format("YYYY-MM-DD");    
+      const data_servico_date = new Date(formatar_data);
+      const data_inicial_date = new Date(data.data_inicial);
+      const data_final_date = new Date(data.data_final);       
+     
+      let valor_total = 0; 
+      let valor_distancia_1 = 0; 
+      let valor_tempo_1 = 0;
+      let valor_bandeirada = 0;       
+      let distanciapai = 0;    
+      let camptempovalue = camptempovalue_global;
 
-  console.log('entrou no calcular_trajeto')
+      contagemespecial = contagemespecial + 1;     
+      if (camptempovalue === 0) {
+        camptempovalue = camptempo_global         
+      }
 
-   // this.calcular_distancia();
+           if (campseltipoveiculo == data.tipoTransporte &&  
+                data_servico_date.getTime() >= data_inicial_date.getTime() && 
+                data_servico_date.getTime() <= data_final_date.getTime() && 
+                this.state.camphora_inicial >= data.hora_inicial.substring(0,5) && 
+                this.state.camphora_inicial <= data.hora_final.substring(0,5)) {  
+              
+                 if (campdistancia_inicio >= Number(data.faixa_inicial)   
+                  && campdistancia_inicio <= Number(data.faixa_final)) {    
+   
+                     /*  X = (QTD Km * valor Km) + (tempo do Serviço * valor tempo) + valor Bandeirada  */
+                     /* se ele achar o registro ele procura a distancia pelo km inicial e final */
+                     /* se ele nao encontrar avisar ao usuario que  */        
+                  
+                  /*   this.setState((state) => {         
+                          campqtddiarias = state.campqtddiarias,
+                          campdistancia_inicio = state.campdistancia_inicio,
+                          camptempovalue = state.camptempovalue                         
+                       });
+                   */
+                       this.incrementState();
+
+                     if (this.state.tabIndex == 1) {
+
+                        this.calcula_hora();                        
+
+                        distanciapai = parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio);
+                          
+                        valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km).toFixed(1)
+
+                        valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo).toFixed(1); 
+
+                        valor_bandeirada = parseInt(this.state.campqtddiarias) * parseFloat(data.bandeira);
+
+
+                        //valor_total_filhos = parseInt(campdistancia_inicio) + (campdistancia_inicio * data.valor_km) + parseFloat(data.bandeira);
+
+                     } else {
+                       
+                       distanciapai = parseInt(campdistancia_inicio);
+
+                       valor_distancia_1 = (campdistancia_inicio * data.valor_km).toFixed(1);
+                     
+                       valor_tempo_1 = (camptempovalue * data.valor_tempo).toFixed(1); 
+
+                       valor_bandeirada = parseFloat(data.bandeira);
+                     }    
+
+                     valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
+          
+                     possui_tarifa_especial_nova = true;
+                     this.setState((state) => {        
+                      state.possui_tarifa_especial = true
+                      state.processo = 1
+                      state.campvalor = valorMask(valor_total.toFixed(2))
+                      state.campvalor_estimado = valorMask(valor_total.toFixed(2))                          
+                      state.valor_bilingue = data.bilingue
+                      state.valor_receptivo = data.receptivo
+                      state.campdistancia = distanciapai 
+                      state.camptempovalue = this.formatar_valor(camptempovalue) //this.state.camptempopaivalue
+                   //   state.camptempo= this.formatar_valor(valor_tempo_1)
+                      state.mensagem_error = false
+                      state.mensagem_servico = ''
+                     })  
+                   } else if (possui_tarifa_especial_nova == false)  {
+                        this.setState((state) => {                              
+                           //campvalor: '0,00',    
+                           state.campvalor = '0,00';      
+                           state.mensagem_error = true
+                           state.mensagem_servico = 'Tarifas Especial para esse percurso não definida. Contatar Administrador !'   
+                           state.validacao_cartao = false
+                           state.inicio = 1
+                           state.processo = 1
+                          // campcartaoid: '',            
+                          // valor_bilingue: 0,
+                          // valor_receptivo: 0,                                                                      
+                         });     
+                         this.teste_mensagem();                            
+                   }
+             
+           //console.log(' formula - '+JSON.stringify((this.state.campdistancia * data.valor_km) + (this.state.camptempovalue * data.valor_tempo) + data.bandeira, null, "    ")); 
+            } else {
+              this.setState((state) => {    
+                state.processo = 1
+                state.possui_tarifa_especial = false                                                                         
+              });  
+            }            
+     })   
+  }
+
+  calcular_trajeto_diaria = () => {  
+    let contagem_diaria=0;
+    let contagem_diariaEspecial=0;
+    let campdistancia_inicio = 0;   
+    campseltipoveiculo = this.state.camptipoId;
+
+    possui_tarifa_especial_nova = false;
+    possui_tarifa_nova = false;
+
+    campdistancia_inicio = 50;     
+    this.setState({      
+      campdistancia: parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio),
+    })
+
+    this.setState({                           
+      possui_tarifa:false,
+      possui_tarifa_especial: false,    
+      mensagem_error: false,      
+      hora_formatada: '',
+      camptempovalue: camptempovalue_global,
+      camptempo: this.formatar_valor(camptempo_global),          
+    });
+
+    contagem_diaria = this.state.listDiarias.length;
+    contagem_diariaEspecial = this.state.listDiariaEspeciais.length; 
+
+    this.verifica_diaria_especial(contagem_diariaEspecial, campdistancia_inicio)
+
+    this.verifica_diaria(contagem_diaria, campdistancia_inicio)
+
+  }
+
+  calcular_trajeto_translado = () => {  
 
     let contagem_tarifa=0;
     let contagem_tarifaEspecial=0;
     let campdistancia_inicio = 0;   
-  //  let contagemespecial = 0;
-   // let contagem = 0;
+
+    campdistancia_inicio = campdistancia_global;
+    possui_tarifa_nova = false;
+    possui_tarifa_especial_nova = false;
+   
+    this.setState({       
+      campdistancia: parseInt(campdistancia_inicio),                    
+      possui_tarifa:false,
+      possui_tarifa_especial: false,    
+      mensagem_error: false, 
+      hora_formatada: '',
+      camptempovalue: camptempovalue_global,
+      camptempo: this.formatar_valor(camptempo_global),          
+    });
+
+    contagem_tarifa = this.state.listTarifas.length;
+    contagem_tarifaEspecial = this.state.listTarifasEspeciais.length;
+
+    this.verifica_tarifa_especial(contagem_tarifaEspecial, campdistancia_inicio)
+
+    this.verifica_tarifa(contagem_tarifa, campdistancia_inicio)
+
+  }
+
+  calcular_trajeto = () => {   
+
+  console.log('entrou no calcular_trajeto')
+
+  this.setState({
+    mensagem_servico: '',
+    mensagem_error: false,    
+  });  
+  
 
     if (this.state.tabIndex == 1) {
-     
-      campdistancia_inicio = 50;     
-      this.setState({      
-        campdistancia: parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio),
-      })
+
+      this.calcular_trajeto_diaria()      
      
     } else {          
      
-      campdistancia_inicio = campdistancia_global;
-      this.setState({      
-        campdistancia: parseInt(campdistancia_inicio),
-      })
-    }
-
-     this.setState({                           
-         possui_tarifa:false,
-         possui_tarifa_especial: false,    
-         mensagem_error: false,      
-         hora_formatada: '',
-         camptempovalue: camptempovalue_global,
-         camptempo: this.formatar_valor(camptempo_global),          
-      });
-
-     contagem_tarifa = this.state.listTarifasEspeciais.length;
-     contagem_tarifaEspecial = this.state.listTarifas.length;
-
-   // if (this.state.processo == 1) {
-    Promise.all([
-      this.verifica_tarifa_especial(contagem_tarifaEspecial, campdistancia_inicio)
-    ])  
-   // } 
-      
-   // if (this.state.processo == 2) {   
-    Promise.all([
-      this.verifica_tarifa(contagem_tarifa, campdistancia_inicio)
-    ])    
-     
-   // }        
+      this.calcular_trajeto_translado()
+    }        
    
   }
-
   
   /*
   distanceCallback = (response) => {
@@ -6411,7 +7084,7 @@ debugger;
 
  
   if (this.state.camplocaldesembarque !== "") {      
-      if (this.state.desembarque_latitude !== null && this.state.desembarque_longitude !== null) {
+      if (this.state.desembarque_latitude !== '' && this.state.desembarque_longitude !== '') {
 
       //this.calculando_distancia_api();     
       
@@ -6518,7 +7191,7 @@ debugger;
   handleOpenModalAlteracaoEvento() {     
     this.setState({ 
       showModalAlteracaoEvento: true,      
-      mensagem_servico: '',      
+      mensagem_servico: '',           
       incluir: false,
       inicio: 1,
     });  
@@ -6545,6 +7218,7 @@ debugger;
       possui_tarifa_especial: false,
       quantidade_diarias: true,
       mensagem_aguarde: '',
+      mensagem_servico: '',   
       mensagem_qtd_diarias: false,
       erro_qtd_diarias: false,
       qtddiarias_old: 0,
@@ -6576,7 +7250,7 @@ debugger;
    this.loadTipoTransporte();     
    this.loadCartaoCliente();
    this.carrega_servico(data);
-   this.loadTodosMotoristasAtivos();
+   this.loadMotoristasPreferencial();
   // this.busca_motorista_alterar(data.nome_motorista);
    this.maior_data_filho_teste(data.id);
   
@@ -6641,6 +7315,7 @@ debugger;
       showModalEmbarque: true,      
       camplocalembarque: this.state.camplocalembarque,      
       controle: 0,
+      obter_rota_nova: false,
     //  mudar_estilo: customStyles_2,
     });      
     
@@ -6665,7 +7340,8 @@ debugger;
     this.setState({ 
       showModalDesembarque: true,      
       camplocaldesembarque: this.state.camplocaldesembarque,      
-      controle: 0,      
+      controle: 0,   
+      obter_rota_nova: false,   
     //  mudar_estilo: customStyles_2,
     });        
    
@@ -6788,6 +7464,7 @@ debugger;
       mensagem_companhia_aerea: '',
       mensagem_numero_voo: '',
       mensagem_cartao: '',
+      mensagem_servico: '',   
       valor_bilingue: '',
       valor_receptivo: '',
       listTarifas:[],
@@ -6824,7 +7501,7 @@ debugger;
   }
 
 
-  handleOpenModalInclusao () { 
+  handleOpenModalInclusao() { 
     this.setState({ 
       showModalInclusao: true,  
       campeventoId: localStorage.getItem('logeventoservico'),
@@ -6833,6 +7510,7 @@ debugger;
       possui_tarifa_especial: false,
       campMotoristaId:'',
       mensagem_aguarde: '',
+      mensagem_servico: '',   
       possui_tarifa: false,
       nome_motorista_visualizacao: true,
       telefone_motorista_visualizacao: true,
@@ -6846,12 +7524,12 @@ debugger;
     this.loadTarifaespecial();
     this.loadTarifa();
     this.loadTipoTransporte();
-    this.loadTodosMotoristasAtivos();
+    this.loadMotoristasPreferencial();
   //  this.limpar_campos();     
     
   }
   
-  handleCloseModalInclusao () {
+  handleCloseModalInclusao() {
     this.setState({ 
       showModalInclusao: false,
       mensagem_aguarde:'',
@@ -6860,7 +7538,37 @@ debugger;
     
   }
 
-  handleOpenModalInclusaoCartao () { 
+  handleOpenModalVisualizacao(e) { 
+    this.setState({ 
+      showModalVisualizacaoServico: true,      
+      visualizar: 'exclusao',
+      campNomeresponsavel: '',
+    });
+    
+    this.carrega_servico_visualizacao(e);
+    if (e.tipoEventoId == 1) {
+      this.setState({ 
+        diaria: true,
+        translado: false, 
+      });
+    }
+    if (e.tipoEventoId == 2) {
+      this.setState({ 
+        translado: true,
+        diaria: false, 
+      });
+    
+  }
+}
+  handleCloseModalVisualizacao() {
+    this.setState({ 
+      showModalVisualizacaoServico: false,
+      mensagem_aguarde:'',
+    });     
+    
+  }
+
+  handleOpenModalInclusaoCartao() { 
     this.setState({ 
       showModalInclusaoCartao: true,      
       incluir: true,      
@@ -6983,7 +7691,7 @@ debugger;
    
    }
 
-   atualiza_pai_delecao(paiId) {
+  atualiza_pai_delecao(paiId) {
 
      debugger;
     let tempo_pai = '';
@@ -7017,12 +7725,195 @@ debugger;
        alert("Error servicos/getEventoPai/ "+error)
      })   
   }
-  
 
-  sendDelete(userId){
+  deletar_servicos = async (userId) => {
+
+  
+    if (this.state.camptipoevento == 1) { // Diaria
+      if (this.state.verificaPai == 0) { // verifica se e pai deleta os filhos     
+       
+       debugger;
+     // const data_servico_deletar = ;
+       
+       api.delete(`/servicos/deletePaieFilhos/${this.state.campDeletarId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}/${this.state.eventoid}/${this.state.nome_passageiro}`)
+       .then(resppai =>{
+         if (resppai.data.success) {
+           this.setState({  
+             //open: true,
+             mensagem_usuario: 'Serviço Pai e filhos Excluido com sucesso!'
+            });
+    
+           this.valor_total_servicos();
+           this.valor_total_viagens();
+           this.loadlistServicos();
+           this.loadlistServicosExcluidos();                
+           this.atualiza_evento();
+
+           this.handleCloseModalDelete(); 
+           this.envia_mensagemClick();            
+         
+         }    
+       })
+       .catch ( error => {
+         alert("Error servicos/deletePaieFilhos/ "+error)
+       })
+
+      } else {
+      
+          // recalcular o valor do pai com o filho excluido
+         // this.state.valor_estimado_filho
+         // this.state.distancia_filho
+         // this.state.quantidade_diarias
+         // this.state.tempo_filho
+
+           this.atualiza_pai_delecao(this.state.verificaPai);
+
+           api.delete(`/servicos/delete/${userId}`)
+           .then(resppai =>{
+             if (resppai.data.success) {
+               this.setState({  
+                 //open: true,
+                 mensagem_usuario: 'Serviço Excluido com sucesso!'
+               });
+                       
+               this.valor_total_servicos();
+               this.valor_total_viagens();
+               this.loadlistServicos();
+               this.loadlistServicosExcluidos();                
+               this.atualiza_evento();
+
+               this.handleCloseModalDelete(); 
+               this.envia_mensagemClick();            
+                 
+             }    
+           })
+           .catch ( error => {
+             alert("Error servicos/deletePaieFilhos/"+error)
+           })
+          
+         }   
+   } else {
+  
+   api.delete(`/servicos/delete/${userId}`)
+   .then(response =>{
+     if (response.data.success) {
+       this.setState({  
+         //open: true,
+         mensagem_usuario: 'Serviço Excluido com sucesso!'
+        });
+      //  debugger;
+     
+       this.valor_total_servicos();
+       this.valor_total_viagens();
+       this.loadlistServicos();
+       this.loadlistServicosExcluidos();
+       this.atualiza_evento();
+            
+      
+       this.handleCloseModalDelete(); 
+       this.envia_mensagemClick();
+       
+     
+    }    
+   })
+   .catch ( error => {
+     alert("Error servicos/delete/ "+error)
+   })
+
+   }  
+
+  }
+  criar_historico  = async (servicos, userId) => {
+
+    var nome_responsavel = ''; 
+
+    if (localStorage.getItem('logperfil') == 1) {
+      nome_responsavel = 'ADMINITRADOR'; 
+    } else {
+      nome_responsavel = localStorage.getItem('lognome'); 
+    }
+
+    const datapost_incluir = {
+      id: servicos[0].id,
+      tipoEventoId: servicos[0].tipoEventoId, 
+      eventoId: servicos[0].eventoId, 
+      tipoTransporte: servicos[0].tipoTransporte,
+      nome_responsavel: nome_responsavel,
+      nome_passageiro: servicos[0].nome_passageiro, 
+      telefone_passageiro: servicos[0].telefone_passageiro,
+      quantidade_passageiro: servicos[0].quantidade_passageiro,  
+      data_servico: servicos[0].data_servico,
+      quantidade_diarias: servicos[0].quantidade_diarias, 
+      hora_inicial: servicos[0].hora_inicial,  
+      hora_final: servicos[0].hora_final,  
+      local_embarque: servicos[0].local_embarque, 
+      local_desembarque: servicos[0].local_desembarque, 
+      embarque_latitude: servicos[0].embarque_latitude, 
+      embarque_longitude: servicos[0].embarque_longitude, 
+      desembarque_latitude: servicos[0].desembarque_latitude, 
+      desembarque_longitude: servicos[0].desembarque_longitude,      
+      distancia_value: servicos[0].distancia_value, 
+      tempo_value: servicos[0].tempo_value,
+      companhia_aerea: servicos[0].companhia_aerea,
+      numero_voo: servicos[0].numero_voo, 
+      motorista_bilingue: servicos[0].motorista_bilingue, 
+      valor_bilingue: servicos[0].valor_bilingue,
+      valor_receptivo: servicos[0].valor_receptivo,
+      motorista_receptivo: servicos[0].motorista_receptivo, 
+      nome_motorista: servicos[0].nome_motorista, 
+      telefone_motorista: servicos[0].telefone_motorista, 
+      km_translado: servicos[0].km_translado, 
+      tempo_translado: servicos[0].tempo_translado,
+      cartaoId: servicos[0].cartaoId,        
+      valor_estimado: servicos[0].valor_estimado,    
+      valor_oser: servicos[0].valor_oser,
+      valor_motorista: servicos[0].valor_motorista,  
+      logid: servicos[0].logid,
+      servico_pai_id: servicos[0].servico_pai_id,
+      perfilId: servicos[0].perfilId,               
+    }  
+    debugger;
+
+    if (this.state.verificaPai !== 0) {  
+         api.post('/historicoServicos/create', datapost_incluir);
+    
+    } else if (this.state.verificaPai == 0)  {// verifica se e pai cria os filhos    
+         api.post('/historicoServicos/create', datapost_incluir);
+
+         debugger;
+         
+         api.get(`/servicos/busca_filho/${userId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+         .then(response=>{
+                  
+          if (response.data.success==true) {      
+
+            const data1 = response.data.data
+      
+            this.setState({listaFilhosAlteracao:data1})
+            
+          }
+      
+          this.state.listaFilhosAlteracao.map((filhos)=>{
+            debugger;
+      
+           api.post('/historicoServicos/create', filhos);          
+            
+       
+          });
+               
+        }).catch ( error => {
+          alert("Error servicos/get ")
+        });
+
+      }        
+      
+      this.deletar_servicos(userId);
+
+}
+
+sendDelete(userId, eventoId){
     // url de backend
    // console.log('deletar o id - '+userId);
- 
     
     debugger;
     api.get(`/servicos/get/${userId}`)
@@ -7030,159 +7921,21 @@ debugger;
       if (res.data.success == true) {
       
        const servicos = res.data.data;
-  //  localStorage.setItem('logdataservico',servicos[0].data_servico);
-     //  tipoEvento = servicos[0].tipoEventoId;
-      // verificaPai = servicos[0].servico_pai_id;
-     //  eventoid = servicos[0].id;
-   //  this.setState({ 
-  //    campdata_servico: servicos[0].data_servico,    
-  ///    nome_passageiro: servicos[0].nome_passageiro,
-  ///   });    
-       const datapost_incluir = {
-        tipoEventoId: servicos[0].tipoEventoId, 
-        eventoId: servicos[0].eventoId, 
-        tipoTransporte: servicos[0].tipoTransporte,
-        nome_passageiro: servicos[0].nome_passageiro, 
-        telefone_passageiro: servicos[0].telefone_passageiro,
-        quantidade_passageiro: servicos[0].quantidade_passageiro,  
-        data_servico: servicos[0].data_servico,
-        quantidade_diarias: servicos[0].quantidade_diarias, 
-        hora_inicial: servicos[0].hora_inicial,  
-        hora_final: servicos[0].hora_final,  
-        local_embarque: servicos[0].local_embarque, 
-        local_desembarque: servicos[0].local_desembarque, 
-        embarque_latitude: servicos[0].embarque_latitude, 
-        embarque_longitude: servicos[0].embarque_longitude, 
-        desembarque_latitude: servicos[0].desembarque_latitude, 
-        desembarque_longitude: servicos[0].desembarque_longitude,      
-        distancia_value: servicos[0].distancia_value, 
-        tempo_value: servicos[0].tempo_value,
-        companhia_aerea: servicos[0].companhia_aerea,
-        numero_voo: servicos[0].numero_voo, 
-        motorista_bilingue: servicos[0].motorista_bilingue, 
-        valor_bilingue: servicos[0].valor_bilingue,
-        valor_receptivo: servicos[0].valor_receptivo,
-        motorista_receptivo: servicos[0].motorista_receptivo, 
-        nome_motorista: servicos[0].nome_motorista, 
-        telefone_motorista: servicos[0].telefone_motorista, 
-        km_translado: servicos[0].km_translado, 
-        tempo_translado: servicos[0].tempo_translado,
-        cartaoId: servicos[0].cartaoId,        
-        valor_estimado: servicos[0].valor_estimado,    
-        valor_oser: servicos[0].valor_oser,
-        valor_motorista: servicos[0].valor_motorista,  
-        logid: servicos[0].logid,
-        servico_pai_id: servicos[0].servico_pai_id,
-        perfilId: servicos[0].perfilId,               
-      }  
-      api.post('/historicoServicos/create', datapost_incluir);
+  debugger
+       this.criar_historico(servicos, userId);
+      } 
        
-      }
-    })
-    .catch ( error => {
-      alert("Error servicos/get ")
-    })
+    });
 
-   // const Url = baseUrl+"/cliente/delete/"+userId    // parameter data post
-    // network
-    //verificar se o servico e diaria ou translado //
-    if (this.state.camptipoevento == 1) { // Diaria
-       if (this.state.verificaPai == 0) { // verifica se e pai deleta os filhos     
-        
-        debugger;
-      // const data_servico_deletar = ;
-        
-        api.delete(`/servicos/deletePaieFilhos/${this.state.campDeletarId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}/${this.state.eventoid}/${this.state.nome_passageiro}`)
-        .then(resppai =>{
-          if (resppai.data.success) {
-            this.setState({  
-              //open: true,
-              mensagem_usuario: 'Serviço Pai e filhos Excluido com sucesso!'
-             });
-           //  debugger;
-          
-            localStorage.setItem('logdataservico', '');
-            this.valor_total_servicos();
-            this.valor_total_viagens();
-            this.loadlistServicos();
-            this.loadlistServicosExcluidos();                
-            this.atualiza_evento();
-
-            this.handleCloseModalDelete(); 
-            this.envia_mensagemClick();            
-          
-        }    
-        })
-        .catch ( error => {
-          alert("Error servicos/deletePaieFilhos/ "+error)
-        })
-
-       } else {
-       
-           // recalcular o valor do pai com o filho excluido
-          // this.state.valor_estimado_filho
-          // this.state.distancia_filho
-          // this.state.quantidade_diarias
-          // this.state.tempo_filho
-
-            this.atualiza_pai_delecao(this.state.verificaPai);
-
-            api.delete(`/servicos/delete/${userId}`)
-            .then(resppai =>{
-              if (resppai.data.success) {
-                this.setState({  
-                  //open: true,
-                  mensagem_usuario: 'Serviço Excluido com sucesso!'
-                });
-              //  debugger;
-              
-                this.valor_total_servicos();
-                this.valor_total_viagens();
-                this.loadlistServicos();
-                this.loadlistServicosExcluidos();                
-                this.atualiza_evento();
-
-                this.handleCloseModalDelete(); 
-                this.envia_mensagemClick();            
-                  
-            }    
-            })
-            .catch ( error => {
-              alert("Error servicos/deletePaieFilhos/ "+error)
-            })
-           
-       }    
-    }  else {
+   // debugger
    
-    api.delete(`/servicos/delete/${userId}`)
-    .then(response =>{
-      if (response.data.success) {
-        this.setState({  
-          //open: true,
-          mensagem_usuario: 'Serviço Excluido com sucesso!'
-         });
-       //  debugger;
-      
-        this.valor_total_servicos();
-        this.valor_total_viagens();
-        this.loadlistServicos();
-        this.loadlistServicosExcluidos();
-        this.atualiza_evento();
-             
-       
-        this.handleCloseModalDelete(); 
-        this.envia_mensagemClick();
-        
-      
-    }    
-    })
-    .catch ( error => {
-      alert("Error servicos/delete/ "+error)
-    })
+  //  .catch ( error => {
+    //  alert("Error servicos/get ")
+  // })
 
-    }  
-  }
 
+  
+}
 }
 
 

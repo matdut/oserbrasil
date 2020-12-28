@@ -162,7 +162,8 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logemail', rescliente.data.data[0].email);                             
                           localStorage.setItem('logid',  rescliente.data.data[0].id); 
                           localStorage.setItem('logperfil', res.data.data[0].perfilId);      
-                          localStorage.setItem('lognome',  rescliente.data.data[0].nome);        
+                          localStorage.setItem('lognome',  rescliente.data.data[0].nome);  
+                          localStorage.setItem('logcpf',  rescliente.data.data[0].cpf);          
                           
                           this.props.history.push('/area_cliente_individual');    
                         } 
@@ -182,7 +183,8 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logemail', resempresa.data.data[0].cliente.email);           
                           localStorage.setItem('lognome',  resempresa.data.data[0].cliente.nome);                          
                           localStorage.setItem('logid',  resempresa.data.data[0].id); 
-                          localStorage.setItem('logperfil', res.data.data[0].perfilId);      
+                          localStorage.setItem('logperfil', res.data.data[0].perfilId);
+                          localStorage.setItem('logcnpj',  resempresa.data.data[0].cnpj);       
                           localStorage.setItem('lograzao_social',  resempresa.data.data[0].razao_social);                   
                     
                           this.props.history.push('/area_cliente_empresarial');    
@@ -200,7 +202,8 @@ class loginComponent extends React.Component  {
                         localStorage.setItem('logemail', resmotorista.data.data[0].email);            
                         localStorage.setItem('lognome',  resmotorista.data.data[0].nome);
                         localStorage.setItem('logid',  resmotorista.data.data[0].id);  
-                        localStorage.setItem('logperfil', res.data.data[0].perfilId);           
+                        localStorage.setItem('logperfil', res.data.data[0].perfilId);  
+                        localStorage.setItem('statusid', res.data.data[0].statusId);          
                         //const history = useHistory();                 
                         
                         this.setState({ 
@@ -214,6 +217,29 @@ class loginComponent extends React.Component  {
                       .catch(error=>{
                         alert("Error server "+error)
                       }) 
+                    } else if (res.data.data[0].perfilId == 9) { // motorista auxiliar
+                      
+                      api.get(`/motoristaAuxiliar/get/${res.data.data[0].logid}`)
+                      .then(resmotorista=>{   
+                    
+                      localStorage.setItem('logemail', resmotorista.data.data[0].email);            
+                      localStorage.setItem('lognome',  resmotorista.data.data[0].nome);
+                      localStorage.setItem('logid',  resmotorista.data.data[0].id);  
+                      localStorage.setItem('logperfil', res.data.data[0].perfilId);  
+                      localStorage.setItem('statusid', res.data.data[0].statusId);          
+                      //const history = useHistory();                 
+                      
+                      this.setState({ 
+                        color: '',
+                        mensagem: ''
+                      })
+
+                    this.props.history.push('/area_motorista_auxiliar');        
+
+                    })
+                    .catch(error=>{
+                      alert("Error server "+error)
+                    }) 
                     } else if (res.data.data[0].perfilId == 8) { 
                         api.get(`/operador/get/${res.data.data[0].logid}`)
                         .then(resoperador=>{   

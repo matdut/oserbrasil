@@ -6,7 +6,7 @@ import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
 import api from '../../../services/api';
 import '../motorista.css';
-import Menu_motorista from '../menu_motorista';
+import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 import FormGroup from '@material-ui/core/FormGroup';
@@ -204,7 +204,7 @@ class motoristaAlterarComponent extends React.Component{
 
   busca_motorista() {
     const { validate } = this.state   
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -268,7 +268,7 @@ class motoristaAlterarComponent extends React.Component{
   }
   busca_cpf(e){
     const { validate } = this.state
-   api.get(`/motorista/getMotoristaCpf/${e.target.value}`)
+   api.get(`/motoristaAuxiliar/getMotoristaCpf/${e.target.value}`)
    .then(res=>{
        console.log(JSON.stringify(res.data, null, "    ")); 
        if (res.data.success) {
@@ -571,46 +571,86 @@ verificaNome() {
  }
  verificaDataNascimento() {
   const { validate } = this.state
-     if (this.state.campData_nascimento.length == 0) {    
-      this.setState({ 
-        validate,
-        erro_datanascimento: false,   
-        validacao_datanascimento: false,    
-        mensagem_data_nascimento: ''  
-       })      
+  let date_validar = this.state.campData_nascimento;
+  var dia = date_validar.substr(0,2);
+  var mes = date_validar.substr(3,2);   
+  var ano = date_validar.substr(6,4);   
+
+     if (this.state.campData_nascimento.length == 0) {     
+       this.setState({ 
+           validate,
+          erro_datanascimento: false, 
+          validacao_datanascimento: false,    
+          mensagem_data_nascimento: '' 
+       })    
+       
      } else if (this.state.campData_nascimento.length == 10) {
 
-      let date_validar = this.state.campData_nascimento;
-        var dia = date_validar.substr(0,2);
-        var mes = date_validar.substr(3,2);         
-    
-        if (dia > 31) {
-         this.setState({ 
-          erro_datanascimento: true,   
-          validacao_datanascimento: false,             
-          mensagem_data_nascimento: 'Dia é inválido.' 
-          })  
-        } else if (mes > 12) {
-         this.setState({ 
-          erro_datanascimento: true,   
-          validacao_datanascimento: false,             
-          mensagem_data_nascimento: 'Mês é inválido.' 
-          })  
-        } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
-         this.setState({ 
-          erro_datanascimento: true,   
-          validacao_datanascimento: false,             
-          mensagem_data_nascimento: 'Data do serviço é inválido.' 
-          })  
-        } else {
-         this.setState({ 
-          erro_datanascimento: false,   
-          validacao_datanascimento: true,             
-          mensagem_data_nascimento: '',
-         });   
-        }       
 
-   }           
+      if ( mes == '02' && dia == 29 && (!Number.isInteger(ano / 4)) ){
+       
+          this.setState({ 
+            validate,
+            erro_datanascimento: true,   
+            validacao_datanascimento: false,      
+            mensagem_data_nascimento: 'Dia é inválido.' 
+           })  
+
+      } else if ( mes == '02' && dia == 30) {
+
+        this.setState({ 
+          validate,
+          erro_datanascimento: true,   
+          validacao_datanascimento: false,      
+          mensagem_data_nascimento: 'Dia é inválido.' 
+         })  
+
+      } else if ( mes == '02' && dia == 31) {
+
+          this.setState({ 
+            validate,
+            erro_datanascimento: true,   
+            validacao_datanascimento: false,      
+            mensagem_data_nascimento: 'Dia é inválido.' 
+           })  
+
+      }  
+      else {
+        
+  
+      if (dia > 31) {
+       this.setState({ 
+        validate,
+        erro_datanascimento: true,   
+        validacao_datanascimento: false,             
+        mensagem_data_nascimento: 'Dia é inválido.' 
+        })  
+      } else if (mes > 12) {
+       this.setState({ 
+        validate,
+        erro_datanascimento: true,   
+        validacao_datanascimento: false,             
+        mensagem_data_nascimento: 'Mês é inválido.' 
+        })  
+      } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
+       this.setState({ 
+        validate,
+        erro_datanascimento: true,   
+        validacao_datanascimento: false,             
+        mensagem_data_nascimento: 'Data do serviço é inválido.' 
+        })  
+      } else {
+        validate.datanascimentoState = 'has-success' ;      
+       this.setState({ 
+        validate,
+        erro_datanascimento: false,   
+        validacao_datanascimento: true,             
+        mensagem_data_nascimento: '',
+       });   
+      }     
+
+     }
+  }            
  }
 
  verificaDataValidade() {
@@ -863,7 +903,7 @@ sendSave(){
     data_validade: moment(this.state.campData_CNH, "DD MM YYYY"), 
     numero_carteira: this.state.campCNH,    
     bilingue: this.state.campMotorista_bilingue,   
-    perfilId: 3,
+    perfilId: 9,
     statusId: this.state.campStatusId,
     situacaoId: 1
   }            
@@ -871,7 +911,7 @@ sendSave(){
    console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
 
      console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/motoristaAuxiliar/update/${localStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -887,8 +927,8 @@ sendSave(){
           //localStorage.setItem('logid', userId);
           if (localStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (localStorage.getItem('logperfil') == 3) {
-            this.props.history.push(`/area_motorista`);                   
+          } else if (localStorage.getItem('logperfil') == 9) {
+            this.props.history.push(`/area_motorista_auxiliar`);                   
           }           
 
         }
@@ -968,9 +1008,9 @@ verificaEmailonfocus(e){
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (localStorage.getItem('logperfil') == 9) {
    return( 
-     <Menu_motorista />     
+     <menu_motorista_auxiliar />     
    );
   }
 

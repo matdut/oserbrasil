@@ -233,7 +233,7 @@ controllers.listaeventosservicos = async (req,res) => {
     where: { eventoId: eventoid,  logid: id, perfilId: perfilId },  
     //group: ['createdAt', 'DESC'],
     order:[ 
-      ['createdAt',  'ASC'] 
+      ['createdAt',  'ASC']      
     ]       
   })
   .then( function (data){
@@ -319,7 +319,7 @@ controllers.listaservicos = async (req,res) => {
    // group: 
     order: [ 
       ['createdAt', 'DESC'],
-      ['data_servico', 'DESC'],
+      ['data_servico', 'ASC'],
       
     ]       
   })

@@ -656,46 +656,86 @@ debugger;
    }
    verificaDataNascimento() {
     const { validate } = this.state
-       if (this.state.campData_nascimento.length == 0) {    
-        this.setState({ 
-          validate,
-          erro_datanascimento: false,   
-          validacao_datanascimento: false,    
-          mensagem_data_nascimento: ''  
-         })      
+    let date_validar = this.state.campData_nascimento;
+    var dia = date_validar.substr(0,2);
+    var mes = date_validar.substr(3,2);   
+    var ano = date_validar.substr(6,4);   
+
+       if (this.state.campData_nascimento.length == 0) {     
+         this.setState({ 
+             validate,
+            erro_datanascimento: false, 
+            validacao_datanascimento: false,    
+            mensagem_data_nascimento: '' 
+         })    
+         
        } else if (this.state.campData_nascimento.length == 10) {
 
-        let date_validar = this.state.campData_nascimento;
-        var dia = date_validar.substr(0,2);
-        var mes = date_validar.substr(3,2);         
+
+        if ( mes == '02' && dia == 29 && (!Number.isInteger(ano / 4)) ){
+         
+            this.setState({ 
+              validate,
+              erro_datanascimento: true,   
+              validacao_datanascimento: false,      
+              mensagem_data_nascimento: 'Dia é inválido.' 
+             })  
+
+        } else if ( mes == '02' && dia == 30) {
+
+          this.setState({ 
+            validate,
+            erro_datanascimento: true,   
+            validacao_datanascimento: false,      
+            mensagem_data_nascimento: 'Dia é inválido.' 
+           })  
+
+        } else if ( mes == '02' && dia == 31) {
+
+            this.setState({ 
+              validate,
+              erro_datanascimento: true,   
+              validacao_datanascimento: false,      
+              mensagem_data_nascimento: 'Dia é inválido.' 
+             })  
+
+        }  
+        else {
+          
     
         if (dia > 31) {
          this.setState({ 
+          validate,
           erro_datanascimento: true,   
           validacao_datanascimento: false,             
           mensagem_data_nascimento: 'Dia é inválido.' 
           })  
         } else if (mes > 12) {
          this.setState({ 
+          validate,
           erro_datanascimento: true,   
           validacao_datanascimento: false,             
           mensagem_data_nascimento: 'Mês é inválido.' 
           })  
         } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
          this.setState({ 
+          validate,
           erro_datanascimento: true,   
           validacao_datanascimento: false,             
           mensagem_data_nascimento: 'Data do serviço é inválido.' 
           })  
         } else {
+          validate.datanascimentoState = 'has-success' ;      
          this.setState({ 
+          validate,
           erro_datanascimento: false,   
           validacao_datanascimento: true,             
           mensagem_data_nascimento: '',
          });   
         }     
 
-     }           
+       }
+    }             
    }
 
    verificaDataValidade() {
@@ -897,19 +937,10 @@ validaDataNascimentoChange(e){
 
 verifica_botao(inicio) {
   const { validate } = this.state    
-  if (inicio == 1) {
-    return (
-
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado" p={2}>
-              <div className="d-flex justify-content-center">
-                <label> Próximo </label>
-              </div>     
-        </Box>           
-    );   
-  } else {
-  
+  debugger
+   
     if (this.state.validacao_cpf == true && this.state.validacao_datanascimento == true  
-      && this.state.validacao_email == true && this.state.validacao_nome == true
+      && this.state.validacao_nome == true
       && this.state.validacao_telefone == true) {
         return (           
           <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados"  p={2} onClick={()=>this.sendSave()}>
@@ -928,7 +959,7 @@ verifica_botao(inicio) {
           </Box>           
       );   
       }         
-  }  
+    
  
 } 
 
@@ -948,7 +979,7 @@ sendSave(){
     bilingue: this.state.campMotorista_bilingue,   
     perfilId: 9,
     statusId: this.state.campStatusId,
-    motorista_principal_id: respemail.data.data[0].eventoId,
+    motorista_principal_id: respemail.data.data[0].empresaId,
   }         
    
 
@@ -1011,8 +1042,8 @@ sendSave(){
           //localStorage.setItem('logid', userId);
           if (localStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/endereco_motorista_incluir/`+localStorage.getItem('logid'));
-          } else if (localStorage.getItem('logperfil') == 3) {
-            this.props.history.push(`/area_motorista`);                   
+          } else if (localStorage.getItem('logperfil') == 9) {
+              this.props.history.push(`/area_motorista_auxiliar`);                
           } else if (localStorage.getItem('logperfil') == 0) {
             this.props.history.push(`/endereco_motorista_incluir/`+localStorage.getItem('logid'));       
           }           

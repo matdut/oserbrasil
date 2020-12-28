@@ -22,6 +22,8 @@ router.post('/file/upload', multer(multerConfig).single('file'), MotoristaContro
 router.put('/foto/update/:id', MotoristaController.uploadFotoFiles);
 //router.put('/documentoCNH/update/:id', multer(multerConfig).single('file'), MotoristaController.uploadCNHFiles);
 router.put('/documentoCNH/update/:id', MotoristaController.uploadCNHFiles);
+router.get('/getMotoristaServico/:estado_motorista/:bilingue', MotoristaController.getMotoristaServico);
+
 /*
 router.post('/file/upload'), multer(multerConfig).single('file'), async (req, res) => {
 

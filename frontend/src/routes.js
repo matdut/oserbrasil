@@ -40,7 +40,7 @@ import Inicio from './pages/inicio';
  import Listar_evento_servico from './pages/eventos/listar_servicos';  
 
  /* SERVIÇOS */
- import Servicos_incluir from './pages/servicos/servicos';
+ //import Servicos_incluir from './pages/servicos/servicos';
  //import Modal_Cliente_Individual from './pages/cliente/modal/representante'; 
 
 /** OPERADORES */
@@ -59,11 +59,16 @@ import Inicio from './pages/inicio';
  //import FormMotorista from './pages/motorista/form';
  import ListMotorista from './pages/motorista/list';
  import Listar_Tipo_veiculo from './pages/tipo_veiculo/list';
+ import Listar_motivo_cancelamento from './pages/motivos_cancelamento/list';
+
+ import Listar_mensagens_site from './pages/mensagens/list';
  //import EditMotorista from './pages/motorista/edit'; 
  import Alterar_senha_Motorista from './pages/motorista/alterar_senha'; 
  import Area_motorista from './pages/motorista/area_motorista';
 
  import ListBancoMotorista from './pages/motorista/banco/list';
+ import ListaServicoMotorista from './pages/servicos_motorista/listar_servicos';
+
 
  import Area_motorista_auxiliar from './pages/motorista_auxiliar/area_motorista_auxiliar';
  import Motorista_aux_cadastro_incluir from './pages/motorista_auxiliar/incluir/motorista';
@@ -105,6 +110,7 @@ import Inicio from './pages/inicio';
 import Area_administrador from './pages/administrador/area_administrador';
 //import Cartao_creedito_cadastrar from './pages/cartao/cartao_credito';
 import Lista_cad_Incompleto from './pages/administrador/lista_cad_incompleto';
+import motivo_cancelamento_form from './pages/motivos_cancelamento/motivo_cancelamento';
 
 //import Area_administrador_auxiliar from './pages/administrador_auxiliar/area_adm_convidaod';
 import List_administrador_auxiliar from './pages/administrador_auxiliar/lista_adm_auxiliar';
@@ -141,7 +147,7 @@ import Esqueceu_Senha from './pages/esqueceu_senha';
  import Sobre from './pages/sobre';
  import Login from './pages/login'; 
  import Rodape from './pages/rodape';
- import Servicos from './pages/servico';
+// import Servicos from './pages/servico';
  import Contato from './pages/contato';
 
  var fs = require('fs');
@@ -194,13 +200,20 @@ export default function Routes() {
             <PrivateRoute exact path="/configuracao" component={Configuracao} />
 
             <PrivateRoute exact path="/auxiliares" component={Auxiliares} />
-            
+
+            <PrivateRoute exact path="/lita_motiva_cancelamento" component={Listar_motivo_cancelamento} />
+            <PrivateRoute exact path="/motivo_cancelamento" component={motivo_cancelamento_form} />
+
+            <PrivateRoute exact path="/lista_servico_motorista/:id" component={ListaServicoMotorista} />  
+
+            <PrivateRoute exact path="/lista_mensagens_site" component={Listar_mensagens_site} />  
+                        
             <PrivateRoute exact path="/area_cliente_individual" component={Area_cliente_individual} />
             <PrivateRoute exact path="/area_cliente_empresarial" component={Area_cliente_empresarial} />
             <PrivateRoute exact path="/area_motorista" component={Area_motorista} />
             <PrivateRoute exact path="/area_motorista_auxiliar" component={Area_motorista_auxiliar} />
             <PrivateRoute exact path="/area_administrador" component={Area_administrador} />
-            <Route exact path="/servicos" component={Servicos} />
+         
             <Route exact path="/contato" component={Contato} />
 
             <PrivateRoute exact path="/lista_motorista_auxiliar" component={Lista_Motorista_auxiliar} />    
@@ -237,9 +250,7 @@ export default function Routes() {
              <PrivateRoute exact path="/empresa_endereco/:id" component={Empresa_endereco} />                          
              <PrivateRoute exact path="/incluir_operador/:id" component={incluir_Operador} />     
                      
-             <PrivateRoute exact path="/lista_operador_email/:id" component={Operador_email_lista} />     
-             
-             <PrivateRoute exact path="/servicos_evento/:id" component={Servicos_incluir} />     
+             <PrivateRoute exact path="/lista_operador_email/:id" component={Operador_email_lista} /> 
 
              <PrivateRoute exact path="/funcionalidade/list" component={Funcionalidades_list} />          
              <PrivateRoute exact path="/funcionalidade/cadastrar" component={Funcionalidades_cadastrar} />          

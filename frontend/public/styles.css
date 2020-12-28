@@ -1138,7 +1138,7 @@
   }
 
   .botao_close_modal_tipo_veiculo {    
-    left: 45%;
+    left: 30%;
   }
 
   .botao_close_incluir_evento_modal {
@@ -1188,6 +1188,16 @@
     margin-top: 48px !important;
     width: 450px !important;
     margin-left: 150px !important;
+  }
+
+  .mensagem_motorista {
+    color: #247AFD;
+    margin-top: 28px !important;
+    width: 100% !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    margin-left: 5% !important; 
+    font-family: Effra;
   }
 
   .titulo_moldura_modal_delecao {

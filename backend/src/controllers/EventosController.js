@@ -117,10 +117,10 @@ controllers.listaeventoADM = async (req,res) => {
       { 
        model: Empresa,
            where: { 
-             clienteId: logid          
+             clienteId: Eventos.logid          
            },         
       }],
-  //   where: { logid: id, perfilId: perfilId},
+
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -132,12 +132,17 @@ controllers.listaeventoADM = async (req,res) => {
 
 controllers.create = async (req,res) => {  
   // DATA parametros desde post
-  const { logid, perfilId, ordem_servico, nome_evento, data_evento, viagens_total, valor_total } = req.body;
+  const {cpf, nome, cnpj, razao_social, logid, perfilId, ordem_servico, nome_evento, data_evento, 
+    viagens_total, valor_total } = req.body;
 
   //console.log(req.body);          
   //console.log("ROle es ==>"+role)
   //create
   await Eventos.create({   
+    cpf: cpf, 
+    nome: nome, 
+    cnpj: cnpj, 
+    razao_social: razao_social,
     logid: logid,
     perfilId: perfilId,    
     ordem_servico: ordem_servico, 
@@ -160,10 +165,14 @@ controllers.update = async (req, res) => {
   const { id } = req.params;  
 
   // parameter post
-  const { logid, perfilId, ordem_servico, viagens_total, nome_evento, data_evento, valor_total } = req.body;
+  const { cpf, nome, cnpj, razao_social, logid, perfilId, ordem_servico, viagens_total, nome_evento, data_evento, valor_total } = req.body;
   console.log("id es ==>"+id)
   // update data  
   await Eventos.update({  
+    cpf: cpf, 
+    nome: nome, 
+    cnpj: cnpj, 
+    razao_social: razao_social,
     logid: logid,
     perfilId: perfilId,    
     ordem_servico: ordem_servico, 

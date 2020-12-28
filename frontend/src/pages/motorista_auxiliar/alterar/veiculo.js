@@ -5,7 +5,7 @@ import Autocomplete1 from 'react-autocomplete';
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import Menu_motorista from '../menu_motorista';
+import Menu_motorista_auxiliar from '../menu_motorista_auxiliar';
 import Menu_administrador from '../../administrador/menu_administrador';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
@@ -1005,9 +1005,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (localStorage.getItem('logperfil') == 9) {
    return( 
-     <Menu_motorista />     
+     <Menu_motorista_auxiliar />     
    );
   }
 

@@ -933,6 +933,17 @@ verifica_horario(){
   }
 }
 
+verifica_mensagem() {
+  if (localStorage.getItem('statusid') == 16) {
+    //const classes = useStyles();
+    return (
+      <div className="mensagem_motorista">     
+         Documentação em análise, favor aguardar. Liberadas apenas as funções de alteração de dados cadastrais!!   
+      </div>
+    );
+  }
+  
+}
 
 render(){  
 
@@ -945,7 +956,8 @@ return (
     <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
               <div className="titulo_bemvindo">Senha </div>         
-              </div>      
+              </div>    
+              {this.verifica_mensagem()}      
             </div> 
 
             <div class="d-flex flex-column espacamento_caixa_texto">

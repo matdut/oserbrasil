@@ -30,6 +30,10 @@ var Historico_eventos = sequelize.define(nametable,{
     type: Sequelize.STRING(100),
     allowNull: false,     
   },
+  nome_responsavel:  {  
+    type: Sequelize.STRING(250),
+    allowNull: false,     
+  },
   data_evento: {
     type: Sequelize.DATEONLY,
     allowNull: false,     

@@ -52,7 +52,8 @@ class menu_motoristaComponent extends React.Component  {
     this.setState({
       perfil: localStorage.getItem('logperfil'),    
       nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid')             
+      id: localStorage.getItem('logid'),
+      statusId: localStorage.getItem('statusid'),                    
     });
     //this.verifica_menu();
 
@@ -63,7 +64,7 @@ class menu_motoristaComponent extends React.Component  {
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
     .then(res=>{
         if (res.data.data.length > 0) {
           this.setState({             
@@ -85,7 +86,8 @@ class menu_motoristaComponent extends React.Component  {
     localStorage.removeItem('logcep');       
     localStorage.removeItem('lograzao_social');  
     localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logVeiculo')
+    localStorage.removeItem('logVeiculo');
+    localStorage.removeItem('statusid');
 
     this.props.history.push("/");
   }
@@ -127,7 +129,7 @@ class menu_motoristaComponent extends React.Component  {
       this.state.isOpen = true;
     }    
   }
-  
+   
   
   render()
   {     

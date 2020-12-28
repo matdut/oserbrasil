@@ -766,6 +766,7 @@ sendUpdate(){
     estadoId: this.state.campEstadoId,      
     cep: this.state.campCep,    
   }          
+  debugger
 
         console.log(JSON.stringify(datapost, null, "    ")); 
         api.put(`/motoristaAuxiliar/update/${localStorage.getItem('logid')}`, datapost)
