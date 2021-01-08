@@ -24,6 +24,7 @@ class inicioComponent extends React.Component  {
 
       localStorage.setItem('logperfil', 0)
       localStorage.setItem('logVeiculo', 0)    
+      localStorage.setItem('conectado', 1)    
 
     return (             
   

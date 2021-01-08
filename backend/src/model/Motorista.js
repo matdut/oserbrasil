@@ -169,7 +169,5 @@ Motorista.belongsTo(Estado);
 Motorista.belongsTo(Perfil);
 Motorista.belongsTo(Situacao);
 Motorista.belongsTo(Status);
-//Motorista.hasMany(Veiculos, { foreignKey: 'motoristaId'})
-//Veiculos.belongsTo(Motorista);
 
 module.exports = Motorista

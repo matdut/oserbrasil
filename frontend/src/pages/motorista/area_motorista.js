@@ -34,7 +34,7 @@ class Area_motorista extends React.Component  {
       nome: "",
       perfil:"",
       id: "",
-      campTotal_viagens: '',
+      campTotal_viagens: '0',
       campvalor_total: '',
       totalEventos: '',
       isOpen: false
@@ -49,35 +49,32 @@ class Area_motorista extends React.Component  {
       statusid: localStorage.getItem('statusid') 
     });
      //this.loadCliente()
-     this.loadlistEventos();
-     this.loadTotalServicosEvento();
+    // this.loadlistEventos();
+    //this.loadTotalServicosEvento();
      this.loadTotalViagensEventos();
+     this.loadlistServicosAtivos();
   }
-
-  loadTotalServicosEvento(){
-    // const url = baseUrl+"/cliente/list"   
-    //debugger;
-    api.get(`/servicos/valorServicoTodosEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+ 
+  loadlistServicosAtivos(){    
+    api.get(`/motorista_servico/getMotoristaServico/${localStorage.getItem('logid')}`)
      .then(res=>{
-       if (res.data.success == true) {
-         const data = res.data.data    
-         
-         //console.log('valor  -'+data.toFixed(2));
+       if (res.data.success == true) {       
 
+         const data = res.data.data    
          this.setState({
-            campvalor_total: valorMask(data.toFixed(2)),
-         })
+           listaServicoAceito:data,
+           loading: false,
+          })
        }
      })
      .catch(error=>{
-       alert("Error server 1 "+error)
+       alert("Error server loadlistServicos "+error)
      })
    }
-
    loadTotalViagensEventos(){
     // const url = baseUrl+"/cliente/list"   
     debugger;
-    api.get(`/servicos/totalViagensEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/motorista_servico/totalServicosMotorista/${localStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data             
@@ -93,21 +90,7 @@ class Area_motorista extends React.Component  {
      })
    }
 
-  loadlistEventos(){
-    // const url = baseUrl+"/cliente/list"   
-    
-    api.get(`/eventos/totaleventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
-     .then(res=>{
-       if (res.data.success) {
-         const data = res.data.data    
-         this.setState({totalEventos:data.count})
-       }
-     })
-     .catch(error=>{
-       alert("Error server "+error)
-     })
-   }
-
+  
 verifica_menu() {    
 
     return (      
@@ -180,123 +163,32 @@ verifica_mensagem() {
                 <Typography component="div" style={{ backgroundColor: '#white', height: '5vh' }} />
               </Container>
               
-              <div className="titulo_area">SEUS NÚMEROS</div>
+              <div className="titulo_area">SERVIÇOS</div>
 
               <div class="p-2">               
                 <div class="d-flex justify-content-start titulo_area_descricao_empresarial">
-                      <div> 
-                          <img src='/icon-calendar-157837097.jpg' style={{ width: '40px', height: '40px' }}/>                           
-                      </div>                      
-                      <div className="area_evento_empresa"> 
-                        Eventos <br/>
-                        <div className="area_evento_valor"> {this.state.totalEventos}   </div>
-                      </div>
+                                         
                       <div className="area_evento_2_empresa"> 
                         <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
                       </div>
-                      <div className="area_evento"> 
-                      Serviços
+                      <div className="area_servico_motorista"> 
+                         Total
                         <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
                       </div>
-                      <div className="area_evento_3_empresa"> 
-                        <img src='/Group_1157.png' style={{ width: '40px', height: '40px' }}/>                
+                      <div className="area_servico_motorista"> 
+                         Finalizados
+                        <div className="area_evento_valor">{0}</div>
                       </div>
-                      <div className="area_evento"> 
-                        Custos
-                          <div className="area_evento_valor">R$ {valorMask(this.state.campvalor_total)}</div>
+                      <div className="area_servico_motorista"> 
+                         Ativos
+                        <div className="area_evento_valor">{0}</div>
                       </div>                     
+                                 
                   </div>  
               </div>  
 
 <br/>
-              <MaterialTable          
-                            title=""
-                            isLoading={this.state.loading}
-                           
-                            columns={[
-                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
-                              { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
-                              { title: 'Hr Serviço', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
-                    
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
-                            cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? rowData.tipoEventoId == 1 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : '' : ''},                 
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
-                              cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
-                              <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
-                               
-                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '220px', minWidth: '220px', maxWidth: '220px',  render: rowData => rowData.nome_passageiro.substring(0,30)  },
-                              { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },     
-                              { title: 'Origem', field: 'origem', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },     
-                              { title: 'Destino', field: 'destino', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },     
-                              { title: '', field: 'motorista_bilingue', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
-                              cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },   
-                              { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
-                              cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },       
-                              { title: 'Número Voo', field: 'origem', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },     
-                              { title: 'Companhia Aerea', field: 'destino', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },   
-                              { title: 'cronometro', field: 'origem', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },  
-                              { title: 'botao cancelar', field: 'origem', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },  
-                        
-                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
-                             },            
-                            ]}
-                            data={this.state.listMotorista}   
-                            localization={{
-                              body: {
-                                emptyDataSourceMessage: 'Nenhum registro para exibir'
-                              },
-                              toolbar: {
-                                searchTooltip: 'Pesquisar',
-                                searchPlaceholder: 'Buscar motorista',        
-                              },
-                              pagination: {
-                                labelRowsSelect: 'linhas',
-                                labelDisplayedRows: '{count} de {from}-{to}',
-                                firstTooltip: 'Primeira página',
-                                previousTooltip: 'Página anterior',
-                                nextTooltip: 'Próxima página',
-                                lastTooltip: 'Última página'
-                              },
-                              header: {
-                                actions: 'Ação',
-                              },
-                            }}        
-                            options={{
-                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
-                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
-                              //paginationPosition: 'bottom',  
-                              searchFieldAlignment: 'left', 
-                              exportAllData: true,
-                              exportFileName: 'Rel_adm_motorista_ativos',
-                              search: true,     
-                              searchFieldVariant: 'outlined', 
-                              toolbarButtonAlignment: 'right',           
-                              paging: false,          
-                              maxBodyHeight: '60vh',
-                              minBodyHeight: '60vh',    
-                              padding: 'dense',   
-                              overflowY: 'scroll',
-                             // tableLayout: 'fixed',
-                              exportButton: { pdf: true },          
-                              actionsColumnIndex: 7,
-                             // pageSize: 9,
-                              pageSizeOptions: [0],      
-                            }}
-                            actions={[
-                              {             
-                                icon: 'edit',
-                                onClick: (evt, data) => this.handleOpenModal(data)
-                              }
-                              /*,
-                              {
-                                icon: 'add',                                                             
-                                tooltip: 'Adiciona Motorista',
-                                isFreeAction: true,
-                                onClick: (event) => this.handleOpenModalEnvio()
-                               //onClick: (event) => this.sendteste()
-                              } */
-                            ]}
-                          />      
+              
             
           </div> 
       </div>    

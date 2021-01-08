@@ -167,20 +167,7 @@ class Area_administrador extends React.Component  {
                          Serviços
                           <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
                         </div>
-                        <div className="area_evento_3_empresa"> 
-                          <img src='/Group_1157.png' style={{ width: '40px', height: '40px' }}/>                
-                        </div>
-                        <div className="area_evento_faturado"> 
-                          Total faturado
-                            <div className="area_evento_valor">R$ {valorMask(this.state.campvalor_total)}</div>
-                        </div>
-                        <div className="area_evento_3_empresa"> 
-                          <img src='/Group_1157.png' style={{ width: '40px', height: '40px' }}/>                
-                        </div>
-                        <div className="area_evento_oser"> 
-                          Faturamento líquido (Oser)
-                           <div className="area_ganhos_oser">R$ {valorMask(this.state.valor_faturamento)}</div>
-                      </div>
+                        
                     </div>  
                 </div>  
 

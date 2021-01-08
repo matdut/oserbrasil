@@ -4,9 +4,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Menu from './cabecalho' ;
 import api from '../services/api';
 
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
-
 //const Contato = props => {
 class contatoComponent extends React.Component {
 
@@ -31,7 +28,7 @@ class contatoComponent extends React.Component {
     }
     api.post("/email/send", data)
     .then(response=>{        
-      if (response.data.msg == 'success'){
+      if (response.data.msg === 'success'){
           alert("Mensagem enviada."); 
         } else if(response.data.msg === 'fail'){
           alert("MMensagem com erro.")

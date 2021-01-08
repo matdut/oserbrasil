@@ -37,7 +37,7 @@ const Servicos = props => {
                 <p>Reuniões</p>              
             </div>           
         </div>
-        <button onClick={this.chamar()} />
+  
         <br /><br />        
       </div>  
     </div>

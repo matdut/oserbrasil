@@ -306,9 +306,11 @@ controllers.update = async (req, res) => {
 controllers.get = async (req, res) => {
   const { id } = req.params;
   await Motorista.findAll({
-    where: { id: id}
-    //,
-    //include: [ Role ]
+    where: { 
+      id: id
+    // include: [{ model: Veiculo }],
+    },
+   // include: [ Role ]
   })
   .then( function (data){
     if (data.length > 0) {
@@ -327,7 +329,7 @@ controllers.getMotVeiculo = async (req, res) => {
   const { id } = req.params;
   await Motorista.findAll({
     include: [{ model: Veiculo, where: {motoristaId: id} }],
-    where: { id: id}
+    where: { id: id }
     //,
     //include: [ Role ]
   })
@@ -347,10 +349,11 @@ controllers.getMotVeiculo = async (req, res) => {
 controllers.getMotoristaServico = async (req, res) => {
  const { estado_motorista, bilingue, tipoTransporte } = req.params;
  // const { bilingue } = req.params;
+  
   await Motorista.findAll({
  //  include: [{ model: Status, where: {id: 1}  }],
    include: [{ model: Estado, where: {nome: estado_motorista}  }],
-  // include: [{ model: Veiculo, where: {motoristaId: Motorista.id} }],
+  // include: [{ model: Veiculo }],
     where: { 
       bilingue: bilingue, 
       statusId: 1

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
 var Servico = require('./servicos');
-var Motorista = require('./Motorista');
+var Motorista = require('./motorista');
 var Status = require('./Status');
 
 var nametable = 'motorista_servico';

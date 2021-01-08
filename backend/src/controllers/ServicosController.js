@@ -8,6 +8,7 @@ var sequelize = require('../model/database');
 var Servicos = require('../model/servicos');
 var Eventos = require('../model/Eventos');
 var TarifaEspecial = require('../model/Tarifa_especial');
+var Motorista = require('../model/Motorista');
 
 // para migrar por si no tiene tablas
 sequelize.sync()
@@ -103,6 +104,31 @@ controllers.getEvento = async (req, res) => {
   console.log('eventoid - '+ eventoid);
   await Servicos.findAll({    
     where: { eventoId: eventoid} 
+  })
+  .then( function(data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+     return res.json({success:false});
+  })
+  
+}
+
+controllers.getServicoMotorista = async (req, res) => {
+  const { servicoId } = req.params;
+  //console.log('eventoid - '+ eventoid);
+  await Servicos.findAll({  
+    include: [{
+     model: Motorista,
+      where: { id: '45' }
+     }],    
+    where: { 
+      id: servicoId
+    } 
   })
   .then( function(data){
     if (data.length > 0) {
@@ -340,7 +366,7 @@ controllers.create = async (req,res) => {
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
     logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, desembarque_latitude, desembarque_longitude,
     valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, 
-    distancia_value, tempo_value, servico_pai_id, motorista_id } = req.body;
+    distancia_value, tempo_value, servico_pai_id, motorista_id, estado_selecionado_mapa } = req.body;
   //console.log("ROle es ==>"+role)
 
   //console.log(req.body);      
@@ -388,7 +414,8 @@ controllers.create = async (req,res) => {
     perfilId: perfilId,    
     cartaoId: cartaoId,
     servico_pai_id: servico_pai_id,
-    statusId: statusId 
+    statusId: statusId,
+    estado_selecionado_mapa: estado_selecionado_mapa 
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -409,7 +436,7 @@ controllers.update = async (req, res) => {
     motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, 
     desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId,
     valor_bilingue, valor_receptivo, distancia_value, tempo_value, servico_pai_id,
-    motorista_id} = req.body;
+    motorista_id, estado_selecionado_mapa} = req.body;
 
   console.log('entrou aqui = '+data_servico);
 
@@ -457,7 +484,8 @@ controllers.update = async (req, res) => {
     distancia_value: distancia_value, 
     tempo_value: tempo_value,
     servico_pai_id: servico_pai_id,
-    statusId: statusId
+    statusId: statusId,
+    estado_selecionado_mapa: estado_selecionado_mapa
   },{
     where: { id: id}
   })

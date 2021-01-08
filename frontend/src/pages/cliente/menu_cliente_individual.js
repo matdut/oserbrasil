@@ -80,6 +80,7 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logModelo');    
     localStorage.removeItem('logeventoservico');
     localStorage.setItem('logperfil', null);
+    localStorage.setItem('conectado', 1);
     localStorage.setItem('logid', 0);
     this.props.history.push("/");
   }

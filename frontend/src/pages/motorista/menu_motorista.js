@@ -88,6 +88,7 @@ class menu_motoristaComponent extends React.Component  {
     localStorage.removeItem('lograzaosocial');  
     localStorage.removeItem('logVeiculo');
     localStorage.removeItem('statusid');
+    localStorage.setItem('conectado', 1);
 
     this.props.history.push("/");
   }

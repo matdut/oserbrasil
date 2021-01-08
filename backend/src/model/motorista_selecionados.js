@@ -13,13 +13,14 @@ var Motorista_selecionados = sequelize.define(nametable,{
   },
   motoristaId:  {
     type: Sequelize.STRING,       
+  },
+  chave_acesso:  {
+    type: Sequelize.STRING,       
   }
 },
 {
   // remove  createdAt y updated
   timestamps:false
 });
-
-Motorista_preferido.belongsTo(Perfil);
 
 module.exports = Motorista_selecionados

@@ -7,6 +7,8 @@ const Op = Sequelize.Op;
 var sequelize = require('../model/database');
 var Motorista_servico = require('../model/motorista_servico');
 var Status = require('../model/Status');
+var Servicos = require('../model/servicos');
+var Motorista = require('../model/Motorista');
 //var Role = require('../model/Role');
 
 // para migrar por si no tiene tablas
@@ -15,13 +17,13 @@ sequelize.sync()
 controllers.delete = async (req,res) => {
   
   // parameter post  
-  const { id } = req.params;  
+  const { servicoId } = req.params;  
  // console.log( JSON.stringify(req.params, null, "    ") ); 
 
   //console.log('delete id  - '+id);
   // delete sequelize
   await Motorista_servico.destroy({
-    where: { id: id }
+    where: { servicoId: servicoId }
   }).then( function (data){
     
      return res.json({success:true, data:data});    
@@ -51,6 +53,7 @@ controllers.update = async (req, res) => {
     motoristaId: motoristaId,              
     servicoId: servicoId,
     statusId: statusId,
+    motoristumId: motoristaId,
   },{
     where: { id: id}
   })
@@ -68,10 +71,74 @@ controllers.update = async (req, res) => {
 
 controllers.get = async (req, res) => {
   const { id } = req.params;
-  await Motorista_auxiliar.findAll({
+  await Motorista_servico.findAll({
+    include: [
+      { 
+        model: Motorista,       
+        required: true,
+      },    
+        { 
+          model: Servicos,       
+          required: true,
+        }],
     where: { id: id}
-    //,
-    //include: [ Role ]
+  
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getMotoristaServico = async (req, res) => {
+  const { motoristaId } = req.params;
+  await Motorista_servico.findAll({
+    include: [
+      { 
+        model: Motorista,       
+        required: true,
+      },    
+        { 
+          model: Servicos,       
+          required: true,
+        }],
+    where: { statusId: 1, motoristaId: motoristaId}
+  
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getServico = async (req, res) => {
+  const { servicoId } = req.params;
+  await Motorista_servico.findAll({
+    include: [
+      { 
+        model: Motorista,       
+        required: true,
+      },    
+        { 
+          model: Servicos,       
+          required: true,
+        }],
+    where: { statusId: 1, servicoId: servicoId}
+  
   })
   .then( function (data){
     if (data.length > 0) {
@@ -87,17 +154,25 @@ controllers.get = async (req, res) => {
 }
 
 
+
 controllers.list = async (req,res) => {
- await Motorista_servico.findAll({
-     include: [{ model: Status  }],
+ /// const { servicoId, motoristaId } = req.params;
+  const { servicoId } = req.params;
+ await Motorista_servico.findAll({ 
+  include: [{
+    model: Motorista,
+  //   where: { id: 45 }
+    }],  
      where: { 
-      statusId: {
-        [Op.notIn]: [6,7]             
-      }
-   } 
+      servicoId: servicoId
+     } 
   })
   .then( function (data){
-    return res.json({success:true, data:data});    
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
   })
   .catch(error => {
     return res.json({success:false, message: error});
@@ -118,6 +193,7 @@ controllers.create = async (req,res) => {
     motoristaId: motoristaId,              
     servicoId: servicoId,
     statusId: statusId,
+    motoristumId: motoristaId,
   })
   .then( function (data){
   
@@ -129,5 +205,18 @@ controllers.create = async (req,res) => {
   })
 
 }
+controllers.totalServicosMotorista = async (req, res) => {
+ 
+  const { motoristaId } = req.params;
+ 
+   const salesCount = await Motorista_servico.count({ 
+    where: { 
+      motoristaId: motoristaId
+     } 
+   });
+ 
+   return res.json({success:true, data: salesCount});
+   
+ }
 
 module.exports = controllers;

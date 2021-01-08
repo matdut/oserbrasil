@@ -102,9 +102,10 @@ var Veiculo = sequelize.define(nametable,{
 
 });
 
-
+//User.belongsToMany(Project, { as: 'Tasks', through: 'worker_tasks', foreignKey: 'userId', otherKey: 'projectId'})
 Veiculo.belongsTo(Seguradora);
+//Veiculo.hasOne(Motorista, {as : 'motorista', foreignKey : 'id'});
 Veiculo.belongsTo(Motorista);
-
+//Veiculo.belongsTo(Motorista, {foreignKey : 'id'});
 
 module.exports = Veiculo

@@ -4,6 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import Cabecalho from './cabecalho';
 import FileUpload from "../pages/FileUpload";
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
 
 class sobreComponent extends React.Component  {
 //const Sobre = props => {
@@ -15,6 +18,18 @@ class sobreComponent extends React.Component  {
 
     componentDidMount(){
         //this.loadCliente()
+
+   /*     debugger;
+        const hora_ini = '08:00'
+        const dataatual = new Date(`${'04/01/2021'} ${hora_ini}`);
+
+        var minhaData = moment(
+            dataatual, "D/M/YYYY h:m"
+          ).subtract(
+              'hours', 3
+          );    
+
+          console.log(' hours - '+minhaData.format("hh:mm ")); */
      }
     
 //class sobreComponent extends React.Component  {

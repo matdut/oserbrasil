@@ -13,8 +13,12 @@ var Envio_servico_motorista = sequelize.define(nametable,{
   id:{
     type:Sequelize.INTEGER,
     primaryKey:true,
-  //  autoIncrement:true
+    autoIncrement:true
   },  
+  servicoId:{
+    type:Sequelize.INTEGER,
+   
+  }, 
   eventoId:{
     type: Sequelize.INTEGER,    
     refences: {

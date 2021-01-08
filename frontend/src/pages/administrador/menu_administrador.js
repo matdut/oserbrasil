@@ -65,7 +65,7 @@ class menu_administradorComponent extends React.Component  {
   }
   handleClick = () => {
     localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
+    localStorage.removeItem('lognome');           
     localStorage.removeItem('logid');  
     localStorage.removeItem('logperfil');  
     localStorage.removeItem('logprogress');
@@ -76,6 +76,7 @@ class menu_administradorComponent extends React.Component  {
     localStorage.removeItem('logeventoservico');
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);
+    localStorage.setItem('conectado', 1);
     this.props.history.push("/");
   }
 
@@ -217,8 +218,8 @@ class menu_administradorComponent extends React.Component  {
               <li>
               <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">
-                <LightTooltip title="Sair" placement="right">                  
-                   <i className="fas fa-sign-out-alt"></i>
+                <LightTooltip title="Sair" placement="top">        
+                   <i className="fas fa-sign-out-alt"></i>                   
                 </LightTooltip>    
               </a>  
               </div>

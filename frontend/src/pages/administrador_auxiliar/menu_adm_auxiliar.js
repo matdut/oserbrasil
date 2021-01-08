@@ -57,7 +57,6 @@ class menu_clienteComponent extends React.Component  {
       id: localStorage.getItem('logid') 
     });
    // this.verifica_menu();
-    
 
   }
   handleClick = () => {
@@ -74,6 +73,7 @@ class menu_clienteComponent extends React.Component  {
     localStorage.removeItem('logMarca');
     localStorage.removeItem('logmatrizId');
     localStorage.removeItem('logModelo');    
+    localStorage.setItem('conectado', 1);
 
     localStorage.setItem('logperfil', null);
     localStorage.setItem('logid', 0);

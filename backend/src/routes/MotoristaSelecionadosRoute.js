@@ -9,8 +9,9 @@ const MotoristaSelecionadosController = require('../controllers/MotoristaSelecio
 router.get('/list',MotoristaSelecionadosController.list);
 router.post('/create', MotoristaSelecionadosController.create);
 router.get('/get/:id', MotoristaSelecionadosController.get);
+router.get('/getChave/:chave', MotoristaSelecionadosController.getChave);
 router.put('/update/:id', MotoristaSelecionadosController.update);
-router.delete('/delete/:id',MotoristaSelecionadosController.delete);
+router.delete('/delete/:chave_acesso',MotoristaSelecionadosController.delete);
 
 
 module.exports = router;

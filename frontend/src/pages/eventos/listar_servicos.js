@@ -55,6 +55,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import CheckIcon from '@material-ui/icons/Check';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
 
@@ -178,8 +179,17 @@ useEffect(() => {
 8*/
 
 var campseltipoveiculo = '';
+var possui_motorista = false;
 var possui_tarifa_nova = false;
 var possui_tarifa_especial_nova = false;
+var motorista_incluido = 0;
+var total_motorista = 0;
+var reenvio_motorista = false;
+var servico_selecionado = 0;
+var estado_selecionado_mapa_global = '';
+var tipoTransporte_global = '';
+var bilingue_global = false;
+var chave_aleatoria_motorista_global = Math.random().toString(36).slice(-8);
 
 const containerStyle = {
   position: 'relative',  
@@ -316,7 +326,6 @@ const ConfirmacaodelStyles = {
   }
 };
 
-
 function formatar_valor2 (texto) {
 
   return (
@@ -357,13 +366,20 @@ class listaservicosComponent extends React.Component  {
       processo: 1,
       visualizar: '',
       campselecaotipo: false,
+      incluir: false,
       //tabAlteracaoIndex: '2',
      // tabInclusaoIndex: '2',
+      chave_aleatoria_motorista: '',
       obter_rota_nova: false,
+      valor_bloquear_cartao: '0,00',
       address: '',
       campeventoId: '',
       campDeletarId: '',
       campNome: '',
+      campMotorista: '',
+      campCor: "",
+      campModelo: '',   
+      campPlaca: "",
       selectedPlace:'',
       data_maior_filho: '',
       camptipoId: '',      
@@ -410,6 +426,7 @@ class listaservicosComponent extends React.Component  {
       valortotalviagens: '0,00',
       valor_oser: '',
       loading: true,
+      servico_criado:[],
       valor_motorista: '',
       erro_nome: false,
       estado_selecionado_mapa: '',
@@ -465,7 +482,8 @@ class listaservicosComponent extends React.Component  {
       listDiarias:[],
       listDiariaEspeciais:[],
       listservicosfilho: [],
-      translado:false,
+      listamotoristaServic: [],
+      translado:false,     
       diaria: false,
       origins: '',     
       h: '',
@@ -492,6 +510,7 @@ class listaservicosComponent extends React.Component  {
       eventoId: '',
       controle: 0,
       resultado_bilingue: '',
+      mensagem_motorista_alocado: '',
       resultado_receptivo: '',
       listServicos:[],
       listTipoTransporte:[],
@@ -503,6 +522,7 @@ class listaservicosComponent extends React.Component  {
       listTodosMotoristasAtivos:[],
       listaFilhosAlteracao:[],
       listaMotoristasPreferencial:[],
+      listaservicoalteracao:[],
       erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
@@ -571,11 +591,11 @@ class listaservicosComponent extends React.Component  {
    
   componentDidMount(){
         
- //  let eventoId = this.props.match.params.id;    
-   // console.log('eventoId'+ eventoId);
+  //let eventoId = this.props.match.params.id;    
+  // console.log('eventoId'+ eventoId);
 
   // this.interval = setInterval(() => this.tickservico(), 1000);
-//debugger;
+  //debugger;
     this.setState({
       perfil: localStorage.getItem('logperfil'),
       id: localStorage.getItem('logid'),
@@ -591,11 +611,7 @@ class listaservicosComponent extends React.Component  {
     this.loadDiariaespecial();
     this.valor_total_servicos();
     this.valor_total_viagens();
-    this.loadlistServicosExcluidos();  
-    
-  //  this.atualiza_evento();
-   // this.teste();
-   // this.calculo_rota_total();;
+    this.loadlistServicosExcluidos();    
   }
 
  
@@ -817,31 +833,124 @@ class listaservicosComponent extends React.Component  {
     }
     
    }
-   carrega_servico_visualizacao(data){
-     debugger;
-    api.get(`/historicoServicos/get/${data.id}`)
+  
+   carregar_motorista_servico(data) {
+     var motorista_id = data
+     console.log('motorista_id - '+motorista_id);
+     if (motorista_id !== undefined) { 
+
+    api.get(`/motorista_servico/getServico/${data.id}`)
     .then(res=>{
       if (res.data.success == true) {
+        
+        this.setState({             
+          campMotorista: res.data.data[0].motoristum.nome,        
+          camp_foto_url: res.data.data[0].motoristum.foto_url
+        });
         debugger;
-        this.setState({   
-           campNomeresponsavel: res.data.data[0].nome_responsavel,
+        api.get(`/veiculo/getVeiculoSelecionado/${res.data.data[0].motoristum.id}/${data.tipoTransporte}`)
+        .then(resveiculo=>{
+          if (resveiculo.data.success == true) {
+
+              this.setState({                           
+                campCor: resveiculo.data.data[0].cor,
+                campModelo: resveiculo.data.data[0].modelo,   
+                campPlaca: resveiculo.data.data[0].placa               
+              });
+
+            }
+          });    
+      } 
+    });    
+    } else {
+      this.setState({                           
+        mensagem_motorista_alocado: 'Nenhum motorista alocado a esse serviço!'          
+      });
+    }
+    
+   }
+
+   carrega_servico_visualizacao(data){
+    // const url = baseUrl+"/cliente/list"   
+    //debugger; 
+
+    api.get(`/historicoServicos/get/${data.id}`)
+     .then(res=>{
+       if (res.data.success == true) {
+         hora_inicial = res.data.data[0].hora_inicial.substr(0,5)
+         hora_final = res.data.data[0].hora_final.substr(0,5)
+        this.setState({     
+           camptipoId: res.data.data[0].tipoTransporte,           
+           tabIndex: res.data.data[0].tipoEventoId.toString(),
+         //  tabIndex: res.data.data[0].tipoEventoId,
+          // tabInclusaoIndex: res.data.data[0].tipoEventoId,
+          // tabAlteracaoIndex: res.data.data[0].tipoEventoId,
+           estado_selecionado_mapa: res.data.data[0].estado_selecionado_mapa,
+           campeventoId: res.data.data[0].eventoid,
            campNome: res.data.data[0].nome_passageiro,
            campTelefone1: res.data.data[0].telefone_passageiro,
            campqtdpassageiro: res.data.data[0].quantidade_passageiro,
            campdata_servico: dateFormat(res.data.data[0].data_servico, "UTC:dd/mm/yyyy"),
+           camphora_inicial: res.data.data[0].hora_inicial.substr(0,5),
+           camphora_final: res.data.data[0].hora_final.substr(0,5),
+           campqtddiarias: res.data.data[0].quantidade_diarias,
+           qtddiarias_old: res.data.data[0].quantidade_diarias,
+           campNumero_voo: res.data.data[0].numero_voo,
+           campCompanhia_aerea: res.data.data[0].companhia_aerea,
+           camplocalembarque: res.data.data[0].local_embarque,
+           camplocaldesembarque: res.data.data[0].local_desembarque,           
+           embarque_latitude: res.data.data[0].embarque_latitude,
+           embarque_longitude: res.data.data[0].embarque_longitude,
+           desembarque_latitude: res.data.data[0].desembarque_latitude,
+           desembarque_longitude: res.data.data[0].desembarque_longitude,
            campbilingue: res.data.data[0].motorista_bilingue,
            campreceptivo: res.data.data[0].motorista_receptivo,
            valor_bilingue: res.data.data[0].valor_bilingue,
            valor_receptivo: res.data.data[0].valor_receptivo, 
-           campMotoristaId: res.data.data[0].motorista_id,  
+           campMotoristaId: res.data.data[0].motorista_id,      
+           campnomemotorista: res.data.data[0].nome_motorista, 
+           camptelefonemotorista: res.data.data[0].telefone_motorista, 
            campdistancia: res.data.data[0].km_translado,                     
            camptempovalue: res.data.data[0].tempo_value,
            camptempo: res.data.data[0].tempo_translado,
            campvalor_estimado: res.data.data[0].valor_estimado,        
-           campvalor: res.data.data[0].valor_estimado, 
-        });  
-      }
-    }); 
+           campvalor: res.data.data[0].valor_estimado,
+           campcartaoid: res.data.data[0].cartaoId,       
+           campservico_pai_id: res.data.data[0].servico_pai_id,      
+            validacao_tipo: true, 
+            validacao_cartao: true,          
+            validacao_data_evento: true,      
+            validacao_nome: true,     
+            validacao_data_servico: true,
+            validacao_qtdpassageiro: true,
+            validacao_hora_inicial: true,
+            validacao_hora_final: true,
+            validacao_telefone1: true,
+            validacao_localembarque: true,
+            validacao_localdesembarque: true,           
+            validacao_qtd_diarias: true,           
+            incluir: false,
+            inicio: 1,
+        });    
+           
+        if (res.data.data[0].nome_motorista !== "") {
+          this.setState({ validacao_nome_motorista: true });
+        }
+        if (res.data.data[0].telefone_motorista !== "") {
+          this.setState({ validacao_telefone_motorista: true });
+        }
+        if (res.data.data[0].companhia_aerea !== "") {
+          this.setState({ validacao_companhia_aerea: true });
+        }
+        if (res.data.data[0].numero_voo !== "") {
+          this.setState({ validacao_numero_voo: true });
+        }
+         
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
    }
 
   carrega_servico(data){
@@ -858,6 +967,7 @@ class listaservicosComponent extends React.Component  {
          //  tabIndex: res.data.data[0].tipoEventoId,
           // tabInclusaoIndex: res.data.data[0].tipoEventoId,
           // tabAlteracaoIndex: res.data.data[0].tipoEventoId,
+           estado_selecionado_mapa: res.data.data[0].estado_selecionado_mapa,
            campeventoId: res.data.data[0].eventoid,
            campNome: res.data.data[0].nome_passageiro,
            campTelefone1: res.data.data[0].telefone_passageiro,
@@ -1589,85 +1699,332 @@ verifica_menu() {
     }            
   }
 
-  procurar_motorista_servico = async () => { 
+  envio_convite_motorista_selecionado(servico){
+
+    debugger;
+    var chave_gerada = '';
+
+    if (this.state.chave_aleatoria_motorista == '') {
+      chave_gerada = chave_aleatoria_motorista_global
+    } else {
+      chave_gerada = this.state.chave_aleatoria_motorista
+    }
+
+    api.get(`/motorista_selecionados/getChave/${chave_gerada}`)                    
+    .then(respMotorista=>{
+      debugger
+
+    if (respMotorista.data.success == true) {      
+     
+      debugger;
+      respMotorista.data.data.map((data)=>{
+
+          const datapost_motorista = {
+            servicoId: servico.id,
+            tipoEventoId: servico.tipoEventoId, 
+            eventoId: servico.eventoId, 
+            tipoTransporte: servico.tipoTransporte,
+            nome_passageiro: servico.nome_passageiro, 
+            telefone_passageiro: servico.telefone_passageiro,
+            quantidade_passageiro: servico.quantidade_passageiro,  
+            data_servico: servico.data_servico,
+            quantidade_diarias: servico.quantidade_diarias, 
+            hora_inicial: servico.hora_inicial,  
+            hora_final: servico.hora_final,  
+            local_embarque: servico.local_embarque, 
+            local_desembarque: servico.local_desembarque, 
+            embarque_latitude: servico.embarque_latitude, 
+            embarque_longitude: servico.embarque_longitude, 
+            desembarque_latitude: servico.desembarque_latitude, 
+            desembarque_longitude: servico.desembarque_longitude, 
+            distancia_value: servico.distancia_value, 
+            tempo_value: servico.tempo_value,
+            km_translado: servico.km_translado, 
+            tempo_translado: servico.tempo_translado,
+            companhia_aerea: servico.companhia_aerea,
+            numero_voo: servico.numero_voo, 
+            motorista_bilingue: servico.motorista_bilingue, 
+            valor_bilingue: servico.valor_bilingue,
+            valor_receptivo: servico.valor_receptivo,
+            motorista_receptivo: servico.motorista_receptivo,         
+            nome_motorista: servico.nome_motorista, 
+            telefone_motorista: servico.telefone_motorista, 
+            motorista_id: data.motoristaId,        
+            logid: servico.logid,
+            perfilId: 3,               
+          }  
+         debugger;
+        // console.log(' envioservicoMotorista/create '+JSON.stringify(datapost_motorista, null, "    ")); 
+          api.post('/envioservicoMotorista/create',datapost_motorista);   
+        });
+
+        debugger;
+        api.delete(`/motorista_selecionados/delete/${chave_gerada}`);                    
+      } 
+    });  
+  }
+
+ // procurar_motorista_servico = async () => { 
+
+  verifica_motorista_selecionados(motorista_id, tipoTransporte){
+    debugger
+    motorista_incluido = motorista_incluido + 1;
+
+    var chave_gerada = '';
+    if (this.state.chave_aleatoria_motorista == '') {
+      chave_gerada = chave_aleatoria_motorista_global
+    } else {
+      chave_gerada = this.state.chave_aleatoria_motorista
+    }
+    
+    const datapost_motorista = {     
+      motoristaId: motorista_id,
+      chave_acesso: chave_gerada, 
+    }      
+
+    debugger;  
+    //verificar se o motorista tem o veiculo selecionado 
+    //console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
+    api.get(`/veiculo/getVeiculoSelecionado/${motorista_id}/${tipoTransporte}`)                    
+    .then(respveiculo=>{   
+
+      debugger;   
+      if (respveiculo.data.success == true) {          
+        //
+        debugger;   
+        api.post('/motorista_selecionados/create',datapost_motorista);
+        possui_motorista = true;   
+    //    this.setState({ motorista_incluido: this.state.motorista_incluido + 1 });      
+
+        this.finalizando_processo_busca();
+                  
+      }  
+
+  }).catch(error=>{
+    alert("Error getVeiculoSelecionado"+error)
+  });
+
+  }
+
+  finalizando_processo_busca() {
+
+    debugger;
+    if (reenvio_motorista == false) {
+      if ( motorista_incluido == total_motorista ) {
+        if (possui_motorista == true) {
+          this.sendSaveInclusao();    
+            motorista_incluido = 0;
+        } else {
+          this.sendSaveInclusao();    
+        // alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
+        }
+      }   
+    } else {
+
+      api.get(`/servicos/get/${this.state.campservicoId}`)
+      .then(res=>{
+        if (res.data.success == true) {       
+          const data = res.data.data    
+          this.setState({
+            listaservicoalteracao:data,
+            loading: false,
+           })
+
+           this.envio_convite_motorista_selecionado(this.state.listaservicoalteracao[0]);
+
+           alert('Reenvio para os motoristas realizado com sucesso');
+        }
+      })
+      .catch(error=>{
+        alert("Error server loadlistServicos "+error)
+      })     
+    }  
+
+  }
+  deletar_motorista_servico(servico) {
+    api.delete(`/motorista_servico/delete/${servico}`);
+     
+  }
+
+  procurar_motorista_servico() { 
     //bloquear_cartao com o valor total mais a porcentagem de acrescimo
     debugger;
-    var encontrou = false; 
-    // se cartao ok 
-         var bilingue = this.state.campbilingue;
-     //    var receptivo = this.state.receptivo;tipoTransporte
-         var estado_motorista = this.state.estado_selecionado_mapa;
-         var tipoTransporte = this.state.camptipoId;
+    possui_motorista = false; 
 
+    if (this.state.incluir == false) {
+      if (this.state.campservicoId !== '') {
+         servico_selecionado = this.state.campservicoId;
+      } 
+      this.deletar_motorista_servico(servico_selecionado);
+      api.delete(`/envioservicoMotorista/delete/${servico_selecionado}`);         
+
+      debugger
+      for(let i=0; i < this.state.listservicoseventos.length - 1; i++){ 
+
+        debugger
+        if (this.state.listservicoseventos[i].id == servico_selecionado) {
+          debugger
+         
+          estado_selecionado_mapa_global = this.state.listservicoseventos[i].estado_selecionado_mapa          
+          tipoTransporte_global = this.state.listservicoseventos[i].tipoTransporte
+          bilingue_global = this.state.listservicoseventos[i].motorista_bilingue
+
+          const datapost_motorista = {     
+            motorista_alocado: false,        
+          } 
+          api.put(`/servicos/update/${servico_selecionado}`,datapost_motorista);
+        }
+
+      }      
+
+    }
+
+    const teste_data = moment(this.state.campdata_servico, "DD/MM/YYYY");
+    const formatar_data = teste_data.format("YYYY-MM-DD");    
+    const data_servico_date = new Date(formatar_data);
+   // var controle_motorista = 0;
+
+    //var data_servico = dateFormat(this.state.campdata_servico, "UTC:dd/mm/yyyy");
+    var data_servico = moment(this.state.campdata_servico, "DD/MM/YYYY");
+    var hora_ini = this.state.camphora_inicial.substring(0,5);   
+  
+    const dataatual = new Date(`${data_servico} ${hora_ini}`);
+
+     var data_tres_horas_mais = moment(
+       dataatual, "D/M/YYYY h:m"
+     ).add(             
+      'hours', 3
+     );    
+
+    var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+
+    var data_tres_horas_menos = moment(
+      dataatual, "D/M/YYYY h:m"
+    ).subtract(             
+      'hours', 3
+    );   
+   
+     var hora_menor_tres = data_tres_horas_menos.format("HH:mm");   
+   
+   // const data_servico_date = new Date(formatar_data);
+    
+    // Não ter outro serviço no mesmo dia e horário.
+    //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+   
+    //O serviço não ter sido aceito por outro motorista.
+    //Não ter ele mesmo cancelado esse serviço.
+
+    //var retorno = false;
+    // se cartao ok 
+        var bilingue = '';
+
+        if (this.state.campbilingue == '') {
+          bilingue = bilingue_global
+        } else {
+          bilingue = this.state.campbilingue
+        }
+       
+        var estado_motorista = '';        
+        if (this.state.estado_selecionado_mapa == '') {
+          estado_motorista = estado_selecionado_mapa_global
+        } else {
+          estado_motorista = this.state.estado_selecionado_mapa;
+        }
+        var tipoTransporte = '';
+        if (this.state.camptipoId == '') {
+          tipoTransporte = tipoTransporte_global
+        } else {
+          tipoTransporte = this.state.camptipoId;
+        }
+               
+        var verifica_possui_servico = false;
+      
+        debugger;
         api.get(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`)                    
         .then(respMotorista=>{
-             
+
           debugger;
-          if (respMotorista.data.success == true) {                     
-            var data = respMotorista.data.data;
-            debugger;
-            data.map((motoristas)=>{
-              debugger;
+          if (respMotorista.data.success == true) {  
 
-              const datapost_motorista = {     
-                motorista_id: motoristas.id,
-                tipoEventoId: motoristas.tipoEventoId, 
-                eventoId: motoristas.eventoId, 
-                tipoTransporte: motoristas.tipoTransporte,
-                nome_passageiro: motoristas.nome_passageiro, 
-                telefone_passageiro: motoristas.telefone_passageiro,
-                quantidade_passageiro: motoristas.quantidade_passageiro,  
-                data_servico: moment(motoristas.data_servico, "DD MM YYYY"),
-                quantidade_diarias: motoristas.quantidade_diarias, 
-                hora_inicial: motoristas.hora_inicial,                
-                local_embarque: motoristas.local_embarque,                
-                embarque_latitude: motoristas.embarque_latitude, 
-                embarque_longitude: motoristas.embarque_longitude,              
-                distancia_value: motoristas.distancia_value, 
-                tempo_value: motoristas.tempo_value,
-                km_translado: motoristas.km_translado, 
-                tempo_translado: motoristas.tempo_translado,
-                companhia_aerea: motoristas.companhia_aerea,
-                numero_voo: motoristas.numero_voo, 
-                motorista_bilingue: motoristas.motorista_bilingue, 
-                valor_bilingue: motoristas.valor_bilingue,
-                valor_receptivo: motoristas.valor_receptivo,
-                motorista_receptivo: motoristas.motorista_receptivo,                
-                nome_motorista: motoristas.nome_motorista, 
-                telefone_motorista: motoristas.telefone_motorista,    
-              }  
-                  //verificar se o motorista tem o veiculo selecionado 
-                  console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
-                  api.get(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`)                    
-                  .then(respveiculo=>{
-                      
-                    debugger;   
-                    if (respveiculo.data.success == true) {        
+            debugger
+          // var count_motoristas = respMotorista.data.data.length; 
+          // for(let i=0; i < respMotorista.data.data.length - 1; i++){
+          // respMotorista.data.map((selecao)=>{
+            total_motorista = respMotorista.data.data.length;
+            motorista_incluido = 0;
+            var mot_sel = respMotorista.data.data;
 
-                      api.post('/envioservicoMotorista/create',datapost_motorista)                         
-                      .then(respfilho=>{    
-                    
-                          if (respfilho.data.success == true) {       
-                              const data1 = respfilho.data.data;
-                              encontrou = true;                        
-                            
-                          }  
-                    
-                      })                        
-                      .catch(error=>{
-                        alert("Error server 2 "+error)
-                      })  
-
-                    }  
-
-                  });    
-                });       
+             mot_sel.map((mot)=>{             
+             
+              //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+              // verifica_possui_servico();
               
-          }
+                api.get(`/motorista_servico/getMotoristaServico/${mot.id}`)                    
+                .then(respservico=>{   
+                  
+                  debugger
+                
+                  if (respservico.data.success == true) {     
+                     
+                     const response_data = respservico.data.data[0];
 
-          return encontrou;
-        });    
-        //selecionar motorista ativos com o estado do local embarque / tipo veiculo / bilingue e receptivo
+                     console.log(' respservico.data.data '+JSON.stringify(respservico.data.data, null, "   "));
+       
+                     const data_teste = response_data.servico.data_servico;            
+                     //var teste_data_banco = moment(data_teste, "DD/MM/YYYY");
+                    // var formatar_data_banco = teste_data_banco.format("YYYY-MM-DD");                       
+                     var data_servico_banco = new Date(data_teste);
+                     
+                    debugger;
+                  
+                    var hora_banco = response_data.servico.hora_inicial.substring(0,5);                   
+
+                    if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                        hora_banco >= hora_menor_tres &&
+                        hora_banco <= hora_maior_tres) {
+
+                            debugger;
+                            verifica_possui_servico = true;
+                            motorista_incluido = motorista_incluido + 1;
+                            this.finalizando_processo_busca();
+
+                    } else {
+                        debugger
+                     //   motorista_incluido = motorista_incluido + 1;
+                   //    this.verifica_motorista_selecionados(mot.id, tipoTransporte);
+
+                    }                    
+                  } else {
+                     debugger
+                  //  motorista_incluido = motorista_incluido + 1;
+                    this.verifica_motorista_selecionados(mot.id, tipoTransporte);
+
+                  }     
+
+
+                }).catch(error=>{
+                  alert("Error motorista_servico getMotoristaServico  -"+error)
+                });    
+
+            })
+
+           
+  
+          } else {
+            alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
+         /*   this.setState({                              
+               mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
+            })*/
+          }  
+
+        }).catch(error=>{
+           alert("Error motorista getMotoristaServico -"+error)
+        });   
+
+     
+  } 
+
+    //selecionar motorista ativos com o estado do local embarque / tipo veiculo / bilingue e receptivo
          //verificar se ja existe algum cancelamento deste motorista
              
             // gravar o registro na tabela envio_servico_motorista 
@@ -1694,12 +2051,7 @@ verifica_menu() {
 
     // criar funcao para verificar se algum motorista aceitou o serviço
 
-
-
-
-  }
-
- 
+   //return possui_motorista;
 
   sendAtualizarembarque(){      
    
@@ -2074,6 +2426,57 @@ debugger
 
 
   } 
+  controle_botao() {
+    debugger
+    if (this.state.mensagem_motorista_alocado !== '') {
+      return (
+       <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_motorista"  p={2} onClick={()=>''}>
+            <div className="d-flex justify-content-center">
+              <label> Substituir Motorista </label>
+            </div>     
+       </Box>  
+      )
+    
+    } else {
+      return (
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_motorista"  p={2} onClick={()=>this.sendSaveCartao()}>
+        <div className="d-flex justify-content-center">
+        <label> Incluir </label>
+        </div>     
+        </Box>        
+      )
+    }
+
+  }
+  verifica_mensagem_alocado() {
+    debugger
+
+    if (this.state.mensagem_motorista_alocado !== '') {
+      return (
+        this.state.mensagem_motorista_alocado
+      )
+    } else {
+      return (
+        <div>
+        <div className="d-flex justify-content">    
+             <div className="p-2">Nome: </div>    
+             <div className="p-2">{this.state.campMotorista}</div>   
+        </div>
+        <div className="d-flex justify-content">    
+             <div className="p-2">Placa: </div>    
+             <div className="p-2">{this.state.campPlaca}</div>   
+             <div className="p-2">Modelo: </div>    
+             <div className="p-2">{this.state.campModelo}</div>   
+        </div>
+        <div className="d-flex justify-content">    
+             <div className="p-2">Cor: </div>    
+             <div className="p-2">{this.state.campCor}</div>   
+        </div>
+       </div>     
+      );
+    }
+
+  }
 
   /*
   ultima_data_filho() {
@@ -2142,14 +2545,50 @@ debugger
  sendFecha() {
   this.handleCloseModalVisualizacao();
  }
+/*
+ motoristaFuncaoAssincrona () {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(this.procurar_motorista_servico())
+    }, 500)    
+  });
+ }
 
-  sendSave(){             
+ salvandoFuncaoAssincrona () {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(this.sendSaveInclusao())         
+    }, 500)
+   
+  });
+ }
+ */
+
+  preparar_servico_salvamento() {   
+    
+   // if (possui_motorista == false) {
+   debugger;  
+
+  this.procurar_motorista_servico();   
+  /* .then((possui_motorista) => {     
+    debugger;
+    if (possui_motorista == true) {
+      // this.sendSaveInclusao();
+    }   
+   }) */
+ 
+   // }
+  
+    
+
+  }
+
+  async sendSaveInclusao(){             
 
     this.setState({                
       validacao_data_servico: false,
       validacao_nome: false,   
-      validacao_data_evento: false, 
-      mensagem_aguarde: 'Aguarde, alterando os dados...',     
+      validacao_data_evento: false,        
       validacao_telefone1: false,
     //  valor_oser: '0.192',
     //  valor_motorista: '0.768',         
@@ -2161,19 +2600,27 @@ debugger
 
     if (this.state.incluir == true) {
 
+      this.setState({     
+        mensagem_aguarde: 'Aguarde, incluindo os dados...',      
+      });
+
       debugger;
           // this.calculo_bilingue();
           // this.calculo_receptivo();   
         
         // busca_motorista();
-         var retorno = this.procurar_motorista_servico();
-         
-        if (retorno == true) { 
+      
+   //    const retorno1 = this.procurar_motorista_servico();
+
+   
+    //   if (retorno == true) { 
+
                 const datapost_incluir = {
                   tipoEventoId: this.state.tabIndex, 
                   eventoId: localStorage.getItem('logeventoservico'), 
                   tipoTransporte: this.state.camptipoId,
                   nome_passageiro: this.state.campNome, 
+                  estado_selecionado_mapa: this.state.estado_selecionado_mapa,
                   telefone_passageiro: this.state.campTelefone1,
                   quantidade_passageiro: this.state.campqtdpassageiro,  
                   data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
@@ -2216,9 +2663,16 @@ debugger
 
                   if (respevento.data.success == true) {          
 
-                //    debugger;
                     const data = respevento.data.data;
+                    this.setState({     
+                      servico_criado: respevento.data.data
+                    });
+                    
                     const pai_servico = data.id;
+
+                    debugger;
+
+                    this.envio_convite_motorista_selecionado(this.state.servico_criado);           
 
                     let valor_total_filhos = (parseFloat(data.valor_estimado) / parseInt(this.state.campqtddiarias)).toFixed(2);
                   
@@ -2233,6 +2687,7 @@ debugger
                                     tipoEventoId: this.state.tabIndex, 
                                     eventoId: localStorage.getItem('logeventoservico'), 
                                     tipoTransporte: this.state.camptipoId,
+                                    estado_selecionado_mapa: this.state.estado_selecionado_mapa,
                                     nome_passageiro: this.state.campNome, 
                                     telefone_passageiro: this.state.campTelefone1,
                                     quantidade_passageiro: this.state.campqtdpassageiro,  
@@ -2314,8 +2769,10 @@ debugger
                               });
                             
                               debugger;
-                              this.verifica_botao(1);
-                              this.handleCloseModalInclusao();
+                            //  this.verifica_botao(1);   
+                             // this.procurar_motorista_servico();
+
+                              this.handleCloseModalInclusao();                            
                               this.loadlistServicos();
                               this.valor_total_servicos();
                               this.valor_total_viagens();
@@ -2335,10 +2792,15 @@ debugger
                   alert("Erro sevico log  "+ error)
                 })               
              
-              } 
+      //      } 
        //  console.log(' logperfil '+localStorage.getItem('logperfil'));   
       
    } else { //Alteração
+
+    this.setState({     
+      mensagem_aguarde: 'Aguarde, alterando os dados...',      
+    });
+     
     
     if (this.state.tabIndex == 1) {
 
@@ -2352,6 +2814,7 @@ debugger
         tipoTransporte: this.state.camptipoId,
         nome_passageiro: this.state.campNome, 
         telefone_passageiro: this.state.campTelefone1,
+        estado_selecionado_mapa: this.state.estado_selecionado_mapa,
         quantidade_passageiro: this.state.campqtdpassageiro,  
         data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
         quantidade_diarias: this.state.campqtddiarias, 
@@ -2416,6 +2879,7 @@ debugger
             tipoTransporte: this.state.camptipoId,
             nome_passageiro: this.state.campNome, 
             telefone_passageiro: this.state.campTelefone1,
+            estado_selecionado_mapa: this.state.estado_selecionado_mapa,
             quantidade_passageiro:this.state.campqtdpassageiro,                              
             quantidade_diarias: 1, 
             hora_inicial: this.state.camphora_inicial,  
@@ -2494,7 +2958,8 @@ debugger
           nome_passageiro: this.state.campNome, 
           data_servico: moment( this.state.campdata_servico, "DD MM YYYY"),
           telefone_passageiro: this.state.campTelefone1,
-          quantidade_passageiro:this.state.campqtdpassageiro,                              
+          quantidade_passageiro:this.state.campqtdpassageiro,   
+          estado_selecionado_mapa: this.state.estado_selecionado_mapa,                           
           quantidade_diarias: this.state.campqtddiarias, 
           distancia_value: this.state.campdistancia, 
           tempo_value: this.state.camptempovalue,
@@ -2540,11 +3005,21 @@ debugger
 
       }          
     } else { // translados
+          
+          debugger
+          for(let i=0; i < this.state.listservicoseventos.length - 1; i++){ 
+
+            debugger
+            if (this.state.listservicoseventos[i].id == this.state.campservicoId) {
+              this.envio_convite_motorista_selecionado(this.state.listservicoseventos[i]);
+            }
+          }        
 
           const datapost_translado_alteracao_1 = {
             //tipoEventoId:  this.state.camptipoId,                             
             tipoTransporte: this.state.camptipoId,
             nome_passageiro: this.state.campNome, 
+            estado_selecionado_mapa: this.state.estado_selecionado_mapa,
             data_servico: moment( this.state.campdata_servico, "DD MM YYYY"),
             telefone_passageiro: this.state.campTelefone1,
             quantidade_passageiro:this.state.campqtdpassageiro,                              
@@ -2572,7 +3047,9 @@ debugger
             valor_estimado: valorDoublemask(this.state.campvalor),                                                             
           // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
         }  
-        
+
+        debugger;
+             
         api.put(`/servicos/update/${this.state.campservicoId}`, datapost_translado_alteracao_1)
         .then(resppai=>{    
   
@@ -2747,16 +3224,16 @@ delay() {
             || this.state.validacao_Telefone1 == true
        */
         if (this.state.validacao_qtdpassageiro == true && this.state.validacao_data_servico == true 
-          && this.state.validacao_nome == true && this.state.validacao_telefone1 == true && 
+          && this.state.validacao_nome == true && 
           this.state.validacao_hora_inicial == true && this.state.validacao_localembarque == true && 
           this.state.validacao_localdesembarque == true && this.state.campcartaoid !== '' && this.state.mensagem_servico === "") { 
           //this.state.validacao_hora_inicial == true  && this.state.validacao_hora_final == true  ) { 
-         if (this.state.tabIndex == 1) {
+          if (this.state.tabIndex == 1) {
 
             if (this.state.validacao_qtd_diarias == true) {     
               
               return (
-                <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.sendSave()}>
+                <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.preparar_servico_salvamento()}>
                         <div className="d-flex justify-content-center">
                         <label> Salvar </label>
                         </div>     
@@ -2779,7 +3256,7 @@ delay() {
 
          } else {
             return (
-              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.sendSave()}>
+              <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.preparar_servico_salvamento()}>
                       <div className="d-flex justify-content-center">
                       <label> Salvar </label>
                       </div>     
@@ -2796,8 +3273,7 @@ delay() {
                     </div>     
               </Box>           
           );                   
-        }
-   
+        }  
 
   }  
  
@@ -3301,6 +3777,21 @@ delay() {
       }             
     } 
   }  
+
+  reenvio_motoristas(row){
+    debugger;
+     reenvio_motorista = true;
+
+     servico_selecionado = row.id;
+     this.setState({    
+      incluir: false,
+      campservicoId: row.id,
+     })      
+
+     this.procurar_motorista_servico();
+         
+  }
+
   render()
   {
     //const [value1, setValue1] = useState(null);
@@ -3374,9 +3865,8 @@ delay() {
         </AppBar>
         
         <TabPanel value="1" className="tirar_espaco">
-        <div>
-          
-                        <MaterialTable          
+                  <div>
+                    <MaterialTable          
                             title=""
                           //  isLoading={this.state.loading}       
                             //style=""                     
@@ -3401,7 +3891,7 @@ delay() {
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },   
                               { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }}/>  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
+                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.motorista_alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista(rowData)} />  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista()}  /> },
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
                             ]}
@@ -3465,7 +3955,14 @@ delay() {
                              // pageSize: 9,
                               pageSizeOptions: [0],                
                             }}
+                            
                             actions={[
+                              {
+                                icon: AutorenewIcon,
+                                tooltip: 'Reenviar Motoristas',
+                                onClick: (event, rowData) => this.reenvio_motoristas(rowData),
+                              //  disabled: (rowData) => rowData.motorista_alocado == true
+                              },
                               {             
                                 icon: 'edit',
                                 tooltip: 'editar',                                
@@ -3483,7 +3980,7 @@ delay() {
                                 isFreeAction: true,
                                 onClick: (event) => this.handleOpenModalInclusao()
                               } */
-                            ]}
+                            ]}                      
                             
                           />      
                 </div>    
@@ -3971,11 +4468,23 @@ delay() {
             </IconButton></div>       
            
             <div className="container_alterado_4">
+
+            <div className="d-flex justify-content">        
+                 <div>  
+                 <Avatar alt={localStorage.getItem('lognome')} 
+                          src={this.state.camp_foto_url} variant="circle" className="avatar_tamanho"/> 
+                 </div>  
+                 {this.verifica_mensagem_alocado()}
+                            
+             </div>      
+          
+              <div>
+                  {this.controle_botao()}     
+              </div>
+                
+                             
               
-                         <div>
-                            <Avatar alt={localStorage.getItem('lognome')} 
-                          src={this.state.camp_foto_url} variant="circle" className="avatar_tamanho"/>            
-                        </div>                  
+                            
 
             </div>
          </ReactModal>
@@ -4656,7 +5165,7 @@ delay() {
                     <div className="d-flex justify-content-start">
                         <div className="checkbox_modal_dados_voo">Motorista Preferido</div>
                     </div>
-        </div>
+                   </div>
         <div className="p-2">
                     
             <div className="d-flex justify-content-start">
@@ -4814,82 +5323,811 @@ delay() {
                   </div>
                 </div>            
           <div>
+          <div>
           <div className="row modal-body">    
           
               <div className="p-2">  
-               
-               { 
-                 this.visualizacao_servico_tipo()              
-               } 
-              
-               <br/>
-                <div className="p-2">  
-                <FormControl variant="outlined" disabled={this.state.ordem_servico_disabled}>
-                        <InputLabel className="label_text" htmlFor="filled-adornment-password">Número de ordem</InputLabel>
-                        <OutlinedInput
-                            autoComplete="off"         
-                            readOnly="true"                       
-                            error={this.state.erro_ordem_servico}
-                            helperText={this.state.mensagem_ordem_servico}
-                            className="data_operador"                    
-                            id="outlined-basic"                      
-                            variant="outlined"
-                            value={this.state.campordem_servico} 
-                        
-                          labelWidth={140}
-                        />
-                      <FormHelperText error={this.state.erro_ordem_servico}>
-                            {this.state.mensagem_ordem_servico}
-                      </FormHelperText>
-                      </FormControl>                                                                   
-               </div>  
-               <div className="p-2">  
-               {
-                 this.seleciona_data()
-               }
-
-               </div>   
-               <div className="p-2">  
-               <FormControl variant="outlined" className="input_modal_direita">
-                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data Inclusão</InputLabel>
-                  <OutlinedInput   
-                    autoComplete="off"
-                    type="text" 
-                    readOnly="true"        
-                    className="input_modal_direita"                           
-                    id="nome_incluir"                   
-                    variant="outlined"
-                    value={this.state.campdata_servico}                                     
-                
-                  labelWidth={150}
-                />                                    
-              </FormControl> 
-               </div>
-               <div className="p-2">  
-               <FormControl variant="outlined" disabled={this.state.ordem_servico_disabled}>
-                        <InputLabel className="label_text" htmlFor="filled-adornment-password">Responsável Exclusão</InputLabel>
-                        <OutlinedInput
-                            autoComplete="off"         
-                            readOnly="true"                       
-                            error={this.state.erro_ordem_servico}
-                            helperText={this.state.mensagem_ordem_servico}
-                            className="data_operador"                    
-                            id="outlined-basic"                      
-                            variant="outlined"
-                            value={this.state.campNomeresponsavel} 
-                           
-                        
-                          labelWidth={140}
-                        />
-                     
-                      </FormControl>    
-               </div>
+              <TabContext value={this.state.tabIndex} className="tabs_padrao">
+              <div>                  
+                <AppBar position="static" color="transparent" >
+                  <TabList onChange={(e, index) => this.selecione_tipo_servico(index)}  
+                           aria-label="simple tabs example">
+                    <Tab label="Translado" disabled={this.state.translado} value="2" className="tabs_titulo_lista"/>          
+                    <Tab label="Diária" disabled={this.state.diaria} value="1" className="tabs_titulo_lista_2"/>          
+                  </TabList>
+                </AppBar>
+              </div>
           
-              </div>
+                <TabPanel value="2" className="tirar_espaco_modal">
+                <div className="p-2">  
+                <FormControl className="select_modal_tipo" variant="outlined">
+                        <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                        <Select
+                          className="text_select_modal_tipo"
+                          error={this.state.erro_tipo}       
+                          disabled='false'                    
+                          helperText={this.state.mensagem_tipoId}
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.camptipoId}
+                           
+                        //  onSelect={this.verificaTipo_veiculo}
+                       //   onFocus={this.verificaTipo_veiculo}
+                        //  onClick={this.verificaTipo_veiculo}
+                          onChange={ this.handleTipoTranspChange }                             
+                          endAdornment={
+                            <InputAdornment position="end">
+                                 {this.state.validacao_tipo? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }     
+                          label="Tipo Transporte"
+                          labelWidth={240}
+                        >
+                          {this.loadFillTipoData()}                    
+                        </Select>
+                      </FormControl>                                                                  
+               </div>            
+               <div className="p-2">
+                  <FormControl variant="outlined" className="data_text_servico">
+                              <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Passageiro</InputLabel>
+                              <OutlinedInput
+                                  autoComplete="off"
+                                  type="text"          
+                                  disabled='false'                  
+                                  error={this.state.erro_nome}
+                                  helperText={this.state.mensagem_cpf}
+                                  className="data_text_servico"                           
+                                  id="nome_incluir"                   
+                                  variant="outlined"
+                                  value={this.state.campNome}      
+                                  onBlur={this.verificaNome}
+                                  onFocus={this.verificaNomeonfocus}
+                                  onChange={ (e) => {
+                                    this.nomeChange(e)                       
+                                    this.validaNomeChange(e)
+                                  }}  
+                                  inputProps={{
+                                    maxLength: 40,
+                                  }}                          
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_nome? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={100}
+                              />                         
+                        </FormControl>    
+               </div>
+               <div className="p-2">  
+                   <div className="d-flex justify-content-start">
+                       <div>   
+                       <FormControl variant="outlined" className="input_modal_direita">
+                          <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                          <OutlinedInput   
+                              autoComplete="off"       
+                              disabled='false'         
+                              readOnly={this.state.camp_telefone_disabled}            
+                              error={this.state.erro_telefone}
+                              helperText={this.state.mensagem_telefone1}
+                              className="input_modal_direita"                       
+                              id="outlined-basic"                   
+                              variant="outlined"
+                              value={this.state.campTelefone1}                
+                              onBlur={this.verificaTelefone1}                            
+                              onChange={ (e) => {
+                                this.telefone1change(e)                       
+                                this.validatelefone1Change(e)
+                              }}                                      
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_telefone1? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={80}                      
+                          />
+                        <FormHelperText error={this.state.erro_telefone}>
+                              {this.state.mensagem_telefone1}
+                        </FormHelperText>
+                      </FormControl>        
+                      
+                      </div>
+                      <div>
+                      <FormControl variant="outlined" className="input_modal_esquerda">
+                              <InputLabel className="label_modal_esquerda" 
+                                    htmlFor="filled-adornment-password">Número Total de Passageiros</InputLabel>
+                              <OutlinedInput      
+                                  autoComplete="off"  
+                                  disabled='false'                                                         
+                                  error={this.state.erro_qtdpassageiro}
+                                  helperText={this.state.mensagem_qtdpassageiro}
+                                  className="input_modal_esquerda"                      
+                                  id="outlined-basic"                   
+                                  variant="outlined"
+                                  value={this.state.campqtdpassageiro}          
+                                  onBlur={this.verificaQtdPassageiros}
+                                  onFocus={this.verificaQtdPassageiros}                        
+                                  onChange={ (e) => {
+                                    this.qtdpassageiroschange(e)                                                           
+                                  }}                                    
+                                  inputProps={{
+                                    maxLength: 3,
+                                  }}     
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_qtdpassageiro? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={180}                      
+                              />
+                            <FormHelperText error={this.state.erro_qtdpassageiro}>
+                                  {this.state.mensagem_qtdpassageiro}
+                            </FormHelperText>
+                          </FormControl>  
+                      </div>
+                  </div>        
+              </div> 
+              <div className="p-2">    
+                        <div className="d-flex justify-content-start">
+                              <div>
+                              <FormControl variant="outlined" className="input_modal_direita">
+                          <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
+                          <OutlinedInput   
+                                  autoComplete="off"
+                                  type="text"                       
+                                  error={this.state.erro_data_servico}
+                                  disabled='false'     
+                                  helperText={this.state.mensagem_data_servico}
+                                  className="input_modal_direita"                           
+                                  id="nome_incluir"                   
+                                  variant="outlined"
+                                  value={this.state.campdata_servico}                                              
+                                  onChange={ (e) => {
+                                    this.data_servicochange(e)                   
+                                    this.validaDataServicoChange(e)                                              
+                                  }}  
+                                  inputProps={{
+                                    maxLength: 10,
+                                  }}                      
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_data_servico? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={150}
+                              />  
+                                  <FormHelperText error={this.state.erro_data_servico}>
+                                        {this.state.mensagem_data_servico}
+                                  </FormHelperText>                       
+                        </FormControl>                                 
+                              </div>    
+                              <div>
+                              <FormControl className="input_modal_esquerda" variant="outlined">
+                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Hora do Serviço</InputLabel>
+                                    <OutlinedInput         
+                                        type="time"  
+                                        autoComplete="off"                       
+                                        error={this.state.erro_hora_inicial}
+                                        disabled='false'     
+                                        helperText={this.state.mensagem_hora_inicial}
+                                        className="input_modal_esquerda"
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        value={this.state.camphora_inicial}     
+                                     //   onfocus={this.verificafocushora_inicial}                                 
+                                        onKeyPress={this.verificahora_inicial} 
+                                        onChange={ (e) => {
+                                          this.hora_inicialchange(e)                                                                 
+                                        }}                                    
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        inputProps={{
+                                          maxLength: 4,
+                                         
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_hora_inicial? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_hora_inicial}>
+                                        {this.state.mensagem_hora_inicial}
+                                  </FormHelperText>
+                                </FormControl>  
+                              </div>                
+                      </div>    
+                    </div>
 
-              
+                </TabPanel>
+                <TabPanel value="1" className="tirar_espaco_modal">
+                <div className="p-2">  
+                <FormControl className="select_modal_tipo" variant="outlined">
+                        <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                        <Select
+                          className="text_select_modal_tipo"
+                          error={this.state.erro_tipo} 
+                          disabled='false'     
+                          helperText={this.state.mensagem_tipoId}
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.camptipoId}
+                          onFocus={this.verificaTipo_veiculo}
+                          onClick={this.verificaTipo_veiculo}
+                          onChange={ (e) => {
+                            this.tipoChange(e)
+                          }}   
+                          
+                          endAdornment={
+                            <InputAdornment position="end">
+                                 {this.state.validacao_tipo? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }     
+                          label="Tipo Transporte"
+                          labelWidth={240}
+                        >
+                          {this.loadFillTipoData()}                    
+                        </Select>
+                      </FormControl>                                                                    
+               </div>            
+               <div className="p-2">
+               <FormControl variant="outlined" className="data_text_servico">
+                              <InputLabel className="label_text" htmlFor="filled-adornment-password">Nome do Passageiro</InputLabel>
+                              <OutlinedInput
+                                  autoComplete="off"
+                                  type="text"            
+                                  disabled='false'                
+                                  error={this.state.erro_nome}
+                                  helperText={this.state.mensagem_cpf}
+                                  className="data_text_servico"                           
+                                  id="nome_incluir"                   
+                                  variant="outlined"
+                                  value={this.state.campNome}      
+                                  onBlur={this.verificaNome}
+                                  onFocus={this.verificaNomeonfocus}
+                                  onChange={ (e) => {
+                                    this.nomeChange(e)                       
+                                    this.validaNomeChange(e)
+                                  }}  
+                                  inputProps={{
+                                    maxLength: 40,
+                                  }}                          
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_nome? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={100}
+                              />                         
+                        </FormControl>        
+               </div>
+               <div className="p-2">  
+                   <div className="d-flex justify-content-start">
+                       <div>   
+                       <FormControl variant="outlined" className="input_modal_direita">
+                          <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                          <OutlinedInput   
+                              autoComplete="off"           
+                              readOnly={this.state.camp_telefone_disabled}          
+                              disabled='false'       
+                              error={this.state.erro_telefone}
+                              helperText={this.state.mensagem_telefone1}
+                              className="input_modal_direita"                       
+                              id="outlined-basic"                   
+                              variant="outlined"
+                              value={this.state.campTelefone1}                
+                              onBlur={this.verificaTelefone1}                            
+                              onChange={ (e) => {
+                                this.telefone1change(e)                       
+                                this.validatelefone1Change(e)
+                              }}                                      
+                            endAdornment={
+                              <InputAdornment position="end">
+                                  {this.state.validacao_telefone1? <CheckIcon />: ''}
+                              </InputAdornment>
+                            }
+                            labelWidth={80}                      
+                          />
+                        <FormHelperText error={this.state.erro_telefone}>
+                              {this.state.mensagem_telefone1}
+                        </FormHelperText>
+                      </FormControl>    
+                      
+                      </div>
+                      <div>
+                      <FormControl variant="outlined" className="input_modal_esquerda">
+                              <InputLabel className="label_modal_esquerda" 
+                                    htmlFor="filled-adornment-password">Número Total de Passageiros</InputLabel>
+                              <OutlinedInput      
+                                  autoComplete="off"                                                      
+                                  error={this.state.erro_qtdpassageiro}
+                                  disabled='false'    
+                                  helperText={this.state.mensagem_qtdpassageiro}
+                                  className="input_modal_esquerda"                      
+                                  id="outlined-basic"                   
+                                  variant="outlined"
+                                  value={this.state.campqtdpassageiro}          
+                                  onBlur={this.verificaQtdPassageiros}
+                                  onFocus={this.verificaQtdPassageiros}                        
+                                  onChange={ (e) => {
+                                    this.qtdpassageiroschange(e)                                                           
+                                  }}                                    
+                                  inputProps={{
+                                    maxLength: 3,
+                                  }}     
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_qtdpassageiro? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={180}                      
+                              />
+                            <FormHelperText error={this.state.erro_qtdpassageiro}>
+                                  {this.state.mensagem_qtdpassageiro}
+                            </FormHelperText>
+                          </FormControl> 
+                      </div>
+                  </div>        
+              </div> 
+              <div className="p-2">    
+                        <div className="d-flex justify-content-start">
+                              <div>
+                              <FormControl variant="outlined" className="input_modal_direita">
+                          <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Data do Serviço</InputLabel>
+                          <OutlinedInput   
+                                  autoComplete="off"
+                                  type="text"                       
+                                  error={this.state.erro_data_servico}
+                                  disabled='false'    
+                                  helperText={this.state.mensagem_data_servico}
+                                  className="input_modal_direita"                           
+                                  id="nome_incluir"                   
+                                  variant="outlined"
+                                  value={this.state.campdata_servico}                                              
+                                  onChange={ (e) => {
+                                    this.data_servicochange(e)                   
+                                    this.validaDataServicoChange(e)                                              
+                                  }}  
+                                  inputProps={{
+                                    maxLength: 10,
+                                  }}                      
+                                endAdornment={
+                                  <InputAdornment position="end">
+                                      {this.state.validacao_data_servico? <CheckIcon />: ''}
+                                  </InputAdornment>
+                                }
+                                labelWidth={150}
+                              />  
+                                  <FormHelperText error={this.state.erro_data_servico}>
+                                        {this.state.mensagem_data_servico}
+                                  </FormHelperText>                       
+                        </FormControl>               
+                              </div>    
+                              <div>
+                              <FormControl className="input_modal_esquerda" variant="outlined">
+                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Hora Inicial</InputLabel>
+                                    <OutlinedInput         
+                                        type="time"  
+                                        autoComplete="off"                       
+                                        error={this.state.erro_hora_inicial}
+                                        disabled='false'    
+                                        helperText={this.state.mensagem_hora_inicial}
+                                        className="input_modal_esquerda"
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        value={this.state.camphora_inicial}          
+                                     //   onfocus={this.verificafocushora_inicial}                                 
+                                        onKeyPress={this.verificahora_inicial} 
+                                        onChange={ (e) => {
+                                          this.hora_inicialchange(e)                                                                 
+                                        }}                                    
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        inputProps={{
+                                          maxLength: 4,
+                                         
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_hora_inicial? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_hora_inicial}>
+                                        {this.state.mensagem_hora_inicial}
+                                  </FormHelperText>
+                                </FormControl>  
+                              </div>                
+                      </div>    
+                    </div>
+                    <div className="p-2">    
+                        <div className="d-flex justify-content-start">
+                              <div>
+                              <FormControl className="input_modal_direita" variant="outlined">
+                                    <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Hora Final</InputLabel>
+                                    <OutlinedInput    
+                                        type="time"       
+                                        autoComplete="off"                       
+                                        error={this.state.erro_hora_final}
+                                        disabled='false'    
+                                        helperText={this.state.mensagem_hora_final}
+                                        className="input_modal_direita"                 
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        onKeyPress={this.verificahora_final}         
+                                        //onfocus={this.verificafocushora_final}    
+                                        value={this.state.camphora_final}                                    
+                                        onChange={ (e) => {
+                                          this.hora_finalchange(e)                                                                 
+                                        }}                                    
+                                        inputProps={{
+                                          maxLength: 10,
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_hora_final? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_hora_final}>
+                                        {this.state.mensagem_hora_final}
+                                  </FormHelperText>
+                                </FormControl>  
+                              </div>    
+                              <div>
+                              <FormControl className="input_modal_esquerda" variant="outlined">
+                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Qtd de Diárias</InputLabel>
+                                    <OutlinedInput         
+                                        type="text"  
+                                        autoComplete="off"        
+                                        readOnly={this.state.quantidade_diarias}     
+                                        disabled='false'              
+                                        error={this.state.erro_qtd_diarias}
+                                        helperText={this.state.mensagem_qtd_diarias}
+                                        className="input_modal_esquerda"
+                                        id="outlined-basic"                   
+                                        variant="outlined"                    
+                                        onKeyUp={this.verificaqtddiaria}                        
+                                        value={this.state.campqtddiarias}                                     
+                                        onChange={ (e) => {
+                                          this.qtdDiariaschange(e)                                                                 
+                                        }}                                    
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        inputProps={{
+                                          maxLength: 4,                                         
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_qtd_diarias? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_qtd_diarias}>
+                                        {this.state.mensagem_qtd_diarias}
+                                  </FormHelperText>
+                                </FormControl>  
+                              </div>                
+                      </div>    
+                    </div>
+                </TabPanel>
+
+               </TabContext>
               </div>
-              {this.fechar_botao()}        
+              <div className="alinha_campos">              
+                    <div className="p-2">           
+                    <table style={{width: '70%'}}>
+                      <tr><td> 
+                           <div className="checkbox_modal_descricao">Local de Embarque</div>
+                           </td>                            
+                          
+                           </tr>
+                        <tr>
+                          <td rowSpan="2">                           
+                           <div style={{width: '70%'}}>
+                               { this.mostrar_endereco_selecionado_embarque() } 
+                               
+                              </div>
+                           </td>
+                         </tr>   
+                    </table>
+                  </div>
+                  
+                    <div className="p-2">
+                    <table style={{width: '70%'}}>
+                      <tr><td> 
+                           <div className="checkbox_modal_descricao">Local de Desembarque</div>
+                           </td>                            
+                          
+                           </tr>
+                        <tr>
+                          <td rowSpan="2">
+                          { this.mostrar_endereco_selecionado_desembarque() }                           
+                           </td>
+                         </tr>   
+                    </table>
+                  
+                    </div>              
+
+                    <div className="p-2">
+                    <div className="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d">                                                             
+                               <div className="checkbox_modal_descricao">Motorista deve fala Inglês?</div>
+                            </div>                               
+                           <div className="coluna_modal_separacao_e">                             
+                                <FormGroup aria-label="position" row>
+                                  <FormControlLabel
+                                    value={this.state.campbilingue}
+                                    disabled='false'  
+                                    control={<Switch color="primary" checked={this.state.campbilingue} 
+                                        onChange={this.bilinguechange}
+                                     //   onBlur={this.calculo_bilingue}
+                                        />}                                    
+                                    labelPlacement="end"
+                                  />                       
+                                </FormGroup>
+                           </div>
+                        </div> 
+                    </div>
+
+                    <div className="p-2">
+                      {this.verificar_tipo_servico()}
+                    </div>
+                    <div className="p-2">
+                    <table style={{width: '70%'}}>
+                      <tr><td> 
+                           <div className="checkbox_modal_dados_voo">Dados do vôo</div>
+                           </td>         
+                           </tr>                       
+                     </table>     
+                     <br/>
+                     <table style={{width: '70%'}}>      
+                       <tr>
+                          <td className="input_modal_voo">
+                          <FormControl className="input_modal_direita" variant="outlined">
+                                    <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Companhia Aérea</InputLabel>
+                                    <OutlinedInput    
+                                        type="text"       
+                                        autoComplete="off"                                                               
+                                        error={this.state.erro_companhia_aerea}
+                                        helperText={this.state.mensagem_companhia_aerea}
+                                        disabled='false'    
+                                        className="input_modal_direita"                 
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        value={this.state.campCompanhia_aerea}                                    
+                                        onChange={ (e) => {
+                                          this.companhia_aereachange(e)                                                                 
+                                        }}                                    
+                                        inputProps={{
+                                          maxLength: 10,
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_companhia_aerea? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_companhia_aerea}>
+                                        {this.state.mensagem_companhia_aerea}
+                                  </FormHelperText>
+                                </FormControl>  
+                           </td>
+                           <td className="input_modal_voo">
+                           <FormControl className="input_modal_esquerda" variant="outlined">
+                                    <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Número do Vôo</InputLabel>
+                                    <OutlinedInput         
+                                        type="text"  
+                                        autoComplete="off"                       
+                                        error={this.state.erro_numero_voo}
+                                        disabled='false'    
+                                        helperText={this.state.mensagem_numero_voo}
+                                        className="input_modal_esquerda"
+                                        id="outlined-basic"                   
+                                        variant="outlined"
+                                        value={this.state.campNumero_voo}                                     
+                                        onChange={ (e) => {
+                                          this.numero_voochange(e)                                                                 
+                                        }}                                    
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        inputProps={{
+                                          maxLength: 10,
+                                         
+                                        }} 
+                                      endAdornment={
+                                        <InputAdornment position="end">
+                                            {this.state.validacao_numero_voo? <CheckIcon />: ''}
+                                        </InputAdornment>
+                                      }
+                                      labelWidth={180}                      
+                                    />
+                                  <FormHelperText error={this.state.erro_numero_voo}>
+                                        {this.state.mensagem_numero_voo}
+                                  </FormHelperText>
+                                </FormControl>  
+
+                           </td>
+                         </tr>   
+                    </table>      
+                    </div>               
+
+                    <div className="p-2">                      
+                    <div class="d-flex justify-content-start">
+                                 <div>                  
+                                    <FormControl variant="outlined" className="select_evento_operador">
+                                      <InputLabel id="demo-simple-select-outlined-label">Motoristas</InputLabel>
+                                      <Select
+                                        error={this.state.erro_tipo} 
+                                        helperText={this.state.mensagem_tipoId}
+                                        disabled='false'    
+                                        labelId="demo-simple-select-outlined-label"
+                                        id="demo-simple-select-outlined"
+                                        value={this.state.campMotoristaId}                                    
+                                        onChange={ (e) => {
+                                          this.motoristaChange(e)
+                                        }}                  
+                                        labelWidth={140}          
+                                      >
+                                        <MenuItem value={0}></MenuItem>      
+                                        {this.loadMotoristaData()}                    
+                                      </Select>
+                                    </FormControl>                                                                
+                                 </div>
+                                
+                             </div>      
+                    </div>
+                    <div className="p-2">
+                    <div className="d-flex justify-content-start">
+                        <div className="checkbox_modal_dados_voo">Motorista Preferido</div>
+                    </div>
+                   </div>
+        <div className="p-2">
+                    
+            <div className="d-flex justify-content-start">
+                  <div>
+                  <FormControl className="input_modal_direita" variant="outlined">
+                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
+                  <OutlinedInput    
+                      type="text"       
+                      autoComplete="off"    
+                      disabled='false'                 
+                      error={this.state.erro_nome_motorista}
+                      helperText={this.state.mensagem_nome_motorista}
+                      className="input_modal_direita"                 
+                      id="outlined-basic"                   
+                      variant="outlined"
+                      value={this.state.campnomemotorista}                                    
+                      onChange={ (e) => {
+                        this.nomemotoristaChange(e)                                                                 
+                      }}                                    
+                      inputProps={{
+                        maxLength: 40,
+                      }} 
+                    endAdornment={
+                      <InputAdornment position="end">
+                          {this.state.validacao_nome_motorista? <CheckIcon />: ''}
+                      </InputAdornment>
+                    }
+                    labelWidth={180}                      
+                  />
+                <FormHelperText error={this.state.erro_nome_motorista}>
+                      {this.state.mensagem_nome_motorista}
+                </FormHelperText>
+              </FormControl>  
+                  </div>
+                  <div>
+                  <FormControl className="input_modal_esquerda" variant="outlined">
+                  <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
+                  <OutlinedInput         
+                      type="text"  
+                      autoComplete="off"   
+                      disabled='false'                            
+                      error={this.state.erro_telefone_motorista}
+                      helperText={this.state.mensagem_telefone_motorista}
+                      className="input_modal_esquerda"
+                      id="outlined-basic"                   
+                      variant="outlined"
+                      value={this.state.camptelefonemotorista}                                     
+                      onChange={ (e) => {
+                        this.telefonemotoristaChange(e)                                                                 
+                      }}                                    
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      inputProps={{
+                        maxLength: 15,
+                       
+                      }} 
+                    endAdornment={
+                      <InputAdornment position="end">
+                          {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
+                      </InputAdornment>
+                    }
+                    labelWidth={180}                      
+                  />
+                <FormHelperText error={this.state.erro_telefone_motorista}>
+                      {this.state.mensagem_telefone_motorista}
+                </FormHelperText>
+              </FormControl>  
+                  </div>
+             </div> 
+
+        </div>
+                    <div className="p-2">
+                      <div className="d-flex justify-content-start">
+                           <div className="coluna_modal_separacao_d">                              
+                               <div className="checkbox_modal_descricao">Cartão Escolhido</div>
+                            </div>                               
+                           
+                        </div>                       
+                     <br/>                       
+                        <FormControl className="select_modal_tipo" variant="outlined">
+                        <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Cartão</InputLabel>
+                        <Select
+                          className="text_select_modal_tipo"
+                          error={this.state.erro_cartao} 
+                          disabled='false'  
+                          helperText={this.state.mensagem_cartao}
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.campcartaoid}
+                          onFocus={this.verificaCartao}
+                          //onClick={this.verificaTipo_veiculo}
+                          onChange={ (e) => {
+                            this.cartaoChange(e)
+                          }}   
+                          endAdornment={
+                            <InputAdornment position="end">
+                                 {this.state.validacao_cartao? <CheckIcon />: ''}
+                            </InputAdornment>
+                          }                             
+                          labelWidth={240}
+                        >
+                          {this.loadFillData()}                    
+                        </Select>
+                      </FormControl>    
+                    </div>
+                </div>
+           </div> 
+           <div className="container-fluid">
+             
+                   <div>
+                     <div className="mensagem_aguarde">
+                      <FormHelperText>
+                          {this.state.mensagem_aguarde}
+                      </FormHelperText>       
+                    </div>   
+                    <div className="botao_servico_fixo">
+                          <table className="margin_total_servicos">
+                              <tr className="titulo_total_servicos"><td className="tamanho_coluna">Distância Total</td>
+                                <td className="tamanho_coluna_tempo">Tempo Total</td>
+                                <td className="tamanho_coluna">Valor Total</td></tr>                
+                              <tr className="resultado_total_servicos">
+                                                  <td>{this.state.campdistancia} km</td>
+                               <td>{ this.state.camptempo}</td>
+                                <td>R$ { valorMask(this.state.campvalor)}</td>
+                                </tr>               
+                          </table>
+                          {this.fechar_botao()}     
+                  
+                        </div>        
+                    </div>                    
+           </div> 
+
+      
+           
+        </div> 
+
+               
         </div>   
        </ReactModal> 
 
@@ -5651,7 +6889,7 @@ delay() {
                         <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Cartão</InputLabel>
                         <Select
                           className="text_select_modal_tipo"
-                          error={this.state.erro_cartao} 
+                          error={this.state.erro_cartao}                          
                           helperText={this.state.mensagem_cartao}
                           labelId="demo-simple-select-outlined-label"
                           id="demo-simple-select-outlined"
@@ -6290,14 +7528,30 @@ delay() {
 
   handleOpenModalMotorista(data) { 
     this.setState({ 
-      showMostraMotorista: true,    
+      showMostraMotorista: true,   
+      campMotorista: '',        
+      camp_foto_url: '',
+      campCor: '',
+      campModelo: '',   
+      campPlaca: '',   
+      mensagem_motorista_alocado: ''
     });     
+
+    //carregar motorista_servico
+    
+    this.carregar_motorista_servico(data);
     
   }
   
   handleCloseModalMotorista() {
     this.setState({ 
-      showMostraMotorista: false
+      showMostraMotorista: false,
+      campMotorista: '',        
+      camp_foto_url: '',
+      campCor: '',
+      campModelo: '',   
+      campPlaca: '',   
+      mensagem_motorista_alocado: ''
     });    
 
     this.loadlistServicos();
@@ -6504,11 +7758,11 @@ debugger;
  if (possui_tarifa_especial_nova == false) { 
     let contagem = 0
   
-
     this.state.listTarifas.map((data)=>{
   // console.log(JSON.stringify(data, null, "    "));         
     let valor_total_alterado = 0;
     let valor_total = 0; 
+    let valor_total_2 = 0; 
     let valor_distancia_1 = 0; 
     let valor_tempo_1 = 0;
     let valor_bandeirada = 0;
@@ -6562,11 +7816,15 @@ debugger;
               }    
 
               valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
+              
+              var valor_acrescimo = ((1,50 / 100) * valor_total).toFixed(2)
+              valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
               entrou = true;   
 
               possui_tarifa_nova = true;
             
               this.setState((state) => {
+                state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))
                 state.possui_tarifa = true
                 state.campvalor = valorMask(valor_total.toFixed(2))
                 state.campvalor_estimado = valorMask(valor_total.toFixed(2))
@@ -6620,6 +7878,7 @@ debugger;
   // console.log(JSON.stringify(data, null, "    "));         
     let valor_total_alterado = 0;
     let valor_total = 0; 
+    let valor_total_2 = 0; 
     let valor_distancia_1 = 0; 
     let valor_tempo_1 = 0;
     let valor_bandeirada = 0;
@@ -6672,10 +7931,14 @@ debugger;
               }    
 
               valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
+             
+              var valor_acrescimo = ((1,50 / 100) * valor_total).toFixed(2)
+              valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
               entrou = true;   
             
               possui_tarifa_nova = true;
               this.setState((state) => {
+                state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))
                 state.possui_tarifa = true
                 state.campvalor = valorMask(valor_total.toFixed(2))
                 state.campvalor_estimado = valorMask(valor_total.toFixed(2))
@@ -6723,6 +7986,7 @@ debugger;
       const data_final_date = new Date(data.data_final);       
      
       let valor_total = 0; 
+      let valor_total_2 = 0; 
       let valor_distancia_1 = 0; 
       let valor_tempo_1 = 0;
       let valor_bandeirada = 0;       
@@ -6783,10 +8047,12 @@ debugger;
 
                      valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
           
-                     
+                     var valor_acrescimo = ((1,50 / 100) * valor_total).toFixed(2)
+                     valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
                       possui_tarifa_especial_nova = true;
 
-                     this.setState((state) => {        
+                     this.setState((state) => {      
+                      state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))  
                       state.possui_tarifa_especial = true
                       state.processo = 1
                       state.campvalor = valorMask(valor_total.toFixed(2))
@@ -6837,6 +8103,7 @@ debugger;
       const data_final_date = new Date(data.data_final);       
      
       let valor_total = 0; 
+      let valor_total_2 = 0; 
       let valor_distancia_1 = 0; 
       let valor_tempo_1 = 0;
       let valor_bandeirada = 0;       
@@ -6897,8 +8164,12 @@ debugger;
 
                      valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
           
+                     var valor_acrescimo = ((1,50 / 100) * valor_total).toFixed(2)
+                     valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
+
                      possui_tarifa_especial_nova = true;
-                     this.setState((state) => {        
+                     this.setState((state) => {    
+                      state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))    
                       state.possui_tarifa_especial = true
                       state.processo = 1
                       state.campvalor = valorMask(valor_total.toFixed(2))
@@ -7000,7 +8271,7 @@ debugger;
 
   calcular_trajeto = () => {   
 
-  console.log('entrou no calcular_trajeto')
+ // console.log('entrou no calcular_trajeto')
 
   this.setState({
     mensagem_servico: '',
@@ -7174,7 +8445,7 @@ debugger;
     return this.state.listaCartao.map((data)=>{          
       return(
       <MenuItem value={data.id}>
-         <div id="externo"> 
+          <div id="externo"> 
             <div className="interno2">
               {this.verifica_formatacao(data.bandeira, data.numero)}
             </div>
@@ -7182,7 +8453,7 @@ debugger;
               {this.verifica_bandeira(data.bandeira)}
             </div>
            
-         </div>             
+         </div>           
       </MenuItem>      
       )
     })
@@ -7223,11 +8494,13 @@ debugger;
       erro_qtd_diarias: false,
       qtddiarias_old: 0,
       possui_tarifa: false,  
+      chave_aleatoria_motorista: Math.random().toString(36).slice(-8),
       nome_motorista_visualizacao: true,
       telefone_motorista_visualizacao: true,          
       data_servico_pai_old: data.data_servico,
       incluir: false,    
     });     
+    reenvio_motorista = false;
 
     if (this.state.tabIndex == 1) {
       this.setState({ 
@@ -7502,6 +8775,7 @@ debugger;
 
 
   handleOpenModalInclusao() { 
+   
     this.setState({ 
       showModalInclusao: true,  
       campeventoId: localStorage.getItem('logeventoservico'),
@@ -7511,14 +8785,15 @@ debugger;
       campMotoristaId:'',
       mensagem_aguarde: '',
       mensagem_servico: '',   
-      possui_tarifa: false,
+      possui_tarifa: false,      
       nome_motorista_visualizacao: true,
       telefone_motorista_visualizacao: true,
+      chave_aleatoria_motorista: Math.random().toString(36).slice(-8),
       qtddiarias_old: 0,
       inicio: 1,
       tabIndex: "2",
     });  
-
+    reenvio_motorista = false;
     this.limpar_campos();     
     this.loadCartaoCliente();
     this.loadTarifaespecial();
@@ -7534,7 +8809,8 @@ debugger;
       showModalInclusao: false,
       mensagem_aguarde:'',
     }); 
-    
+
+  //  this.procurar_motorista_servico();
     
   }
 
@@ -7546,6 +8822,7 @@ debugger;
     });
     
     this.carrega_servico_visualizacao(e);
+    //this.carrega_servico_visualizacao(e);
     if (e.tipoEventoId == 1) {
       this.setState({ 
         diaria: true,
@@ -7559,6 +8836,11 @@ debugger;
       });
     
   }
+
+  this.limpar_campos();     
+  this.loadTipoTransporte();
+  this.loadCartaoCliente();
+ // this.loadMotoristasPreferencial();
 }
   handleCloseModalVisualizacao() {
     this.setState({ 

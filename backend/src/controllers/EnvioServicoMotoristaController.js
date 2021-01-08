@@ -10,7 +10,7 @@ sequelize.sync()
 controllers.list = async (req,res) => {
   const { motoristaId } = req.params;
   await EnvioServicoMotorista.findAll({
-    where: { motorista_id: motoristaId, perfilId: perfilId  }   
+    where: { motorista_id: motoristaId }   
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -23,7 +23,7 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
+  const { servicoId, tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, local_embarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
@@ -34,6 +34,7 @@ controllers.create = async (req,res) => {
   //console.log("ROle es ==>"+role)
   //create
   await EnvioServicoMotorista.create({ 
+    servicoId: servicoId,
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
     nome_passageiro: nome_passageiro, 
@@ -95,7 +96,7 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
+  const { servicoId, tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, local_embarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
@@ -107,6 +108,7 @@ controllers.update = async (req, res) => {
   // update data
   
   await EnvioServicoMotorista.update({
+    servicoId: servicoId, 
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
     nome_passageiro: nome_passageiro, 
@@ -172,7 +174,26 @@ controllers.delete = async (req,res) => {
   const { id } = req.params;  
  
   await EnvioServicoMotorista.destroy({
-    where: { id: id }
+    where: { servicoId: id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  }) 
+
+}
+
+controllers.delete_servico = async (req,res) => {
+  
+  // parameter post  
+  const { servicoId } = req.params;  
+ 
+  await EnvioServicoMotorista.destroy({
+    where: { servicoId: servicoId }
   }).then( function (data){
     
     return res.json({success:true, data:data});    

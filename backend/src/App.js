@@ -46,6 +46,7 @@ const permissaoRouters = require('./routes/PermissaoRoute');
 const tipo_eventoRoutes = require('./routes/TipoEventoRoute');
 const motoristaRouters = require('./routes/MotoristaRoute');
 const motoristapreferidoRouters = require('./routes/MotoristaPreferidoRoute');
+const motoristaselecionadosRouters = require('./routes/MotoristaSelecionadosRoute');
 const motorista_servicoRouters = require('./routes/MotoristaServicoRoute');
 const motoristaAuxiliarRoutes = require('./routes/MotoristaAuxiliarRoute');
 const bancoRouters = require('./routes/BancoRoute');
@@ -72,14 +73,14 @@ const SeguradoraRouters = require('./routes/SeguradoraRoute');
 const Foto_motoristaRouters = require('./routes/Foto_motoristaRoute');
 const Tipo_TransporteRouters = require('./routes/Tipo_TransporteRoute');
 const StatusRouters = require('./routes/StatusRoute');
+const StatusFinalizacaoRouters = require('./routes/StatusFinalizacaoRoute');
 const VeiculoRouters = require('./routes/VeiculosRoute');
 const MarcaRouters = require('./routes/MarcaRoute');
 const ModeloRouters = require('./routes/ModeloRoute');
 const EmailRouters = require('./routes/EmailRoute');
 const DescontosRouters = require('./routes/DescontosRoute');
 const TaxasRouters = require('./routes/TaxasRoute');
-const Mensagens_cliente = require('./model/Mensagens_Cliente');
-const Mensagens_motorista = require('./model/Mensagens_motorista');
+
 
 app.use(
   "/files",
@@ -103,11 +104,13 @@ app.use('/permissao', permissaoRouters);
 app.use('/perfil', perfilRoutes);
 app.use('/tipoevento', tipo_eventoRoutes);
 app.use('/status', StatusRouters);
+app.use('/status_finalizacao', StatusFinalizacaoRouters);
 app.use('/empresa', empresaRouters);
 app.use('/motorista', motoristaRouters);
 app.use('/motorista_preferido', motoristapreferidoRouters);
 app.use('/motorista_servico', motorista_servicoRouters);
 app.use('/motoristaAuxiliar', motoristaAuxiliarRoutes);
+app.use('/motorista_selecionados', motoristaselecionadosRouters);
 app.use('/marca', MarcaRouters);
 app.use('/modelo', ModeloRouters);
 app.use('/login', loginRouters);

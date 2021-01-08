@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-// import Role for FK roleId
-//var Role = require('./Role');
-// name table
+
 var Perfil = require('./Perfil');
 var Transporte = require('./Tipo_transporte');
 var Status = require('./Status');
@@ -10,6 +8,7 @@ var Eventos = require('./Eventos');
 var Situacao = require('./Situacao');
 var Tipo_evento = require('./tipo_evento');
 var Cartao = require('./Cartao_credito');
+//var Motorista_servico = require('./Motorista_servico');
 
 var nametable = 'servicos';
 
@@ -159,6 +158,9 @@ var Servicos = sequelize.define(nametable,{
   servico_pai_id:  {  
     type: Sequelize.INTEGER
   },
+  estado_selecionado_mapa: {
+    type: Sequelize.STRING(3)
+  },
   statusId:{
     type: Sequelize.INTEGER,
     // this is a refence to another model
@@ -207,6 +209,5 @@ Servicos.belongsTo(Status);
 Servicos.belongsTo(Eventos);
 Servicos.belongsTo(Tipo_evento);
 Servicos.belongsTo(Cartao);
-
 
 module.exports = Servicos

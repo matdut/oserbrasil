@@ -120,6 +120,7 @@ class loginComponent extends React.Component  {
     let email_logado = this.state.email
     console.log('BOTAO1 '+this.state.email)
     console.log('BOTAO2 '+this.state.senha)
+    
    /* const data = {                
         email: this.state.email,
         senha: this.state.senha        
@@ -152,6 +153,7 @@ class loginComponent extends React.Component  {
                     if (res.data.data[0].perfilId == 1) {
 
                       localStorage.setItem('logperfil', 1); 
+                      localStorage.setItem('conectado', 0);   
 
                       this.props.history.push('/area_administrador'); 
 
@@ -163,7 +165,8 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logid',  rescliente.data.data[0].id); 
                           localStorage.setItem('logperfil', res.data.data[0].perfilId);      
                           localStorage.setItem('lognome',  rescliente.data.data[0].nome);  
-                          localStorage.setItem('logcpf',  rescliente.data.data[0].cpf);          
+                          localStorage.setItem('logcpf',  rescliente.data.data[0].cpf);       
+                          localStorage.setItem('conectado', 0);   
                           
                           this.props.history.push('/area_cliente_individual');    
                         } 
@@ -187,6 +190,7 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logcnpj',  resempresa.data.data[0].cnpj);       
                           localStorage.setItem('lograzao_social',  resempresa.data.data[0].razao_social);                   
                     
+                          localStorage.setItem('conectado', 0);
                           this.props.history.push('/area_cliente_empresarial');    
                     
                         } 
@@ -203,7 +207,8 @@ class loginComponent extends React.Component  {
                         localStorage.setItem('lognome',  resmotorista.data.data[0].nome);
                         localStorage.setItem('logid',  resmotorista.data.data[0].id);  
                         localStorage.setItem('logperfil', res.data.data[0].perfilId);  
-                        localStorage.setItem('statusid', res.data.data[0].statusId);          
+                        localStorage.setItem('statusid', res.data.data[0].statusId);    
+                        localStorage.setItem('conectado', 0);      
                         //const history = useHistory();                 
                         
                         this.setState({ 
@@ -226,7 +231,8 @@ class loginComponent extends React.Component  {
                       localStorage.setItem('lognome',  resmotorista.data.data[0].nome);
                       localStorage.setItem('logid',  resmotorista.data.data[0].id);  
                       localStorage.setItem('logperfil', res.data.data[0].perfilId);  
-                      localStorage.setItem('statusid', res.data.data[0].statusId);          
+                      localStorage.setItem('statusid', res.data.data[0].statusId);
+                      localStorage.setItem('conectado', 0);          
                       //const history = useHistory();                 
                       
                       this.setState({ 
@@ -251,6 +257,8 @@ class loginComponent extends React.Component  {
                           localStorage.setItem('logstatus', resoperador.data.data[0].statusId);   
                           localStorage.setItem('lograzao_social', resoperador.data.data[0].empresa.razao_social);                         
                           
+                          localStorage.setItem('conectado', 0);
+
                           this.setState({ 
                             color: '',
                             mensagem: ''
@@ -293,6 +301,8 @@ class loginComponent extends React.Component  {
     this.setState({ 
       mensagem: ''
     })
+    localStorage.setItem('conectado', 1);
+   
      //this.loadCliente()
   }   
  

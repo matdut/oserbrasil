@@ -187,7 +187,8 @@
 
 .foto_size_modal {
  
-  height: 250px !important;
+  width: 400px !important;
+  height: 300px !important;
 }
 
 .botao_cadastro_empresa {

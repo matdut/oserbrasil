@@ -147,7 +147,7 @@ import Esqueceu_Senha from './pages/esqueceu_senha';
  import Sobre from './pages/sobre';
  import Login from './pages/login'; 
  import Rodape from './pages/rodape';
-// import Servicos from './pages/servico';
+import Servicos from './pages/servico';
  import Contato from './pages/contato';
 
  var fs = require('fs');
@@ -196,6 +196,7 @@ export default function Routes() {
           
             <Route exact path="/login" component={Login} />
             <Route exact path="/sobre" component={Sobre} />
+            <Route exact path="/servicos" component={Servicos} />
 
             <PrivateRoute exact path="/configuracao" component={Configuracao} />
 
@@ -311,7 +312,7 @@ export default function Routes() {
              
              <PrivateRoute exact path="/area_operador" component={Area_operador} />
 
-             <PrivateRoute exact path="/esqueceu_senha" component={Esqueceu_Senha} />  
+             <Route exact path="/esqueceu_senha" component={Esqueceu_Senha} />  
 
              <PrivateRoute exact path="/lista_cad_incompleto/:id" component={Lista_cad_Incompleto} />  
              

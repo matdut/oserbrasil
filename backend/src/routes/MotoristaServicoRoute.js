@@ -6,11 +6,13 @@ const multerConfig = require('../config/multer');
 
 const MotoristaServicoController = require('../controllers/MotoristaServicoController');
 
-router.get('/list',MotoristaServicoController.list);
+router.get('/list/:servicoId',MotoristaServicoController.list);
 router.post('/create', MotoristaServicoController.create);
 router.get('/get/:id', MotoristaServicoController.get);
 router.put('/update/:id', MotoristaServicoController.update);
-router.delete('/delete/:id',MotoristaServicoController.delete);
-
+router.delete('/delete/:servicoId',MotoristaServicoController.delete);
+router.get('/getMotoristaServico/:motoristaId', MotoristaServicoController.getMotoristaServico);
+router.get('/getServico/:servicoId', MotoristaServicoController.getServico);
+router.get('/totalServicosMotorista/:motoristaId', MotoristaServicoController.totalServicosMotorista);
 
 module.exports = router;

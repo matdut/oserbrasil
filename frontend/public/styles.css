@@ -994,6 +994,34 @@
     bottom: 0px !important;  
   }
 
+  .botoes_desabilitado_motorista {
+    margin-top: 28px !important;
+    text-align: center;
+    width: 244px !important;
+    /*line-height: 26px !important; */   
+    height: 64px !important; 
+    border: 2px solid #C9C9C9 !important; 
+    background: #C9C9C9 0% 0% no-repeat padding-box !important;
+    opacity: 1 !important;
+    margin-left: 150px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
+  .botoes_habilitados_motorista {
+    margin-top: 28px !important;
+    width: 244px !important;
+    text-align: center;
+    /*line-height: 26px !important; */   
+    height: 64px !important; 
+    border: 2px solid #FF840A !important;
+    background: #FF840A 0% 0% no-repeat padding-box !important;
+    opacity: 1 !important;
+    margin-left: 150px !important;
+    position: absolute !important;    
+    bottom: 0px !important;  
+  }
+
   .botoes_desabilitado_modal_cartao {
     margin-top: 28px !important;
     width: 244px !important;
@@ -1292,9 +1320,9 @@
     position: fixed !important;
     text-decoration: underline !important;
     font-size: 14px !important;
-    margin-left: -56px !important;
+    margin-left: 56px !important;
     letter-spacing: 0px;
-    color: #0F93D9 !important;
+    color: #0F93D9 !important;  
   }
 
   .incluir_foto_2 {

@@ -3,10 +3,11 @@ const router = express.Router();
 
 const EnvioServicoMotoristaController = require('../controllers/EnvioServicoMotoristaController');
 
-router.get('/list/:motoristaId/:perfilId',EnvioServicoMotoristaController.list);
+router.get('/list/:motoristaId',EnvioServicoMotoristaController.list);
 router.post('/create',EnvioServicoMotoristaController.create);
 router.get('/get/:id', EnvioServicoMotoristaController.get);
 router.put('/update/:id',EnvioServicoMotoristaController.update);
 router.delete('/delete/:id',EnvioServicoMotoristaController.delete);
+router.delete('/delete_servico/:servicoId',EnvioServicoMotoristaController.delete_servico);
 
 module.exports = router;

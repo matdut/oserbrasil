@@ -98,6 +98,7 @@ controllers.lista_veiculos = async (req,res) => {
 
 controllers.list = async (req,res) => {
   await Veiculo.findAll({  
+   
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -204,7 +205,8 @@ controllers.getVeiculo = async (req, res) => {
   
   await Veiculo.findAll({
     include: [{
-      model: Motorista,      
+      model: Motorista//,         
+    //    required: true   
      }],
      where: { id: id }      
   })
@@ -222,6 +224,26 @@ controllers.getVeiculo = async (req, res) => {
 }
 
 controllers.getVeiculoSelecionado = async (req, res) => {
+  const { tipoTransporte, id } = req.params;
+  
+  await Veiculo.findAll({   
+   //  where: { motoristaId: id, tipoTransporte: tipoTransporte }      
+   where: { motoristaId: id, tipoTransporte: tipoTransporte }      
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getVeiculoTransporte = async (req, res) => {
   const { tipoTransporte, id } = req.params;
   
   await Veiculo.findAll({   
