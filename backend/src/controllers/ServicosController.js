@@ -431,7 +431,7 @@ controllers.update = async (req, res) => {
   
   const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
-    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
+    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias, 
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
     motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, 
     desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId,
@@ -453,7 +453,7 @@ controllers.update = async (req, res) => {
     quantidade_diarias: quantidade_diarias,
     data_servico: data_servico,  
     hora_inicial: hora_inicial,
-    hora_final: hora_final,  
+    hora_final: hora_final,    
     valor_bilingue: valor_bilingue, 
     valor_receptivo: valor_receptivo,
     motorista_alocado: motorista_alocado, 

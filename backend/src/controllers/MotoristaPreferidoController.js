@@ -89,12 +89,14 @@ controllers.get = async (req, res) => {
 
 
 controllers.list = async (req,res) => {
+  const { logid, perfilId } = req.params;
  await Motorista_preferido.findAll({
      include: [{ model: Status  }],
      where: { 
       statusId: {
         [Op.notIn]: [6,7]             
-      }
+      },
+      logid: logid, perfilId: perfilId
    } 
   })
   .then( function (data){

@@ -103,6 +103,8 @@ import { isThisHour } from 'date-fns';
 var campdistancia_global = '';
 var camptempovalue_global = '';
 var camptempo_global = '';
+var incluiu_servico = false;
+//var procurar_motoristas_global = false;
 
 //const service = new window.google.maps.DistanceMatrixService();
 var dateFormat = require('dateformat');
@@ -111,6 +113,7 @@ var nome_motorista_1 = '';
 var telefone_motorista_1 = '';
 
 //import { Alert } from 'reactstrap';
+//const procurar_motoristas_global = localStorage.getItem('logServicoIncluido');  
 const nome = localStorage.getItem('lognome');  
 const perfil = localStorage.getItem('logperfil');
 const libraries = ["places"];
@@ -190,6 +193,8 @@ var estado_selecionado_mapa_global = '';
 var tipoTransporte_global = '';
 var bilingue_global = false;
 var chave_aleatoria_motorista_global = Math.random().toString(36).slice(-8);
+var camplocalembarque_old = '';
+var camplocaldesembarque_old = '';
 
 const containerStyle = {
   position: 'relative',  
@@ -594,15 +599,33 @@ class listaservicosComponent extends React.Component  {
   //let eventoId = this.props.match.params.id;    
   // console.log('eventoId'+ eventoId);
 
-  // this.interval = setInterval(() => this.tickservico(), 1000);
+   this.interval = setInterval(() => this.tickservico(), 1000);
   //debugger;
     this.setState({
       perfil: localStorage.getItem('logperfil'),
       id: localStorage.getItem('logid'),
       eventoId: this.props.match.params.id          
     });
-
+    debugger
+   
     localStorage.setItem('logeventoservico',this.props.match.params.id);    
+
+    if (localStorage.getItem('logTipo') == "INCLUSAO") {
+      servico_selecionado = localStorage.getItem('logServicoIncluido');
+      this.setState({    
+       incluir: true,
+       campservicoId: servico_selecionado,
+      })  
+      this.carrega_servicos_distribuicao(servico_selecionado);    
+    } else if (localStorage.getItem('logTipo') == "ALTERACAO") {
+      servico_selecionado = localStorage.getItem('logServicoalteracao');
+      this.setState({    
+       incluir: true,
+       campservicoId: servico_selecionado,
+      })  
+      this.carrega_servicos_distribuicao(servico_selecionado);    
+    }   
+
     this.loadEvento();    
     this.loadlistServicos();
     this.loadTarifaespecial();
@@ -611,7 +634,8 @@ class listaservicosComponent extends React.Component  {
     this.loadDiariaespecial();
     this.valor_total_servicos();
     this.valor_total_viagens();
-    this.loadlistServicosExcluidos();    
+    this.loadlistServicosExcluidos();   
+    this.atualiza_evento(); 
   }
 
  
@@ -731,7 +755,10 @@ class listaservicosComponent extends React.Component  {
  }
 
  componentWillUnmount() {
- // clearInterval(this.interval);
+  clearInterval(this.interval);
+  
+   
+
  }
 
   valor_total_servicos(){
@@ -1035,6 +1062,19 @@ class listaservicosComponent extends React.Component  {
      })
    }
 
+   async carrega_servicos_distribuicao(data){
+    // const url = baseUrl+"/cliente/list"   
+    debugger;
+    const res = await api.get(`/servicos/get/${data}`)
+  //   .then(res=>{
+       if (res.data.success == true) {      
+
+        this.procurar_motorista_servico(res.data.data[0], localStorage.getItem('logTipo'));   
+
+       }   
+   }
+
+
   
    handleEmbarqueFocusChange = camplocalembarque => {     
           
@@ -1076,6 +1116,21 @@ class listaservicosComponent extends React.Component  {
         inicio: 1,  
       });  
 
+      if (camplocalembarque_old !== this.state.camplocalembarque) {
+        this.setState({ 
+            obter_rota_nova: true,         
+        })
+        camplocalembarque_old = this.state.camplocalembarque;
+      } else {
+        this.setState({ 
+          obter_rota_nova: false,         
+        })
+      }
+
+      console.log(' obter_rota_nova '+JSON.stringify(this.state.obter_rota_nova, null, "    "));
+      console.log(' camplocalembarque_old '+JSON.stringify(camplocalembarque_old, null, "    "));
+      console.log(' this.state.camplocalembarque '+JSON.stringify(this.state.camplocalembarque, null, "    "));
+
       console.log(' estado_selecionado_mapa '+JSON.stringify(results[0], null, "    ")); 
 
       console.log(' resultado geocodeByPlaceId '+JSON.stringify(this.state, null, "    ")); 
@@ -1097,6 +1152,22 @@ class listaservicosComponent extends React.Component  {
         desembarque_longitude: results[0].geometry.location.lng().toString(),                
         inicio: 1,
       });  
+debugger
+      if (camplocalembarque_old !== this.state.camplocaldesembarque) {
+        this.setState({ 
+            obter_rota_nova: true,         
+        })
+        camplocaldesembarque_old = this.state.camplocaldesembarque;
+      } else {
+        this.setState({ 
+          obter_rota_nova: false,         
+        })
+      }
+
+      console.log(' obter_rota_nova '+JSON.stringify(this.state.obter_rota_nova, null, "    "));
+      console.log(' camplocaldesembarque_old '+JSON.stringify(camplocaldesembarque_old, null, "    "));
+      console.log(' this.state.camplocaldesembarque '+JSON.stringify(this.state.camplocaldesembarque, null, "    "));
+
    //   console.log(' resultado '+JSON.stringify(this.state, null, "    ")); 
     })
     .catch(error => console.error(error));    
@@ -1423,11 +1494,12 @@ verificaCartao(e) {
         validacao_cartao: false,            
         mensagem_cartao: ''  
        })            
-  } else  if (this.state.campcartaoid.length > 0) {
+  } else if (this.state.campcartaoid.length > 0) {
     this.setState({       
       erro_cartao: false,   
       validacao_cartao: true,            
-      mensagem_cartao: ''  
+      mensagem_cartao: '',
+      inicio: 1, 
     })            
   }  
 }
@@ -1699,7 +1771,7 @@ verifica_menu() {
     }            
   }
 
-  envio_convite_motorista_selecionado(servico){
+  async envio_convite_motorista_selecionado(servico){
 
     debugger;
     var chave_gerada = '';
@@ -1710,8 +1782,8 @@ verifica_menu() {
       chave_gerada = this.state.chave_aleatoria_motorista
     }
 
-    api.get(`/motorista_selecionados/getChave/${chave_gerada}`)                    
-    .then(respMotorista=>{
+    const respMotorista = await api.get(`/motorista_selecionados/getChave/${chave_gerada}`)                    
+    //.then(respMotorista=>{
       debugger
 
     if (respMotorista.data.success == true) {      
@@ -1761,56 +1833,91 @@ verifica_menu() {
         debugger;
         api.delete(`/motorista_selecionados/delete/${chave_gerada}`);                    
       } 
-    });  
+  //  });  
   }
 
  // procurar_motorista_servico = async () => { 
 
-  verifica_motorista_selecionados(motorista_id, tipoTransporte){
+ async verifica_motorista_selecionados(motorista_id, tipoTransporte, servico){
     debugger
     motorista_incluido = motorista_incluido + 1;
-
-    var chave_gerada = '';
-    if (this.state.chave_aleatoria_motorista == '') {
-      chave_gerada = chave_aleatoria_motorista_global
-    } else {
-      chave_gerada = this.state.chave_aleatoria_motorista
-    }
-    
-    const datapost_motorista = {     
-      motoristaId: motorista_id,
-      chave_acesso: chave_gerada, 
-    }      
 
     debugger;  
     //verificar se o motorista tem o veiculo selecionado 
     //console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
-    api.get(`/veiculo/getVeiculoSelecionado/${motorista_id}/${tipoTransporte}`)                    
-    .then(respveiculo=>{   
+    const respveiculo = await api.get(`/veiculo/getVeiculoSelecionado/${motorista_id}/${tipoTransporte}`)                    
+   // .then(respveiculo=>{   
 
       debugger;   
-      if (respveiculo.data.success == true) {          
+      if (respveiculo.data.success == true) {     
+        
+        const datapost_motorista = {
+          servicoId: servico.id,
+          tipoEventoId: servico.tipoEventoId, 
+          eventoId: servico.eventoId, 
+          tipoTransporte: servico.tipoTransporte,
+          nome_passageiro: servico.nome_passageiro, 
+          telefone_passageiro: servico.telefone_passageiro,
+          quantidade_passageiro: servico.quantidade_passageiro,  
+          data_servico: servico.data_servico,
+          quantidade_diarias: servico.quantidade_diarias, 
+          hora_inicial: servico.hora_inicial,  
+          hora_final: servico.hora_final,  
+          local_embarque: servico.local_embarque, 
+          local_desembarque: servico.local_desembarque, 
+          embarque_latitude: servico.embarque_latitude, 
+          embarque_longitude: servico.embarque_longitude, 
+          desembarque_latitude: servico.desembarque_latitude, 
+          desembarque_longitude: servico.desembarque_longitude, 
+          distancia_value: servico.distancia_value, 
+          tempo_value: servico.tempo_value,
+          km_translado: servico.km_translado, 
+          tempo_translado: servico.tempo_translado,
+          companhia_aerea: servico.companhia_aerea,
+          numero_voo: servico.numero_voo, 
+          motorista_bilingue: servico.motorista_bilingue, 
+          valor_bilingue: servico.valor_bilingue,
+          valor_receptivo: servico.valor_receptivo,
+          motorista_receptivo: servico.motorista_receptivo,         
+          nome_motorista: servico.nome_motorista, 
+          telefone_motorista: servico.telefone_motorista, 
+          motorista_id: motorista_id,        
+          logid: servico.logid,
+          perfilId: 3,               
+        }  
+        api.post('/envioservicoMotorista/create',datapost_motorista);   
+
+        localStorage.setItem('logServicoIncluido', ''); 
+        localStorage.setItem('logServicoalteracao', ''); 
+        localStorage.setItem('logTipo', '');
+
+       // alert('Reenvio para os motoristas realizado com sucesso');
+
         //
-        debugger;   
+    /*    debugger;   
         api.post('/motorista_selecionados/create',datapost_motorista);
         possui_motorista = true;   
     //    this.setState({ motorista_incluido: this.state.motorista_incluido + 1 });      
-
-        this.finalizando_processo_busca();
+        localStorage.setItem('logServicoIncluido', ''); 
+        this.finalizando_processo_busca(servico);
+     */
                   
       }  
 
-  }).catch(error=>{
-    alert("Error getVeiculoSelecionado"+error)
-  });
+ // }).catch(error=>{
+ //   alert("Error getVeiculoSelecionado"+error)
+ // });
 
   }
 
-  finalizando_processo_busca() {
+  async finalizando_processo_busca(servico) {
 
     debugger;
     if (reenvio_motorista == false) {
-      if ( motorista_incluido == total_motorista ) {
+       //verificar se e inclusao ou alteracao
+      this.envio_convite_motorista_selecionado(servico);
+     
+  /*    if ( motorista_incluido == total_motorista ) {
         if (possui_motorista == true) {
           this.sendSaveInclusao();    
             motorista_incluido = 0;
@@ -1818,77 +1925,88 @@ verifica_menu() {
           this.sendSaveInclusao();    
         // alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
         }
-      }   
-    } else {
+      }   */
+    } else {   
 
-      api.get(`/servicos/get/${this.state.campservicoId}`)
-      .then(res=>{
-        if (res.data.success == true) {       
-          const data = res.data.data    
-          this.setState({
-            listaservicoalteracao:data,
-            loading: false,
-           })
+           this.envio_convite_motorista_selecionado(servico);
 
-           this.envio_convite_motorista_selecionado(this.state.listaservicoalteracao[0]);
-
-           alert('Reenvio para os motoristas realizado com sucesso');
-        }
-      })
-      .catch(error=>{
-        alert("Error server loadlistServicos "+error)
-      })     
+     
+        
+  
     }  
 
   }
   deletar_motorista_servico(servico) {
+
     api.delete(`/motorista_servico/delete/${servico}`);
      
   }
 
-  procurar_motorista_servico() { 
+  async procurar_motorista_servico(servico, tipo_solicitacao) { 
+    // tipo_solicitacao: inclusao, alteracao / reenvio 
     //bloquear_cartao com o valor total mais a porcentagem de acrescimo
     debugger;
-    possui_motorista = false; 
+    possui_motorista = false;     
+        
+    if (tipo_solicitacao == 'REENVIO') {    
 
-    if (this.state.incluir == false) {
-      if (this.state.campservicoId !== '') {
-         servico_selecionado = this.state.campservicoId;
-      } 
-      this.deletar_motorista_servico(servico_selecionado);
-      api.delete(`/envioservicoMotorista/delete/${servico_selecionado}`);         
+      api.delete(`/envioservicoMotorista/delete/${servico.id}`);        
 
-      debugger
-      for(let i=0; i < this.state.listservicoseventos.length - 1; i++){ 
+    } else if (tipo_solicitacao == 'ALTERCAO') {  
+     // this.deletar_motorista_servico(servico_selecionado);
+     debugger
+      api.delete(`/envioservicoMotorista/delete/${servico.id}`);    
+      
+      //se algum motorista aceitou o servico 
+      //Se faltarem 6 ou mais horas para o inicio do serviço que teve
+      // os dados alterados, não será cobrado do Cliente o valor do serviço 
+      //e o (s) Motorista (s) não será remunerado;
+      if (servico.motorista_alocado == true) {
 
-        debugger
-        if (this.state.listservicoseventos[i].id == servico_selecionado) {
-          debugger
-         
-          estado_selecionado_mapa_global = this.state.listservicoseventos[i].estado_selecionado_mapa          
-          tipoTransporte_global = this.state.listservicoseventos[i].tipoTransporte
-          bilingue_global = this.state.listservicoseventos[i].motorista_bilingue
+        const data_hora_atual = new Date();
+        const data_servico_alteracao = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");  
+        const data_moment_alt = moment(data_servico_alteracao, "DD/MM/YYYY");
+        const hora_ini_alt = servico.hora_inicial;
+        const dataatual_alt = new Date(`${data_moment_alt} ${hora_ini_alt}`);
+        
+        var data_seis_horas_menos = moment(
+          dataatual_alt, "D/M/YYYY h:m"
+        ).subtract(             
+         'hours', 6
+        );   
+        
+        var data_atual = moment(
+          data_hora_atual, "D/M/YYYY h:m"
+        );
 
-          const datapost_motorista = {     
-            motorista_alocado: false,        
-          } 
-          api.put(`/servicos/update/${servico_selecionado}`,datapost_motorista);
+        if (data_atual.getTime() >= data_seis_horas_menos.getTime() ) {
+             alert(' data_atual '+ data_atual);
+             alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+
+        } else if (data_atual.getTime() <= data_seis_horas_menos.getTime() ) {
+            //Se faltarem menos que 6 horas antes do inicio do serviço que teve os dados alterados
+          //, será cobrado do Cliente o valor do serviço bloqueado no cartão de crédito 
+          //e o Motorista será remunerado pelo valor que lhe couber; Usar a rotina 
+
+          alert(' data_atual '+ data_atual);
+          alert(' data_seis_horas_menos '+ data_seis_horas_menos);
         }
 
-      }      
+      } 
 
     }
 
-    const teste_data = moment(this.state.campdata_servico, "DD/MM/YYYY");
-    const formatar_data = teste_data.format("YYYY-MM-DD");    
-    const data_servico_date = new Date(formatar_data);
-   // var controle_motorista = 0;
-
-    //var data_servico = dateFormat(this.state.campdata_servico, "UTC:dd/mm/yyyy");
-    var data_servico = moment(this.state.campdata_servico, "DD/MM/YYYY");
-    var hora_ini = this.state.camphora_inicial.substring(0,5);   
+    const data_servico = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");
   
-    const dataatual = new Date(`${data_servico} ${hora_ini}`);
+    const data_moment = moment(data_servico, "DD/MM/YYYY");
+    const formatar_data = data_moment.format("YYYY-MM-DD");    
+    const data_servico_date = new Date(formatar_data);
+    const data_servico_ini = servico.data_servico;                                   
+ 
+    const hora_ini = servico.hora_inicial;
+    //hora_ini = hora_ini.substring(0,5); 
+  
+    const dataatual = new Date(`${formatar_data} ${hora_ini}`);
 
      var data_tres_horas_mais = moment(
        dataatual, "D/M/YYYY h:m"
@@ -1918,28 +2036,41 @@ verifica_menu() {
     // se cartao ok 
         var bilingue = '';
 
-        if (this.state.campbilingue == '') {
+        if (servico.motorista_bilingue == '') {
           bilingue = bilingue_global
         } else {
-          bilingue = this.state.campbilingue
+          bilingue = servico.motorista_bilingue
         }
-       
+
+        if (bilingue == false) {
+          bilingue = 0
+        } else {
+          bilingue = 1
+        }
+
+            
         var estado_motorista = '';        
-        if (this.state.estado_selecionado_mapa == '') {
+        if (servico.estado_selecionado_mapa == '') {
           estado_motorista = estado_selecionado_mapa_global
         } else {
-          estado_motorista = this.state.estado_selecionado_mapa;
+          estado_motorista = servico.estado_selecionado_mapa;
         }
         var tipoTransporte = '';
-        if (this.state.camptipoId == '') {
+        if (servico.camptipoId == '') {
           tipoTransporte = tipoTransporte_global
         } else {
-          tipoTransporte = this.state.camptipoId;
+          tipoTransporte = servico.tipoTransporte;
         }
                
         var verifica_possui_servico = false;
       
         debugger;
+        //verificar motorista preferido //
+        if (estado_motorista == 'Rio') {
+          estado_motorista = 'RJ'   
+        }  
+
+       // alert(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`);
         api.get(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`)                    
         .then(respMotorista=>{
 
@@ -1947,9 +2078,7 @@ verifica_menu() {
           if (respMotorista.data.success == true) {  
 
             debugger
-          // var count_motoristas = respMotorista.data.data.length; 
-          // for(let i=0; i < respMotorista.data.data.length - 1; i++){
-          // respMotorista.data.map((selecao)=>{
+      
             total_motorista = respMotorista.data.data.length;
             motorista_incluido = 0;
             var mot_sel = respMotorista.data.data;
@@ -1959,45 +2088,38 @@ verifica_menu() {
               //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
               // verifica_possui_servico();
               
-                api.get(`/motorista_servico/getMotoristaServico/${mot.id}`)                    
-                .then(respservico=>{   
+              api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
+              .then(respservico=>{   
                   
-                  debugger
-                
-                  if (respservico.data.success == true) {     
-                     
-                     const response_data = respservico.data.data[0];
+                  debugger                 
+                  if (respservico.data.success == true) {   
+                    const response_data = respservico.data.data[0];      
+                        
+                            const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                            const data_teste = moment(data_servico, "DD/MM/YYYY");
+                            const formatar_data = data_teste.format("YYYY-MM-DD");    
+                            const data_servico_banco = new Date(formatar_data);
+                            var hora_banco = servico.hora_inicial.substring(0,5);                   
 
-                     console.log(' respservico.data.data '+JSON.stringify(respservico.data.data, null, "   "));
-       
-                     const data_teste = response_data.servico.data_servico;            
-                     //var teste_data_banco = moment(data_teste, "DD/MM/YYYY");
-                    // var formatar_data_banco = teste_data_banco.format("YYYY-MM-DD");                       
-                     var data_servico_banco = new Date(data_teste);
-                     
-                    debugger;
-                  
-                    var hora_banco = response_data.servico.hora_inicial.substring(0,5);                   
+                            if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                hora_banco <= hora_maior_tres &&
+                                hora_banco >= hora_menor_tres) {
 
-                    if (data_servico_banco.getTime() == data_servico_date.getTime() &&
-                        hora_banco >= hora_menor_tres &&
-                        hora_banco <= hora_maior_tres) {
+                                    debugger;
+                                    verifica_possui_servico = true;
+                                    motorista_incluido = motorista_incluido + 1;
+                                //    this.finalizando_processo_busca();
 
-                            debugger;
-                            verifica_possui_servico = true;
-                            motorista_incluido = motorista_incluido + 1;
-                            this.finalizando_processo_busca();
+                            } else {
+                                debugger
+                            //   motorista_incluido = motorista_incluido + 1;
+                            this.verifica_motorista_selecionados(mot.id, tipoTransporte, servico);
 
-                    } else {
-                        debugger
-                     //   motorista_incluido = motorista_incluido + 1;
-                   //    this.verifica_motorista_selecionados(mot.id, tipoTransporte);
-
-                    }                    
+                            }                                             
                   } else {
                      debugger
                   //  motorista_incluido = motorista_incluido + 1;
-                    this.verifica_motorista_selecionados(mot.id, tipoTransporte);
+                    this.verifica_motorista_selecionados(mot.id, tipoTransporte, servico);
 
                   }     
 
@@ -2008,17 +2130,18 @@ verifica_menu() {
 
             })
 
-           
+           // alert('Reenvio para os motoristas realizado com sucesso');
   
           } else {
             alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
-         /*   this.setState({                              
+            localStorage.setItem('logServicoIncluido', ''); 
+            /*   this.setState({                              
                mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
             })*/
           }  
 
         }).catch(error=>{
-           alert("Error motorista getMotoristaServico -"+error)
+            alert("Error motorista getMotoristaServico -"+error)
         });   
 
      
@@ -2441,7 +2564,7 @@ debugger
       return (
         <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_motorista"  p={2} onClick={()=>this.sendSaveCartao()}>
         <div className="d-flex justify-content-center">
-        <label> Incluir </label>
+        <label> Substituir Motorista </label>
         </div>     
         </Box>        
       )
@@ -2564,26 +2687,17 @@ debugger
  }
  */
 
-  preparar_servico_salvamento() {   
+  async preparar_servico_salvamento() {   
     
    // if (possui_motorista == false) {
    debugger;  
 
-  this.procurar_motorista_servico();   
-  /* .then((possui_motorista) => {     
-    debugger;
-    if (possui_motorista == true) {
-      // this.sendSaveInclusao();
-    }   
-   }) */
- 
-   // }
-  
+   this.sendSaveServico();
     
 
   }
 
-  async sendSaveInclusao(){             
+  async sendSaveServico(){             
 
     this.setState({                
       validacao_data_servico: false,
@@ -2646,7 +2760,7 @@ debugger
                   motorista_id: this.state.campMotoristaId,    
                   nome_motorista: this.state.campnomemotorista, 
                   telefone_motorista: this.state.camptelefonemotorista, 
-                
+                  motorista_alocado: 0,                
                   cartaoId: this.state.campcartaoid,        
                   valor_estimado: valorDoublemask(this.state.campvalor),    
                   valor_oser: (parseFloat('0.192') * valorDoublemask(this.state.campvalor)).toFixed(2),
@@ -2659,7 +2773,7 @@ debugger
             
                 // console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
                 api.post('/servicos/create',datapost_incluir)
-                .then(respevento=>{    
+                .then(respevento=>{             
 
                   if (respevento.data.success == true) {          
 
@@ -2672,7 +2786,7 @@ debugger
 
                     debugger;
 
-                    this.envio_convite_motorista_selecionado(this.state.servico_criado);           
+                  //  this.envio_convite_motorista_selecionado(this.state.servico_criado);           
 
                     let valor_total_filhos = (parseFloat(data.valor_estimado) / parseInt(this.state.campqtddiarias)).toFixed(2);
                   
@@ -2705,6 +2819,7 @@ debugger
                                     distancia_value: this.state.km_total_filho, 
                                   // tempo_value: this.state.tempo_total_filho,
                                     companhia_aerea: this.state.campCompanhia_aerea,
+                                    //motorista_alocado: 0,        
                                     numero_voo: this.state.campNumero_voo, 
                                     motorista_bilingue: this.state.campbilingue, 
                                     motorista_receptivo: this.state.campreceptivo, 
@@ -2739,7 +2854,7 @@ debugger
                           }
 
 
-                      }
+                    }
                   // debugger;
                     //console.log(`/servicos/totalservicos/${this.state.campeventoId}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`); 
 
@@ -2761,24 +2876,31 @@ debugger
 
                           
                           api.put(`/eventos/update/${this.state.campeventoId}`, datapost_alterar)
-                          .then(respevento1=>{
-                            if (respevento1.data.success==true) {    
+                          .then(respevento2=>{
+                            if (respevento2.data.success==true) {    
 
                               this.setState({                
                                 mensagem_usuario: 'Serviço incluído com sucesso!'
                               });
-                            
+
+                             // procurar_motoristas_global = true;                              
+                              incluiu_servico = true;
+                              const servico_id = this.state.servico_criado;
+                              localStorage.setItem('logServicoIncluido', servico_id.id);
+                              localStorage.setItem('logTipo', 'INCLUSAO');
+
                               debugger;
                             //  this.verifica_botao(1);   
-                             // this.procurar_motorista_servico();
+                         //    this.procurar_motorista_servico();
 
-                              this.handleCloseModalInclusao();                            
+                              this.handleCloseModalInclusao(); 
                               this.loadlistServicos();
                               this.valor_total_servicos();
                               this.valor_total_viagens();
                               this.envia_mensagemClick();  
                               this.atualiza_evento();
                               this.refreshPage();  
+                              
 
                             // this.props.history.push(`/lista_evento_servico/${localStorage.getItem('logeventoservico')}`);  
 
@@ -2789,8 +2911,8 @@ debugger
                             })                    
                     }              
                   }).catch(error=>{
-                  alert("Erro sevico log  "+ error)
-                })               
+                   alert("Erro sevico log  "+ error)
+                  })               
              
       //      } 
        //  console.log(' logperfil '+localStorage.getItem('logperfil'));   
@@ -2800,6 +2922,9 @@ debugger
     this.setState({     
       mensagem_aguarde: 'Aguarde, alterando os dados...',      
     });
+
+    localStorage.setItem('logServicoalteracao', this.state.campservicoId);
+    localStorage.setItem('logTipo', 'ALTERACAO');
      
     
     if (this.state.tabIndex == 1) {
@@ -3006,14 +3131,15 @@ debugger
       }          
     } else { // translados
           
-          debugger
-          for(let i=0; i < this.state.listservicoseventos.length - 1; i++){ 
+       /*   debugger
+          for(let i=0; i < this.state.listservicoseventos.length; i++){ 
 
             debugger
             if (this.state.listservicoseventos[i].id == this.state.campservicoId) {
               this.envio_convite_motorista_selecionado(this.state.listservicoseventos[i]);
             }
-          }        
+          }     
+          */   
 
           const datapost_translado_alteracao_1 = {
             //tipoEventoId:  this.state.camptipoId,                             
@@ -3215,7 +3341,7 @@ delay() {
   verifica_botao(inicio) {
     const { validate } = this.state 
 
-   // console.log(' inicio verifica_botao - '+JSON.stringify(this.state, null, "    "))
+   console.log(' inicio verifica_botao - '+JSON.stringify(this.state, null, "    "))
    
       
       /* this.state.validacao_tipo == true ||     
@@ -3226,43 +3352,16 @@ delay() {
         if (this.state.validacao_qtdpassageiro == true && this.state.validacao_data_servico == true 
           && this.state.validacao_nome == true && 
           this.state.validacao_hora_inicial == true && this.state.validacao_localembarque == true && 
-          this.state.validacao_localdesembarque == true && this.state.campcartaoid !== '' && this.state.mensagem_servico === "") { 
+          this.state.validacao_localdesembarque == true && this.state.campcartaoid !== '') { 
           //this.state.validacao_hora_inicial == true  && this.state.validacao_hora_final == true  ) { 
-          if (this.state.tabIndex == 1) {
-
-            if (this.state.validacao_qtd_diarias == true) {     
-              
-              return (
-                <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.preparar_servico_salvamento()}>
-                        <div className="d-flex justify-content-center">
-                        <label> Salvar </label>
-                        </div>     
-                  </Box>           
-              );   
-
-            } else {
-              
-              return (
-        
-                <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_evento_modal"  p={2}>
-                        <div className="d-flex justify-content-center">
-                        <label> Salvar </label>
-                        </div>     
-                  </Box>           
-              );    
-
-            }
-               
-
-         } else {
+          
             return (
               <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_evento_modal"  p={2} onClick={()=>this.preparar_servico_salvamento()}>
                       <div className="d-flex justify-content-center">
                       <label> Salvar </label>
                       </div>     
                 </Box>           
-            );   
-         }
+            );            
           
         } else {
           return (
@@ -3362,11 +3461,13 @@ delay() {
   obtendo_distancia_rota_nova = () => { 
     debugger 
 
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && this.state.obter_rota_nova == false) {    
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' 
+    && this.state.obter_rota_nova == true) {    
+
       var origem = this.state.camplocalembarque;
       var destino = this.state.camplocaldesembarque;   
       this.setState({                
-       obter_rota_nova: true,
+       obter_rota_nova: false,
       });
    
       function CalculaDistancia(origem, destino) {
@@ -3396,6 +3497,7 @@ delay() {
               campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
               camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
               camptempo_global = response.rows[0].elements[0].duration.text 
+              
           }
          }, function(status) {
            console.log('Não foi possível realizar a operação! Status: ' + status);
@@ -3778,6 +3880,11 @@ delay() {
     } 
   }  
 
+  async getServico_selecionado() {
+    return await api.get(`/servicos/get/${localStorage.getItem('logServicoIncluido')}`);
+  }
+  
+
   reenvio_motoristas(row){
     debugger;
      reenvio_motorista = true;
@@ -3786,10 +3893,16 @@ delay() {
      this.setState({    
       incluir: false,
       campservicoId: row.id,
-     })      
+     })    
+    
+      this.procurar_motorista_servico(row, 'REENVIO' );
 
-     this.procurar_motorista_servico();
-         
+      this.setState({                   
+        mensagem_usuario: 'Reenvio para os motoristas realizado com sucesso',          
+      });          
+    
+     this.envia_mensagemClick(); 
+          
   }
 
   render()
@@ -3959,9 +4072,9 @@ delay() {
                             actions={[
                               {
                                 icon: AutorenewIcon,
-                                tooltip: 'Reenviar Motoristas',
-                                onClick: (event, rowData) => this.reenvio_motoristas(rowData),
-                              //  disabled: (rowData) => rowData.motorista_alocado == true
+                                tooltip: 'Reenviar Serviços',
+                                onClick: (event, rowData) => rowData.motorista_alocado == false ? this.reenvio_motoristas(rowData) : '',
+                                // disabled: (rowData) => rowData.motorista_alocado === true
                               },
                               {             
                                 icon: 'edit',
@@ -5131,113 +5244,7 @@ delay() {
                          </tr>   
                     </table>      
                     </div>               
-
-                    <div className="p-2">                      
-                    <div class="d-flex justify-content-start">
-                                 <div>                  
-                                    <FormControl variant="outlined" className="select_evento_operador">
-                                      <InputLabel id="demo-simple-select-outlined-label">Motoristas</InputLabel>
-                                      <Select
-                                        error={this.state.erro_tipo} 
-                                        helperText={this.state.mensagem_tipoId}
-                                        labelId="demo-simple-select-outlined-label"
-                                        id="demo-simple-select-outlined"
-                                        value={this.state.campMotoristaId}                                    
-                                        onChange={ (e) => {
-                                          this.motoristaChange(e)
-                                        }}                  
-                                        labelWidth={140}          
-                                      >
-                                        <MenuItem value={0}></MenuItem>      
-                                        {this.loadMotoristaData()}                    
-                                      </Select>
-                                    </FormControl>                                                                
-                                 </div>
-                                 <div>
-                                 <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
-                                            onClick={()=>this.handleOpenMotorista()}>
-                                    Adicionar Motorista  <i class="fas fa-users"></i>
-                                 </Button>    
-                                 </div>
-                             </div>      
-                    </div>
-                    <div className="p-2">
-                    <div className="d-flex justify-content-start">
-                        <div className="checkbox_modal_dados_voo">Motorista Preferido</div>
-                    </div>
-                   </div>
-        <div className="p-2">
-                    
-            <div className="d-flex justify-content-start">
-                  <div>
-                  <FormControl className="input_modal_direita" variant="outlined">
-                  <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
-                  <OutlinedInput    
-                      type="text"       
-                      autoComplete="off"    
-                      disabled={this.state.nome_motorista_visualizacao}                   
-                      error={this.state.erro_nome_motorista}
-                      helperText={this.state.mensagem_nome_motorista}
-                      className="input_modal_direita"                 
-                      id="outlined-basic"                   
-                      variant="outlined"
-                      value={this.state.campnomemotorista}                                    
-                      onChange={ (e) => {
-                        this.nomemotoristaChange(e)                                                                 
-                      }}                                    
-                      inputProps={{
-                        maxLength: 40,
-                      }} 
-                    endAdornment={
-                      <InputAdornment position="end">
-                          {this.state.validacao_nome_motorista? <CheckIcon />: ''}
-                      </InputAdornment>
-                    }
-                    labelWidth={180}                      
-                  />
-                <FormHelperText error={this.state.erro_nome_motorista}>
-                      {this.state.mensagem_nome_motorista}
-                </FormHelperText>
-              </FormControl>  
-                  </div>
-                  <div>
-                  <FormControl className="input_modal_esquerda" variant="outlined">
-                  <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                  <OutlinedInput         
-                      type="text"  
-                      autoComplete="off"   
-                      disabled={this.state.telefone_motorista_visualizacao}                             
-                      error={this.state.erro_telefone_motorista}
-                      helperText={this.state.mensagem_telefone_motorista}
-                      className="input_modal_esquerda"
-                      id="outlined-basic"                   
-                      variant="outlined"
-                      value={this.state.camptelefonemotorista}                                     
-                      onChange={ (e) => {
-                        this.telefonemotoristaChange(e)                                                                 
-                      }}                                    
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      inputProps={{
-                        maxLength: 15,
-                       
-                      }} 
-                    endAdornment={
-                      <InputAdornment position="end">
-                          {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
-                      </InputAdornment>
-                    }
-                    labelWidth={180}                      
-                  />
-                <FormHelperText error={this.state.erro_telefone_motorista}>
-                      {this.state.mensagem_telefone_motorista}
-                </FormHelperText>
-              </FormControl>  
-                  </div>
-             </div> 
-
-        </div>
+        
                     <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
@@ -6770,111 +6777,8 @@ delay() {
                            </td>
                          </tr>   
                     </table>      
-                    </div>               
-
-                    <div className="p-2">    
-                         <div class="d-flex justify-content-start">
-                                 <div>  
-                                 <FormControl variant="outlined" className="select_evento_operador">
-                                      <InputLabel id="demo-simple-select-outlined-label">Motoristas</InputLabel>
-                                      <Select
-                                        error={this.state.erro_tipo} 
-                                        helperText={this.state.mensagem_tipoId}
-                                        labelId="demo-simple-select-outlined-label"
-                                        id="demo-simple-select-outlined"
-                                        value={this.state.campMotoristaId}                                    
-                                        onChange={ (e) => {
-                                          this.motoristaChange(e)
-                                        }}                  
-                                        labelWidth={140}          
-                                      >
-                                        <MenuItem value={0}></MenuItem>      
-                                        {this.loadMotoristaData()}                    
-                                      </Select>
-                                    </FormControl>   
-                                                                                                
-                                 </div>
-                                 <div>
-                                 <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
-                                            onClick={()=>this.handleOpenMotorista()}>
-                                    Adicionar Motorista  <i class="fas fa-users"></i>
-                                 </Button>    
-                                 </div>
-                             </div>                      
-                     
-                    </div>
-                    <div className="p-2">
-                    
-                    <div className="d-flex justify-content-start">
-                          <div>
-                          <FormControl className="input_modal_direita" variant="outlined">
-                          <InputLabel className="label_modal_direita" htmlFor="filled-adornment-password">Nome Motorista</InputLabel>
-                          <OutlinedInput    
-                              type="text"       
-                              disabled={this.state.nome_motorista_visualizacao}
-                              autoComplete="off"                       
-                              error={this.state.erro_nome_motorista}
-                              helperText={this.state.mensagem_nome_motorista}
-                              className="input_modal_direita"                 
-                              id="outlined-basic"                   
-                              variant="outlined"
-                              value={this.state.campnomemotorista}                                    
-                              onChange={ (e) => {
-                                this.nomemotoristaChange(e)                                                                 
-                              }}                                    
-                              inputProps={{
-                                maxLength: 40,
-                              }} 
-                            endAdornment={
-                              <InputAdornment position="end">
-                                  {this.state.validacao_nome_motorista? <CheckIcon />: ''}
-                              </InputAdornment>
-                            }
-                            labelWidth={180}                      
-                          />
-                        <FormHelperText error={this.state.erro_nome_motorista}>
-                              {this.state.mensagem_nome_motorista}
-                        </FormHelperText>
-                      </FormControl>  
-                          </div>
-                          <div>
-                          <FormControl className="input_modal_esquerda" variant="outlined">
-                          <InputLabel className="label_modal_esquerda" htmlFor="filled-adornment-password">Telefone</InputLabel>
-                          <OutlinedInput         
-                              type="text"  
-                              disabled={this.state.telefone_motorista_visualizacao}
-                              autoComplete="off"                       
-                              error={this.state.erro_telefone_motorista}
-                              helperText={this.state.mensagem_telefone_motorista}
-                              className="input_modal_esquerda"
-                              id="outlined-basic"                   
-                              variant="outlined"
-                              value={this.state.camptelefonemotorista}                                     
-                              onChange={ (e) => {
-                                this.telefonemotoristaChange(e)                                                                 
-                              }}                                    
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              inputProps={{
-                                maxLength: 15,
-                               
-                              }} 
-                            endAdornment={
-                              <InputAdornment position="end">
-                                  {this.state.validacao_telefone_motorista? <CheckIcon />: ''}
-                              </InputAdornment>
-                            }
-                            labelWidth={180}                      
-                          />
-                        <FormHelperText error={this.state.erro_telefone_motorista}>
-                              {this.state.mensagem_telefone_motorista}
-                        </FormHelperText>
-                      </FormControl>  
-                          </div>
-                     </div> 
-        
-                </div>
+                    </div>         
+                   
                     <div className="p-2">
                       <div className="d-flex justify-content-start">
                            <div className="coluna_modal_separacao_d">                              
@@ -8269,7 +8173,7 @@ debugger;
 
   }
 
-  calcular_trajeto = () => {   
+  async calcular_trajeto() {   
 
  // console.log('entrou no calcular_trajeto')
 
@@ -8588,9 +8492,11 @@ debugger;
       showModalEmbarque: true,      
       camplocalembarque: this.state.camplocalembarque,      
       controle: 0,
-      obter_rota_nova: false,
+    //  obter_rota_nova: false,
     //  mudar_estilo: customStyles_2,
-    });      
+    });   
+     debugger
+     
     
   }
   
@@ -8601,6 +8507,8 @@ debugger;
       //mudar_estilo: customStyles,
     }); 
     debugger;
+
+    
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
       Promise.all([
         this.calcular_trajeto()
@@ -8614,10 +8522,10 @@ debugger;
       showModalDesembarque: true,      
       camplocaldesembarque: this.state.camplocaldesembarque,      
       controle: 0,   
-      obter_rota_nova: false,   
+    //  obter_rota_nova: false,   
     //  mudar_estilo: customStyles_2,
-    });        
-   
+    });       
+     
     
   }
   
@@ -8626,7 +8534,7 @@ debugger;
       showModalDesembarque: false,  
       validacao_localdesembarque: true,
     });  
-
+  
     debugger;
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
       Promise.all([
@@ -8810,7 +8718,7 @@ debugger;
       mensagem_aguarde:'',
     }); 
 
-  //  this.procurar_motorista_servico();
+   
     
   }
 

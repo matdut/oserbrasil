@@ -25,8 +25,8 @@ var Motorista_preferido = sequelize.define(nametable,{
     allowNull: false,     
   }, 
   perfilId:{
-  type: Sequelize.INTEGER,
-  // this is a refence to another model
+    type: Sequelize.INTEGER,
+      // this is a refence to another model
     refences: {
       model: Perfil,
       key: 'id'

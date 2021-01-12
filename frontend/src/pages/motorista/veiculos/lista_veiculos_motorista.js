@@ -47,8 +47,12 @@ import filesize from "filesize";
 /* import Upload from "../../UploadDocumentosModal"; */
 //import FileList from "../../FilelistDocInclusao";
 /* import FileList from "../../FilelistDocumentoModal"; */
-import Upload from "../../UploadDocumentosModalAlteracao";
-import FileList from "../../FilelistDocumentoModal";
+import Upload from "../../UploadDocumentosModalveiculo";
+import FileList from "../../FilelistDocumentoModalveiculo";
+
+//import Upload from "../../UploadDocumentosModalAlteracao";
+//import FileList from "../../FilelistDocumentoModal";
+
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -81,7 +85,7 @@ const customStyles = {
   },
   content : {
     top                    : '0px',
-    left                   : '64%',    
+    left                   : '61%',    
     right                  : '0%',
     bottom                 : 'auto',  
     height                 : '100%',    
@@ -1301,11 +1305,13 @@ class listComponent extends React.Component  {
                                                      
                             columns={[
                               { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },
+                              { title: 'Tipo Transporte', field: 'tipoTransporte', width: '140px', minWidth: '140px', maxWidth: '140px' },  
                               { title: 'Marca', field: 'marca', width: '285px', minWidth: '285px', maxWidth: '285px' },
                               { title: 'Modelo', field: 'modelo', width: '285px', minWidth: '285px', maxWidth: '285px' },
                               { title: 'Placa', field: 'placa', width: '250px', minWidth: '250px', maxWidth: '250px' },
-                              { title: 'Ano', field: 'ano', width: '300px', minWidth: '300px', maxWidth: '300px' },                                                            
-                              { title: '', field: '#', width: '40px', minWidth: '40px', maxWidth: '40px' },                              
+                              { title: 'Ano', field: 'ano', width: '200px', minWidth: '200px', maxWidth: '200px' },                                                            
+                              
+                                                         
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },         
                             ]}
                             data={this.state.listVeiculos}   
@@ -1354,7 +1360,7 @@ class listComponent extends React.Component  {
                               overflowY: 'scroll',
                               //tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 5,
+                              actionsColumnIndex: 6,
                               //pageSize: 7,
                               pageSizeOptions: [0],    
                             }}
@@ -1788,9 +1794,9 @@ class listComponent extends React.Component  {
                   <CloseOutlinedIcon />
                 </IconButton></div>   
 
-                <div className="container_alterado">
-               <div className="d-flex justify-content">        
-                 <div>  
+            
+               <div className="container_modal_alterado">        
+                
                  <div class="d-flex flex-column espacamento_caixa_texto">              
                   <div class="p-2">
                     <div class="d-flex justify-content-start">
@@ -2150,10 +2156,10 @@ class listComponent extends React.Component  {
               <br/>
                 </div>                            
                   {this.verifica_botao_alteracao(this.state.inicio)}                          
-                      
-                 </div>
-               </div>        
-            </div>
+                  
+            
+           </div>        
+         
 
           </ReactModal>      
           <ReactModal 

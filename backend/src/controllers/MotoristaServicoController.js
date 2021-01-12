@@ -98,7 +98,7 @@ controllers.get = async (req, res) => {
 }
 
 controllers.getMotoristaServico = async (req, res) => {
-  const { motoristaId } = req.params;
+  const { motoristaId, tipo } = req.params;
   await Motorista_servico.findAll({
     include: [
       { 
@@ -107,7 +107,36 @@ controllers.getMotoristaServico = async (req, res) => {
       },    
         { 
           model: Servicos,       
-          required: true,
+          where: {tipoTransporte: tipo} 
+          
+        }],
+    where: { statusId: 1, motoristaId: motoristaId}
+  
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+controllers.getMotoristaServicoAtivos = async (req, res) => {
+  const { motoristaId } = req.params;
+  await Motorista_servico.findAll({
+    include: [
+      { 
+        model: Motorista,       
+        required: true,
+      },    
+        { 
+          model: Servicos,            
+          
         }],
     where: { statusId: 1, motoristaId: motoristaId}
   

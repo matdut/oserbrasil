@@ -11,7 +11,8 @@ router.post('/create', MotoristaServicoController.create);
 router.get('/get/:id', MotoristaServicoController.get);
 router.put('/update/:id', MotoristaServicoController.update);
 router.delete('/delete/:servicoId',MotoristaServicoController.delete);
-router.get('/getMotoristaServico/:motoristaId', MotoristaServicoController.getMotoristaServico);
+router.get('/getMotoristaServico/:motoristaId/:tipo', MotoristaServicoController.getMotoristaServico);
+router.get('/getMotoristaServicoAtivos/:motoristaId', MotoristaServicoController.getMotoristaServicoAtivos);
 router.get('/getServico/:servicoId', MotoristaServicoController.getServico);
 router.get('/totalServicosMotorista/:motoristaId', MotoristaServicoController.totalServicosMotorista);
 

@@ -229,6 +229,15 @@ class menu_clienteComponent extends React.Component  {
                     </a>
                  </div>   
                </li>                          
+              <li>             
+               <div className="itens_menu">
+                <a href={`/lista_motorista_preferido`} className="icon_centralizado_novo">
+                     <LightTooltip title="Motoristas Preferidos" placement="top">
+                         <i className="fas fa-id-card"></i>
+                      </LightTooltip>              
+                    </a>
+                </div>   
+              </li>                          
               <li>
               <div className="itens_menu">
               <a onClick={this.handleClick} className="icon_centralizado_novo">

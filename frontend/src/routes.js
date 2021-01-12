@@ -77,6 +77,16 @@ import Inicio from './pages/inicio';
  import Motorista_aux_foto_incluir from './pages/motorista_auxiliar/incluir/foto';
  import Motorista_aux_senha_incluir from './pages/motorista_auxiliar/incluir/senha_motorista';
 
+ //import Area_motorista_preferido from './pages/motorista_preferido/area_motorista_preferido';
+ import lista_motorista_preferido from './pages/motorista_preferido/list';
+
+ //import Motorista_aux_cadastro_incluir from './pages/motorista_auxiliar/incluir/motorista';
+ //import Motorista_aux_endereco_incluir from './pages/motorista_auxiliar/incluir/endereco_motorista'; 
+ //import Motorista_aux_documento_incluir from './pages/motorista_auxiliar/incluir/documentos';
+ //import Motorista_aux_foto_incluir from './pages/motorista_auxiliar/incluir/foto';
+ //import Motorista_aux_senha_incluir from './pages/motorista_auxiliar/incluir/senha_motorista';
+
+
  import Motorista_cadastro_incluir from './pages/motorista/incluir/motorista'; 
  import Motorista_veiculo_incluir from './pages/motorista/incluir/veiculo';
  import Motorista_senha_incluir from './pages/motorista/incluir/senha_motorista';
@@ -247,7 +257,7 @@ export default function Routes() {
              <PrivateRoute exact path="/empresa_dados_alterar/:id" component={Empresa_dados_alterar} />
              <PrivateRoute exact path="/empresa_senha_alterar/:id" component={Empresa_senha_alterar} />     
 
-             <PrivateRoute exact path="/tipo" component={Tipo_cliente} />             
+             <Route exact path="/tipo" component={Tipo_cliente} />             
              <PrivateRoute exact path="/empresa_endereco/:id" component={Empresa_endereco} />                          
              <PrivateRoute exact path="/incluir_operador/:id" component={incluir_Operador} />     
                      
@@ -275,7 +285,7 @@ export default function Routes() {
              <PrivateRoute exact path="/senha_motorista_aux_incluir/:id" component={Motorista_aux_senha_incluir} />  
 
              <PrivateRoute exact path="/motorista_incluir_convite/:email" component={Motorista_cadastro_incluir} />
-             <PrivateRoute exact path="/motorista_incluir/:id" component={Motorista_cadastro_incluir} />             
+             <Route exact path="/motorista_incluir/:id" component={Motorista_cadastro_incluir} />             
              <PrivateRoute exact path="/veiculo_motorista_incluir/:id" component={Motorista_veiculo_incluir} />      
              <PrivateRoute exact path="/senha_motorista_incluir/:id" component={Motorista_senha_incluir} />      
              <PrivateRoute exact path="/documentos_motorista_incluir/:id" component={Motorista_documento_incluir} />
@@ -292,6 +302,8 @@ export default function Routes() {
              <PrivateRoute exact path="/documentos_motorista_alterar/:id" component={Motorista_doc_alterar} />
              
              <PrivateRoute exact path="/listar_tipo_veiculo" component={Listar_Tipo_veiculo} />  
+
+             <PrivateRoute exact path="/lista_motorista_preferido" component={lista_motorista_preferido} />   
 
              <PrivateRoute exact path="/lista_veiculos/:id" component={lista_Veiculos_motorista} />
              <PrivateRoute exact path="/incluir_veiculos/:id" component={incluir_Veiculos} />                   

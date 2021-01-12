@@ -1121,6 +1121,43 @@ verificaData_Evento(e) {
     });    
   };
 
+  verificar_permissao() {
+    if (localStorage.getItem('logperfil') == 7) {
+      return (
+        <div class="p-2">  
+        <div class="d-flex justify-content-start">
+            <div>                  
+               <FormControl variant="outlined" className="select_evento_operador">
+                 <InputLabel id="demo-simple-select-outlined-label">Operadores</InputLabel>
+                 <Select
+                   error={this.state.erro_tipo} 
+                   helperText={this.state.mensagem_tipoId}
+                   labelId="demo-simple-select-outlined-label"
+                   id="demo-simple-select-outlined"
+                   value={this.state.campOperadorId}                                    
+                   onChange={ (e) => {
+                     this.operadorChange(e)
+                   }}                  
+                   labelWidth={140}          
+                 >
+                   <MenuItem value={0}></MenuItem>      
+                   {this.loadOperadoresData()}                    
+                 </Select>
+               </FormControl>                                                                
+            </div>
+            <div>
+            <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
+                       onClick={()=>this.handleOpenModalCompartilhar()}>
+               Adicionar Operador  <i class="fas fa-users"></i>
+            </Button>    
+            </div>
+        </div>       
+   </div>   
+      );
+    }
+
+  }
+
   render()
   {
   
@@ -1551,35 +1588,7 @@ verificaData_Evento(e) {
                               </FormHelperText>
                               </FormControl>     
                           </div>                                                  
-                          <div class="p-2">  
-                             <div class="d-flex justify-content-start">
-                                 <div>                  
-                                    <FormControl variant="outlined" className="select_evento_operador">
-                                      <InputLabel id="demo-simple-select-outlined-label">Operadores</InputLabel>
-                                      <Select
-                                        error={this.state.erro_tipo} 
-                                        helperText={this.state.mensagem_tipoId}
-                                        labelId="demo-simple-select-outlined-label"
-                                        id="demo-simple-select-outlined"
-                                        value={this.state.campOperadorId}                                    
-                                        onChange={ (e) => {
-                                          this.operadorChange(e)
-                                        }}                  
-                                        labelWidth={140}          
-                                      >
-                                        <MenuItem value={0}></MenuItem>      
-                                        {this.loadOperadoresData()}                    
-                                      </Select>
-                                    </FormControl>                                                                
-                                 </div>
-                                 <div>
-                                 <Button className="botao_evento_operador_compartilha" color="primary" variant="contained"                         
-                                            onClick={()=>this.handleOpenModalCompartilhar()}>
-                                    Adicionar Operador  <i class="fas fa-users"></i>
-                                 </Button>    
-                                 </div>
-                             </div>       
-                        </div>     
+                           {this.verificar_permissao()}  
 
                     {this.verifica_botao(this.state.inicio)}       
 

@@ -1,0 +1,147 @@
+
+.espacamento_caixa_texto { 
+  margin-top: 15px !important;
+  margin-left: 108px !important;
+}  
+.caixa1 {
+border:  1px !important;
+background-color: antiquewhite !important;
+}
+
+.caixa2 {
+  border:  1px !important;
+  background-color: aqua !important;
+}   
+
+.area_esquerda3 {
+  width: 481px !important;    
+  height: 140px !important;
+  top: 0px !important;
+  margin-left: 0px !important;  
+}
+
+
+.grid1 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  margin-left: 180px !important;
+}
+
+.grid2 {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  
+}
+
+.documento_crvl_doc {
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 250px !important; 
+  margin-left: 100px !important;
+  height: 350px !important;
+}
+
+.grid_documento {
+  margin-top: 3px;      
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 480px !important; 
+  margin-left: 100px !important;
+}
+
+.grid_alteracao_doc {
+  margin-top: 30px;  
+  padding: 2px !important; 
+  text-align: center !important;   
+  width: 480px !important; 
+  margin-left: 20px !important;
+}
+
+.grid4 {
+  margin-top: 0px !important;
+  padding: 11px !important;
+  text-align: center !important;
+  width: 480px !important;
+  margin-left: 15px !important;
+}
+
+.grid4_alteracao {
+  margin-top: -26px !important;
+  padding: 11px !important; 
+  text-align: center !important;   
+  width: 480px !important;
+  margin-left: 100px !important;
+}
+
+
+.descricaocnh {
+  font-size: 15px;
+  padding: 1px;
+  text-align: left !important;   
+}
+
+.titulocrvl {
+  font-size: 15px !important;   
+  padding: 1px !important;   
+  text-align: left !important;   
+  text-decoration: #0F074E !important;  
+  font-weight: bold !important;   
+  color: #0F074E !important;   
+}
+
+.descricaocrvl {
+  font-size: 15px;
+  padding: 1px;
+  text-align: left !important;   
+}
+
+.botao_cadastro_doc_foto {
+  margin-top: 8px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_cadastro_doc_foto_habilitado {
+  margin-top: 8px !important; 
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}
+
+.botao_alterar_doc_foto {
+  margin-top: 48px !important;
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #C9C9C9 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px !important;
+}
+.botao_alterar_doc_foto_habilitado {
+  margin-top: 48px !important;
+  width: 480px !important;
+  line-height: 40px !important;  
+  background: #FF840A 0% 0% no-repeat padding-box !important;
+  opacity: 1 !important;
+  margin-left: 108px;
+}
+
+
+.mensagem_foto2 {
+  background: white 0% 0% no-repeat padding-box !important;
+  color: white !important;  
+  font-size: 10px;
+}
+
+
+e {
+ /* margin-top: 25px !important;
+  margin-bottom: 1rem !important;
+  margin-left: 38px !important;
+  margin-right: 46px !important; */
+}

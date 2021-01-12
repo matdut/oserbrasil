@@ -98,9 +98,10 @@ import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData
 import { cyan } from '@material-ui/core/colors';
 import { isThisHour } from 'date-fns';
 
-var campdistancia_global = ''
-var camptempovalue_global = ''
-var camptempo_global = '' 
+var campdistancia_global = '';
+var camptempovalue_global = '';
+var camptempo_global = ''; 
+
 
 //const service = new window.google.maps.DistanceMatrixService();
 var dateFormat = require('dateformat');
@@ -186,6 +187,8 @@ var possui_tarifa_especial_nova = false;
 var motorista_incluido = 0;
 var total_motorista = 0;
 var possui_motorista = false;
+var camplocalembarque_old = '';
+var camplocaldesembarque_old = '';
 
 const containerStyle = {
   position: 'relative',  
@@ -591,6 +594,7 @@ class listaservicosComponent extends React.Component  {
 
     this.loadlistServicosNovos();
     this.loadlistServicosAtivos(); 
+    //this.loadlistServicos();
    /* this.loadEvento();    
     this.loadlistServicos();
     this.loadTarifaespecial();
@@ -715,7 +719,7 @@ class listaservicosComponent extends React.Component  {
 */ 
  tickservico() {
   //this.loadServicos();    
-  this.loadlistServicosNovos();
+  //this.loadlistServicosNovos();
   //this.loadTarifaespecial();
   //this.loadTarifa();
   //this.valor_total_servicos();
@@ -780,12 +784,12 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server loadlistServicos "+error)
+       alert("Error server loadlistServicosNovos "+error)
      })
    }
 
    loadlistServicosAtivos(){    
-    api.get(`/motorista_servico/getMotoristaServico/${localStorage.getItem('logid')}`)
+    api.get(`/motorista_servico/getMotoristaServicoAtivos/${localStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success == true) {       
 
@@ -1583,10 +1587,10 @@ verifica_menu() {
 
   sendAtualizarembarque(){      
    
-   /// debugger;
-    Promise.all([
+   debugger;
+   // Promise.all([
       this.obtendo_distancia_rota_nova() 
-    ])    
+  //  ])    
     
      this.handleCloseModalEmbarque();
     // this.handleCloseModalDesembarque();
@@ -1942,7 +1946,7 @@ debugger
      
         //this.verifica_botao(1);
         //this.listservicoseventos();
-        this.loadlistServicos();
+        this.loadlistServicosNovos();
         this.handleCloseModalAlteracaoEvento();
         this.envia_mensagemClick();                     
 
@@ -2191,7 +2195,7 @@ debugger
                            debugger;
                            this.verifica_botao(1);
                            this.handleCloseModalInclusao();
-                           this.loadlistServicos();
+                           this.loadlistServicosNovos();
                            this.valor_total_servicos();
                            this.valor_total_viagens();
                            this.envia_mensagemClick();  
@@ -2749,47 +2753,52 @@ delay() {
   
   obtendo_distancia_rota_nova = () => { 
     debugger 
-
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && this.state.obter_rota_nova == false) {    
-      var origem = this.state.camplocalembarque;
-      var destino = this.state.camplocaldesembarque;   
-      this.setState({                
-       obter_rota_nova: true,
-      });
-   
-      function CalculaDistancia(origem, destino) {
-        return new Promise(function(resolve, reject) {
-          var service = new window.google.maps.DistanceMatrixService();
-          debugger
-          service.getDistanceMatrix({
-            origins: [origem],
-            destinations: [destino],
-            travelMode: window.google.maps.TravelMode.DRIVING
-          }, 
-          function(response, status) {
-            if (status == window.google.maps.DistanceMatrixStatus.OK) {
-                resolve(response);               
-            } else {
-                reject(status);
-            }
-          }); 
-        });
-      }
-                                                
-      CalculaDistancia(origem, destino)
-        .then(function(response) {
-         
-          debugger
-          if (response.rows[0].elements[0].status !== "NOT_FOUND") {
-              campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
-              camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
-              camptempo_global = response.rows[0].elements[0].duration.text 
-          }
-         }, function(status) {
-           console.log('Não foi possível realizar a operação! Status: ' + status);
-      });
     
-    }
+    let teste = camplocaldesembarque_old;
+
+    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' 
+        && this.state.obter_rota_nova == true) {        
+      
+        var origem = this.state.camplocalembarque;
+        var destino = this.state.camplocaldesembarque;   
+        this.setState({                
+           obter_rota_nova: false,
+        });
+    
+        function CalculaDistancia(origem, destino) {
+          return new Promise(function(resolve, reject) {
+            var service = new window.google.maps.DistanceMatrixService();
+            debugger
+            service.getDistanceMatrix({
+              origins: [origem],
+              destinations: [destino],
+              travelMode: window.google.maps.TravelMode.DRIVING
+            }, 
+            function(response, status) {
+              if (status == window.google.maps.DistanceMatrixStatus.OK) {
+                  resolve(response);               
+              } else {
+                  reject(status);
+              }
+            }); 
+          });
+        }
+                                                  
+        CalculaDistancia(origem, destino)
+          .then(function(response) {
+          
+            debugger
+            if (response.rows[0].elements[0].status !== "NOT_FOUND") {
+                campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
+                camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
+                camptempo_global = response.rows[0].elements[0].duration.text 
+            }
+          }, function(status) {
+            console.log('Não foi possível realizar a operação! Status: ' + status);
+        });
+      
+      }
+    
   }
 
   
@@ -3102,11 +3111,37 @@ delay() {
     });    
  }
 
- aceitou_servico(row) {
+ async aceitou_servico(row) {
     //alert("aceitou o serviço "+row.servicoId);
-   
+   debugger
     var servico_id = row.servicoId;
     var motorista_id = row.motorista_id;
+    var data_servico_ini = row.data_servico;
+    var hora_servico = row.hora_inicial;
+    
+    const data_servico = dateFormat(data_servico_ini, "UTC:dd/mm/yyyy");
+  
+    const data_moment = moment(data_servico, "DD/MM/YYYY");
+    const formatar_data = data_moment.format("YYYY-MM-DD");    
+    const data_servico_date = new Date(formatar_data);
+    
+    const dataatual = new Date(`${formatar_data} ${hora_servico}`);
+
+     var data_tres_horas_mais = moment(
+       dataatual, "D/M/YYYY h:m"
+     ).add(             
+      'hours', 3
+     );    
+
+    var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+
+    var data_tres_horas_menos = moment(
+      dataatual, "D/M/YYYY h:m"
+    ).subtract(             
+      'hours', 3
+    );   
+   
+     var hora_menor_tres = data_tres_horas_menos.format("HH:mm");     
 
     debugger;
     const motorista_alocado = {
@@ -3116,18 +3151,48 @@ delay() {
 
     //excluir os servicos enviados aos motoristas 
     api.delete(`/envioservicoMotorista/delete_servico/${servico_id}`);
-    
-        const datapost = {
-          motoristaId: motorista_id,              
-          servicoId: servico_id,
-          statusId: 1,
-          motoristumId: motorista_id,
-        }    
 
-        debugger;
-      //  console.log(' motorista_servico - '+JSON.stringify(datapost, null, "    "))  
-        api.post(`/motorista_servico/create`, datapost);
-        debugger;
+    const datapost = {
+      motoristaId: motorista_id,              
+      servicoId: servico_id,
+      statusId: 1,
+      motoristumId: motorista_id,
+    }    
+
+    debugger;
+  //  console.log(' motorista_servico - '+JSON.stringify(datapost, null, "    "))  
+    api.post(`/motorista_servico/create`, datapost);
+
+   //verificar se possui algum outro servico no intervalo de 3 horas a mais ou a menos 
+   // se tiver excluir da tabela envioservicoMotorista
+    const respservico = await api.get(`/envioservicoMotorista/getMotorista/${motorista_id}`)                  
+   //.then(respservico=>{   
+
+      if (respservico.data.success == true) {                  
+                      
+       // const response_data = respservico.data.data[0];
+
+         respservico.data.data.map((motorista_enviado)=>{  
+             
+            const data_servico_b = dateFormat(motorista_enviado.data_servico, "UTC:dd/mm/yyyy");  
+            const data_teste = moment(data_servico_b, "DD/MM/YYYY");
+            const formatar_data = data_teste.format("YYYY-MM-DD");    
+            const data_servico_banco = new Date(formatar_data);
+            var hora_banco = hora_servico.substring(0,5);  
+
+            debugger
+            if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+              hora_banco <= hora_maior_tres &&
+              hora_banco >= hora_menor_tres) {  
+
+                api.delete(`/envioservicoMotorista/delete_servico/${motorista_enviado.servicoId}`);
+            }
+
+          })   
+      }
+   // })     
+      
+     
 
       
         this.refreshPage();
@@ -3334,19 +3399,18 @@ delay() {
                               { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px'},
                               { title: 'Data Serviço', field: 'data_servico', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
                               { title: 'Hora Serviço', field: 'hora_inicial', width: '120px', minWidth: '120px', maxWidth: '120px', render: rowData => rowData.hora_inicial.substring(0,5) },  
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
-                              cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
+                              { title: '', field: 'tipoEventoId', width: '70px', minWidth: '70px', maxWidth: '70px', 
+                              cellStyle:{ fontSize: 10, textAlign: "center"}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
-                       
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: '', field: '', width: '10px', minWidth: '10px', maxWidth: '10px'}, 
                               { title: 'Origem', field: 'local_embarque', width: '290px', minWidth: '290px', maxWidth: '290px' },
-                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' },                                                           
-                              { title: '', field: 'motorista_bilingue', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
+               
+                              { title: '', field: 'motorista_bilingue', width: '60px', minWidth: '60px', maxWidth: '60px', 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },   
-                              { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
+                              { title: '', field: 'motorista_receptivo', width: '60px', minWidth: '60px', maxWidth: '60px',  
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },  
-                              { title: '', field: '', width: '100px', minWidth: '100px', maxWidth: '100px' }, 
-                              { title: '', field: '', width: '280px', minWidth: '280px', maxWidth: '280px', lookup: { 1: 'sadas', 2: 'asdas' },                              
+                              { title: '', field: '', width: '400px', minWidth: '400px', maxWidth: '400px'},
+                              { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                             
                              },            
                             ]}
                             data={this.state.listservicoseventos}   
@@ -3392,14 +3456,17 @@ delay() {
                               toolbarButtonAlignment: 'right',           
                               paging: false,          
                               maxBodyHeight: '60vh',
-                              minBodyHeight: '60vh',                 
+                              minBodyHeight: '60vh',      
                               padding: 'dense',   
-                              overflowY: 'scroll', 
-                             // tableLayout: 'auto',                        
+                              overflowY: 'scroll',     
+                              //overflowY: 'scroll',
+                              //overflowX: 'hidden',
+                              //WebkitOverflowScrolling: 'hidden',
+                             // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 10,
+                              actionsColumnIndex: 8,
                              // pageSize: 9,
-                              pageSizeOptions: [0],                
+                             // pageSizeOptions: [0],                 
                             }}
                             actions={[                             
                               {
@@ -3435,15 +3502,15 @@ delay() {
                               { title: 'Dt Serviço', field: 'servico.data_servico', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.servico.data_servico, "UTC:dd/mm/yyyy") },
                               { title: 'Hr Serviço', field: 'servico.hora_inicial', width: '110px', minWidth: '110px', maxWidth: '110px',  render: rowData => rowData.servico.hora_inicial.substring(0,5) }, 
                                              
-                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
-                              cellStyle:{ fontSize: 10}, render: rowData => rowData.servico.tipoEventoId == 1 ? 
+                              { title: '', field: 'tipoEventoId', width: '70px', minWidth: '70px', maxWidth: '70px',
+                              cellStyle:{ fontSize: 10, textAlign: "center"}, render: rowData => rowData.servico.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
-                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
-                              { title: 'Nome Passageiro', field: 'servico.nome_passageiro', width: '180px', minWidth: '180px', maxWidth: '180px' },
+                              { title: '', field: '', width: '10px', minWidth: '10px', maxWidth: '10px'},  
+                              { title: 'Nome Passageiro', field: 'servico.nome_passageiro', width: '160px', minWidth: '160px', maxWidth: '160px' },
                               { title: 'Qtd Passageiros', field: 'servico.quantidade_passageiro', width: '130px', minWidth: '130px', maxWidth: '130px', align: 'center' },     
 
                               { title: 'Origem', field: 'servico.local_embarque', width: '230px', minWidth: '230px', maxWidth: '230px', render: rowData => rowData.servico.local_embarque.substring(0,40)  },
-                              { title: 'Destino', field: 'servico.local_desembarque', width: '190px', minWidth: '190px', maxWidth: '190px', render: rowData => rowData.servico.local_desembarque.substring(0,30) },
+                              { title: 'Destino', field: 'servico.local_desembarque', width: '250px', minWidth: '250px', maxWidth: '250px', render: rowData => rowData.servico.local_desembarque.substring(0,40) },
                                                                                   
                               { title: '', field: 'servico.motorista_bilingue', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.servico.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
@@ -3503,9 +3570,9 @@ delay() {
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 11,
+                              actionsColumnIndex: 10,
                              // pageSize: 9,
-                              pageSizeOptions: [0],                     
+                             // pageSizeOptions: [0],                     
                             }}
                             actions={[
                               {
@@ -5979,7 +6046,7 @@ delay() {
       showMensagemDelete: false
     });    
 
-    this.loadlistServicos();
+    this.loadlistServicosNovos();
      
   }
 
@@ -6035,7 +6102,7 @@ delay() {
       showMostraMotorista: false
     });    
 
-    this.loadlistServicos();
+    this.loadlistServicosNovos();
      
   }
 
@@ -6940,7 +7007,7 @@ debugger;
       showModalAlteracaoEvento: false
     }); 
     
-    this.loadlistServicos();
+    this.loadlistServicosNovos();
   }
 
 
@@ -7046,13 +7113,13 @@ debugger;
 
 
   handleOpenModalEmbarque() { 
+    debugger
     this.setState({ 
       showModalEmbarque: true,      
       camplocalembarque: this.state.camplocalembarque,      
-      controle: 0,
-      obter_rota_nova: false,
-    //  mudar_estilo: customStyles_2,
-    });      
+      controle: 0
+    })    
+    
     
   }
   
@@ -7063,22 +7130,36 @@ debugger;
       //mudar_estilo: customStyles,
     }); 
     debugger;
+    if (this.state.camplocalembarq1ue !== '') {
+      if (camplocalembarque_old !== this.state.camplocalembarque) {
+        this.setState({ 
+            obter_rota_nova: true,         
+        })
+        camplocalembarque_old = this.state.camplocalembarque;
+      } else {
+        this.setState({ 
+          obter_rota_nova: false,         
+        })
+      }
+  } 
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
-      Promise.all([
+    //  Promise.all([
         this.calcular_trajeto()
-      ])    
+    //  ])    
     }
   //  this.obtendo_latitude_longitude();
   }
 
   handleOpenModalDesembarque() { 
+    debugger
     this.setState({ 
       showModalDesembarque: true,      
       camplocaldesembarque: this.state.camplocaldesembarque,      
       controle: 0,   
-      obter_rota_nova: false,   
+  //    obter_rota_nova: false,   
     //  mudar_estilo: customStyles_2,
     });        
+    
    
     
   }
@@ -7089,11 +7170,24 @@ debugger;
       validacao_localdesembarque: true,
     });  
 
+    if (this.state.camplocaldesembarque !== '') {
+      if (camplocaldesembarque_old !== this.state.camplocaldesembarque) {
+        this.setState({ 
+            obter_rota_nova: true,         
+        }); 
+        camplocaldesembarque_old = this.state.camplocaldesembarque;
+      } else {
+        this.setState({ 
+          obter_rota_nova: false,         
+      }); 
+      }
+    }
+   
     debugger;
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
-      Promise.all([
+   //   Promise.all([
         this.calcular_trajeto()
-      ])    
+     // ])    
     }
    
    //debugger;
@@ -7450,7 +7544,7 @@ debugger;
     
            this.valor_total_servicos();
            this.valor_total_viagens();
-           this.loadlistServicos();
+           this.loadlistServicosNovos();
            this.loadlistServicosExcluidos();                
            this.atualiza_evento();
 
@@ -7483,7 +7577,7 @@ debugger;
                        
                this.valor_total_servicos();
                this.valor_total_viagens();
-               this.loadlistServicos();
+               this.loadlistServicosNovos();
                this.loadlistServicosExcluidos();                
                this.atualiza_evento();
 
@@ -7510,7 +7604,7 @@ debugger;
      
        this.valor_total_servicos();
        this.valor_total_viagens();
-       this.loadlistServicos();
+       this.loadlistServicosNovos();
        this.loadlistServicosExcluidos();
        this.atualiza_evento();
             
