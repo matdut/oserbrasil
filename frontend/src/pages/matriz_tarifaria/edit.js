@@ -19,10 +19,10 @@ import Menu_administrador from '../administrador/menu_administrador';
 import api from '../../services/api';
 import './matriz.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
-const dataendereco = localStorage.getItem('logdataCliente');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
+const dataendereco = sessionStorage.getItem('logdataCliente');
 const buscadorcep = require('buscadorcep');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -105,10 +105,10 @@ class empresarialComponent extends React.Component{
 
     let userId = this.props.match.params.id;   
     
-    localStorage.setItem('logid', userId);      
+    sessionStorage.setItem('logid', userId);      
 
     console.log('logid - '+userId);
-    localStorage.setItem('logmatrizId', userId);      
+    sessionStorage.setItem('logmatrizId', userId);      
 
     this.loadTipoTransporte();
     this.carrega_matriz();
@@ -140,8 +140,8 @@ class empresarialComponent extends React.Component{
   }   
 
   carrega_matriz() {
-    console.log('matriz - '+localStorage.getItem('logmatrizId'));
-    api.get('/matriz/get/'+localStorage.getItem('logmatrizId'))
+    console.log('matriz - '+sessionStorage.getItem('logmatrizId'));
+    api.get('/matriz/get/'+sessionStorage.getItem('logmatrizId'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
@@ -419,10 +419,10 @@ loadFillData(){
 verifica_botao(inicio) {
 //  const { validate } = this.state
 //console.log('inicio - '+ inicio);
-//console.log('logperfil - '+ localStorage.getItem('logperfil'));
+//console.log('logperfil - '+ sessionStorage.getItem('logperfil'));
 console.log('this.state - '+JSON.stringify(this.state, null, "    ")); 
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
       if (inicio == 1) {
         return (
     
@@ -461,7 +461,7 @@ console.log('this.state - '+JSON.stringify(this.state, null, "    "));
 
   verificar_menu() {   
 
-    if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+    if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
       return(
         <div>
       <div className="d-flex justify-content-around">
@@ -502,7 +502,7 @@ sendUpdate(){
   }          
 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put('/matriz/update/'+localStorage.getItem('logmatrizId'), datapost)
+        api.put('/matriz/update/'+sessionStorage.getItem('logmatrizId'), datapost)
         .then(response=>{
           
           if (response.data.success==true) {                                      
@@ -525,7 +525,7 @@ handleChange = (prop) => (event) => {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );

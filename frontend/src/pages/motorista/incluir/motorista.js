@@ -33,7 +33,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import { Multiselect } from 'multiselect-react-dropdown';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 
 class motoristaComponent extends React.Component{  
 
@@ -157,7 +157,7 @@ class motoristaComponent extends React.Component{
 
     this.setState({          
       inicio: 1,     
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
     
     console.log('user '+userId);
@@ -165,20 +165,20 @@ class motoristaComponent extends React.Component{
     if (email == null) {
 
           if (userId !== 0) {                    
-            localStorage.setItem('logid', userId);
-            localStorage.setItem('logperfil', 0);            
+            sessionStorage.setItem('logid', userId);
+            sessionStorage.setItem('logperfil', 0);            
           } else {
-            localStorage.setItem('logperfil', 0);
+            sessionStorage.setItem('logperfil', 0);
           }    
 
-          if (localStorage.getItem('logperfil') == 3) {
+          if (sessionStorage.getItem('logperfil') == 3) {
             this.setState({      
               camp_cpf_disabled: true,
             // camp_nome_disabled: true,
             });   
           }
 
-          if (localStorage.getItem('logid') == 0) { 
+          if (sessionStorage.getItem('logid') == 0) { 
             this.setState({      
               campStatusId: 6,
               progresso: 0
@@ -189,14 +189,14 @@ class motoristaComponent extends React.Component{
             }); 
           } 
           
-          if (localStorage.getItem('logperfil') !== 0) { 
+          if (sessionStorage.getItem('logperfil') !== 0) { 
             //console.log(' busca cliente ')                  
             // buscar representante       
             this.busca_motorista()      
           }
      } else {
       this.busca_motorista()     
-      localStorage.setItem('logperfil', 0);
+      sessionStorage.setItem('logperfil', 0);
 
       this.setState({              
          camp_email_disabled: true,
@@ -221,7 +221,7 @@ class motoristaComponent extends React.Component{
 
   busca_motorista() {
     const { validate } = this.state   
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -989,20 +989,20 @@ sendSave(){
 
             api.post('/login/create',logindata)
 
-            localStorage.setItem('logid', response.data.data.id);
-            localStorage.setItem('lognome', response.data.data.nome);  
+            sessionStorage.setItem('logid', response.data.data.id);
+            sessionStorage.setItem('lognome', response.data.data.nome);  
          /* console.log('entrou ');           
           
-          console.log('pegou sessao perfil - '+localStorage.getItem('logperfil'));           
-          console.log('pegou sessao id - '+localStorage.getItem('logid'));           */
-          console.log('pegou sessao perfil - '+localStorage.getItem('logperfil'));           
-          console.log('pegou sessao id - '+localStorage.getItem('logid'));          
-          if (localStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_motorista_incluir/`+localStorage.getItem('logid'));   
-          } else if (localStorage.getItem('logperfil') == 3) {
+          console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
+          console.log('pegou sessao id - '+sessionStorage.getItem('logid'));           */
+          console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
+          console.log('pegou sessao id - '+sessionStorage.getItem('logid'));          
+          if (sessionStorage.getItem('logperfil') == 1) {
+            this.props.history.push(`/endereco_motorista_incluir/`+sessionStorage.getItem('logid'));   
+          } else if (sessionStorage.getItem('logperfil') == 3) {
             this.props.history.push(`/area_motorista`);                   
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_motorista_incluir/`+localStorage.getItem('logid'));       
+          } else if (sessionStorage.getItem('logperfil') == 0) {
+            this.props.history.push(`/endereco_motorista_incluir/`+sessionStorage.getItem('logid'));       
           }          
   
           }
@@ -1015,7 +1015,7 @@ sendSave(){
         })
     } else {
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -1025,16 +1025,16 @@ sendSave(){
             statusId: this.state.campStatusId
           }
 
-          api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+          api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)
 
-          localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);
-          if (localStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_motorista_incluir/`+localStorage.getItem('logid'));
-          } else if (localStorage.getItem('logperfil') == 3) {
+          sessionStorage.setItem('lognome', this.state.campNome);  
+          //sessionStorage.setItem('logid', userId);
+          if (sessionStorage.getItem('logperfil') == 1) {
+            this.props.history.push(`/endereco_motorista_incluir/`+sessionStorage.getItem('logid'));
+          } else if (sessionStorage.getItem('logperfil') == 3) {
             this.props.history.push(`/area_motorista`);                   
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_motorista_incluir/`+localStorage.getItem('logid'));       
+          } else if (sessionStorage.getItem('logperfil') == 0) {
+            this.props.history.push(`/endereco_motorista_incluir/`+sessionStorage.getItem('logid'));       
           }           
 
         }
@@ -1113,11 +1113,11 @@ verificaEmailonfocus(e){
 
  verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
    return( 
      <Menu_motorista />     
    );

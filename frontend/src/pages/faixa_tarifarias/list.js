@@ -26,9 +26,9 @@ import Menu_administrador from '../administrador/menu_administrador';
 import Menu_matriz from '../matriz_tarifaria/menu_matriz';
 
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
-//const EventoId = localStorage.getItem('logidEvento');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+//const EventoId = sessionStorage.getItem('logidEvento');
 var dateFormat = require('dateformat');
 
 //const baseUrl = "http://34.210.56.22:3333";
@@ -58,7 +58,7 @@ class listaFaixaComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil'),      
+      perfil: sessionStorage.getItem('logperfil'),      
       campMatrizId: this.props.match.params.id
     });     
 

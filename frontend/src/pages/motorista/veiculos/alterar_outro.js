@@ -23,9 +23,9 @@ import CheckIcon from '@material-ui/icons/Check';
 import api from '../../../services/api';
 import './veiculo.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -115,8 +115,8 @@ class empresarialComponent extends React.Component{
 
     let userId = this.props.match.params.id;
    
-    if (localStorage.getItem('logperfil') == 3) {
-      localStorage.setItem('logVeiculo', userId)
+    if (sessionStorage.getItem('logperfil') == 3) {
+      sessionStorage.setItem('logVeiculo', userId)
       this.setState({ 
         incluir: false
       })
@@ -125,7 +125,7 @@ class empresarialComponent extends React.Component{
     this.carrega_veiculo()
 
     this.setState({          
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
 
     this.setState({      
@@ -260,7 +260,7 @@ class empresarialComponent extends React.Component{
    }    
   carrega_veiculo() {
     const { validate } = this.state;
-    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -363,7 +363,7 @@ class empresarialComponent extends React.Component{
         
                   this.buscaSeguradora(res.data.data[0].seguradoraId)
                   this.load_modelo_banco(this.state.campCarroId)
-                  localStorage.setItem('lognome', this.state.campNome);              
+                  sessionStorage.setItem('lognome', this.state.campNome);              
                 
               }   
             })        
@@ -727,7 +727,7 @@ verifica_botao(inicio) {
    //console.log(JSON.stringify(this.state, null, "    "));
    // console.log(JSON.stringify(inicio, null, "    "));
    console.log(JSON.stringify(this.state, null, "    ")); 
-   if (localStorage.getItem('logperfil') == 0) {
+   if (sessionStorage.getItem('logperfil') == 0) {
         if (inicio == 1) {
           return (
       
@@ -761,7 +761,7 @@ verifica_botao(inicio) {
             );
           }     
         }
-      } else  if (localStorage.getItem('logperfil') == 1) {    
+      } else  if (sessionStorage.getItem('logperfil') == 1) {    
         if (inicio == 1) {
           return (
       
@@ -795,7 +795,7 @@ verifica_botao(inicio) {
             );
           }     
         }
-      } else  if (localStorage.getItem('logperfil') == 3) {    
+      } else  if (sessionStorage.getItem('logperfil') == 3) {    
         if (inicio == 1) {
           return (
       
@@ -868,7 +868,7 @@ verifica_botao(inicio) {
       this.state.listaMarcas.map((data)=>{          
          if (data.id == id) {
             console.log('buscaMarca - '+data.name);     
-            localStorage.setItem('logMarca', data.name)
+            sessionStorage.setItem('logMarca', data.name)
            // marca_saida = data.name                   
          }
 
@@ -886,7 +886,7 @@ verifica_botao(inicio) {
     this.state.listaModelos.map((data)=>{          
        if (data.id == id) {
          console.log('buscaModelo - '+data.name); 
-         localStorage.setItem('logModelo', data.name)
+         sessionStorage.setItem('logModelo', data.name)
          //modelo_saida = data.name                       
        }
      }) 
@@ -905,8 +905,8 @@ sendUpdate(){
   const datapost = {
     marcaId: this.state.campCarroId, 
     modeloId: this.state.campModeloId,
-    marca: localStorage.getItem('logMarca'), 
-    modelo: localStorage.getItem('logModelo'),
+    marca: sessionStorage.getItem('logMarca'), 
+    modelo: sessionStorage.getItem('logModelo'),
     seguradoraId: this.state.campSeguradoraId,
     apolice: this.state.campApolice,
     placa: this.state.campPlaca,
@@ -918,14 +918,14 @@ sendUpdate(){
       if (this.state.incluir == false) {        
 
         console.log(JSON.stringify(datapost, null, "    "));        
-        api.put(`/veiculo/update/${localStorage.getItem('logVeiculo')}`, datapost)
+        api.put(`/veiculo/update/${sessionStorage.getItem('logVeiculo')}`, datapost)
           .then(response=>{
             if (response.data.success==true) {                        
             
-                if (localStorage.getItem('logperfil') == 1) {
-                  this.props.history.push(`/alterar_documentos/`+localStorage.getItem('logVeiculo'));    
-                } else if (localStorage.getItem('logperfil') == 3) {
-                  this.props.history.push(`/alterar_documentos/`+localStorage.getItem('logVeiculo'));                  
+                if (sessionStorage.getItem('logperfil') == 1) {
+                  this.props.history.push(`/alterar_documentos/`+sessionStorage.getItem('logVeiculo'));    
+                } else if (sessionStorage.getItem('logperfil') == 3) {
+                  this.props.history.push(`/alterar_documentos/`+sessionStorage.getItem('logVeiculo'));                  
                 }  
             }
             else {
@@ -939,13 +939,13 @@ sendUpdate(){
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
+  if (sessionStorage.getItem('logperfil') == 0) {
    
    return(
     <div>
      <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/endereco_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/endereco_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -966,7 +966,7 @@ verificar_menu() {
    </div>         
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">
@@ -992,13 +992,13 @@ verificar_menu() {
     </div>    
       );
 
-  } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
+  } else if (sessionStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
 
     return(
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/lista_veiculos/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/lista_veiculos/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -1025,23 +1025,23 @@ verificar_menu() {
 }
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
    return( 
      <Menu_cliente_individual />     
    );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
    return( 
      <Menu_cliente_empresarial />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
     return( 
       <Menu_Motorista />     
     );
-  } else if (localStorage.getItem('logperfil') == 8) {
+  } else if (sessionStorage.getItem('logperfil') == 8) {
    return( 
      <Menu_operador />     
    );

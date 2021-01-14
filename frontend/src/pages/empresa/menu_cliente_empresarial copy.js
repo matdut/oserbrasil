@@ -56,27 +56,27 @@ class menu_clienteComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      razao_social: localStorage.getItem('lograzao_social'), 
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      razao_social: sessionStorage.getItem('lograzao_social'), 
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
    // this.verifica_menu();
     
 
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');   
-    localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.setItem('logperfil', null);
-    localStorage.setItem('logid', 0);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');   
+    sessionStorage.removeItem('logcepbanco');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.setItem('logperfil', null);
+    sessionStorage.setItem('logid', 0);
 
     this.props.history.push("/");
   }
@@ -92,7 +92,7 @@ class menu_clienteComponent extends React.Component  {
     } else {
       return ( 
          <NavItem className="nav-item">            
-           <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {localStorage.getItem('lognome')} </strong></NavLink>                              
+           <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {sessionStorage.getItem('lognome')} </strong></NavLink>                              
          </NavItem>   
        ); 
     }            
@@ -120,7 +120,7 @@ class menu_clienteComponent extends React.Component  {
  return (
   <div>    
     <Navbar color="#dc3545" light expand="md">
-        <NavbarBrand href="#">{localStorage.getItem('lograzao_social')}</NavbarBrand>
+        <NavbarBrand href="#">{sessionStorage.getItem('lograzao_social')}</NavbarBrand>
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.isOpen} navbar>
           <Nav className="ml-auto" navbar>            
@@ -172,19 +172,19 @@ class menu_clienteComponent extends React.Component  {
               </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem 
-                    href={`/empresa/`+localStorage.getItem('logid')}> 
+                    href={`/empresa/`+sessionStorage.getItem('logid')}> 
                     <i class="far fa-user"></i> Dados Representante
                  </DropdownItem>  
                  <DropdownItem 
-                    href={`/empresa_dados/`+localStorage.getItem('logid')}> 
+                    href={`/empresa_dados/`+sessionStorage.getItem('logid')}> 
                     <i class="fas fa-home"></i> Dados Empresa
                  </DropdownItem>  
                  <DropdownItem 
-                    href={`/empresa_endereco/`+localStorage.getItem('logid')}> 
+                    href={`/empresa_endereco/`+sessionStorage.getItem('logid')}> 
                     <i class="fas fa-home"></i> Endereço
                  </DropdownItem>  
                  <DropdownItem 
-                    href={`/empresa_senha/`+localStorage.getItem('logid')}> 
+                    href={`/empresa_senha/`+sessionStorage.getItem('logid')}> 
                    <i class="fas fa-key"></i> Alterar Senha
                  </DropdownItem>                
                 <DropdownItem divider />                     

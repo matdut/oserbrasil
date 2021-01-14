@@ -9,8 +9,8 @@ import { cnpjMask } from '../../formatacao/cnpjmask';
 import api from '../../../services/api';
 import './empresarial.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const { cnpj } = require('cpf-cnpj-validator');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -75,25 +75,25 @@ class empresarialComponent extends React.Component{
     this.setState({      
       progresso: 50
     });    
-    //console.log('logprogress - '+ localStorage.getItem('logprogress'));  
+    //console.log('logprogress - '+ sessionStorage.getItem('logprogress'));  
     validate.cnpjState = ''
     validate.razao_socialState = ''
     validate.nome_fantasiaState = ''
 
     let userId = this.props.match.params.id;
 
-    localStorage.setItem('logid', userId);           
+    sessionStorage.setItem('logid', userId);           
     
     this.setState({      
       validate      
     });   
-    console.log('logid -'+localStorage.getItem('logid'))
+    console.log('logid -'+sessionStorage.getItem('logid'))
     
-    //if (localStorage.getItem('logid') !== 0) {     
+    //if (sessionStorage.getItem('logid') !== 0) {     
        this.busca_cliente()
     //}
     
-    if (localStorage.getItem('logperfil') == 2) {
+    if (sessionStorage.getItem('logperfil') == 2) {
       this.setState({      
           campo_cnpj_disabled: true,
           campo_razao_social_disabled:true,
@@ -114,7 +114,7 @@ class empresarialComponent extends React.Component{
 
    busca_cliente(e) {
     const { validate } = this.state
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -290,7 +290,7 @@ class empresarialComponent extends React.Component{
 
     if (this.state.campo_cnpj_disabled !== true) {
     //console.log(JSON.stringify(inicio, null, "    "));
-    if (localStorage.getItem('logperfil') == null) {
+    if (sessionStorage.getItem('logperfil') == null) {
         if (inicio == 1) {
           return (
       
@@ -323,7 +323,7 @@ class empresarialComponent extends React.Component{
               }        
                   
         }
-      }  else if (localStorage.getItem('logperfil') == 1) {
+      }  else if (sessionStorage.getItem('logperfil') == 1) {
         if (inicio == 1) {
           return (
       
@@ -357,7 +357,7 @@ class empresarialComponent extends React.Component{
                   
         }
 
-      }  else if (localStorage.getItem('logperfil') == 2) {
+      }  else if (sessionStorage.getItem('logperfil') == 2) {
         if (inicio == 1) {
           return (
       
@@ -529,34 +529,34 @@ sendUpdate(){
   }          
 
        // console.log('Atualiza Empresa - '+JSON.stringify(datapost, null, "    ")); 
-       // console.log('Atualiza Empresa id - '+localStorage.getItem('logid')); 
-        api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+       // console.log('Atualiza Empresa id - '+sessionStorage.getItem('logid')); 
+        api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {
            
-            localStorage.setItem('logprogress', 50);  
-            localStorage.setItem('lognome', this.state.campRazao_social);  
-            localStorage.setItem('logcepbanco', this.state.campCep);
-            localStorage.setItem('logcep', this.state.campCep);
-            console.log('Atualiza perfil id - '+localStorage.getItem('logperfil')); 
+            sessionStorage.setItem('logprogress', 50);  
+            sessionStorage.setItem('lognome', this.state.campRazao_social);  
+            sessionStorage.setItem('logcepbanco', this.state.campCep);
+            sessionStorage.setItem('logcep', this.state.campCep);
+            console.log('Atualiza perfil id - '+sessionStorage.getItem('logperfil')); 
 
-            if (localStorage.getItem('logperfil') == 1) {
-              localStorage.setItem('logperfil', 1);
-              this.props.history.push(`/empresa_endereco/`+localStorage.getItem('logid'));    
-            } else if (localStorage.getItem('logperfil') == 2) {
+            if (sessionStorage.getItem('logperfil') == 1) {
+              sessionStorage.setItem('logperfil', 1);
+              this.props.history.push(`/empresa_endereco/`+sessionStorage.getItem('logid'));    
+            } else if (sessionStorage.getItem('logperfil') == 2) {
               if (this.state.campCnpj == null) {
-                localStorage.setItem('logperfil', 2);
+                sessionStorage.setItem('logperfil', 2);
                 this.props.history.push(`/area_cliente_individual`);       
               } else {
-                localStorage.setItem('logperfil', 2);
+                sessionStorage.setItem('logperfil', 2);
                 this.props.history.push(`/area_cliente_empresarial`);       
               }           
-            } else if (localStorage.getItem('logperfil') == null) {              
-              this.props.history.push(`/empresa_endereco/`+localStorage.getItem('logid'));              
+            } else if (sessionStorage.getItem('logperfil') == null) {              
+              this.props.history.push(`/empresa_endereco/`+sessionStorage.getItem('logid'));              
             } 
-           // localStorage.setItem('logcep', this.state.campCep);   
-            //localStorage.setItem('logid', userId);              
-            //localStorage.setItem('lognome', this.state.campId);              
+           // sessionStorage.setItem('logcep', this.state.campCep);   
+            //sessionStorage.setItem('logid', userId);              
+            //sessionStorage.setItem('lognome', this.state.campId);              
             
             
   
@@ -626,7 +626,7 @@ loadcnpj(e) {
                   encontrou_cnpj: true,      
                 });    
 
-                localStorage.setItem('logcepbanco', this.state.campCep);  
+                sessionStorage.setItem('logcepbanco', this.state.campCep);  
                 if (this.state.campCnpj !== "") {
                   validate.cnpjState = 'has-success'      
                 }
@@ -681,13 +681,13 @@ loadcnpj(e) {
 
  verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == null) {
+  if (sessionStorage.getItem('logperfil') == null) {
    
    return(
     <div>
     <div className="d-flex justify-content-around">
         <div className="botao_navegacao">
-          <Link to={`/empresa/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+          <Link to={`/empresa/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
         </div>                  
         <div>
           <div className="titulo_representante">                
@@ -708,11 +708,11 @@ loadcnpj(e) {
    </div>         
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div className="d-flex justify-content-around">
            <div className="botao_navegacao">
-               <Link to={`/cliente/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+               <Link to={`/cliente/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
              </div>                  
              <div>
                <div className="titulo_representante">                
@@ -728,7 +728,7 @@ loadcnpj(e) {
          </div>
       );
 
-  } else if (localStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL OU EMPRESARIAL              
+  } else if (sessionStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL OU EMPRESARIAL              
 
     return(
       <div className="d-flex justify-content-around">

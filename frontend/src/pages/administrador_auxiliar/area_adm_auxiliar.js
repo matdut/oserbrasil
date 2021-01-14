@@ -19,9 +19,9 @@ class Area_cliente extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
 
   }
@@ -29,7 +29,7 @@ class Area_cliente extends React.Component  {
   verifica_titulo() {    
 
     return (      
-       <strong>{localStorage.getItem('lognome')}</strong>
+       <strong>{sessionStorage.getItem('lognome')}</strong>
      ); 
   
   }  

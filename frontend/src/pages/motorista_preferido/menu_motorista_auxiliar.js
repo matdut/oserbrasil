@@ -50,10 +50,10 @@ class menu_motoristaComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid'),
-      statusId: localStorage.getItem('statusid'),                    
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid'),
+      statusId: sessionStorage.getItem('statusid'),                    
     });
     //this.verifica_menu();
 
@@ -64,7 +64,7 @@ class menu_motoristaComponent extends React.Component  {
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         if (res.data.data.length > 0) {
           this.setState({             
@@ -78,17 +78,17 @@ class menu_motoristaComponent extends React.Component  {
   }
 
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logVeiculo');
-    localStorage.removeItem('statusid');
-    localStorage.setItem('conectado', 1);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logVeiculo');
+    sessionStorage.removeItem('statusid');
+    sessionStorage.setItem('conectado', 1);
 
     this.props.history.push("/");
   }
@@ -111,7 +111,7 @@ class menu_motoristaComponent extends React.Component  {
         return ( 
           <li className="nav-item">
              <NavItem>  
-                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {localStorage.getItem('lognome').toUpperCase()} </strong></NavLink>                              
+                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {sessionStorage.getItem('lognome').toUpperCase()} </strong></NavLink>                              
              </NavItem>  
           </li>   
          ); 
@@ -145,10 +145,10 @@ class menu_motoristaComponent extends React.Component  {
           <ul id="menu-content" className="menu-content collapse out">
               <li>
                 <div className="avatar_titulo">
-                <div className="avatar_motorista"><Avatar alt={localStorage.getItem('lognome')} src={this.state.foto_perfil}/>                       
+                <div className="avatar_motorista"><Avatar alt={sessionStorage.getItem('lognome')} src={this.state.foto_perfil}/>                       
                 </div>
                   <div className="teste perfil">
-                    <a href={`/motorista_alterar/`+localStorage.getItem('logid')}>   
+                    <a href={`/motorista_alterar/`+sessionStorage.getItem('logid')}>   
                         Editar Perfil  
                     </a>  
                     <br/>
@@ -166,7 +166,7 @@ class menu_motoristaComponent extends React.Component  {
               </li>     
               <li>
               <div className="itens_menu">
-              <a href={`/endereco_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">                    
+              <a href={`/endereco_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">                    
                    <LightTooltip title="Endereço" placement="top">                
                    <i className="fas fa-address-card"></i>
                    </LightTooltip>    
@@ -175,7 +175,7 @@ class menu_motoristaComponent extends React.Component  {
               </li>   
               <li>
               <div className="itens_menu">
-               <a href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+               <a href={`/documentos_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Documentos" placement="top">
                 <i className="fas fa-folder-open"></i>                
                 </LightTooltip>              
@@ -184,7 +184,7 @@ class menu_motoristaComponent extends React.Component  {
               </li>
               <li>
               <div className="itens_menu">
-              <a href={`/foto_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+              <a href={`/foto_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Minha Foto" placement="top">
                 <i className="fas fa-camera"></i>
                 </LightTooltip>              
@@ -193,7 +193,7 @@ class menu_motoristaComponent extends React.Component  {
               </li> 
               <li>
               <div className="itens_menu">
-              <a href={`/senha_motorista_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+              <a href={`/senha_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Senha" placement="top">
                 <i className="fas fa-unlock-alt"></i>
                 </LightTooltip>              

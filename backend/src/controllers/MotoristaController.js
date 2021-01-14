@@ -346,8 +346,8 @@ controllers.getMotVeiculo = async (req, res) => {
   
 }
 
-controllers.getMotoristaServico = async (req, res) => {
- const { estado_motorista, bilingue, tipoTransporte } = req.params;
+controllers.getSelecionaMotorista = async (req, res) => {
+ const { estado_motorista, bilingue } = req.params;
  // const { bilingue } = req.params;
   
   await Motorista.findAll({
@@ -363,7 +363,7 @@ controllers.getMotoristaServico = async (req, res) => {
   })
   .then( function (data){
     if (data.length > 0) {
-      return res.json({success:true, data:data});
+      return res.json({success:true, data:data, total: data.length});
      } else {
       return res.json({success:false, data:data});
      }

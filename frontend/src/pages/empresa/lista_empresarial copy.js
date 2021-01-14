@@ -59,8 +59,8 @@ const buscadorcep = require('buscadorcep');
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
 
 /*
@@ -225,12 +225,12 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({     
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
     console.log('logperfil - '+perfil);
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -262,14 +262,14 @@ class listComponent extends React.Component  {
 
   busca_cliente() {
     const { validate } = this.state  
-    console.log('id - '+localStorage.getItem('logeditid'));
-    api.get(`/empresa/get/${localStorage.getItem('logeditid')}`)
+    console.log('id - '+sessionStorage.getItem('logeditid'));
+    api.get(`/empresa/get/${sessionStorage.getItem('logeditid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
       //  const dataF = new Data(res.data.data[0].data_nascimento);     
         if (res.data.success) {
-          localStorage.setItem('logclienteId', res.data.data[0].cliente.id)  
-          localStorage.setItem('logempresaid', res.data.data[0].id)
+          sessionStorage.setItem('logclienteId', res.data.data[0].cliente.id)  
+          sessionStorage.setItem('logempresaid', res.data.data[0].id)
           this.setState({ 
             campCnpj: cnpjMask(res.data.data[0].cnpj),          
             campRazao_social: res.data.data[0].razao_social,
@@ -1079,11 +1079,11 @@ busca_cpf(e){
       mensagem_aguarde: '',
     });    
 
-    localStorage.setItem('logeditid', data.id);             
+    sessionStorage.setItem('logeditid', data.id);             
     console.log(' logeditid - '+data.id);
     this.busca_cliente();   
 
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -1102,7 +1102,7 @@ busca_cpf(e){
       listEmpresasExcluidos: [],
     });
    
-    localStorage.setItem('logeditid', '');
+    sessionStorage.setItem('logeditid', '');
     
     this.loadEmpresas();  
     this.loadEmpresasExcluidos();  
@@ -1698,7 +1698,7 @@ busca_cpf(e){
     cep: this.state.campCep,  
   }       
   
-  api.put(`/empresa/update/${localStorage.getItem('logempresaid')}`, dataempresaData)
+  api.put(`/empresa/update/${sessionStorage.getItem('logempresaid')}`, dataempresaData)
   .then(respempresa=>{
     if (respempresa.data.success==true) {        
   
@@ -1716,8 +1716,8 @@ busca_cpf(e){
               console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
             // console.log(' this.state.incluir - '+JSON.stringify(this.state.incluir, null, "    "));         
            
-          //   console.log(`/cliente/update/${localStorage.getItem('logeditid')}`); 
-              api.put(`/cliente/update/${localStorage.getItem('logclienteId')}`, datapost)
+          //   console.log(`/cliente/update/${sessionStorage.getItem('logeditid')}`); 
+              api.put(`/cliente/update/${sessionStorage.getItem('logclienteId')}`, datapost)
               .then(response=>{
                 if (response.data.success==true) {        
                   
@@ -1728,10 +1728,10 @@ busca_cpf(e){
                   }
                   
                   console.log('logindata - '+JSON.stringify(logindata, null, "    ")); 
-                  //console.log(`/login/update/${localStorage.getItem('logid')}`); 
-                  api.put(`/login/update/${localStorage.getItem('logclienteId')}`,logindata)
+                  //console.log(`/login/update/${sessionStorage.getItem('logid')}`); 
+                  api.put(`/login/update/${sessionStorage.getItem('logclienteId')}`,logindata)
                   
-                  localStorage.setItem('lognome', this.state.campNome);          
+                  sessionStorage.setItem('lognome', this.state.campNome);          
                   
                   
                   this.handleCloseModal(); 

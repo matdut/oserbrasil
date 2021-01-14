@@ -52,36 +52,36 @@ class menu_clienteComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
    // this.verifica_menu();
     
 
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil'); 
-    localStorage.removeItem('logcnpj'); 
-    localStorage.removeItem('logcpf');
-    localStorage.removeItem('logservicoid');     
-    localStorage.removeItem('logempresaid');  
-    localStorage.removeItem('logcep');      
-    localStorage.removeItem('logclienteId');
-    localStorage.removeItem('logcpfrep');
-    localStorage.removeItem('logdocumento');
-    localStorage.removeItem('logemailId');
-    localStorage.removeItem('logeventoId');
-    localStorage.removeItem('logMarca');
-    localStorage.removeItem('logmatrizId');
-    localStorage.removeItem('logModelo');    
-    localStorage.removeItem('logeventoservico');
-    localStorage.setItem('logperfil', null);
-    localStorage.setItem('conectado', 1);
-    localStorage.setItem('logid', 0);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil'); 
+    sessionStorage.removeItem('logcnpj'); 
+    sessionStorage.removeItem('logcpf');
+    sessionStorage.removeItem('logservicoid');     
+    sessionStorage.removeItem('logempresaid');  
+    sessionStorage.removeItem('logcep');      
+    sessionStorage.removeItem('logclienteId');
+    sessionStorage.removeItem('logcpfrep');
+    sessionStorage.removeItem('logdocumento');
+    sessionStorage.removeItem('logemailId');
+    sessionStorage.removeItem('logeventoId');
+    sessionStorage.removeItem('logMarca');
+    sessionStorage.removeItem('logmatrizId');
+    sessionStorage.removeItem('logModelo');    
+    sessionStorage.removeItem('logeventoservico');
+    sessionStorage.setItem('logperfil', null);
+    sessionStorage.setItem('conectado', 1);
+    sessionStorage.setItem('logid', 0);
     this.props.history.push("/");
   }
 
@@ -126,10 +126,10 @@ class menu_clienteComponent extends React.Component  {
           <ul id="menu-content" className="menu-content collapse out">
               <li>
                 <div className="avatar_titulo">
-                <div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                       
+                <div className="avatar"><Avatar alt={sessionStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                       
                 </div>
                   <div className="teste perfil">
-                  <a href={`/cliente_alterar/`+localStorage.getItem('logid')}>      
+                  <a href={`/cliente_alterar/`+sessionStorage.getItem('logid')}>      
                         Editar Perfil  
                     </a>  
                     <br/>
@@ -156,7 +156,7 @@ class menu_clienteComponent extends React.Component  {
               </li>   
               <li>
               <div className="itens_menu">
-              <a href={`/cliente_senha_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+              <a href={`/cliente_senha_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Senha" placement="top">
                 <i className="fas fa-fw fa-columns"></i>                  
                 </LightTooltip>              

@@ -36,7 +36,7 @@ import Icon from '@material-ui/core/Icon';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 //const nodemailer = require('nodemailer');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 //var sendmail = require('../sendmail')({silent: true})
 
 const customStyles = {
@@ -142,19 +142,19 @@ class operadoresComponent extends React.Component{
    
     let userId = this.props.match.params.id;    
     
-    localStorage.setItem('logid', userId);
+    sessionStorage.setItem('logid', userId);
           
-    //const logperfil = localStorage.getItem('logperfil');
+    //const logperfil = sessionStorage.getItem('logperfil');
    // this.loadTipoTransporte();
 
-    if (localStorage.getItem('logperfil') == 2) {      
+    if (sessionStorage.getItem('logperfil') == 2) {      
        this.busca_cliente();
     }      
-    if (localStorage.getItem('logperfil') == 7) {        
+    if (sessionStorage.getItem('logperfil') == 7) {        
       this.busca_empresa()           
     }
 
-    if (localStorage.getItem('logperfil') == 8) {       
+    if (sessionStorage.getItem('logperfil') == 8) {       
       this.busca_operador()      
       this.setState({              
         progresso: 25
@@ -170,7 +170,7 @@ class operadoresComponent extends React.Component{
   }
 
   loadOperadores() {
-    api.get(`/operador/listaempresa/`+localStorage.getItem('logid'))
+    api.get(`/operador/listaempresa/`+sessionStorage.getItem('logid'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
@@ -281,7 +281,7 @@ class operadoresComponent extends React.Component{
   verifica_botao_modal() {
     const { validate } = this.state 
 
-    if (localStorage.getItem('logperfil') == 7) {  
+    if (sessionStorage.getItem('logperfil') == 7) {  
       
         if (validate.emailState == 'has-success') { 
           return (
@@ -375,7 +375,7 @@ verifica_data_evento(){
 
   busca_cliente() {
     
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -394,7 +394,7 @@ verifica_data_evento(){
   } 
   busca_empresa() {
     
-    api.get(`/empresa/get/${localStorage.getItem('logid')}`)
+    api.get(`/empresa/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -413,7 +413,7 @@ verifica_data_evento(){
   } 
   busca_operador() {
     //const { validate } = this.state  
-    api.get(`/operador/get/${localStorage.getItem('logid')}`)
+    api.get(`/operador/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -690,9 +690,9 @@ validaDataNascimentoChange(e){
 verifica_botao(inicio) {
 
   const { validate } = this.state    
-  console.log('perfil verifica_botao -'+localStorage.getItem('logperfil'))
+  console.log('perfil verifica_botao -'+sessionStorage.getItem('logperfil'))
   
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
     if (inicio == 1) {
       return (
 
@@ -725,7 +725,7 @@ verifica_botao(inicio) {
         }         
 
       }    
-    }  else if (localStorage.getItem('logperfil') == 2) {
+    }  else if (sessionStorage.getItem('logperfil') == 2) {
       if (inicio == 1) {
         return (
   
@@ -756,7 +756,7 @@ verifica_botao(inicio) {
           );   
           }   
         }         
-  }  else if (localStorage.getItem('logperfil') == 7) {
+  }  else if (sessionStorage.getItem('logperfil') == 7) {
     if (inicio == 1) {
       return (
 
@@ -787,7 +787,7 @@ verifica_botao(inicio) {
         );   
         }   
       }         
-    }  else if (localStorage.getItem('logperfil') == 8) {
+    }  else if (sessionStorage.getItem('logperfil') == 8) {
       if (inicio == 1) {
         return (
   
@@ -839,8 +839,8 @@ sendEmail(){
   const email_envio = this.state.campEmail
   const operadordata = {  
     email: this.state.campEmail,    
-    empresaId: localStorage.getItem('logid'),      
-    eventoId: localStorage.getItem('logeventoId'),
+    empresaId: sessionStorage.getItem('logid'),      
+    eventoId: sessionStorage.getItem('logeventoId'),
     statusId: 6,
     gerenciar_eventos: this.state.campgerencia_eventos, 
     gerenciar_todos_eventos: this.state.campgerencia_todos_eventos, 
@@ -867,8 +867,8 @@ sendEmail(){
       api.post("/email/send", params_email)       
      
       this.handleCloseModal();
-     // if (localStorage.getItem('logperfil') == 7) {              
-      //  this.props.history.push(`/criar_eventos/`+localStorage.getItem('logid'));               
+     // if (sessionStorage.getItem('logperfil') == 7) {              
+      //  this.props.history.push(`/criar_eventos/`+sessionStorage.getItem('logid'));               
      // }  
     }      
   })        
@@ -884,8 +884,8 @@ prepareSave(){
   this.setState({ adicionou_operador: true });
 
   const datapost_incluir = {
-    logid: localStorage.getItem('logid'),
-    perfilId: localStorage.getItem('logperfil'),    
+    logid: sessionStorage.getItem('logid'),
+    perfilId: sessionStorage.getItem('logperfil'),    
     ordem_servico: this.state.campordem_servico, 
     nome_evento: this.state.campnome_evento, 
     data_evento: this.state.campdata_evento,           
@@ -895,7 +895,7 @@ prepareSave(){
     .then(respevento=>{    
       if (respevento.data.success == true) {          
 
-        localStorage.setItem('logeventoId',respevento.data.data.id );
+        sessionStorage.setItem('logeventoId',respevento.data.data.id );
           
       }  
     }).catch(error=>{
@@ -910,8 +910,8 @@ sendSave(){
           if (this.state.adicionou_operador !== true) {
 
             const datapost_incluir = {
-              logid: localStorage.getItem('logid'),
-              perfilId: localStorage.getItem('logperfil'),    
+              logid: sessionStorage.getItem('logid'),
+              perfilId: sessionStorage.getItem('logperfil'),    
               ordem_servico: this.state.campordem_servico, 
               nome_evento: this.state.campnome_evento, 
               data_evento: this.state.campdata_evento,           
@@ -921,7 +921,7 @@ sendSave(){
               .then(respevento=>{    
                 if (respevento.data.success == true) {          
           
-                  localStorage.setItem('logeventoId',respevento.data.data.id );
+                  sessionStorage.setItem('logeventoId',respevento.data.data.id );
                     
                 }  
               }).catch(error=>{
@@ -930,37 +930,37 @@ sendSave(){
 
           }  
     
-          console.log(' logperfil '+localStorage.getItem('logperfil'));
+          console.log(' logperfil '+sessionStorage.getItem('logperfil'));
 
-          if (localStorage.getItem('logperfil') == 1) {
-             localStorage.setItem('logperfil', 1);
+          if (sessionStorage.getItem('logperfil') == 1) {
+             sessionStorage.setItem('logperfil', 1);
              this.props.history.push('/area_administrador');                 
-          } else if (localStorage.getItem('logperfil') == 7) {            
-            this.props.history.push("/lista_evento_servico/"+localStorage.getItem('logid'));       
-          } else if (localStorage.getItem('logperfil') == 8) {
-            localStorage.setItem('lognome', this.state.campNome);  
-            localStorage.setItem('logperfil', 8);
+          } else if (sessionStorage.getItem('logperfil') == 7) {            
+            this.props.history.push("/lista_evento_servico/"+sessionStorage.getItem('logid'));       
+          } else if (sessionStorage.getItem('logperfil') == 8) {
+            sessionStorage.setItem('lognome', this.state.campNome);  
+            sessionStorage.setItem('logperfil', 8);
             this.props.history.push('/area_operador');       
           }           
        
     } else {
       const datapost_alterar = {     
-        logid: localStorage.getItem('logid'),
-        perfilId: localStorage.getItem('logperfil'),    
+        logid: sessionStorage.getItem('logid'),
+        perfilId: sessionStorage.getItem('logperfil'),    
         ordem_servico: this.state.campordem_servico, 
         nome_evento: this.state.campnome_evento, 
         data_evento: this.state.campdata_evento,     
        }           
       console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-      api.put(`/eventos/update/${localStorage.getItem('logid')}`, datapost_alterar)
+      api.put(`/eventos/update/${sessionStorage.getItem('logid')}`, datapost_alterar)
       .then(response=>{
         if (response.data.success==true) {                                  
     
-          if (localStorage.getItem('logperfil') == 1) {
+          if (sessionStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (localStorage.getItem('logperfil') == 7) {
+          } else if (sessionStorage.getItem('logperfil') == 7) {
               this.props.history.push(`/area_cliente_empresarial`);                   
-          } else if (localStorage.getItem('logperfil') == 8) {
+          } else if (sessionStorage.getItem('logperfil') == 8) {
               this.props.history.push(`/area_operador`);                                  
           }            
 
@@ -977,9 +977,9 @@ sendSave(){
 }  
 
 verificar_menu() {   
- // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+ // console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
 
-  if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">
@@ -1002,7 +1002,7 @@ verificar_menu() {
         </div>      
   </div>           
       );
- } else  if (localStorage.getItem('logperfil') == 2) {  //CLIENTE INDIVIDUAL
+ } else  if (sessionStorage.getItem('logperfil') == 2) {  //CLIENTE INDIVIDUAL
       return(
         <div>
         <div className="d-flex justify-content-around">
@@ -1026,7 +1026,7 @@ verificar_menu() {
     </div>           
         );     
 
-  } else if (localStorage.getItem('logperfil') == 7) { // CLIENTE EMPRESARIAL           
+  } else if (sessionStorage.getItem('logperfil') == 7) { // CLIENTE EMPRESARIAL           
 
     return(
       <div className="d-flex justify-content-around">
@@ -1046,7 +1046,7 @@ verificar_menu() {
              
       </div>
       );
-  } else if (localStorage.getItem('logperfil') == 8) { // OPERADOR
+  } else if (sessionStorage.getItem('logperfil') == 8) { // OPERADOR
     return(
       <div className="d-flex justify-content-around">
               <div className="botao_navegacao">                                  
@@ -1091,19 +1091,19 @@ loadOperadoresData(){
 
 verificar_menu_lateral() {
 
-   if (localStorage.getItem('logperfil') == 1) {
+   if (sessionStorage.getItem('logperfil') == 1) {
     return( 
       <Menu_administrador />     
     );
-   } else if (localStorage.getItem('logperfil') == 2) {
+   } else if (sessionStorage.getItem('logperfil') == 2) {
     return( 
       <Menu_cliente_individual />     
     );
-   } else if (localStorage.getItem('logperfil') == 7) {
+   } else if (sessionStorage.getItem('logperfil') == 7) {
     return( 
       <Menu_cliente_empresarial />     
     );
-   } else if (localStorage.getItem('logperfil') == 8) {
+   } else if (sessionStorage.getItem('logperfil') == 8) {
     return( 
       <Menu_operador />     
     );

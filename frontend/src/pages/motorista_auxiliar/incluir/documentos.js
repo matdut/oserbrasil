@@ -22,9 +22,9 @@ import Upload from "../../UploadDocumentos";
 import FileList from "../../FilelistDocumento";
 import { Container, Content } from "../../style";
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 const resizeFile = (file) => new Promise(resolve => {
   Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
@@ -63,7 +63,7 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     this.setState({      
-      perfillog: localStorage.getItem('logperfil'),
+      perfillog: sessionStorage.getItem('logperfil'),
       incluir_foto_1: false, 
       incluir_foto_2: false,    
     });  
@@ -73,11 +73,11 @@ class empresarialComponent extends React.Component{
     });  
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     }      
     this.carrega_motorista();  
     
-    if (localStorage.getItem('logVeiculo') > 0) {
+    if (sessionStorage.getItem('logVeiculo') > 0) {
       this.carrega_doc_veiculo();  
   //  } else {
 
@@ -89,7 +89,7 @@ class empresarialComponent extends React.Component{
   carrega_motorista() {   
     
 
-    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista doc - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success == true) {
@@ -198,7 +198,7 @@ async sendUpdate(){
       console.log(' CNH - '+JSON.stringify(formData, null, "    ")); 
  //    formData.append("file", this.state.uploadedCNH[0].file, this.state.uploadedCNH[0].name)                  
 
-      api.put(`/motoristaAuxiliar/documentoCNH/update/${localStorage.getItem('logid')}`, formData)
+      api.put(`/motoristaAuxiliar/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
       .then(response=>{
         
             console.log('Retorno update 1'+JSON.stringify(response.data, null, "    ")); 
@@ -221,12 +221,12 @@ async sendUpdate(){
     } 
           
 
-      if (localStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista_auxiliar_incluir/`+localStorage.getItem('logid'));
-      } else if (localStorage.getItem('logperfil') == 9) {
+      if (sessionStorage.getItem('logperfil') == 1) {
+        this.props.history.push(`/foto_motorista_auxiliar_incluir/`+sessionStorage.getItem('logid'));
+      } else if (sessionStorage.getItem('logperfil') == 9) {
         this.props.history.push(`/area_motorista_auxiliar`);                   
-      } else if (localStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista_auxiliar_incluir/`+localStorage.getItem('logid'));
+      } else if (sessionStorage.getItem('logperfil') == 0) {
+        this.props.history.push(`/foto_motorista_auxiliar_incluir/`+sessionStorage.getItem('logid'));
       }          
 
 }  
@@ -274,12 +274,12 @@ handleUploadCNH = files => {
 
 
 verificar_menu(){
-  if (localStorage.getItem('logperfil') == 0) {  
+  if (sessionStorage.getItem('logperfil') == 0) {  
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -300,12 +300,12 @@ verificar_menu(){
      </div>    
     );
 
-  } else if (localStorage.getItem('logperfil') == 1) { 
+  } else if (sessionStorage.getItem('logperfil') == 1) { 
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -324,7 +324,7 @@ verificar_menu(){
           </div>                     
      </div>    
     );
-  } else if (localStorage.getItem('logperfil') == 9) { 
+  } else if (sessionStorage.getItem('logperfil') == 9) { 
     return(
       <div>
           <div className="d-flex justify-content-around">             
@@ -348,11 +348,11 @@ verificar_menu(){
 }
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 9) {
    return( 
     <menu_motorista_auxiliar />   
    );

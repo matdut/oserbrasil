@@ -152,8 +152,8 @@ class loginComponent extends React.Component  {
 
                     if (res.data.data[0].perfilId == 1) {
 
-                      localStorage.setItem('logperfil', 1); 
-                      localStorage.setItem('conectado', 0);   
+                      sessionStorage.setItem('logperfil', 1); 
+                      sessionStorage.setItem('conectado', 0);   
 
                       this.props.history.push('/area_administrador'); 
 
@@ -161,12 +161,12 @@ class loginComponent extends React.Component  {
                       api.get(`/cliente/get/${res.data.data[0].logid}`)
                       .then(rescliente=>{   
                         if (rescliente.data.success) {  
-                          localStorage.setItem('logemail', rescliente.data.data[0].email);                             
-                          localStorage.setItem('logid',  rescliente.data.data[0].id); 
-                          localStorage.setItem('logperfil', res.data.data[0].perfilId);      
-                          localStorage.setItem('lognome',  rescliente.data.data[0].nome);  
-                          localStorage.setItem('logcpf',  rescliente.data.data[0].cpf);       
-                          localStorage.setItem('conectado', 0);   
+                          sessionStorage.setItem('logemail', rescliente.data.data[0].email);                             
+                          sessionStorage.setItem('logid',  rescliente.data.data[0].id); 
+                          sessionStorage.setItem('logperfil', res.data.data[0].perfilId);      
+                          sessionStorage.setItem('lognome',  rescliente.data.data[0].nome);  
+                          sessionStorage.setItem('logcpf',  rescliente.data.data[0].cpf);       
+                          sessionStorage.setItem('conectado', 0);   
                           
                           this.props.history.push('/area_cliente_individual');    
                         } 
@@ -183,14 +183,14 @@ class loginComponent extends React.Component  {
                     
                         if (resempresa.data.success) {  
                           
-                          localStorage.setItem('logemail', resempresa.data.data[0].cliente.email);           
-                          localStorage.setItem('lognome',  resempresa.data.data[0].cliente.nome);                          
-                          localStorage.setItem('logid',  resempresa.data.data[0].id); 
-                          localStorage.setItem('logperfil', res.data.data[0].perfilId);
-                          localStorage.setItem('logcnpj',  resempresa.data.data[0].cnpj);       
-                          localStorage.setItem('lograzao_social',  resempresa.data.data[0].razao_social);                   
+                          sessionStorage.setItem('logemail', resempresa.data.data[0].cliente.email);           
+                          sessionStorage.setItem('lognome',  resempresa.data.data[0].cliente.nome);                          
+                          sessionStorage.setItem('logid',  resempresa.data.data[0].id); 
+                          sessionStorage.setItem('logperfil', res.data.data[0].perfilId);
+                          sessionStorage.setItem('logcnpj',  resempresa.data.data[0].cnpj);       
+                          sessionStorage.setItem('lograzao_social',  resempresa.data.data[0].razao_social);                   
                     
-                          localStorage.setItem('conectado', 0);
+                          sessionStorage.setItem('conectado', 0);
                           this.props.history.push('/area_cliente_empresarial');    
                     
                         } 
@@ -203,12 +203,12 @@ class loginComponent extends React.Component  {
                         api.get(`/motorista/get/${res.data.data[0].logid}`)
                         .then(resmotorista=>{   
                       
-                        localStorage.setItem('logemail', resmotorista.data.data[0].email);            
-                        localStorage.setItem('lognome',  resmotorista.data.data[0].nome);
-                        localStorage.setItem('logid',  resmotorista.data.data[0].id);  
-                        localStorage.setItem('logperfil', res.data.data[0].perfilId);  
-                        localStorage.setItem('statusid', res.data.data[0].statusId);    
-                        localStorage.setItem('conectado', 0);      
+                        sessionStorage.setItem('logemail', resmotorista.data.data[0].email);            
+                        sessionStorage.setItem('lognome',  resmotorista.data.data[0].nome);
+                        sessionStorage.setItem('logid',  resmotorista.data.data[0].id);  
+                        sessionStorage.setItem('logperfil', res.data.data[0].perfilId);  
+                        sessionStorage.setItem('statusid', res.data.data[0].statusId);    
+                        sessionStorage.setItem('conectado', 0);      
                         //const history = useHistory();                 
                         
                         this.setState({ 
@@ -227,12 +227,12 @@ class loginComponent extends React.Component  {
                       api.get(`/motoristaAuxiliar/get/${res.data.data[0].logid}`)
                       .then(resmotorista=>{   
                     
-                      localStorage.setItem('logemail', resmotorista.data.data[0].email);            
-                      localStorage.setItem('lognome',  resmotorista.data.data[0].nome);
-                      localStorage.setItem('logid',  resmotorista.data.data[0].id);  
-                      localStorage.setItem('logperfil', res.data.data[0].perfilId);  
-                      localStorage.setItem('statusid', res.data.data[0].statusId);
-                      localStorage.setItem('conectado', 0);          
+                      sessionStorage.setItem('logemail', resmotorista.data.data[0].email);            
+                      sessionStorage.setItem('lognome',  resmotorista.data.data[0].nome);
+                      sessionStorage.setItem('logid',  resmotorista.data.data[0].id);  
+                      sessionStorage.setItem('logperfil', res.data.data[0].perfilId);  
+                      sessionStorage.setItem('statusid', res.data.data[0].statusId);
+                      sessionStorage.setItem('conectado', 0);          
                       //const history = useHistory();                 
                       
                       this.setState({ 
@@ -250,14 +250,14 @@ class loginComponent extends React.Component  {
                         api.get(`/operador/get/${res.data.data[0].logid}`)
                         .then(resoperador=>{   
                       
-                          localStorage.setItem('logemail', resoperador.data.data[0].email);            
-                          localStorage.setItem('lognome', resoperador.data.data[0].nome);
-                          localStorage.setItem('logid', resoperador.data.data[0].id);  
-                          localStorage.setItem('logperfil', resoperador.data.data[0].perfilId);   
-                          localStorage.setItem('logstatus', resoperador.data.data[0].statusId);   
-                          localStorage.setItem('lograzao_social', resoperador.data.data[0].empresa.razao_social);                         
+                          sessionStorage.setItem('logemail', resoperador.data.data[0].email);            
+                          sessionStorage.setItem('lognome', resoperador.data.data[0].nome);
+                          sessionStorage.setItem('logid', resoperador.data.data[0].id);  
+                          sessionStorage.setItem('logperfil', resoperador.data.data[0].perfilId);   
+                          sessionStorage.setItem('logstatus', resoperador.data.data[0].statusId);   
+                          sessionStorage.setItem('lograzao_social', resoperador.data.data[0].empresa.razao_social);                         
                           
-                          localStorage.setItem('conectado', 0);
+                          sessionStorage.setItem('conectado', 0);
 
                           this.setState({ 
                             color: '',
@@ -301,7 +301,7 @@ class loginComponent extends React.Component  {
     this.setState({ 
       mensagem: ''
     })
-    localStorage.setItem('conectado', 1);
+    sessionStorage.setItem('conectado', 1);
    
      //this.loadCliente()
   }   

@@ -13,7 +13,7 @@ import 'react-credit-cards/es/styles-compiled.css';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 //const nodemailer = require('nodemailer');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 //var sendmail = require('../sendmail')({silent: true})
 
 class operadoresComponent extends React.Component{  
@@ -58,8 +58,8 @@ class operadoresComponent extends React.Component{
 
 verifica_botao(inicio) {
   const { validate } = this.state    
-  console.log('perfil verifica_botao -'+localStorage.getItem('logperfil'))
-   if (localStorage.getItem('logperfil') == 1) {
+  console.log('perfil verifica_botao -'+sessionStorage.getItem('logperfil'))
+   if (sessionStorage.getItem('logperfil') == 1) {
     if (inicio == 1) {
       return (
 
@@ -101,9 +101,9 @@ sendSave(){
 }  
 
 verificar_menu() {   
- // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+ // console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
 
- if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+ if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">

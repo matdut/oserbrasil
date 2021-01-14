@@ -49,8 +49,8 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
 
 
@@ -108,7 +108,7 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
     
     this.loadCliente();  
@@ -186,9 +186,9 @@ class listComponent extends React.Component  {
       teste: data.nome,     
     }); 
     console.log('editar');
-    localStorage.setItem('logincluir', false);      
-    localStorage.setItem('logid', data.id);    
-    localStorage.setItem('TituloModal','Editar');      
+    sessionStorage.setItem('logincluir', false);      
+    sessionStorage.setItem('logid', data.id);    
+    sessionStorage.setItem('TituloModal','Editar');      
 
   //  this.prepareSave(); 
 }
@@ -196,7 +196,7 @@ handleCloseModal () {
   this.setState({ 
     showModal: false
   });
-  localStorage.setItem('logincluir', false)      
+  sessionStorage.setItem('logincluir', false)      
   this.loadCliente();  
   this.carrega_status();      
 }  
@@ -206,8 +206,8 @@ handleCloseModal () {
       showModal: true,    
     }); 
     console.log('incluir');
-    localStorage.setItem('TituloModal','Incluir');
-    localStorage.setItem('logincluir', true);          
+    sessionStorage.setItem('TituloModal','Incluir');
+    sessionStorage.setItem('logincluir', true);          
   //  this.prepareSave();
   }
 
@@ -215,7 +215,7 @@ handleCloseModal () {
     this.setState({ 
       showModal: false,     
     });
-    localStorage.setItem('logincluir', false)      
+    sessionStorage.setItem('logincluir', false)      
     this.loadCliente();  
     this.carrega_status();      
   }  
@@ -416,7 +416,7 @@ handleCloseModal () {
             isOpen={this.state.showModal}
             style={customStyles}
             contentLabel="Minimal Modal Example"          
-            > {localStorage.getItem('TituloModal')} Cliente
+            > {sessionStorage.getItem('TituloModal')} Cliente
                 <IconButton aria-label="editar" onClick={()=>this.handleCloseModal()} className="botao_close_modal">
                   <CloseOutlinedIcon />
                 </IconButton>                                            
@@ -469,7 +469,7 @@ handleCloseModal () {
   
   validar_delete(email, id) {
      
-    api.get(`/eventos/listaeventocliente/${id}/${localStorage.getItem('logperfil')}`)
+    api.get(`/eventos/listaeventocliente/${id}/${sessionStorage.getItem('logperfil')}`)
     .then(response =>{
 
       const registros = response.data.data;

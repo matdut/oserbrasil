@@ -9,6 +9,7 @@ router.get('/get/:id', EnvioServicoMotoristaController.get);
 router.get('/getMotorista/:motorista_id', EnvioServicoMotoristaController.getMotorista);
 router.put('/update/:id',EnvioServicoMotoristaController.update);
 router.delete('/delete/:id',EnvioServicoMotoristaController.delete);
+router.delete('/delete_servico_motorista/:servicoId/:motorista_id',EnvioServicoMotoristaController.delete_servico_motorista);
 router.delete('/delete_servico/:servicoId',EnvioServicoMotoristaController.delete_servico);
 router.get('/totalEnvioServicoMotorista/:motoristaId', EnvioServicoMotoristaController.totalEnvioServicoMotorista);
 module.exports = router;

@@ -29,8 +29,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -113,17 +113,17 @@ class empresarialComponent extends React.Component{
  
     let userId = this.props.match.params.id;      
 
-    if (localStorage.getItem('loperfil') == 0) {
+    if (sessionStorage.getItem('loperfil') == 0) {
       this.setState({      
         inicio: 1,
         validacao_inicial: 1       
       })        
       this.validacoes_mensagens(this.state.validacao_inicial)  
     }
-   // const perfillog = localStorage.getItem('loperfil');
+   // const perfillog = sessionStorage.getItem('loperfil');
    this.carrega_senha()
 
-   //localStorage.setItem('logid', userId);     
+   //sessionStorage.setItem('logid', userId);     
    this.carrega_cliente()     
 
   }
@@ -137,7 +137,7 @@ class empresarialComponent extends React.Component{
 
   carrega_senha() {
     const { validate } = this.state;
-    api.get(`/login/getSenha/${localStorage.getItem('logid')}/2`) 
+    api.get(`/login/getSenha/${sessionStorage.getItem('logid')}/2`) 
     .then(res=>{
       if (res.data.success) {
         this.setState({     
@@ -173,7 +173,7 @@ class empresarialComponent extends React.Component{
   
   carrega_cliente() {
     const { validate } = this.state;
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -654,28 +654,28 @@ sendUpdate(){
     statusId: 1,  
   }       
 
-  if (localStorage.getItem('logperfil') == 0) {
-     localStorage.setItem('logperfil', 2);
+  if (sessionStorage.getItem('logperfil') == 0) {
+     sessionStorage.setItem('logperfil', 2);
   } 
 
   const logindata = {  
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: sessionStorage.getItem('logperfil'),
     senha: this.state.campSenha,     
     statusId: 1
   }  
-  //console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
-  //console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
+  //console.log('logid - '+JSON.stringify(sessionStorage.getItem('logid'), null, "    ")); 
+  //console.log('logperfil - '+JSON.stringify(sessionStorage.getItem('logperfil'), null, "    ")); 
        
-     api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)        
+     api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)        
         .then(response=>{
           if (response.data.success==true) {                       
            
-            api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)  
+            api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)  
                
-                if (localStorage.getItem('logperfil') == 1) {
+                if (sessionStorage.getItem('logperfil') == 1) {
                   this.props.history.push(`/lista_individual`);                   
                 } else {          
-                  localStorage.setItem('logperfil', 2);    
+                  sessionStorage.setItem('logperfil', 2);    
                   this.props.history.push('/area_cliente_individual');                
                 }        
                
@@ -851,7 +851,7 @@ verificar_menu() {
     <div className="barra_incluir">
     <Row>
     <Col xs={3} md={2} className="acerto_navegacao">
-    <Link to={`/cliente_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+    <Link to={`/cliente_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
     </Col>
     <Col xs={6} md={8} className="titulo_representante_cliente">
     <label>{this.verifica_nome(this.state.campNome)}, Cadastre a sua senha de acesso  </label>      
@@ -873,11 +873,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
    return( 
      <Menu_cliente_individual />     
    );

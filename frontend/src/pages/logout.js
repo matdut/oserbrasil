@@ -11,9 +11,9 @@ class logoutComponent extends React.Component  {
 
     componentWillMount() {              
 
-        localStorage.removeItem('logemail');
-        localStorage.removeItem('lognome');       
-        localStorage.removeItem('logid');                    
+        sessionStorage.removeItem('logemail');
+        sessionStorage.removeItem('lognome');       
+        sessionStorage.removeItem('logid');                    
         //this.props.navigate('Inicio');
     }
    

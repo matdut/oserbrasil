@@ -42,8 +42,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Menu_administrador from '../administrador/menu_administrador';
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 
 const customStyles = {
   overlay: {    
@@ -148,10 +148,10 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 

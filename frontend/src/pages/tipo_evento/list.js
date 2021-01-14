@@ -16,8 +16,8 @@ import AddIcon from '@material-ui/icons/Add';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Menu_administrador from '../administrador/menu_administrador';
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 
 //const baseUrl = "http://34.210.56.22:3333"
 
@@ -35,7 +35,7 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
     this.loadTipoEvento();  
   }  

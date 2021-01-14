@@ -43,8 +43,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Menu_administrador from '../administrador/menu_administrador';
 import { Container } from '@material-ui/core';
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 
 const customStyles = {
   overlay: {    
@@ -108,10 +108,10 @@ class funcionalidadesComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -146,11 +146,11 @@ class funcionalidadesComponent extends React.Component  {
       incluir: false,  
       mensagem_aguarde: '',
     });    
-    localStorage.setItem('logeditid', data.id);     
+    sessionStorage.setItem('logeditid', data.id);     
     console.log('buscar_cliente ');
     //this.busca_cliente();   
 
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -168,7 +168,7 @@ class funcionalidadesComponent extends React.Component  {
       showModal: false,  
       campStatusId: 0,  
     });
-    localStorage.setItem('logeditid', '');
+    sessionStorage.setItem('logeditid', '');
     
     //this.loadMotoristaExcluidos();
    // this.loadMotorista();     
@@ -398,7 +398,7 @@ class funcionalidadesComponent extends React.Component  {
     this.setState({ 
       showModal: true
     });  
-    localStorage.setItem('logmatrizId', data.id);    
+    sessionStorage.setItem('logmatrizId', data.id);    
      
     this.loadTipoTransporte();
     this.carrega_matriz();

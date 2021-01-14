@@ -74,10 +74,10 @@ await this.setState({
                     if (res.data.success) { 
                       if (res.data.data != "") {
 
-                        localStorage.setItem('logemail', this.state.email);            
-                        localStorage.setItem('lognome',  res.data.data[0].nome);
-                        localStorage.setItem('logid',  res.data.data[0].id);  
-                        localStorage.setItem('logperfil', res.data.data[0].perfilId);           
+                        sessionStorage.setItem('logemail', this.state.email);            
+                        sessionStorage.setItem('lognome',  res.data.data[0].nome);
+                        sessionStorage.setItem('logid',  res.data.data[0].id);  
+                        sessionStorage.setItem('logperfil', res.data.data[0].perfilId);           
                         //const history = useHistory();                 
                         
                         this.props.history.push('/area_motorista');        
@@ -100,10 +100,10 @@ await this.setState({
                 } else {
                   
 
-                  localStorage.setItem('logemail', res.data.data[0].email);            
-                  localStorage.setItem('lognome',  res.data.data[0].nome);
-                  localStorage.setItem('logid',  res.data.data[0].id); 
-                  localStorage.setItem('logperfil', res.data.data[0].perfilId);      
+                  sessionStorage.setItem('logemail', res.data.data[0].email);            
+                  sessionStorage.setItem('lognome',  res.data.data[0].nome);
+                  sessionStorage.setItem('logid',  res.data.data[0].id); 
+                  sessionStorage.setItem('logperfil', res.data.data[0].perfilId);      
                   //const history = useHistory();                 
                   
                   this.props.history.push('/area_cliente');            
@@ -137,7 +137,7 @@ await this.setState({
           }
    
       } else {
-         localStorage.setItem('logperfil', 1); 
+         sessionStorage.setItem('logperfil', 1); 
          this.props.history.push('/area_administrador'); 
       }     
     }

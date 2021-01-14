@@ -73,8 +73,8 @@ var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
 //const baseUrl = "http://34.210.56.22:3333";
 
 /*
@@ -265,13 +265,13 @@ class listaClienteComponent extends React.Component  {
     moment.locale('pt-br');
     this.setState({
       mensagem_aguarde: '',
-      perfil: localStorage.getItem('logperfil'),
+      perfil: sessionStorage.getItem('logperfil'),
       lista_height: px2vw(createGlobalStyle.height),
     });
 
     console.log('lista_height - '+this.state.lista_height);
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -675,8 +675,8 @@ sendSave(){
       console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
      // console.log(' this.state.incluir - '+JSON.stringify(this.state.incluir, null, "    ")); 
   
-      console.log(`/cliente/update/${localStorage.getItem('logeditid')}`); 
-      api.put(`/cliente/update/${localStorage.getItem('logeditid')}`, datapost)
+      console.log(`/cliente/update/${sessionStorage.getItem('logeditid')}`); 
+      api.put(`/cliente/update/${sessionStorage.getItem('logeditid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {        
           
@@ -687,10 +687,10 @@ sendSave(){
           }
           
           console.log('logindata - '+JSON.stringify(logindata, null, "    ")); 
-          //console.log(`/login/update/${localStorage.getItem('logid')}`); 
-          api.put(`/login/update/${localStorage.getItem('logeditid')}`,logindata)
+          //console.log(`/login/update/${sessionStorage.getItem('logid')}`); 
+          api.put(`/login/update/${sessionStorage.getItem('logeditid')}`,logindata)
           
-          localStorage.setItem('lognome', this.state.campNome);               
+          sessionStorage.setItem('lognome', this.state.campNome);               
         
           this.setState({           
             mensagem_usuario: 'Cliente alterado com sucesso!',          
@@ -715,18 +715,18 @@ sendSave(){
 
           //this.props.history.push('/lista_individual');           
           //this.handleCloseModal();   
-          //localStorage.setItem('logid', userId);
+          //sessionStorage.setItem('logid', userId);
        /*
-          if (localStorage.getItem('logperfil') == 1) {
-         //   localStorage.setItem('logperfil', 1);
+          if (sessionStorage.getItem('logperfil') == 1) {
+         //   sessionStorage.setItem('logperfil', 1);
             //this.handleCloseModal();            
             this.props.history.push('/lista_individual');   
-         } else if (localStorage.getItem('logperfil') == 2) {
+         } else if (sessionStorage.getItem('logperfil') == 2) {
              this.props.history.push(`/area_cliente_individual`);
-         } else if (localStorage.getItem('logperfil') == 7) {  
+         } else if (sessionStorage.getItem('logperfil') == 7) {  
              this.props.history.push(`/area_cliente_empresarial`);                              
-         } else if (localStorage.getItem('logperfil') == 0) {
-             this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
+         } else if (sessionStorage.getItem('logperfil') == 0) {
+             this.props.history.push(`/cliente_senha/`+sessionStorage.getItem('logid'));   
          }             
          */  
         }
@@ -736,8 +736,8 @@ sendSave(){
 }  
 busca_cliente() {
   const { validate } = this.state 
-  console.log(`/cliente/get/${localStorage.getItem('logeditid')}`);  
-  api.get(`/cliente/get/${localStorage.getItem('logeditid')}`)
+  console.log(`/cliente/get/${sessionStorage.getItem('logeditid')}`);  
+  api.get(`/cliente/get/${sessionStorage.getItem('logeditid')}`)
   .then(res=>{
      // console.log(JSON.stringify(res.data, null, "    ")); 
       if (res.data.success) {
@@ -867,11 +867,11 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
       incluir: false,  
       mensagem_aguarde: '',
     });    
-    localStorage.setItem('logeditid', data.id);     
+    sessionStorage.setItem('logeditid', data.id);     
     console.log('buscar_cliente ');
     this.busca_cliente();   
 
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -1649,7 +1649,7 @@ api.get(`/cliente/getClienteCpf/${e.target.value}`)
 
   validar_delete(email, id) {
      
-    api.get(`/eventos/listaeventocliente/${id}/${localStorage.getItem('logperfil')}`)
+    api.get(`/eventos/listaeventocliente/${id}/${sessionStorage.getItem('logperfil')}`)
     .then(response =>{
 
       const registros = response.data.data;

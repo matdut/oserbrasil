@@ -82,8 +82,8 @@ class Alterar_senha_Motorista extends React.Component  {
 
   verifica_senha_anterior(){ 
     
-    //const url = baseUrl+"/login/get/"+localStorage.getItem('logemail')+"/"+this.state.campSenhaAnterior
-    //console.log( JSON.stringify(localStorage.getItem('logemail'), null, "    ") );    
+    //const url = baseUrl+"/login/get/"+sessionStorage.getItem('logemail')+"/"+this.state.campSenhaAnterior
+    //console.log( JSON.stringify(sessionStorage.getItem('logemail'), null, "    ") );    
     //console.log( JSON.stringify(this.state.campSenhaAnterior, null, "    ") );     
 
   if (this.state.campSenhaAnterior !== "")  {  
@@ -94,7 +94,7 @@ class Alterar_senha_Motorista extends React.Component  {
       if (this.state.campSenhaTeste !== "") {
 
         if (this.state.campSenha === this.state.campSenhaTeste) {     
-          api.get(`/login/getmotorista/${localStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
+          api.get(`/login/getmotorista/${sessionStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
           .then(res=>{
             const data = res.data.data
               

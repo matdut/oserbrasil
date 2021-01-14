@@ -30,8 +30,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 
@@ -116,17 +116,17 @@ class empresarialComponent extends React.Component{
  
     let userId = this.props.match.params.id;      
 
-    if (localStorage.getItem('loperfil') == 0) {
+    if (sessionStorage.getItem('loperfil') == 0) {
       this.setState({      
         inicio: 1,
         validacao_inicial: 1       
       })        
       this.validacoes_mensagens(this.state.validacao_inicial)  
     }
-   // const perfillog = localStorage.getItem('loperfil');
+   // const perfillog = sessionStorage.getItem('loperfil');
    this.carrega_senha()
 
-   //localStorage.setItem('logid', userId);     
+   //sessionStorage.setItem('logid', userId);     
    this.carrega_cliente()     
 
   }
@@ -140,7 +140,7 @@ class empresarialComponent extends React.Component{
 
   carrega_senha() {
     const { validate } = this.state;
-    api.get(`/login/getSenha/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`) 
+    api.get(`/login/getSenha/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`) 
     .then(res=>{
       if (res.data.success) {
         this.setState({     
@@ -176,7 +176,7 @@ class empresarialComponent extends React.Component{
   
   carrega_cliente() {
     const { validate } = this.state;
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -667,27 +667,27 @@ sendUpdate(){
     statusId: 1,  
   }       
 
-  if (localStorage.getItem('logperfil') == 0) {
-     localStorage.setItem('logperfil', 2);
+  if (sessionStorage.getItem('logperfil') == 0) {
+     sessionStorage.setItem('logperfil', 2);
   } 
 
   const logindata = {  
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: sessionStorage.getItem('logperfil'),
     senha: this.state.campSenha,     
     statusId: 1
   }  
-  //console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
-  //console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
+  //console.log('logid - '+JSON.stringify(sessionStorage.getItem('logid'), null, "    ")); 
+  //console.log('logperfil - '+JSON.stringify(sessionStorage.getItem('logperfil'), null, "    ")); 
        
-     api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)        
+     api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)        
         .then(response=>{
           if (response.data.success==true) {                       
            
-            api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)  
+            api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)  
                
-                if (localStorage.getItem('logperfil') == 1) {
+                if (sessionStorage.getItem('logperfil') == 1) {
                   this.props.history.push(`/lista_individual`);                   
-                } else if (localStorage.getItem('logperfil') == 2) {              
+                } else if (sessionStorage.getItem('logperfil') == 2) {              
                   this.props.history.push('/area_cliente_individual');                
                 }        
                
@@ -844,13 +844,13 @@ handleMouseDownPassword = (event) => {
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
+  if (sessionStorage.getItem('logperfil') == 0) {
    
    return(
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                <Link to={`/cliente_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                <Link to={`/cliente_alterar/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante_cliente">                
@@ -871,12 +871,12 @@ verificar_menu() {
    </div>         
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-               <Link to={`/cliente_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+               <Link to={`/cliente_alterar/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                  </div>                  
                  <div>
                    <div className="titulo_representante_cliente">                
@@ -897,7 +897,7 @@ verificar_menu() {
      </div>    
       );
 
-  } else if (localStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL             
+  } else if (sessionStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL             
 
     return(
       <div className="d-flex justify-content-around">
@@ -924,11 +924,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
    return( 
      <Menu_cliente_individual />     
    );
@@ -942,7 +942,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }

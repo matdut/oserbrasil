@@ -22,8 +22,8 @@ import FilledInput from '@material-ui/core/FilledInput';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const { cnpj } = require('cpf-cnpj-validator');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -98,34 +98,34 @@ class empresarialComponent extends React.Component{
     this.setState({      
       progresso: 65
     });    
-    //console.log('logprogress - '+ localStorage.getItem('logprogress'));  
+    //console.log('logprogress - '+ sessionStorage.getItem('logprogress'));  
     validate.cnpjState = ''
     validate.razao_socialState = ''
     validate.nome_fantasiaState = ''
 
     let userId = this.props.match.params.id;
 
-    localStorage.setItem('logid', userId);        
+    sessionStorage.setItem('logid', userId);        
     
     this.setState({      
       validate      
     });   
          
-    //console.log('logid -'+localStorage.getItem('logid'))
+    //console.log('logid -'+sessionStorage.getItem('logid'))
     
-    //if (localStorage.getItem('logid') !== 0) {             
+    //if (sessionStorage.getItem('logid') !== 0) {             
     this.busca_empresa();
 
     //}
     
-    if (localStorage.getItem('logperfil') == 7) {
+    if (sessionStorage.getItem('logperfil') == 7) {
       this.setState({      
           campo_cnpj_disabled: true,
           campo_razao_social_disabled:true,
           campo_nome_fantasia_disabled: true 
       });   
 
-    } else if (localStorage.getItem('logperfil') == 0) {
+    } else if (sessionStorage.getItem('logperfil') == 0) {
       this.setState({              
         incluir: true 
      });    
@@ -144,7 +144,7 @@ class empresarialComponent extends React.Component{
 
    busca_empresa(e) {
     const { validate } = this.state
-    api.get(`/empresa/get/${localStorage.getItem('logid')}`)
+    api.get(`/empresa/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {           
@@ -450,7 +450,7 @@ class empresarialComponent extends React.Component{
   const { validate } = this.state
  // console.log('verifica_base_cnpj cnpj - '+cnpjremoveMask(e.target.value))         
   //let userId = this.props.match.params.id;  
-  api.get(`/empresa/getEmpresaCnpj/${cnpjremoveMask(e.target.value)}/${localStorage.getItem('logcpfrep')}`)
+  api.get(`/empresa/getEmpresaCnpj/${cnpjremoveMask(e.target.value)}/${sessionStorage.getItem('logcpfrep')}`)
   .then(res=>{
       console.log(JSON.stringify(res.data, null, "    ")); 
       if (res.data.success) {
@@ -516,7 +516,7 @@ sendUpdate(){
     endereco: this.state.campEndereco,
     estadoId: this.state.campEstado,    
     cep: this.state.campCep,
-    clienteId: localStorage.getItem('logrepresentante')
+    clienteId: sessionStorage.getItem('logrepresentante')
   }            
     console.log(' state.incluir - '+this.state.incluir);
 
@@ -527,9 +527,9 @@ sendUpdate(){
          // console.log(' resultado empresa - '+JSON.stringify(response.data, null, "    "));        
           if (response.data.success==true) {           
             
-            localStorage.setItem('lograzao_social', this.state.campRazao_social);            
+            sessionStorage.setItem('lograzao_social', this.state.campRazao_social);            
             
-            this.props.history.push(`/empresa_senha_incluir/`+localStorage.getItem('logid'));           
+            this.props.history.push(`/empresa_senha_incluir/`+sessionStorage.getItem('logid'));           
             
   
           }
@@ -542,14 +542,14 @@ sendUpdate(){
         
       } else {
 
-        api.put("/empresa/update/"+localStorage.getItem('logid'), datapost)
+        api.put("/empresa/update/"+sessionStorage.getItem('logid'), datapost)
         .then(response=>{
          // console.log(' resultado empresa - '+JSON.stringify(response.data, null, "    "));        
           if (response.data.success==true) {           
             
-            localStorage.setItem('lograzao_social', this.state.campRazao_social);            
+            sessionStorage.setItem('lograzao_social', this.state.campRazao_social);            
             
-            this.props.history.push(`/empresa_senha_incluir/`+localStorage.getItem('logid'));                       
+            this.props.history.push(`/empresa_senha_incluir/`+sessionStorage.getItem('logid'));                       
   
           }
           else {
@@ -629,7 +629,7 @@ loadcnpj(e) {
                   encontrou_cnpj: true,      
                 });    
 
-                localStorage.setItem('logcepbanco', this.state.campCep);  
+                sessionStorage.setItem('logcepbanco', this.state.campCep);  
                 if (this.state.campCnpj !== "") {
                   validate.cnpjState = 'has-success'      
                 }
@@ -706,7 +706,7 @@ loadcnpj(e) {
     <div>
     <div className="d-flex justify-content-around">
         <div className="botao_navegacao">
-          <Link to={`/empresa_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+          <Link to={`/empresa_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
         </div>                  
         <div>
           <div className="titulo_representante">                
@@ -737,11 +737,11 @@ analisando_retorno() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
    return( 
      <Menu_cliente_empresarial />     
    );

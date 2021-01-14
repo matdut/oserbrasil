@@ -29,7 +29,7 @@ import { Data } from '@react-google-maps/api';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 //const nodemailer = require('nodemailer');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 //var sendmail = require('../sendmail')({silent: true})
 
 class operadoresComponent extends React.Component{  
@@ -123,14 +123,14 @@ class operadoresComponent extends React.Component{
    // let email = this.props.match.params.email;         
 
    // console.log('Email '+email);
-    localStorage.setItem('logoperadorId',  userId);
-    //localStorage.setItem('logperfil', 0);
+    sessionStorage.setItem('logoperadorId',  userId);
+    //sessionStorage.setItem('logperfil', 0);
     
     this.busca_operador();    
     this.busca_empresa();    
 
-    console.log('operador ID alterar'+localStorage.getItem('logoperadorId'));
-    console.log('operador perfil - '+localStorage.getItem('logperfil'));   
+    console.log('operador ID alterar'+sessionStorage.getItem('logoperadorId'));
+    console.log('operador perfil - '+sessionStorage.getItem('logperfil'));   
 
     this.setState({      
       camp_cpf_disabled: true,    
@@ -158,8 +158,8 @@ class operadoresComponent extends React.Component{
        );  
   } 
   busca_empresa() {    
-    //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
-    api.get(`/empresa/get/${localStorage.getItem('logempresaid')}`)
+    //console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid'));    
+    api.get(`/empresa/get/${sessionStorage.getItem('logempresaid')}`)
     .then(res=>{       
         if (res.data.success) {
            
@@ -207,9 +207,9 @@ class operadoresComponent extends React.Component{
   } 
   busca_operador() {
     const { validate } = this.state
-   // console.log('busca operador ID '+localStorage.getItem('logid'));
-  //  console.log('busca perfil operador state - '+localStorage.getItem('logperfil'));   
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+   // console.log('busca operador ID '+sessionStorage.getItem('logid'));
+  //  console.log('busca perfil operador state - '+sessionStorage.getItem('logperfil'));   
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -233,7 +233,7 @@ class operadoresComponent extends React.Component{
             validacao_telefone: true,
           })                        
          
-          localStorage.setItem('logempresaid', res.data.data[0].empresaId);
+          sessionStorage.setItem('logempresaid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
             validate.cpfState = 'has-success'      
@@ -746,7 +746,7 @@ sendSave(){
        }  
 
      // console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-      api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost_alterar)
+      api.put(`/operador/update/${sessionStorage.getItem('logoperadorId')}`, datapost_alterar)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -756,13 +756,13 @@ sendSave(){
             statusId: this.state.campStatusId
           }
 
-          api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata)
+          api.put(`/login/update/${sessionStorage.getItem('logoperadorId')}`,logindata)
 
-        //  localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);    
-          if (localStorage.getItem('logperfil') == 1) {
+        //  sessionStorage.setItem('lognome', this.state.campNome);  
+          //sessionStorage.setItem('logid', userId);    
+          if (sessionStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (localStorage.getItem('logperfil') == 8) {
+          } else if (sessionStorage.getItem('logperfil') == 8) {
               this.props.history.push(`/area_operador/`);                                  
           }            
 
@@ -774,7 +774,7 @@ sendSave(){
 }  
 
 verificar_menu() {   
- // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+ // console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
  return(
   <div className="d-flex justify-content-around">
           <div className="botao_navegacao">                           
@@ -797,11 +797,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 8) {
+  } else if (sessionStorage.getItem('logperfil') == 8) {
    return( 
      <Menu_operador />     
    );
@@ -815,7 +815,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }
@@ -864,7 +864,7 @@ return (
     <div className="container-fluid titulo_lista margem_left">                   
            <div className="unnamed-character-style-4 descricao_admministrador">                                
               <div className="titulo_bemvindo"> {this.verifica_titulo()}, {this.verifica_horario()} ! </div>
-              <div className="titulo_empresa"> {localStorage.getItem('lograzao_social')} </div>      
+              <div className="titulo_empresa"> {sessionStorage.getItem('lograzao_social')} </div>      
             </div>               
             
               <Container maxWidth="sm">

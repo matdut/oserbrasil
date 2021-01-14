@@ -20,9 +20,9 @@ export class Menu extends Component {
     }
 
     render() {
-        const login = localStorage.getItem('logemail');              
-        const nome = localStorage.getItem('lognome');
-        const id = localStorage.getItem('logid');
+        const login = sessionStorage.getItem('logemail');              
+        const nome = sessionStorage.getItem('lognome');
+        const id = sessionStorage.getItem('logid');
 
         return (
             <div className="container-fluid">                          

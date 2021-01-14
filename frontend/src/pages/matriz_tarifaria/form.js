@@ -19,10 +19,10 @@ import Menu_administrador from '../administrador/menu_administrador';
 import api from '../../services/api';
 import './matriz.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
-const dataendereco = localStorage.getItem('logdataCliente');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
+const dataendereco = sessionStorage.getItem('logdataCliente');
 const buscadorcep = require('buscadorcep');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -113,8 +113,8 @@ class empresarialComponent extends React.Component{
 
     let userId = this.props.match.params.id;
 
-    const perfillog = localStorage.getItem('loperfil');
-    localStorage.setItem('logid', userId);      
+    const perfillog = sessionStorage.getItem('loperfil');
+    sessionStorage.setItem('logid', userId);      
 
     this.loadTipoTransporte();
 /*
@@ -402,10 +402,10 @@ loadFillData(){
 verifica_botao(inicio) {
 //  const { validate } = this.state
 //console.log('inicio - '+ inicio);
-//console.log('logperfil - '+ localStorage.getItem('logperfil'));
+//console.log('logperfil - '+ sessionStorage.getItem('logperfil'));
 //console.log('this.state - '+JSON.stringify(this.state, null, "    ")); 
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
       if (inicio == 1) {
         return (
     
@@ -449,7 +449,7 @@ verifica_botao(inicio) {
 
   verificar_menu() {   
 
-    if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+    if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
       return(
         <div>
       <div className="d-flex justify-content-around">
@@ -499,8 +499,8 @@ sendUpdate(){
           
           if (response.data.success==true) {                        
 
-              if (localStorage.getItem('logperfil') == 1) {
-                localStorage.setItem('logperfil', 1);
+              if (sessionStorage.getItem('logperfil') == 1) {
+                sessionStorage.setItem('logperfil', 1);
                 const { validate } = this.state          
 
                 validate.bandeiraState = ''       
@@ -559,7 +559,7 @@ handleChange = (prop) => (event) => {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );

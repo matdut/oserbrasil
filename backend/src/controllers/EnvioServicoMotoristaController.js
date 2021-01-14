@@ -10,7 +10,10 @@ sequelize.sync()
 controllers.list = async (req,res) => {
   const { motoristaId } = req.params;
   await EnvioServicoMotorista.findAll({
-    where: { motorista_id: motoristaId }   
+    where: { motorista_id: motoristaId },   
+    order: [
+      ['data_servico', 'ASC']
+    ]
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -219,6 +222,26 @@ controllers.delete_servico = async (req,res) => {
   }) 
 
 }
+
+controllers.delete_servico_motorista = async (req,res) => {
+  
+  // parameter post  
+  const { servicoId, motorista_id } = req.params;  
+ 
+  await EnvioServicoMotorista.destroy({
+    where: { servicoId: servicoId, motorista_id: motorista_id }
+  }).then( function (data){
+    
+    return res.json({success:true, data:data});    
+    
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+    //return error;
+  }) 
+
+}
+
 controllers.totalEnvioServicoMotorista = async (req, res) => {
  
   const { motoristaId } = req.params;

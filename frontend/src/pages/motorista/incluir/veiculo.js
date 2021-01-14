@@ -23,9 +23,9 @@ import CheckIcon from '@material-ui/icons/Check';
 import api from '../../../services/api';
 import '../motorista.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -150,11 +150,11 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);     
+      sessionStorage.setItem('logid', userId);     
     
     } 
 
-    if (localStorage.getItem('logVeiculo') > 0) {
+    if (sessionStorage.getItem('logVeiculo') > 0) {
        this.carrega_veiculo();                       
     } else {
       this.limpar_campos();
@@ -167,7 +167,7 @@ class empresarialComponent extends React.Component{
     
     this.carrega_motorista() 
     this.setState({          
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
 
     this.setState({      
@@ -342,7 +342,7 @@ class empresarialComponent extends React.Component{
 
    carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
       if (res.data.success == true) {          
 
@@ -360,7 +360,7 @@ class empresarialComponent extends React.Component{
 
   load_veiculo() {   
     const { validate } = this.state;
-    api.get(`/veiculo/getMotoristaVeiculos/${localStorage.getItem('logid')}`)
+    api.get(`/veiculo/getMotoristaVeiculos/${sessionStorage.getItem('logid')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -395,7 +395,7 @@ class empresarialComponent extends React.Component{
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
            this.load_modelo_banco(this.state.campCarroId)
-           localStorage.setItem('lognome', this.state.campNome);  
+           sessionStorage.setItem('lognome', this.state.campNome);  
 
 
           if (this.state.campCarro == null) {
@@ -484,7 +484,7 @@ class empresarialComponent extends React.Component{
 
    carrega_veiculo() {
     const { validate } = this.state;
-    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -519,7 +519,7 @@ class empresarialComponent extends React.Component{
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
            this.load_modelo_banco(this.state.campCarroId)
-           localStorage.setItem('lognome', this.state.campNome);  
+           sessionStorage.setItem('lognome', this.state.campNome);  
 
 
           if (this.state.campCarro == null) {
@@ -1173,7 +1173,7 @@ verifica_botao(inicio) {
       this.state.listaMarcas.map((data)=>{          
          if (data.id == id) {
             console.log('buscaMarca - '+data.name);     
-            localStorage.setItem('logMarca', data.name)
+            sessionStorage.setItem('logMarca', data.name)
            // marca_saida = data.name                   
          }
 
@@ -1191,7 +1191,7 @@ verifica_botao(inicio) {
     this.state.listaModelos.map((data)=>{          
        if (data.id == id) {
          console.log('buscaModelo - '+data.name); 
-         localStorage.setItem('logModelo', data.name)
+         sessionStorage.setItem('logModelo', data.name)
          //modelo_saida = data.name                       
        }
      }) 
@@ -1211,8 +1211,8 @@ sendUpdate(){
   const datapost = {
     marcaId: this.state.campCarroId, 
     modeloId: this.state.campModeloId,
-    marca: localStorage.getItem('logMarca'), 
-    modelo: localStorage.getItem('logModelo'),
+    marca: sessionStorage.getItem('logMarca'), 
+    modelo: sessionStorage.getItem('logModelo'),
     tipoTransporte: this.state.camptipo_veiculo,
     seguradoraId: this.state.campSeguradoraId,
     apolice: this.state.campApolice,
@@ -1224,7 +1224,7 @@ sendUpdate(){
     cadeirinha_pequena: this.state.campCadeirinhaPequena, 
     cadeirinha_grande: this.state.campCadeirinhaGrande, 
     cadeira_rodas: this.state.campCadeiraRodas,
-    motoristaId: localStorage.getItem('logid')
+    motoristaId: sessionStorage.getItem('logid')
   }          
 
   console.log('state- '+ JSON.stringify(this.state.incluir, null, "    "));       
@@ -1239,14 +1239,14 @@ sendUpdate(){
           
             debugger;
           //   console.log('VEICULO SUCESSO ');
-              localStorage.setItem('logVeiculo', response.data.data.id)
+              sessionStorage.setItem('logVeiculo', response.data.data.id)
 
-              if (localStorage.getItem('logperfil') == 1) {
-                this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid')); 
-              } else if (localStorage.getItem('logperfil') == 3) {
+              if (sessionStorage.getItem('logperfil') == 1) {
+                this.props.history.push(`/documentos_motorista_incluir/`+sessionStorage.getItem('logid')); 
+              } else if (sessionStorage.getItem('logperfil') == 3) {
                 this.props.history.push(`/area_motorista`);                
-              } else if (localStorage.getItem('logperfil') == 0) {                 
-                this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid'));                  
+              } else if (sessionStorage.getItem('logperfil') == 0) {                 
+                this.props.history.push(`/documentos_motorista_incluir/`+sessionStorage.getItem('logid'));                  
               }      
       //    }
         
@@ -1256,16 +1256,16 @@ sendUpdate(){
       } else {      
 
         console.log(JSON.stringify(datapost, null, "    "));        
-        api.put(`/veiculo/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/veiculo/update/${sessionStorage.getItem('logid')}`, datapost)
           .then(response=>{
             if (response.data.success==true) {                        
             
-                if (localStorage.getItem('logperfil') == 1) {
-                  this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid')); 
-                } else if (localStorage.getItem('logperfil') == 3) {
+                if (sessionStorage.getItem('logperfil') == 1) {
+                  this.props.history.push(`/documentos_motorista_incluir/`+sessionStorage.getItem('logid')); 
+                } else if (sessionStorage.getItem('logperfil') == 3) {
                   this.props.history.push(`/area_motorista`);                
-                } else if (localStorage.getItem('logperfil') == 0) {                 
-                  this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid'));                  
+                } else if (sessionStorage.getItem('logperfil') == 0) {                 
+                  this.props.history.push(`/documentos_motorista_incluir/`+sessionStorage.getItem('logid'));                  
                 }      
                 
             }
@@ -1277,12 +1277,12 @@ sendUpdate(){
           })        
      }   
      
-     if (localStorage.getItem('logperfil') == 1) {
-      this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid')); 
-    } else if (localStorage.getItem('logperfil') == 3) {
+     if (sessionStorage.getItem('logperfil') == 1) {
+      this.props.history.push(`/documentos_motorista_incluir/`+sessionStorage.getItem('logid')); 
+    } else if (sessionStorage.getItem('logperfil') == 3) {
       this.props.history.push(`/area_motorista`);                
-    } else if (localStorage.getItem('logperfil') == 0) {                 
-      this.props.history.push(`/documentos_motorista_incluir/`+localStorage.getItem('logid'));                  
+    } else if (sessionStorage.getItem('logperfil') == 0) {                 
+      this.props.history.push(`/documentos_motorista_incluir/`+sessionStorage.getItem('logid'));                  
     }   
 }  
 
@@ -1291,7 +1291,7 @@ verificar_menu() {
     <div>
      <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/endereco_motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/endereco_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -1315,11 +1315,11 @@ verificar_menu() {
 }
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
    return( 
      <Menu_motorista />     
    );

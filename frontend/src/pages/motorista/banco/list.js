@@ -50,8 +50,8 @@ import Menu_cliente_empresarial from '../../empresa/menu_cliente_empresarial';
 import Menu_motorista from '../../motorista/menu_motorista';
 import Menu_operador from '../../operadores/menu_operador';
 import { Card } from '@material-ui/core';
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 var dateFormat = require('dateformat');
 
 const visaRegex = new RegExp("/^4(?!38935|011|51416|576)\d{12}(?:\d{3})?$/");
@@ -189,14 +189,14 @@ class BancoComponent extends React.Component  {
   
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
-    } else if (localStorage.getItem('logperfil') > 0) {       
+    } else if (sessionStorage.getItem('logperfil') > 0) {       
        this.loadBancoMotorista();  
     }      
 
@@ -326,7 +326,7 @@ class BancoComponent extends React.Component  {
 
    loadBancoMotorista(){ 
    
-    api.get(`/banco/list_banco_motorista/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/banco/list_banco_motorista/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -611,8 +611,8 @@ verifica_botao_update(inicio) {
           conta_dv: this.state.campconta_dv,
           operacao: this.state.campoperacao,
           conta: this.state.campconta,  
-          logid: localStorage.getItem('logid'), 
-          perfilId: localStorage.getItem('logperfil')  
+          logid: sessionStorage.getItem('logid'), 
+          perfilId: sessionStorage.getItem('logperfil')  
         }                  
    
           api.put(`/banco/update/${this.state.campId}`,datapost)
@@ -670,8 +670,8 @@ verifica_botao_update(inicio) {
           conta: this.state.campconta,  
           conta_dv: this.state.campconta_dv,
           operacao: this.state.campoperacao,
-          logid: localStorage.getItem('logid'), 
-          perfilId: localStorage.getItem('logperfil')  
+          logid: sessionStorage.getItem('logid'), 
+          perfilId: sessionStorage.getItem('logperfil')  
         }                  
       
           console.log('dataPost '+JSON.stringify(datapost, null, "    ")); 
@@ -776,23 +776,23 @@ loadStatus(){
 
 verificar_menu_lateral() {
  
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
     return( 
       <Menu_cliente_individual />     
     );    
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
     return( 
       <Menu_motorista />     
     );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
     return( 
       <Menu_cliente_empresarial />     
     );   
-  } else if (localStorage.getItem('logperfil') == 8) {
+  } else if (sessionStorage.getItem('logperfil') == 8) {
    return( 
      <Menu_operador />     
    );
@@ -802,7 +802,7 @@ verificar_menu_lateral() {
 }
 
 verifica_mensagem() {
-  if (localStorage.getItem('statusid') == 16) {
+  if (sessionStorage.getItem('statusid') == 16) {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     

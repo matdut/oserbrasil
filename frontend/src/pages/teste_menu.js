@@ -34,18 +34,18 @@ class menu_administradorComponent extends React.Component  {
   }
   
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');   
-    localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');   
+    sessionStorage.removeItem('logcepbanco');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
 
-    localStorage.setItem('logperfil', null);
-    localStorage.setItem('logid', 0);
+    sessionStorage.setItem('logperfil', null);
+    sessionStorage.setItem('logid', 0);
     this.props.history.push("/");
   }
   render()

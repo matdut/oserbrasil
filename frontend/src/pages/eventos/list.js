@@ -57,8 +57,8 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { valorDoublemask } from '../formatacao/valorDoublemask';
 
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
 var dateFormat = require('dateformat');
 //const baseUrl = "http://34.210.56.22:3333";
 
@@ -243,14 +243,14 @@ class listaeventosComponent extends React.Component  {
   componentDidMount(){
     //let userId = this.props.match.params.id;  
 
-   // localStorage.setItem('logid',userId)
+   // sessionStorage.setItem('logid',userId)
    this.interval = setInterval(() => this.tick(), 1000);
     this.setState({
-      perfil: localStorage.getItem('logperfil'),
-      id: localStorage.getItem('logid')   
+      perfil: sessionStorage.getItem('logperfil'),
+      id: sessionStorage.getItem('logid')   
     });
 
-    if (localStorage.getItem('logperfil') > 1) {       
+    if (sessionStorage.getItem('logperfil') > 1) {       
        this.loadlistEventos();  
        this.loadeventosexcluidos();
        this.atualiza_evento();
@@ -271,12 +271,12 @@ class listaeventosComponent extends React.Component  {
     debugger;
     let totalservicos = 0;
     let totalviagens = 0;
-    api.get(`/servicos/totalservicos/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/totalservicos/${sessionStorage.getItem('logeventoservico')}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
     .then(resservico=>{
       if (resservico.data.success == true) {
         totalservicos = resservico.data.data;  
 
-        api.get(`/servicos/totalviagens/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+        api.get(`/servicos/totalviagens/${sessionStorage.getItem('logeventoservico')}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
         .then(resviagem=>{
           if (resviagem.data.success == true) {       
             
@@ -287,7 +287,7 @@ class listaeventosComponent extends React.Component  {
             valor_total: totalservicos,              
           }           
       
-           api.put(`/eventos/update/${localStorage.getItem('logeventoservico')}`, datapost_alterar_valores);
+           api.put(`/eventos/update/${sessionStorage.getItem('logeventoservico')}`, datapost_alterar_valores);
 
           }
         })
@@ -345,7 +345,7 @@ class listaeventosComponent extends React.Component  {
 
   loadeventosexcluidos() {
    //  debugger;
-     api.get(`/historicoEventos/listaeventoexcluidos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+     api.get(`/historicoEventos/listaeventoexcluidos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(resp =>{
    
        if (resp.data.success) {
@@ -362,7 +362,7 @@ class listaeventosComponent extends React.Component  {
    valor_total_servicos(){
     let data_formatada = '0.00'
 
-    api.get(`/servicos/totalservicos/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/totalservicos/${sessionStorage.getItem('logeventoservico')}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data  
@@ -384,7 +384,7 @@ class listaeventosComponent extends React.Component  {
 
    valor_total_viagens(){
 
-    api.get(`/servicos/totalviagens/${localStorage.getItem('logeventoservico')}/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/totalviagens/${sessionStorage.getItem('logeventoservico')}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {       
          
@@ -430,7 +430,7 @@ class listaeventosComponent extends React.Component  {
 
   
   loadOperadores() {
-    api.get(`/operador/listaempresa/`+localStorage.getItem('logid'))
+    api.get(`/operador/listaempresa/`+sessionStorage.getItem('logid'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
@@ -470,7 +470,7 @@ class listaeventosComponent extends React.Component  {
   loadlistEventos(){
    // const url = baseUrl+"/cliente/list"   
    
-   api.get(`/eventos/listaeventocliente/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+   api.get(`/eventos/listaeventocliente/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data    
@@ -650,9 +650,9 @@ class listaeventosComponent extends React.Component  {
 
       const operadordata = {  
         email: this.state.campEmail,    
-        empresaId: localStorage.getItem('logid'),     
+        empresaId: sessionStorage.getItem('logid'),     
         statusId: 8,
-        perfilId: localStorage.getItem('logperfil'),
+        perfilId: sessionStorage.getItem('logperfil'),
         gerenciar_eventos: this.state.campgerencia_eventos, 
         monitorar_eventos: this.state.campMonitorar_eventos,   
         representante_legal: this.state.camprepresentante_legal,        
@@ -736,12 +736,12 @@ class listaeventosComponent extends React.Component  {
       if (this.state.incluir == true) {
 
              const datapost_incluir = {
-               cpf: localStorage.getItem('logcpf'), 
-               nome: localStorage.getItem('lognome'), 
-               cnpj: localStorage.getItem('logcnpj'),
-               razao_social: localStorage.getItem('lograzao_social'),
-               logid: localStorage.getItem('logid'),
-               perfilId: localStorage.getItem('logperfil'),    
+               cpf: sessionStorage.getItem('logcpf'), 
+               nome: sessionStorage.getItem('lognome'), 
+               cnpj: sessionStorage.getItem('logcnpj'),
+               razao_social: sessionStorage.getItem('lograzao_social'),
+               logid: sessionStorage.getItem('logid'),
+               perfilId: sessionStorage.getItem('logperfil'),    
                ordem_servico: this.state.campordem_servico, 
                nome_evento: this.state.campnome_evento, 
                viagens_total: 0,
@@ -756,14 +756,14 @@ class listaeventosComponent extends React.Component  {
                .then(respevento=>{    
                  if (respevento.data.success == true) {          
            
-                   localStorage.setItem('logeventoId',respevento.data.data.id );                                     
+                   sessionStorage.setItem('logeventoId',respevento.data.data.id );                                     
                    console.log('campOperadorId -'+ this.state.campOperadorId);  
 
                    if (this.state.campOperadorId !== "") { 
                    
                     const datapost_operador = {
                       operadorId: this.state.campOperadorId, 
-                      eventoId: localStorage.getItem('logeventoId'),
+                      eventoId: sessionStorage.getItem('logeventoId'),
                       statusId: 1 
                      }        
 
@@ -784,30 +784,30 @@ class listaeventosComponent extends React.Component  {
                this.handleCloseModalInclusao();
                this.envia_mensagemClick();    
      
-           console.log(' logperfil '+localStorage.getItem('logperfil'));
+           console.log(' logperfil '+sessionStorage.getItem('logperfil'));
  
-       /*    if (localStorage.getItem('logperfil') == 1) {
-              localStorage.setItem('logperfil', 1);
+       /*    if (sessionStorage.getItem('logperfil') == 1) {
+              sessionStorage.setItem('logperfil', 1);
               this.props.history.push('/area_administrador');                 
-           } else if (localStorage.getItem('logperfil') == 7) {            
-             this.props.history.push("/lista_evento_servico/"+localStorage.getItem('logeventoId'));       
-           } else if (localStorage.getItem('logperfil') == 8) {
-             localStorage.setItem('lognome', this.state.campNome);  
-             localStorage.setItem('logperfil', 8);
+           } else if (sessionStorage.getItem('logperfil') == 7) {            
+             this.props.history.push("/lista_evento_servico/"+sessionStorage.getItem('logeventoId'));       
+           } else if (sessionStorage.getItem('logperfil') == 8) {
+             sessionStorage.setItem('lognome', this.state.campNome);  
+             sessionStorage.setItem('logperfil', 8);
              this.props.history.push('/area_operador');       
            }            */
         
      } else {
        const datapost_alterar = {     
-         logid: localStorage.getItem('logid'),
-         perfilId: localStorage.getItem('logperfil'),    
+         logid: sessionStorage.getItem('logid'),
+         perfilId: sessionStorage.getItem('logperfil'),    
          ordem_servico: this.state.campordem_servico,         
          nome_evento: this.state.campnome_evento, 
          data_evento: moment(this.state.campdata_evento, "DD MM YYYY"),   
          statusId: 1,      
         }           
        console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-       api.put(`/eventos/update/${localStorage.getItem('logid')}`, datapost_alterar)
+       api.put(`/eventos/update/${sessionStorage.getItem('logid')}`, datapost_alterar)
        .then(response=>{
          if (response.data.success==true) {                                  
      
@@ -917,31 +917,31 @@ class listaeventosComponent extends React.Component  {
 
   verifica_menu() {
 
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       return ( 
         <div>
             <Menu_administrador />                
          </div>   
        ); 
-    } else if (localStorage.getItem('logperfil') == 2) {
+    } else if (sessionStorage.getItem('logperfil') == 2) {
       return ( 
         <div>
             <Menu_cliente_individual />                
          </div>   
        ); 
-    } else if (localStorage.getItem('logperfil') == 8) {
+    } else if (sessionStorage.getItem('logperfil') == 8) {
         return ( 
           <div>
               <Menu_operador />                
            </div>   
          );    
-    } else if (localStorage.getItem('logperfil') == 7) {
+    } else if (sessionStorage.getItem('logperfil') == 7) {
       return ( 
         <div>
             <Menu_cliente_empresarial />                
          </div>   
        ); 
-    } else if (localStorage.getItem('logperfil') == null){
+    } else if (sessionStorage.getItem('logperfil') == null){
         return (
           <Menu />
         );
@@ -951,7 +951,7 @@ class listaeventosComponent extends React.Component  {
 
   autorizacao_inclusao() {
  
-    if (localStorage.getItem('logperfil') > 1){
+    if (sessionStorage.getItem('logperfil') > 1){
       return (
         <div className="botao_lista_incluir">
         <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=>this.handleOpenModalInclusao()}>
@@ -1079,7 +1079,7 @@ verificaData_Evento(e) {
        ); 
     } else {
       return (      
-        localStorage.getItem('lognome')
+        sessionStorage.getItem('lognome')
        ); 
     }            
   }
@@ -1122,7 +1122,7 @@ verificaData_Evento(e) {
   };
 
   verificar_permissao() {
-    if (localStorage.getItem('logperfil') == 7) {
+    if (sessionStorage.getItem('logperfil') == 7) {
       return (
         <div class="p-2">  
         <div class="d-flex justify-content-start">
@@ -1754,11 +1754,11 @@ verificaData_Evento(e) {
     );
   }
   onEditar(data) {    
-     localStorage.setItem('logeventoId', data.id);
+     sessionStorage.setItem('logeventoId', data.id);
      this.props.history.push(`/lista_evento_servico/${data.id}`);        
   }
   onAdicionar() {
-    this.props.history.push(`/criar_eventos/${localStorage.getItem('logid')}`);   
+    this.props.history.push(`/criar_eventos/${sessionStorage.getItem('logid')}`);   
   }
 
   envia_mensagemClick = () => {
@@ -1953,7 +1953,7 @@ verificaData_Evento(e) {
           eventoId: this.state.listservicosevento[i].eventoId, 
           tipoTransporte: this.state.listservicosevento[i].tipoTransporte,
           nome_passageiro: this.state.listservicosevento[i].nome_passageiro, 
-          nome_responsavel: localStorage.getItem('lognome'),
+          nome_responsavel: sessionStorage.getItem('lognome'),
           telefone_passageiro: this.state.listservicosevento[i].telefone_passageiro,
           quantidade_passageiro: this.state.listservicosevento[i].quantidade_passageiro,  
           data_servico: this.state.listservicosevento[i].data_servico,
@@ -2004,7 +2004,7 @@ verificaData_Evento(e) {
                   id: eventos[0].id,
                   eventoId: eventos[0].id,
                   logid: eventos[0].logid,
-                  nome_responsavel: localStorage.getItem('lognome'),
+                  nome_responsavel: sessionStorage.getItem('lognome'),
                   perfilId: eventos[0].perfilId,    
                   ordem_servico: eventos[0].ordem_servico, 
                   nome_evento: eventos[0].nome_evento, 

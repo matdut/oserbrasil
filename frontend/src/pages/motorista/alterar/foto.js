@@ -34,9 +34,9 @@ var dateFormat = require('dateformat');
 
 const fs = require('fs');
 //const imageToBase64 = require('image-to-base64');
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 const resizeFile = (file) => new Promise(resolve => {
@@ -93,11 +93,11 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     }
 
     this.setState({           
-      perfillog: localStorage.getItem('logperfil'),
+      perfillog: sessionStorage.getItem('logperfil'),
       fotoState: ''
     }); 
     
@@ -111,8 +111,8 @@ class empresarialComponent extends React.Component{
 
   valida_motorista() {
     const { validate } = this.state;  
-    localStorage.setItem('logPendencia', 0);
-    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    sessionStorage.setItem('logPendencia', 0);
+    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -145,49 +145,49 @@ class empresarialComponent extends React.Component{
               
               
               if (this.state.campCarroId == null || this.state.campCarroId == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campModeloId == null || this.state.campModeloId == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.camp_foto_CRVL_url == null || this.state.camp_foto_CRVL_url == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campSeguradoraId == null || this.state.campSeguradoraId == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campPlaca == null || this.state.campPlaca == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campAnodut == null || this.state.campAnodut == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campAno == null || this.state.campAno == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campCor == null || this.state.campCor == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campCNH == null || this.state.campCNH == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campData_CNH == null || this.state.campData_CNH == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.camp_foto_CNH_url == null || this.state.camp_foto_CNH_url == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.camp_foto_url == null || this.state.camp_foto_url == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campCep == null || this.state.campCep == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campNumero == null || this.state.campNumero == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
               if (this.state.campComplemento == null || this.state.campComplemento == "") {
-                localStorage.setItem('logPendencia', 1)
+                sessionStorage.setItem('logPendencia', 1)
               }
 
             } 
@@ -215,7 +215,7 @@ class empresarialComponent extends React.Component{
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {   
@@ -323,15 +323,15 @@ getBase64(file, success) {
 async sendUpdate(){         
 
   
-  if (localStorage.getItem('logPendencia') == 0) {
+  if (sessionStorage.getItem('logPendencia') == 0) {
     const data1 = {
       email: this.state.campEmail,  
       perfilId: 3,
       statusId: 16
     }          
-      api.put(`/motorista/update/${localStorage.getItem('logid')}`, data1)      
+      api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, data1)      
 
-      api.put(`/login/update/${localStorage.getItem('logid')}`,data1)
+      api.put(`/login/update/${sessionStorage.getItem('logid')}`,data1)
    }
 
 
@@ -348,14 +348,14 @@ async sendUpdate(){
       }
      console.log(' base64 o arquivo 1 - '+JSON.stringify(formData, null, "    "));
     
-      api.put(`/motorista/foto/update/${localStorage.getItem('logid')}`, formData)      
+      api.put(`/motorista/foto/update/${sessionStorage.getItem('logid')}`, formData)      
   
-              if (localStorage.getItem('logperfil') == 1) {
-                this.props.history.push(`/senha_motorista/`+localStorage.getItem('logid'));                    
-              } else if (localStorage.getItem('logperfil') == 3) {
+              if (sessionStorage.getItem('logperfil') == 1) {
+                this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
+              } else if (sessionStorage.getItem('logperfil') == 3) {
                 this.props.history.push(`/area_motorista`);                   
-              } else if (localStorage.getItem('logperfil') == 0) {
-                this.props.history.push(`/senha_motorista/`+localStorage.getItem('logid'));                    
+              } else if (sessionStorage.getItem('logperfil') == 0) {
+                this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
               }         
 
    // }   
@@ -383,12 +383,12 @@ async sendUpdate(){
         //  alert("Erro verificar log  "+error)
        // })
    } else {
-    if (localStorage.getItem('logperfil') == 1) {
-      this.props.history.push(`/senha_motorista/`+localStorage.getItem('logid'));                    
-    } else if (localStorage.getItem('logperfil') == 3) {
+    if (sessionStorage.getItem('logperfil') == 1) {
+      this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
+    } else if (sessionStorage.getItem('logperfil') == 3) {
       this.props.history.push(`/area_motorista`);                   
-    } else if (localStorage.getItem('logperfil') == 0) {
-      this.props.history.push(`/senha_motorista/`+localStorage.getItem('logid'));                    
+    } else if (sessionStorage.getItem('logperfil') == 0) {
+      this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
     }            
     
    }   
@@ -448,7 +448,7 @@ verificar_menu(){
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-               <Link to={`/documentos_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+               <Link to={`/documentos_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
              </div>                  
              <div>
                <div className="titulo_representante">                
@@ -472,11 +472,11 @@ verificar_menu(){
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
    return( 
      <Menu_motorista />     
    );
@@ -491,7 +491,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }
@@ -528,7 +528,7 @@ verifica_horario(){
 }
 
 verifica_mensagem() {
-  if (localStorage.getItem('statusid') == 16) {
+  if (sessionStorage.getItem('statusid') == 16) {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     

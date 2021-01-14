@@ -9,9 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import menu_motorista_auxiliar from '../motorista_auxiliar/menu_motorista_auxiliar';
 import { valorMask } from '../formatacao/valormask';
 
-const login = localStorage.getItem('logemail');              
-const nome = localStorage.getItem('lognome');  
-const id = localStorage.getItem('logid');   
+const login = sessionStorage.getItem('logemail');              
+const nome = sessionStorage.getItem('lognome');  
+const id = sessionStorage.getItem('logid');   
 
 class Area_motorista extends React.Component  {
 
@@ -31,17 +31,17 @@ class Area_motorista extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid'), 
-      statusid: localStorage.getItem('statusid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid'), 
+      statusid: sessionStorage.getItem('statusid') 
     });
   }
 
 verifica_menu() {    
 
     return (      
-       localStorage.getItem('lognome')
+       sessionStorage.getItem('lognome')
      ); 
   
 }
@@ -77,7 +77,7 @@ verifica_horario(){
 }
 
 verifica_mensagem() {
-  if (localStorage.getItem('statusid') == 16) {
+  if (sessionStorage.getItem('statusid') == 16) {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     

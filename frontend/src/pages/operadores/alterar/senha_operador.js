@@ -27,8 +27,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -120,18 +120,18 @@ class empresarialComponent extends React.Component{
  
     let userId = this.props.match.params.id;
 
-    localStorage.setItem('logoperadorId',  userId);
+    sessionStorage.setItem('logoperadorId',  userId);
    
     this.setState({      
-      perfil: localStorage.getItem('logperfil'),
+      perfil: sessionStorage.getItem('logperfil'),
       progresso: 95
     });  
 /*
     if (userId !== 0) {
-      localStorage.setItem('logoperadorId', userId);      
+      sessionStorage.setItem('logoperadorId', userId);      
     } 
   */  
-    //if (localStorage.getItem('logid') !== 0) { 
+    //if (sessionStorage.getItem('logid') !== 0) { 
       this.carrega_senha(); 
       this.carrega_operador()
     //}   
@@ -139,7 +139,7 @@ class empresarialComponent extends React.Component{
 
   carrega_senha() {
     const { validate } = this.state;    
-    api.get(`/login/getSenha/${localStorage.getItem('logoperadorId')}/${localStorage.getItem('logperfil')}`) 
+    api.get(`/login/getSenha/${sessionStorage.getItem('logoperadorId')}/${sessionStorage.getItem('logperfil')}`) 
     .then(res=>{
       if (res.data.success) {
         this.setState({     
@@ -182,8 +182,8 @@ class empresarialComponent extends React.Component{
   carrega_operador() {
     const { validate } = this.state;
 
-    console.log('logoperador '+ localStorage.getItem('userId'));
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+    console.log('logoperador '+ sessionStorage.getItem('userId'));
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -613,22 +613,22 @@ class empresarialComponent extends React.Component{
   
 sendUpdate(){        
   
-  //localStorage.setItem('logperfil', 8);  
+  //sessionStorage.setItem('logperfil', 8);  
 
   const logindata = {    
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: sessionStorage.getItem('logperfil'),
     senha: this.state.campSenha,         
   }                
-      //  localStorage.setItem('logstatus', 1);    
+      //  sessionStorage.setItem('logstatus', 1);    
 
 
         console.log(JSON.stringify(logindata, null, "    "));  
-        api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata)       
+        api.put(`/login/update/${sessionStorage.getItem('logoperadorId')}`,logindata)       
 
 
-            if (localStorage.getItem('logperfil') == 1) {              
+            if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (localStorage.getItem('logperfil') == 8) {
+            } else if (sessionStorage.getItem('logperfil') == 8) {
               this.props.history.push(`/area_operador`);              
             }
             
@@ -796,7 +796,7 @@ verificar_menu() {
     <Menu_operador />   
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/operadores_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/operadores_alterar/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -817,11 +817,11 @@ verificar_menu() {
 }
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 8) {
+  } else if (sessionStorage.getItem('logperfil') == 8) {
    return( 
      <Menu_operador />     
    );
@@ -835,7 +835,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }

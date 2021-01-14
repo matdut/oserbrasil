@@ -35,21 +35,21 @@ class menu_motoristaComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
     //this.verifica_menu();
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
 
     this.props.history.push("/");
   }
@@ -116,22 +116,22 @@ class menu_motoristaComponent extends React.Component  {
               <i class="fas fa-list"></i> ALTERAR
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={`/motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/motorista/`+sessionStorage.getItem('logid')}>
                 <i class="far fa-user"></i> Dados Pessoais
                 </DropdownItem>
-                <DropdownItem href={`/endereco_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/endereco_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-home"></i> Endereço
                 </DropdownItem>
                 <DropdownItem href="#">
                 <i class="fas fa-money-bill-wave"></i> Meus Ganhos
                 </DropdownItem>
-                <DropdownItem href={`/documentos_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/documentos_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="far fa-file-alt"></i> Meus Documentos
                 </DropdownItem>
                 <DropdownItem href="#">
                 <i class="fas fa-road"></i> Minhas Viagens
                 </DropdownItem>                
-                <DropdownItem href={`/veiculo_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/veiculo_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-car"></i> Meu Veículo
                 </DropdownItem>
                 <DropdownItem href="#">
@@ -140,7 +140,7 @@ class menu_motoristaComponent extends React.Component  {
                 <DropdownItem href="#">
                 <i class="fas fa-sliders-h"></i> Configurações
                 </DropdownItem>
-                <DropdownItem href={`/senha_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/senha_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-key"></i> Alterar Senha
                 </DropdownItem>
                 <DropdownItem divider />                

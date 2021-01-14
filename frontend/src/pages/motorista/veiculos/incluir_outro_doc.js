@@ -16,9 +16,9 @@ import Upload from "../../UploadDocumentos";
 import FileList from "../../FilelistDocumento";
 import { Container, Content } from "../../style";
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 const resizeFile = (file) => new Promise(resolve => {
   Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
@@ -53,7 +53,7 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     this.setState({      
-      perfillog: localStorage.getItem('logperfil'),
+      perfillog: sessionStorage.getItem('logperfil'),
       incluir_foto_2: true,   
       progresso: 90 
     });  
@@ -63,7 +63,7 @@ class empresarialComponent extends React.Component{
     });  
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     }   
   
     this.carrega_doc_veiculo()
@@ -72,7 +72,7 @@ class empresarialComponent extends React.Component{
  
  
  carrega_doc_veiculo() { 
-  api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+  api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
   .then(res=>{        
 
         const uploadedCRVL = res.data.data.map(file => ({         
@@ -104,7 +104,7 @@ class empresarialComponent extends React.Component{
 verifica_botao(inicio) {
    // console.log(JSON.stringify(this.state, null, "    "));
    // console.log(JSON.stringify(inicio, null, "    "));
-   if (localStorage.getItem('logperfil') == 0) {
+   if (sessionStorage.getItem('logperfil') == 0) {
       if (inicio == 1) {
         return (
     
@@ -137,7 +137,7 @@ verifica_botao(inicio) {
             );   
           }         
       }
-    } else if (localStorage.getItem('logperfil') == 1) {
+    } else if (sessionStorage.getItem('logperfil') == 1) {
       if (inicio == 1) {
         return (
     
@@ -170,7 +170,7 @@ verifica_botao(inicio) {
         }              
       }
 
-    } else if (localStorage.getItem('logperfil') == 3) {
+    } else if (sessionStorage.getItem('logperfil') == 3) {
       if (inicio == 1) {
         return (
     
@@ -235,7 +235,7 @@ async sendUpdate(){
          
              // formData.append("file", this.state.uploadedCRVL[0].file, this.state.uploadedCRVL[0].name)                      
 
-              api.put(`/veiculo/documentoCRVL/update/${localStorage.getItem('logVeiculo')}/${localStorage.getItem('logid')}`, formData)
+              api.put(`/veiculo/documentoCRVL/update/${sessionStorage.getItem('logVeiculo')}/${sessionStorage.getItem('logid')}`, formData)
                 .then(response=>{
               //    console.log(JSON.stringify(response.data, null, "    ")); 
   
@@ -254,9 +254,9 @@ async sendUpdate(){
 
       }     
 
-      if (localStorage.getItem('logperfil') == 1) {
+      if (sessionStorage.getItem('logperfil') == 1) {
         this.props.history.push(`/area_administrador`);
-      } else if (localStorage.getItem('logperfil') == 3) {
+      } else if (sessionStorage.getItem('logperfil') == 3) {
         this.props.history.push(`/area_motorista`);                   
       }            
 }
@@ -299,12 +299,12 @@ handleUploadCRVL = files => {
 }
 
 verificar_menu(){
-  if (localStorage.getItem('logperfil') == 0) {  
+  if (sessionStorage.getItem('logperfil') == 0) {  
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -325,12 +325,12 @@ verificar_menu(){
      </div>    
     );
 
-  } else if (localStorage.getItem('logperfil') == 1) { 
+  } else if (sessionStorage.getItem('logperfil') == 1) { 
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -349,12 +349,12 @@ verificar_menu(){
           </div>                        
      </div>    
     );
-  } else if (localStorage.getItem('logperfil') == 3) { 
+  } else if (sessionStorage.getItem('logperfil') == 3) { 
     return(
       <div>
       <div className="d-flex justify-content-around">             
            <div className="botao_navegacao">
-             <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+             <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
            </div>                  
            <div>
              <div className="titulo_representante">                

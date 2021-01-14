@@ -9,8 +9,8 @@ import api from '../../services/api';
 import './motorista.css';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const userId = localStorage.getItem('logid');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const userId = sessionStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -66,11 +66,11 @@ class empresarialComponent extends React.Component{
   }
 
   componentDidMount(){ 
-   // localStorage.clear();
-    console.log('log id  - '+localStorage.getItem('logid'))
+   // sessionStorage.clear();
+    console.log('log id  - '+sessionStorage.getItem('logid'))
     this.textInput.current.focus();
     //this.cepInput.current.focus();
-    if (localStorage.getItem('logid') !== null) { 
+    if (sessionStorage.getItem('logid') !== null) { 
       //console.log(' busca cliente ')
       this.setState({      
         progresso: 25 
@@ -79,22 +79,22 @@ class empresarialComponent extends React.Component{
       this.busca_cliente()      
     } else {      
         //console.log('LIMPAR OS ITENS ')
-        localStorage.removeItem('logemail');
-        localStorage.removeItem('lognome');       
-        localStorage.removeItem('logid');  
-        localStorage.removeItem('logperfil');  
-        localStorage.removeItem('logprogress');
-        localStorage.removeItem('logcep');       
-        localStorage.removeItem('lograzao_social');  
-        localStorage.removeItem('lograzaosocial');        
+        sessionStorage.removeItem('logemail');
+        sessionStorage.removeItem('lognome');       
+        sessionStorage.removeItem('logid');  
+        sessionStorage.removeItem('logperfil');  
+        sessionStorage.removeItem('logprogress');
+        sessionStorage.removeItem('logcep');       
+        sessionStorage.removeItem('lograzao_social');  
+        sessionStorage.removeItem('lograzaosocial');        
     }
     
   }
 
   busca_cliente() {
     const { validate } = this.state
-    console.log('busca cliente metodo e ID '+localStorage.getItem('logid')); 
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid')); 
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -506,9 +506,9 @@ sendSave(){
           if (response.data.success==true) {                        
 
           //console.log('logprogress - '+ this.state.progresso);  
-          localStorage.setItem('logprogress', 25);  
-          localStorage.setItem('lognome', this.state.campNome);  
-          localStorage.setItem('logid', response.data.data.id);
+          sessionStorage.setItem('logprogress', 25);  
+          sessionStorage.setItem('lognome', this.state.campNome);  
+          sessionStorage.setItem('logid', response.data.data.id);
             
           this.props.history.push('/endereco_motorista');            
   
@@ -521,11 +521,11 @@ sendSave(){
         })
     } else {
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
-          //localStorage.setItem('logid', userId);
+          //sessionStorage.setItem('logid', userId);
 
           this.props.history.push('/cliente_endereco');            
 

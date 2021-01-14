@@ -23,8 +23,8 @@ import Paper from '@material-ui/core/Paper';
 import api from '../../services/api';
 import './empresarial.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
 //const userNome = ;
 const buscadorcep = require('buscadorcep');
 
@@ -72,17 +72,17 @@ class criarOperadoresComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
 
     }
 
-    //if (localStorage.getItem('logperfil') == 0) {
-    // localStorage.setItem('logperfil', 7);
+    //if (sessionStorage.getItem('logperfil') == 0) {
+    // sessionStorage.setItem('logperfil', 7);
    // }    
     
     this.setState({      
       progresso: 85,
-      campNome: localStorage.getItem('lognome'), 
+      campNome: sessionStorage.getItem('lognome'), 
     });    
    
     
@@ -134,7 +134,7 @@ verifica_botao(inicio) {
   const { validate } = this.state 
    // console.log(JSON.stringify(this.state, null, "    "));
    // console.log(JSON.stringify(inicio, null, "    "));
- if (localStorage.getItem('logperfil') == 0) {  
+ if (sessionStorage.getItem('logperfil') == 0) {  
       if (inicio == 1) {
 
             return (
@@ -169,7 +169,7 @@ verifica_botao(inicio) {
         }   
 
       } 
-    } else if (localStorage.getItem('logperfil') == 1) {     
+    } else if (sessionStorage.getItem('logperfil') == 1) {     
       if (inicio == 1) {
         return (
     
@@ -200,7 +200,7 @@ verifica_botao(inicio) {
 
        } 
       }  
-    } else if (localStorage.getItem('logperfil') == 7) {  
+    } else if (sessionStorage.getItem('logperfil') == 7) {  
       if (inicio == 1) {
         return (
     
@@ -238,7 +238,7 @@ sendUpdate(){
   const email_envio = this.state.campEmail
   const operadordata = {  
     email: this.state.campEmail,    
-    empresaId: localStorage.getItem('logid'),     
+    empresaId: sessionStorage.getItem('logid'),     
     statusId: 6,
     gerenciar_eventos: this.state.campgerencia_eventos, 
     gerenciar_todos_eventos: this.state.campgerencia_todos_eventos, 
@@ -278,9 +278,9 @@ sendUpdate(){
                    
           alert('Mensagem Enviada');
 
-          if (localStorage.getItem('logperfil') == 7) {              
-            this.props.history.push(`/operador_lista_empresa/`+localStorage.getItem('logid'));               
-          } else if (localStorage.getItem('logperfil') == 1) {               
+          if (sessionStorage.getItem('logperfil') == 7) {              
+            this.props.history.push(`/operador_lista_empresa/`+sessionStorage.getItem('logid'));               
+          } else if (sessionStorage.getItem('logperfil') == 1) {               
             this.props.history.push(`/operador_lista`);               
           }
         }      
@@ -302,9 +302,9 @@ sendUpdate(){
                
       alert('Mensagem Enviada');
 
-      if (localStorage.getItem('logperfil') == 7) {              
-        this.props.history.push(`/operador_lista_empresa/`+localStorage.getItem('logid'));               
-      } else if (localStorage.getItem('logperfil') == 1) {               
+      if (sessionStorage.getItem('logperfil') == 7) {              
+        this.props.history.push(`/operador_lista_empresa/`+sessionStorage.getItem('logid'));               
+      } else if (sessionStorage.getItem('logperfil') == 1) {               
         this.props.history.push(`/operador_lista`);               
       }         
 
@@ -377,7 +377,7 @@ emailchange(e) {
 
 verificar_menu(){
   
-  if (localStorage.getItem('logperfil') == 1) { 
+  if (sessionStorage.getItem('logperfil') == 1) { 
     return(
       <div>
       <div className="d-flex justify-content-around">
@@ -401,7 +401,7 @@ verificar_menu(){
           </div> 
      </div>     
     );
-  } else if (localStorage.getItem('logperfil') == 7) { 
+  } else if (sessionStorage.getItem('logperfil') == 7) { 
     return(
       <div>
       <div className="d-flex justify-content-around">

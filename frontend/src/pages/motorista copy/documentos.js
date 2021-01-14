@@ -16,9 +16,9 @@ import Upload from "../UploadDocumentos";
 import FileList from "../FilelistDocumento";
 import { Container, Content } from "../style";
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -51,7 +51,7 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     this.setState({      
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
 
     this.setState({      
@@ -59,7 +59,7 @@ class empresarialComponent extends React.Component{
     });  
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     }
     
   
@@ -71,7 +71,7 @@ class empresarialComponent extends React.Component{
     
     const { validate } = this.state
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -129,7 +129,7 @@ class empresarialComponent extends React.Component{
 verifica_botao(inicio) {
    // console.log(JSON.stringify(this.state, null, "    "));
    // console.log(JSON.stringify(inicio, null, "    "));
-   if (localStorage.getItem('logperfil') == 0) {
+   if (sessionStorage.getItem('logperfil') == 0) {
       if (inicio == 1) {
         return (
     
@@ -153,7 +153,7 @@ verifica_botao(inicio) {
               );         
         }          
       }
-    } else if (localStorage.getItem('logperfil') == 1) {
+    } else if (sessionStorage.getItem('logperfil') == 1) {
       if (inicio == 1) {
         return (
     
@@ -178,7 +178,7 @@ verifica_botao(inicio) {
         }          
       }
 
-    } else if (localStorage.getItem('logperfil') == 3) {
+    } else if (sessionStorage.getItem('logperfil') == 3) {
       if (inicio == 1) {
         return (
     
@@ -214,9 +214,9 @@ sendUpdate(){
        console.log(JSON.stringify(this.state.uploadedCRVL[0].file, null, "    ")); 
 
         formData.append("file", this.state.uploadedCNH[0].file)         
-        formData.append('id', localStorage.getItem('logid'));     
+        formData.append('id', sessionStorage.getItem('logid'));     
 
-        api.put(`/motorista/documentoCNH/update/${localStorage.getItem('logid')}`, formData)
+        api.put(`/motorista/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
         .then(response=>{
           console.log(JSON.stringify(response.data, null, "    ")); 
 
@@ -224,20 +224,20 @@ sendUpdate(){
               const formData = new FormData();  
 
               formData.append("file", this.state.uploadedCRVL[0].file)                   
-              formData.append('id', localStorage.getItem('logid'));     
+              formData.append('id', sessionStorage.getItem('logid'));     
 
-              api.put(`/motorista/documentoCRVL/update/${localStorage.getItem('logid')}`, formData)
+              api.put(`/motorista/documentoCRVL/update/${sessionStorage.getItem('logid')}`, formData)
                 .then(response=>{
                   console.log(JSON.stringify(response.data, null, "    ")); 
   
                   if (response.data.success==true) {       
                     
-                    if (localStorage.getItem('logperfil') == 1) {
-                      this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));
-                    } else if (localStorage.getItem('logperfil') == 3) {
+                    if (sessionStorage.getItem('logperfil') == 1) {
+                      this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
+                    } else if (sessionStorage.getItem('logperfil') == 3) {
                       this.props.history.push(`/area_motorista`);                   
-                    } else if (localStorage.getItem('logperfil') == 0) {
-                      this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));
+                    } else if (sessionStorage.getItem('logperfil') == 0) {
+                      this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
                     }    
           
                   }
@@ -257,12 +257,12 @@ sendUpdate(){
         }) 
     } else {
 
-      if (localStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));                    
-      } else if (localStorage.getItem('logperfil') == 3) {
+      if (sessionStorage.getItem('logperfil') == 1) {
+        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));                    
+      } else if (sessionStorage.getItem('logperfil') == 3) {
         this.props.history.push(`/area_motorista`);                   
-      } else if (localStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista/`+localStorage.getItem('logid'));                    
+      } else if (sessionStorage.getItem('logperfil') == 0) {
+        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));                    
       }    
       
     }     
@@ -318,12 +318,12 @@ handleUploadCRVL = files => {
 }
 
 verificar_menu(){
-  if (localStorage.getItem('logperfil') == 0) {  
+  if (sessionStorage.getItem('logperfil') == 0) {  
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -344,12 +344,12 @@ verificar_menu(){
      </div>    
     );
 
-  } else if (localStorage.getItem('logperfil') == 1) { 
+  } else if (sessionStorage.getItem('logperfil') == 1) { 
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -369,12 +369,12 @@ verificar_menu(){
           </div>
      </div>    
     );
-  } else if (localStorage.getItem('logperfil') == 3) { 
+  } else if (sessionStorage.getItem('logperfil') == 3) { 
     return(
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                

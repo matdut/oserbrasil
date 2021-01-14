@@ -22,9 +22,9 @@ class inicioComponent extends React.Component  {
     render()
     {
 
-      localStorage.setItem('logperfil', 0)
-      localStorage.setItem('logVeiculo', 0)    
-      localStorage.setItem('conectado', 1)    
+      sessionStorage.setItem('logperfil', 0)
+      sessionStorage.setItem('logVeiculo', 0)    
+      sessionStorage.setItem('conectado', 1)    
 
     return (             
   

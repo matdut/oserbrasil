@@ -32,10 +32,10 @@ import Typography from '@material-ui/core/Typography';
 import api from '../../services/api';
 import './empresarial.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
-const dataendereco = localStorage.getItem('logdataCliente');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
+const dataendereco = sessionStorage.getItem('logdataCliente');
 
 const buscadorcep = require('buscadorcep');
 
@@ -112,24 +112,24 @@ class empresarialComponent extends React.Component{
   }
 
   componentDidMount(){    
-    //console.log('CEP 1 - '+cepremoveMask(localStorage.getItem('logcep')))
+    //console.log('CEP 1 - '+cepremoveMask(sessionStorage.getItem('logcep')))
     this.setState({      
       progresso: 65,
-      campCep: localStorage.getItem('logcep') 
+      campCep: sessionStorage.getItem('logcep') 
     });  
    
     let userId = this.props.match.params.id;
 
-    localStorage.setItem('logid', userId);      
+    sessionStorage.setItem('logid', userId);      
     
     this.limpar_endereco();    
     this.loadEstados();
     
-    console.log('logcep ' + localStorage.getItem('logcep'))
-    console.log('logcepbanco' + localStorage.getItem('logcepbanco'))
-    console.log('logid' + localStorage.getItem('logid'))
+    console.log('logcep ' + sessionStorage.getItem('logcep'))
+    console.log('logcepbanco' + sessionStorage.getItem('logcepbanco'))
+    console.log('logid' + sessionStorage.getItem('logid'))
     
-    //if (localStorage.getItem('logid') !== 0) {     
+    //if (sessionStorage.getItem('logid') !== 0) {     
       this.busca_cep_banco();            
     //}  
 
@@ -186,7 +186,7 @@ class empresarialComponent extends React.Component{
     console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/empresa/get/${localStorage.getItem('logid')}`)
+    api.get(`/empresa/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca empresa - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -282,14 +282,14 @@ class empresarialComponent extends React.Component{
 
         /*  if (validate.estadoState !== 'has-success' && validate.cidadeState !== 'has-success' 
           && validate.bairroState !== 'has-success' && validate.enderecoState !== 'has-success'           
-          && localStorage.getItem('logcep') !== null) {
+          && sessionStorage.getItem('logcep') !== null) {
 
-            this.cep_preenchido(cepremoveMask(localStorage.getItem('logcep')))  
+            this.cep_preenchido(cepremoveMask(sessionStorage.getItem('logcep')))  
           }*/
 
         } else {          
              console.log('ENTROU AQUI não achou empresa')
-             this.cep_preenchido(cepremoveMask(localStorage.getItem('logcep')));          
+             this.cep_preenchido(cepremoveMask(sessionStorage.getItem('logcep')));          
         }
       })        
       .catch(error=>{
@@ -819,18 +819,18 @@ sendUpdate(){
   }          
     
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/empresa/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/empresa/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
                
-                if (localStorage.getItem('logperfil') == 1) {
-                  this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid')); 
-                } else if (localStorage.getItem('logperfil') == 2) {
+                if (sessionStorage.getItem('logperfil') == 1) {
+                  this.props.history.push(`/empresa_senha/`+sessionStorage.getItem('logid')); 
+                } else if (sessionStorage.getItem('logperfil') == 2) {
                   this.props.history.push(`/area_cliente_individual`);       
-                } else if (localStorage.getItem('logperfil') == 7) {
+                } else if (sessionStorage.getItem('logperfil') == 7) {
                   this.props.history.push(`/area_cliente_empresarial`);                                  
-                } else if (localStorage.getItem('logperfil') == 0) {
-                  this.props.history.push(`/empresa_senha/`+localStorage.getItem('logid'));      
+                } else if (sessionStorage.getItem('logperfil') == 0) {
+                  this.props.history.push(`/empresa_senha/`+sessionStorage.getItem('logid'));      
                 }                
             
           }
@@ -847,7 +847,7 @@ verificar_menu() {
     <div>
       <div className="d-flex justify-content-around">
         <div className="botao_navegacao">
-            <Link to={`/empresa_dados/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+            <Link to={`/empresa_dados/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
         </div>                  
       <div>           
         <div className="titulo_representante">                
@@ -872,11 +872,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
    return( 
      <Menu_cliente_empresarial />     
    );
@@ -890,7 +890,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }

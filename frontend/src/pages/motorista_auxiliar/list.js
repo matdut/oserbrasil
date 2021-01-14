@@ -64,8 +64,8 @@ var dateFormat = require('dateformat');
 const buscadorcep = require('buscadorcep');
 
 var myURL = window.URL || window.webkitURL;
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 
 
 const customStyles = {
@@ -327,10 +327,10 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
     
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -745,8 +745,8 @@ class listComponent extends React.Component  {
 
   carrega_motorista_veiculo() {
     const { validate } = this.state;
-    console.log('logVeiculo - '+JSON.stringify(localStorage.getItem('logVeiculo'), null, "    ")); 
-    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    console.log('logVeiculo - '+JSON.stringify(sessionStorage.getItem('logVeiculo'), null, "    ")); 
+    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -768,14 +768,14 @@ class listComponent extends React.Component  {
             campCadeirinhaPequena: res.data.data[0].cadeirinha_pequena,       
             campCadeirinhaGrande: res.data.data[0].cadeirinha_grande,       
             campCadeiraRodas: res.data.data[0].cadeira_rodas,             
-            campVeiculoId: localStorage.getItem('logVeiculo'),                                    
+            campVeiculoId: sessionStorage.getItem('logVeiculo'),                                    
             inicio: 2,
             
           })            
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
           // this.load_modelo_banco(this.state.campCarroId)
-           localStorage.setItem('lognome', this.state.campNome);  
+           sessionStorage.setItem('lognome', this.state.campNome);  
 
 
           if (this.state.campCarro == null) {
@@ -903,7 +903,7 @@ class listComponent extends React.Component  {
       this.state.listaMarcas.map((data)=>{          
          if (data.id == id) {
             console.log('buscaMarca - '+data.name);     
-            localStorage.setItem('logMarca', data.name)
+            sessionStorage.setItem('logMarca', data.name)
            // marca_saida = data.name                   
          }
 
@@ -921,7 +921,7 @@ class listComponent extends React.Component  {
     this.state.listaModelos.map((data)=>{          
        if (data.id == id) {
          console.log('buscaModelo - '+data.name); 
-         localStorage.setItem('logModelo', data.name)
+         sessionStorage.setItem('logModelo', data.name)
          //modelo_saida = data.name                       
        }
      }) 
@@ -1186,8 +1186,8 @@ cadeirarodasChange(e) {
 
   busca_motorista() {
     const { validate } = this.state   
-    console.log(`/motoristaAuxiliar/get/${localStorage.getItem('logeditid')}`);
-    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logeditid')}`)
+    console.log(`/motoristaAuxiliar/get/${sessionStorage.getItem('logeditid')}`);
+    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logeditid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -1282,7 +1282,7 @@ cadeirarodasChange(e) {
 
    carrega_veiculos(){ 
    
-    api.get(`/veiculo/lista_veiculos/${localStorage.getItem('logeditid')}`)
+    api.get(`/veiculo/lista_veiculos/${sessionStorage.getItem('logeditid')}`)
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -1316,7 +1316,7 @@ cadeirarodasChange(e) {
 
   loadMotoristaAuxConvite(){
     // const url = baseUrl+"/motorista/list"
-    api.get(`/emailOperador/listMotoristaAux/${localStorage.getItem('logid')}`)
+    api.get(`/emailOperador/listMotoristaAux/${sessionStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data
@@ -1370,15 +1370,15 @@ cadeirarodasChange(e) {
       showModal: true,            
       mensagem_aguarde: '',
     });    
-    localStorage.setItem('logeditid', data.id);     
+    sessionStorage.setItem('logeditid', data.id);     
     //console.log('buscar_cliente ');
     this.busca_motorista();   
     this.carrega_veiculos();     
     
-    //localStorage.setItem('logVeiculo', this.state.listaVeiculos[0].id);
+    //sessionStorage.setItem('logVeiculo', this.state.listaVeiculos[0].id);
     //this.carrega_motorista_veiculo();      
     
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -1408,7 +1408,7 @@ cadeirarodasChange(e) {
       showModal: false,  
       campStatusId: 0,  
     });
-    localStorage.setItem('logeditid', '');
+    sessionStorage.setItem('logeditid', '');
     
     this.loadMotoristaExcluidos();
     this.loadMotorista();     
@@ -1459,7 +1459,7 @@ cadeirarodasChange(e) {
     }             
      
        console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-        api.put(`/motorista/update/${localStorage.getItem('logeditid')}`, datapost)
+        api.put(`/motorista/update/${sessionStorage.getItem('logeditid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
             
@@ -1476,7 +1476,7 @@ cadeirarodasChange(e) {
                 marcaId: this.state.campCarroId, 
                 modeloId: this.state.campModeloId,
                 tipoTransporte: this.state.camptipoTransporte,
-                marca: localStorage.getItem('logMarca'), 
+                marca: sessionStorage.getItem('logMarca'), 
                 modelo: modelo.data.data[0].name,
                 seguradoraId: this.state.campSeguradoraId,
                 apolice: this.state.campApolice,
@@ -1487,7 +1487,7 @@ cadeirarodasChange(e) {
               }        
 
               console.log('veiculo - '+JSON.stringify(veiculoupdate, null, "    ")); 
-              api.put(`/veiculo/update/${localStorage.getItem('logVeiculo')}`, veiculoupdate)
+              api.put(`/veiculo/update/${sessionStorage.getItem('logVeiculo')}`, veiculoupdate)
               .then(response=>{
                 if (response.data.success==true) {                  
 
@@ -1497,8 +1497,8 @@ cadeirarodasChange(e) {
                           statusId: this.state.campStatusId
                         }
               
-                        api.put(`/login/update/${localStorage.getItem('logeditid')}`,logindata);  
-                        localStorage.setItem('lognome', this.state.campNome);           
+                        api.put(`/login/update/${sessionStorage.getItem('logeditid')}`,logindata);  
+                        sessionStorage.setItem('lognome', this.state.campNome);           
 
                         this.setState({                                                     
                           mensagem_usuario: 'Motorista alterado com sucesso!',          
@@ -1572,7 +1572,7 @@ cadeirarodasChange(e) {
     console.log('lista veiculo - '+this.state.listaVeiculos.length);
      if (this.state.listaVeiculos.length > 0) {
      //   console.log('Lista'+JSON.stringify(this.state.listaVeiculos[0].id, null, "    ")); 
-        localStorage.setItem('logVeiculo', this.state.listaVeiculos[0].id);
+        sessionStorage.setItem('logVeiculo', this.state.listaVeiculos[0].id);
         this.carrega_motorista_veiculo();
      }
   }
@@ -1643,7 +1643,7 @@ sendEnvioEmail(){
 
       const operadordata = {  
         email: this.state.campEmail,    
-        empresaId: localStorage.getItem('logid'),     
+        empresaId: sessionStorage.getItem('logid'),     
         statusId: 1,
         perfilId: 9
       }    
@@ -1709,27 +1709,27 @@ abre_foto(foto) {
 
 verificar_menu_lateral() {
  
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
     return( 
       <Menu_cliente_individual />     
     );    
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
     return( 
       <Menu_motorista />     
     );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
     return( 
       <Menu_cliente_empresarial />     
     );   
-  } else if (localStorage.getItem('logperfil') == 8) {
+  } else if (sessionStorage.getItem('logperfil') == 8) {
    return( 
      <Menu_operador />     
    );
-  } else if (localStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 9) {
     return( 
       <Menu_motorista_auxiliar />     
     );
@@ -2115,7 +2115,7 @@ opcao_tabChange = (event, newValue) => {
                   <div class="p-2">  
                     <div class="d-flex justify-content-start">
                         <div>
-                            <Avatar alt={localStorage.getItem('lognome')} 
+                            <Avatar alt={sessionStorage.getItem('lognome')} 
                           src={this.state.camp_foto_url} variant="circle" className="avatar_tamanho"/>            
                         </div>  
 
@@ -3198,7 +3198,7 @@ opcao_tabChange = (event, newValue) => {
     })     
     
     console.log('veiculo - '+ e.target.value);
-    localStorage.setItem('logVeiculo', e.target.value);
+    sessionStorage.setItem('logVeiculo', e.target.value);
     this.carrega_motorista_veiculo();      
     
   }

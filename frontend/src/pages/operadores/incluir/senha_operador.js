@@ -26,8 +26,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -118,16 +118,16 @@ class empresarialComponent extends React.Component{
     });      
  
     let userId = this.props.match.params.id;
-    localStorage.setItem('logoperadorId', userId);      
+    sessionStorage.setItem('logoperadorId', userId);      
 
-    console.log('perfil - '+localStorage.getItem('logperfil'))    
+    console.log('perfil - '+sessionStorage.getItem('logperfil'))    
 
     this.setState({      
-      perfil: localStorage.getItem('logperfil'),
+      perfil: sessionStorage.getItem('logperfil'),
       progresso: 50
     });  
     
-    //if (localStorage.getItem('logid') !== 0) { 
+    //if (sessionStorage.getItem('logid') !== 0) { 
       this.carrega_senha(); 
       this.carrega_operador()
     //}   
@@ -135,7 +135,7 @@ class empresarialComponent extends React.Component{
 
   carrega_senha() {
     const { validate } = this.state;    
-    api.get(`/login/getSenha/${localStorage.getItem('logoperadorId')}/${localStorage.getItem('logperfil')}`) 
+    api.get(`/login/getSenha/${sessionStorage.getItem('logoperadorId')}/${sessionStorage.getItem('logperfil')}`) 
     .then(res=>{
       if (res.data.success) {
         this.setState({     
@@ -177,7 +177,7 @@ class empresarialComponent extends React.Component{
 
   carrega_operador() {
     const { validate } = this.state;
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -607,7 +607,7 @@ class empresarialComponent extends React.Component{
   
 sendUpdate(){        
   
-  //localStorage.setItem('logperfil', 8);  
+  //sessionStorage.setItem('logperfil', 8);  
 
   const datapost = {  
     statusId: 1,  
@@ -618,11 +618,11 @@ sendUpdate(){
     statusId: 1   
   }        
         
-      //  localStorage.setItem('logstatus', 1);     
-        api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost);  
+      //  sessionStorage.setItem('logstatus', 1);     
+        api.put(`/operador/update/${sessionStorage.getItem('logoperadorId')}`, datapost);  
 
         console.log(JSON.stringify(logindata, null, "    "));  
-        api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata) ;      
+        api.put(`/login/update/${sessionStorage.getItem('logoperadorId')}`,logindata) ;      
            
             console.log('this.state.campEmail - '+JSON.stringify(this.state.campEmail, null, "    "));  
             api.get(`/emailOperador/getemail/${this.state.campEmail}`)
@@ -708,15 +708,15 @@ sendUpdate(){
                 alert("Erro verificar log  "+error)
               })           
 
-            if (localStorage.getItem('logperfil') == 1) {              
+            if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (localStorage.getItem('logperfil') == 0) {          
-              localStorage.setItem('logperfil', 8);  
-              localStorage.setItem('logid', localStorage.getItem('logoperadorId'));                
+            } else if (sessionStorage.getItem('logperfil') == 0) {          
+              sessionStorage.setItem('logperfil', 8);  
+              sessionStorage.setItem('logid', sessionStorage.getItem('logoperadorId'));                
               this.props.history.push('/area_operador');  
-            } else if (localStorage.getItem('logperfil') == 8) {          
-              localStorage.setItem('logperfil', 8);  
-              localStorage.setItem('logid', localStorage.getItem('logoperadorId'));                
+            } else if (sessionStorage.getItem('logperfil') == 8) {          
+              sessionStorage.setItem('logperfil', 8);  
+              sessionStorage.setItem('logid', sessionStorage.getItem('logoperadorId'));                
               this.props.history.push('/area_operador');  
             }                    
 }  
@@ -887,7 +887,7 @@ verificar_menu() {
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/operadores_incluir/`+localStorage.getItem('logoperadorId')+`/0`}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/operadores_incluir/`+sessionStorage.getItem('logoperadorId')+`/0`}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                

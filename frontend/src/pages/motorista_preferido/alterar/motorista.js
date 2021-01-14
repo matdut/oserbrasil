@@ -31,7 +31,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import { Multiselect } from 'multiselect-react-dropdown';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 
 class motoristaAlterarComponent extends React.Component{  
 
@@ -144,23 +144,23 @@ class motoristaAlterarComponent extends React.Component{
 
     this.setState({          
       inicio: 1,     
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
     
     if (userId !== 0) {                    
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     } else {
-      localStorage.setItem('logperfil', 0);
+      sessionStorage.setItem('logperfil', 0);
     }    
 
-    if (localStorage.getItem('logperfil') == 3) {
+    if (sessionStorage.getItem('logperfil') == 3) {
       this.setState({      
         camp_cpf_disabled: true,
        // camp_nome_disabled: true,
       });   
     }
 
-    if (localStorage.getItem('logid') == 0) { 
+    if (sessionStorage.getItem('logid') == 0) { 
       this.setState({      
         campStatusId: 6,
         progresso: 0
@@ -172,12 +172,12 @@ class motoristaAlterarComponent extends React.Component{
     } 
         
   /*  console.log('userID - '+userId)
-    console.log('logid - '+localStorage.getItem('logid'))
-    console.log('Perfil log - '+localStorage.getItem('logperfil'))
+    console.log('logid - '+sessionStorage.getItem('logid'))
+    console.log('Perfil log - '+sessionStorage.getItem('logperfil'))
     console.log('Status - '+this.state.campStatusId)
     console.log('LogPerfil const - '+this.state.perfillog) */
     
-    if (localStorage.getItem('logperfil') !== 0) { 
+    if (sessionStorage.getItem('logperfil') !== 0) { 
       //console.log(' busca cliente ')                  
       // buscar representante       
       this.busca_motorista()      
@@ -204,7 +204,7 @@ class motoristaAlterarComponent extends React.Component{
 
   busca_motorista() {
     const { validate } = this.state   
-    api.get(`/motoristaAuxiliar/get/${localStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -911,7 +911,7 @@ sendSave(){
    console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
 
      console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/motoristaAuxiliar/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -921,13 +921,13 @@ sendSave(){
             statusId: this.state.campStatusId
           }
 
-          api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+          api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)
 
-          localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);
-          if (localStorage.getItem('logperfil') == 1) {
+          sessionStorage.setItem('lognome', this.state.campNome);  
+          //sessionStorage.setItem('logid', userId);
+          if (sessionStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (localStorage.getItem('logperfil') == 9) {
+          } else if (sessionStorage.getItem('logperfil') == 9) {
             this.props.history.push(`/area_motorista_auxiliar`);                   
           }           
 
@@ -1004,11 +1004,11 @@ verificaEmailonfocus(e){
 
  verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 9) {
    return( 
      <menu_motorista_auxiliar />     
    );
@@ -1023,7 +1023,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }

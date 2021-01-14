@@ -25,10 +25,10 @@ import '../motorista.css';
 import Menu_motorista from '../menu_motorista';
 
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
-const dataendereco = localStorage.getItem('logdataCliente');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
+const dataendereco = sessionStorage.getItem('logdataCliente');
 const buscadorcep = require('buscadorcep');
 var dateFormat = require('dateformat');
 
@@ -127,21 +127,21 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
     
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);      
+      sessionStorage.setItem('logid', userId);      
     } else {
-      localStorage.setItem('logperfil', 0);      
+      sessionStorage.setItem('logperfil', 0);      
     }    
 
     this.setState({      
       validate,
       progresso: 30,
-      perfillog: localStorage.getItem('logperfil'),    
-      campCep: localStorage.getItem('logcep') 
+      perfillog: sessionStorage.getItem('logperfil'),    
+      campCep: sessionStorage.getItem('logcep') 
     });  
     this.limpar_endereco();    
     this.loadEstados();       
 
-    if (localStorage.getItem('logid') !== 0) { 
+    if (sessionStorage.getItem('logid') !== 0) { 
       this.busca_cep_banco();    
     }
 
@@ -162,7 +162,7 @@ class empresarialComponent extends React.Component{
   busca_cep_banco(e) {   
     const { validate } = this.state
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -261,13 +261,13 @@ class empresarialComponent extends React.Component{
 
         /*  if (validate.estadoState !== 'has-success' && validate.cidadeState !== 'has-success' 
           && validate.bairroState !== 'has-success' && validate.enderecoState !== 'has-success'           
-          && localStorage.getItem('logcep') !== null) {
+          && sessionStorage.getItem('logcep') !== null) {
 
-            this.cep_preenchido(cepremoveMask(localStorage.getItem('logcep')))  
+            this.cep_preenchido(cepremoveMask(sessionStorage.getItem('logcep')))  
           }*/
 
         } else {          
-             this.cep_preenchido(cepremoveMask(localStorage.getItem('logcep')));          
+             this.cep_preenchido(cepremoveMask(sessionStorage.getItem('logcep')));          
         }
       })        
       .catch(error=>{
@@ -501,8 +501,8 @@ limpar_endereco() {
 
 valida_motorista() {
   const { validate } = this.state;  
-  localStorage.setItem('logPendencia', 0);
-  api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+  sessionStorage.setItem('logPendencia', 0);
+  api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
   .then(res=>{
       console.log(JSON.stringify(res.data, null, "    ")); 
       if (res.data.data.length > 0) {          
@@ -531,49 +531,49 @@ valida_motorista() {
             })                   
             
             if (this.state.campCarroId == null || this.state.campCarroId == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campModeloId == null || this.state.campModeloId == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.camp_foto_CRVL_url == null || this.state.camp_foto_CRVL_url == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campSeguradoraId == null || this.state.campSeguradoraId == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campPlaca == null || this.state.campPlaca == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campAnodut == null || this.state.campAnodut == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campAno == null || this.state.campAno == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campCor == null || this.state.campCor == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campCNH == null || this.state.campCNH == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campData_CNH == null || this.state.campData_CNH == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.camp_foto_CNH_url == null || this.state.camp_foto_CNH_url == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.camp_foto_url == null || this.state.camp_foto_url == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campCep == null || this.state.campCep == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campNumero == null || this.state.campNumero == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
             if (this.state.campComplemento == null || this.state.campComplemento == "") {
-              localStorage.setItem('logPendencia', 1)
+              sessionStorage.setItem('logPendencia', 1)
             }
 
           } 
@@ -855,7 +855,7 @@ verifica_botao(inicio) {
       <div>
       <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_endereco_motorista">                
@@ -890,30 +890,30 @@ sendUpdate(){
     cep: this.state.campCep,    
   }          
 
-     if (localStorage.getItem('logPendencia') == 0) {
+     if (sessionStorage.getItem('logPendencia') == 0) {
       const data1 = {
         email: this.state.campEmail,  
         perfilId: 3,
         statusId: 16
       }          
-        api.put(`/motorista/update/${localStorage.getItem('logid')}`, data1)      
+        api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, data1)      
 
-        api.put(`/login/update/${localStorage.getItem('logid')}`,data1)
+        api.put(`/login/update/${sessionStorage.getItem('logid')}`,data1)
      }
 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
            
-              localStorage.setItem('logprogress', 75);  
-             // localStorage.setItem('logid', userId);
-             if (localStorage.getItem('logperfil') == 1) {
-                this.props.history.push(`/veiculo_motorista/`+localStorage.getItem('logid'));
-              } else if (localStorage.getItem('logperfil') == 3) {
+              sessionStorage.setItem('logprogress', 75);  
+             // sessionStorage.setItem('logid', userId);
+             if (sessionStorage.getItem('logperfil') == 1) {
+                this.props.history.push(`/veiculo_motorista/`+sessionStorage.getItem('logid'));
+              } else if (sessionStorage.getItem('logperfil') == 3) {
                 this.props.history.push(`/area_motorista`);                
-              } else if (localStorage.getItem('logperfil') == 0) {                 
-                 this.props.history.push(`/veiculo_motorista/`+localStorage.getItem('logid'));                                                
+              } else if (sessionStorage.getItem('logperfil') == 0) {                 
+                 this.props.history.push(`/veiculo_motorista/`+sessionStorage.getItem('logid'));                                                
               }              
   
           }
@@ -952,7 +952,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }
@@ -990,11 +990,11 @@ verifica_horario(){
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
    return( 
      <Menu_motorista />     
    );
@@ -1003,7 +1003,7 @@ verificar_menu_lateral() {
 }
 
 verifica_mensagem() {
-  if (localStorage.getItem('statusid') == 16) {
+  if (sessionStorage.getItem('statusid') == 16) {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     

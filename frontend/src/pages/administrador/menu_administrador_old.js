@@ -32,16 +32,16 @@ class menu_administradorComponent extends React.Component  {
      //this.loadCliente()
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logVeiculo')
-    localStorage.setItem('logperfil', 0);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logVeiculo')
+    sessionStorage.setItem('logperfil', 0);
 
     this.props.history.push("/");
   }
@@ -54,9 +54,9 @@ class menu_administradorComponent extends React.Component  {
   
   render()
   {
-    const login = localStorage.getItem('logemail');              
-    const nome = localStorage.getItem('lognome');  
-    const id = localStorage.getItem('logid');    
+    const login = sessionStorage.getItem('logemail');              
+    const nome = sessionStorage.getItem('lognome');  
+    const id = sessionStorage.getItem('logid');    
 
  return (
   <div>  

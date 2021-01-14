@@ -24,8 +24,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -109,15 +109,15 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
    
     this.setState({      
-      perfil: localStorage.getItem('logperfil'),
+      perfil: sessionStorage.getItem('logperfil'),
       progresso: 95
     });  
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);      
+      sessionStorage.setItem('logid', userId);      
     } 
     
-    if (localStorage.getItem('logid') !== 0) { 
+    if (sessionStorage.getItem('logid') !== 0) { 
        this.carrega_motorista()
     }   
   }
@@ -131,7 +131,7 @@ class empresarialComponent extends React.Component{
 
   carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -165,7 +165,7 @@ class empresarialComponent extends React.Component{
             })  
             this.verifica_botao(this.state.inicio)    
           }
-          localStorage.setItem('lograzao_social', this.state.campRazao_social);  
+          sessionStorage.setItem('lograzao_social', this.state.campRazao_social);  
 
         }  
       })        
@@ -601,20 +601,20 @@ sendUpdate(){
   }          
 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
            
-            //this.props.history.push(`/cliente_endereco/`+localStorage.getItem('logid'));            
-            localStorage.setItem('logprogress', this.state.progresso);        
+            //this.props.history.push(`/cliente_endereco/`+sessionStorage.getItem('logid'));            
+            sessionStorage.setItem('logprogress', this.state.progresso);        
             
-            if (localStorage.getItem('logperfil') == 1) {              
+            if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (localStorage.getItem('logperfil') == 3) {
+            } else if (sessionStorage.getItem('logperfil') == 3) {
               this.props.history.push(`/area_motorista`);
               
-            } else if (localStorage.getItem('logperfil') == 0) {          
-              localStorage.setItem('logperfil', 3);  
+            } else if (sessionStorage.getItem('logperfil') == 0) {          
+              sessionStorage.setItem('logperfil', 3);  
               this.props.history.push('/area_motorista');  
             }          
   
@@ -686,7 +686,7 @@ verifica_botao(inicio) {
   const { validate } = this.state;
   //console.log(JSON.stringify(this.state, null, "    "));
   //console.log(JSON.stringify(inicio, null, "    "));
-  if (localStorage.getItem('logperfil') == 0) {
+  if (sessionStorage.getItem('logperfil') == 0) {
 
       if (inicio == 1) {
         return (
@@ -738,7 +738,7 @@ verifica_botao(inicio) {
               );   
             }    
       }
-    } else if (localStorage.getItem('logperfil') == 1) {
+    } else if (sessionStorage.getItem('logperfil') == 1) {
       if (inicio == 1) {
         return (
 
@@ -776,7 +776,7 @@ verifica_botao(inicio) {
             }    
        }      
 
-    } else if (localStorage.getItem('logperfil') == 3) {  
+    } else if (sessionStorage.getItem('logperfil') == 3) {  
     
       if (inicio == 1) {
         return (
@@ -862,13 +862,13 @@ handleMouseDownPassword = (event) => {
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
+  if (sessionStorage.getItem('logperfil') == 0) {
    
    return(
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/foto_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/foto_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -889,11 +889,11 @@ verificar_menu() {
    </div>         
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div className="d-flex justify-content-around">
            <div className="botao_navegacao">
-                 <Link to={`/endereco_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/endereco_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -909,7 +909,7 @@ verificar_menu() {
          </div>
       );
 
-  } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
+  } else if (sessionStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
 
     return(
       <div className="d-flex justify-content-around">

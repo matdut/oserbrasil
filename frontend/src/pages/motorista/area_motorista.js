@@ -22,9 +22,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const login = localStorage.getItem('logemail');              
-const nome = localStorage.getItem('lognome');  
-const id = localStorage.getItem('logid');   
+const login = sessionStorage.getItem('logemail');              
+const nome = sessionStorage.getItem('lognome');  
+const id = sessionStorage.getItem('logid');   
 
 class Area_motorista extends React.Component  {
 
@@ -44,10 +44,10 @@ class Area_motorista extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid'), 
-      statusid: localStorage.getItem('statusid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid'), 
+      statusid: sessionStorage.getItem('statusid') 
     });
      //this.loadCliente()
     // this.loadlistEventos();
@@ -57,7 +57,7 @@ class Area_motorista extends React.Component  {
   }
  
   loadlistServicosConvite(){    
-    api.get(`/envioservicoMotorista/totalEnvioServicoMotorista/${localStorage.getItem('logid')}`)
+    api.get(`/envioservicoMotorista/totalEnvioServicoMotorista/${sessionStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success == true) {       
 
@@ -75,7 +75,7 @@ class Area_motorista extends React.Component  {
    loadlistServicosAtivos(){
     // const url = baseUrl+"/cliente/list"   
     debugger;
-    api.get(`/motorista_servico/totalServicosMotorista/${localStorage.getItem('logid')}`)
+    api.get(`/motorista_servico/totalServicosMotorista/${sessionStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data             
@@ -95,7 +95,7 @@ class Area_motorista extends React.Component  {
 verifica_menu() {    
 
     return (      
-       localStorage.getItem('lognome')
+       sessionStorage.getItem('lognome')
      ); 
   
 }
@@ -131,7 +131,7 @@ verifica_horario(){
 }
 
 verifica_mensagem() {
-  if (localStorage.getItem('statusid') == 16) {
+  if (sessionStorage.getItem('statusid') == 16) {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     

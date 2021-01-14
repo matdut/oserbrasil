@@ -35,10 +35,10 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 
 //const baseUrl = "http://34.210.56.22:3333";
-const login = localStorage.getItem('logemail');              
-const nome = localStorage.getItem('lognome');  
-const id = localStorage.getItem('logid');  
-const perfil = localStorage.getItem('logperfil');  
+const login = sessionStorage.getItem('logemail');              
+const nome = sessionStorage.getItem('lognome');  
+const id = sessionStorage.getItem('logid');  
+const perfil = sessionStorage.getItem('logperfil');  
 const buscadorcep = require('buscadorcep');
 
 class EditComponent extends React.Component{ 
@@ -240,8 +240,8 @@ class EditComponent extends React.Component{
   //console.log('entrou componentDidMount');
   // parametro de id del usuario
   this.setState({
-      perfil: localStorage.getItem('logperfil'),
-      nome: localStorage.getItem('lognome')}
+      perfil: sessionStorage.getItem('logperfil'),
+      nome: sessionStorage.getItem('lognome')}
   );
 
   this.verifica_menu();
@@ -1320,7 +1320,7 @@ voltarlistaClick = () => {
  
 habilita_botao_voltar() {
  // console.log('this.state.perfil -'+this.state.perfil);  
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
     return (      
       <button type="button" class="btn btn-danger" onClick={this.voltarlistaClick}>VOLTAR</button>    
     );
@@ -2355,9 +2355,9 @@ fileChangedHandler = (event) => {
               'success'
             )
 
-           // localStorage.setItem('logemail', response.data.data.email);            
-           // localStorage.setItem('lognome', response.data.data.nome);
-           // localStorage.setItem('logid', response.data.data.id);
+           // sessionStorage.setItem('logemail', response.data.data.email);            
+           // sessionStorage.setItem('lognome', response.data.data.nome);
+           // sessionStorage.setItem('logid', response.data.data.id);
 
             if (this.state.perfil == 1) {
               this.props.history.push('/listar');

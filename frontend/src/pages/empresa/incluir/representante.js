@@ -33,8 +33,8 @@ import '../empresarial.css';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 
-//const userId = localStorage.getItem('logid');
-const andamento_cadastro = localStorage.getItem('logprogress');   
+//const userId = sessionStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');   
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -118,40 +118,40 @@ class empresarialComponent extends React.Component{
 
   componentDidMount(){ 
     moment.locale('pt-br');
-   // localStorage.clear();
+   // sessionStorage.clear();
    let userId = this.props.match.params.id;       
    //let email = this.props.match.params.email;     
 
   // console.log('email '+ email);
 
   
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
 
-      if (localStorage.getItem('logperfil') == null) {
-        localStorage.setItem('logperfil', 0);
+      if (sessionStorage.getItem('logperfil') == null) {
+        sessionStorage.setItem('logperfil', 0);
       }
 
-      if (localStorage.getItem('logid') == 0) { // esta vindo do create 
-          //localStorage.setItem('logperfil', 0);
-        // localStorage.setItem('logrepresentante', 0);
-          localStorage.setItem('logsenha', '');
-          localStorage.setItem('logcepbanco', '');
+      if (sessionStorage.getItem('logid') == 0) { // esta vindo do create 
+          //sessionStorage.setItem('logperfil', 0);
+        // sessionStorage.setItem('logrepresentante', 0);
+          sessionStorage.setItem('logsenha', '');
+          sessionStorage.setItem('logcepbanco', '');
           this.setState({              
             incluir: true 
           });    
       } else {
           this.busca_empresa()
         //  this.busca_cliente()    
-          localStorage.setItem('logperfil', 7);
+          sessionStorage.setItem('logperfil', 7);
       }
       
       //console.log('userID - '+userId)
-      //console.log('logid - '+localStorage.getItem('logid'))
-      //console.log('Perfil log - '+localStorage.getItem('logperfil'))
+      //console.log('logid - '+sessionStorage.getItem('logid'))
+      //console.log('Perfil log - '+sessionStorage.getItem('logperfil'))
 
       //const perfillog =      
     
-      if (localStorage.getItem('logperfil') == 7) {
+      if (sessionStorage.getItem('logperfil') == 7) {
         this.setState({      
           camp_cpf_disabled: true,
         //  camp_nome_disabled: true,
@@ -160,11 +160,11 @@ class empresarialComponent extends React.Component{
         this.busca_empresa()
       }
 
-      if (localStorage.getItem('logrepresentante') !== 0) {
+      if (sessionStorage.getItem('logrepresentante') !== 0) {
           this.busca_cliente()
       }
         
-      if (localStorage.getItem('logperfil') == 0 && localStorage.getItem('logid') == 0) {
+      if (sessionStorage.getItem('logperfil') == 0 && sessionStorage.getItem('logid') == 0) {
         this.setState({      
           progresso: 0, 
           campStatusId: 6
@@ -184,7 +184,7 @@ class empresarialComponent extends React.Component{
 
   busca_empresa() {
     const { validate } = this.state  
-    api.get(`/empresa/getEmpresaCliente/${localStorage.getItem('logid')}`)
+    api.get(`/empresa/getEmpresaCliente/${sessionStorage.getItem('logid')}`)
     .then(res=>{
       if (res.data.success) {
 
@@ -193,8 +193,8 @@ class empresarialComponent extends React.Component{
           camprazao_social: res.data.data[0].razao_social
         });   
         
-        localStorage.setItem('logrepresentante', this.state.logrepresentante)
-        localStorage.setItem('lograzao_social', res.data.data[0].razao_social)
+        sessionStorage.setItem('logrepresentante', this.state.logrepresentante)
+        sessionStorage.setItem('lograzao_social', res.data.data[0].razao_social)
         this.busca_cliente() 
       }  
     })        
@@ -205,7 +205,7 @@ class empresarialComponent extends React.Component{
 
   busca_cliente() {
     const { validate } = this.state  
-    api.get(`/cliente/get/${localStorage.getItem('logrepresentante')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logrepresentante')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -817,11 +817,11 @@ sendSave(){
            api.post('/login/create',logindata)
             
       
-          localStorage.setItem('logrepresentante', response.data.data.id);
-          localStorage.setItem('logcpfrep', response.data.data.cpf);
-          localStorage.setItem('logid', response.data.data.id);          
+          sessionStorage.setItem('logrepresentante', response.data.data.id);
+          sessionStorage.setItem('logcpfrep', response.data.data.cpf);
+          sessionStorage.setItem('logid', response.data.data.id);          
 
-          this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logid'));   
+          this.props.history.push(`/empresa_dados_incluir/`+sessionStorage.getItem('logid'));   
           
   
           }
@@ -833,7 +833,7 @@ sendSave(){
         })
     } else {
       console.log('atualizar - '+JSON.stringify(datapost, null, "    "));         
-      api.put('/cliente/update/'+localStorage.getItem('logrepresentante'),datapost)
+      api.put('/cliente/update/'+sessionStorage.getItem('logrepresentante'),datapost)
       .then(response=>{
         //console.log( JSON.stringify(response.data, null, "    ") ); 
         if (response.data.success==true) {       
@@ -842,12 +842,12 @@ sendSave(){
             email: this.state.campEmail,  
             perfilId: 7,
             statusId: this.state.campStatusId,
-            logid: localStorage.getItem('logrepresentante')
+            logid: sessionStorage.getItem('logrepresentante')
           }
 
-        api.put('/login/update/'+localStorage.getItem('logrepresentante'),logindata)          
+        api.put('/login/update/'+sessionStorage.getItem('logrepresentante'),logindata)          
 
-        this.props.history.push(`/empresa_dados_incluir/`+localStorage.getItem('logid'));           
+        this.props.history.push(`/empresa_dados_incluir/`+sessionStorage.getItem('logid'));           
 
         }
         else {
@@ -885,11 +885,11 @@ verificar_menu(perfil) {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
    return( 
      <Menu_cliente_empresarial />     
    );

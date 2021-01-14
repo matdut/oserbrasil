@@ -24,9 +24,9 @@ class Area_cliente extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
 
     this.loadlistEventos();
@@ -38,14 +38,14 @@ class Area_cliente extends React.Component  {
   verifica_titulo() {    
 
     return (      
-       localStorage.getItem('lognome')
+       sessionStorage.getItem('lognome')
      ); 
   
   }  
   loadTotalServicosEvento(){
     // const url = baseUrl+"/cliente/list"   
     //debugger;
-    api.get(`/servicos/valorServicoTodosEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/valorServicoTodosEventos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data    
@@ -65,7 +65,7 @@ class Area_cliente extends React.Component  {
    loadTotalViagensEventos(){
     // const url = baseUrl+"/cliente/list"   
     debugger;
-    api.get(`/servicos/totalViagensEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/totalViagensEventos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data             
@@ -84,7 +84,7 @@ class Area_cliente extends React.Component  {
   loadlistEventos(){
     // const url = baseUrl+"/cliente/list"   
     
-    api.get(`/eventos/totaleventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/eventos/totaleventos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data    

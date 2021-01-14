@@ -29,8 +29,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -128,15 +128,15 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
    
     this.setState({      
-      perfil: localStorage.getItem('logperfil'),
+      perfil: sessionStorage.getItem('logperfil'),
       progresso: 95
     });  
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);      
+      sessionStorage.setItem('logid', userId);      
     } 
     
-    //if (localStorage.getItem('logid') !== 0) { 
+    //if (sessionStorage.getItem('logid') !== 0) { 
       this.carrega_senha()
       this.carrega_motorista()
     //}   
@@ -144,7 +144,7 @@ class empresarialComponent extends React.Component{
 
   carrega_senha() {
     const { validate } = this.state;
-    api.get(`/login/getSenha/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)     
+    api.get(`/login/getSenha/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)     
     .then(res=>{
       if (res.data.success) {
         this.setState({     
@@ -188,7 +188,7 @@ class empresarialComponent extends React.Component{
   
   carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -203,7 +203,7 @@ class empresarialComponent extends React.Component{
             endereco: "/area_motorista" 
           })  
          
-          localStorage.setItem('lognome', this.state.campNome);  
+          sessionStorage.setItem('lognome', this.state.campNome);  
 
         }  
       })        
@@ -657,29 +657,29 @@ sendUpdate(){
     statusId: this.state.statusId,  
   }       
 
-  if (localStorage.getItem('logperfil') == 0) {
-    localStorage.setItem('logperfil', 3);
+  if (sessionStorage.getItem('logperfil') == 0) {
+    sessionStorage.setItem('logperfil', 3);
   } 
   
   const logindata = {  
-    perfilId: localStorage.getItem('logperfil'),
+    perfilId: sessionStorage.getItem('logperfil'),
     senha: this.state.campSenha,     
     statusId: this.state.statusId
   }  
 
-  api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+  api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)
 
-  //console.log('logid - '+JSON.stringify(localStorage.getItem('logid'), null, "    ")); 
-  //console.log('logperfil - '+JSON.stringify(localStorage.getItem('logperfil'), null, "    ")); 
+  //console.log('logid - '+JSON.stringify(sessionStorage.getItem('logid'), null, "    ")); 
+  //console.log('logperfil - '+JSON.stringify(sessionStorage.getItem('logperfil'), null, "    ")); 
   
-        api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, datapost)
         
         .then(response=>{
           if (response.data.success==true) {                        
             
-            if (localStorage.getItem('logperfil') == 1) {              
+            if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (localStorage.getItem('logperfil') == 3) {              
+            } else if (sessionStorage.getItem('logperfil') == 3) {              
               this.props.history.push(`/area_motorista`);  
             }          
   
@@ -854,7 +854,7 @@ verificar_menu() {
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/foto_motorista_alterar/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/foto_motorista_alterar/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_seha_motorista">                
@@ -878,11 +878,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
    return( 
      <Menu_motorista />     
    );
@@ -897,7 +897,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }
@@ -934,7 +934,7 @@ verifica_horario(){
 }
 
 verifica_mensagem() {
-  if (localStorage.getItem('statusid') == 16) {
+  if (sessionStorage.getItem('statusid') == 16) {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     

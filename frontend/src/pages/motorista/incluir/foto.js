@@ -24,9 +24,9 @@ import Paper from '@material-ui/core/Paper';
 import api from '../../../services/api';
 import '../foto.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 const resizeFile = (file) => new Promise(resolve => {
@@ -62,11 +62,11 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     }
 
     this.setState({           
-      perfillog: localStorage.getItem('logperfil'),
+      perfillog: sessionStorage.getItem('logperfil'),
       fotoState: ''
     }); 
     
@@ -82,7 +82,7 @@ class empresarialComponent extends React.Component{
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -205,14 +205,14 @@ async sendUpdate(){
         name: this.state.uploadedFilesFoto[0].name
       }
 
-         api.put(`/motorista/foto/update/${localStorage.getItem('logid')}`, formData)
+         api.put(`/motorista/foto/update/${sessionStorage.getItem('logid')}`, formData)
     
-            if (localStorage.getItem('logperfil') == 1) {
-              this.props.history.push(`/senha_motorista_incluir/`+localStorage.getItem('logid'));                    
-            } else if (localStorage.getItem('logperfil') == 3) {
+            if (sessionStorage.getItem('logperfil') == 1) {
+              this.props.history.push(`/senha_motorista_incluir/`+sessionStorage.getItem('logid'));                    
+            } else if (sessionStorage.getItem('logperfil') == 3) {
               this.props.history.push(`/area_motorista`);                   
-            } else if (localStorage.getItem('logperfil') == 0) {
-              this.props.history.push(`/senha_motorista_incluir/`+localStorage.getItem('logid'));                    
+            } else if (sessionStorage.getItem('logperfil') == 0) {
+              this.props.history.push(`/senha_motorista_incluir/`+sessionStorage.getItem('logid'));                    
             }              
         
         //  }
@@ -220,12 +220,12 @@ async sendUpdate(){
         //  this.getBase64(file, onload);
 
    } else {
-    if (localStorage.getItem('logperfil') == 1) {
-      this.props.history.push(`/senha_motorista_incluir/`+localStorage.getItem('logid'));                    
-    } else if (localStorage.getItem('logperfil') == 3) {
+    if (sessionStorage.getItem('logperfil') == 1) {
+      this.props.history.push(`/senha_motorista_incluir/`+sessionStorage.getItem('logid'));                    
+    } else if (sessionStorage.getItem('logperfil') == 3) {
       this.props.history.push(`/area_motorista`);                   
-    } else if (localStorage.getItem('logperfil') == 0) {
-      this.props.history.push(`/senha_motorista_incluir/`+localStorage.getItem('logid'));                    
+    } else if (sessionStorage.getItem('logperfil') == 0) {
+      this.props.history.push(`/senha_motorista_incluir/`+sessionStorage.getItem('logid'));                    
     }            
     
    }   
@@ -276,12 +276,12 @@ handleUpload = files => {
 }
 
 verificar_menu(){
-  if (localStorage.getItem('logperfil') == 0) {  
+  if (sessionStorage.getItem('logperfil') == 0) {  
     return(
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/documentos_motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/documentos_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -302,12 +302,12 @@ verificar_menu(){
      </div>     
     );
 
-  } else if (localStorage.getItem('logperfil') == 1) { 
+  } else if (sessionStorage.getItem('logperfil') == 1) { 
     return(
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/documentos_motorista_incluir/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/documentos_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -327,7 +327,7 @@ verificar_menu(){
           </div> 
      </div>     
     );
-  } else if (localStorage.getItem('logperfil') == 3) { 
+  } else if (sessionStorage.getItem('logperfil') == 3) { 
     return(
       <div>
       <div className="d-flex justify-content-around">
@@ -352,11 +352,11 @@ verificar_menu(){
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 3) {
+  } else if (sessionStorage.getItem('logperfil') == 3) {
    return( 
      <Menu_motorista />     
    );

@@ -62,8 +62,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import Menu_motorista from '../menu_motorista';
 import { Backdrop } from '@material-ui/core';
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 const resizeFile = (file) => new Promise(resolve => {
   Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
   uri => {
@@ -266,7 +266,7 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
 
@@ -339,7 +339,7 @@ class listComponent extends React.Component  {
  
   loadMotorista(){
    // const url = baseUrl+"/motorista/list"
-   api.get('/veiculo/lista_veiculos/'+localStorage.getItem('logid'))
+   api.get('/veiculo/lista_veiculos/'+sessionStorage.getItem('logid'))
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -356,7 +356,7 @@ class listComponent extends React.Component  {
  
   carrega_veiculo() {
     const { validate } = this.state;
-    api.get(`/veiculo/get/${localStorage.getItem('logVeiculo')}`)
+    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -420,7 +420,7 @@ class listComponent extends React.Component  {
 
            this.buscaSeguradora(res.data.data[0].seguradoraId)
            this.load_modelo_banco(this.state.campCarroId)
-         //  localStorage.setItem('lognome', this.state.campNome);  
+         //  sessionStorage.setItem('lognome', this.state.campNome);  
 
 
           if (this.state.campCarro == null) {
@@ -884,7 +884,7 @@ class listComponent extends React.Component  {
         this.state.listaMarcas.map((data)=>{          
            if (data.id == id) {
               console.log('buscaMarca - '+data.name);     
-              localStorage.setItem('logMarca', data.name)
+              sessionStorage.setItem('logMarca', data.name)
              // marca_saida = data.name                   
            }
   
@@ -897,7 +897,7 @@ class listComponent extends React.Component  {
       this.state.listaModelos.map((data)=>{          
          if (data.id == id) {
            console.log('buscaModelo - '+data.name); 
-           localStorage.setItem('logModelo', data.name)    
+           sessionStorage.setItem('logModelo', data.name)    
          }
        }) 
      
@@ -1038,8 +1038,8 @@ class listComponent extends React.Component  {
         const datapost = {
           marcaId: this.state.campCarroId, 
           modeloId: this.state.campModeloId,
-          marca: localStorage.getItem('logMarca'), 
-          modelo: localStorage.getItem('logModelo'),
+          marca: sessionStorage.getItem('logMarca'), 
+          modelo: sessionStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
           tipoTransporte: this.state.camptipo_veiculo,      
           apolice: this.state.campApolice,
@@ -1051,7 +1051,7 @@ class listComponent extends React.Component  {
           cadeirinha_pequena: this.state.campCadeirinhaPequena, 
           cadeirinha_grande: this.state.campCadeirinhaGrande, 
           cadeira_rodas: this.state.campCadeiraRodas,
-          motoristaId: localStorage.getItem('logid'),
+          motoristaId: sessionStorage.getItem('logid'),
           foto_CRVL_name: this.state.uploadedCRVL[0].name,          
           foto_url: await this.onChange(file),                    
         }          
@@ -1085,7 +1085,7 @@ class listComponent extends React.Component  {
                //   console.log(' CRLV - '+JSON.stringify(formData1, null, "    ")); 
                   //    formData.append("file", this.state.uploadedCNH[0].file, this.state.uploadedCNH[0].name)                  
                  /*
-                  api.put(`/veiculo/documentoCRVL/update/${resp.data.data.id}/${localStorage.getItem('logid')}`, formData1)
+                  api.put(`/veiculo/documentoCRVL/update/${resp.data.data.id}/${sessionStorage.getItem('logid')}`, formData1)
                   .then(response=>{
 
                         
@@ -1132,8 +1132,8 @@ class listComponent extends React.Component  {
         datapost = {
           marcaId: this.state.campCarroId, 
           modeloId: this.state.campModeloId,
-          marca: localStorage.getItem('logMarca'), 
-          modelo: localStorage.getItem('logModelo'),
+          marca: sessionStorage.getItem('logMarca'), 
+          modelo: sessionStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
           tipoTransporte: this.state.camptipo_veiculo,
           apolice: this.state.campApolice,
@@ -1145,7 +1145,7 @@ class listComponent extends React.Component  {
           cadeirinha_pequena: this.state.campCadeirinhaPequena, 
           cadeirinha_grande: this.state.campCadeirinhaGrande, 
           cadeira_rodas: this.state.campCadeiraRodas,
-          motoristaId: localStorage.getItem('logid'),
+          motoristaId: sessionStorage.getItem('logid'),
           foto_CRVL_name: this.state.uploadedCRVL[0].name,          
           foto_url: await this.onChange(file),                    
         }          
@@ -1155,8 +1155,8 @@ class listComponent extends React.Component  {
         datapost = {
           marcaId: this.state.campCarroId, 
           modeloId: this.state.campModeloId,
-          marca: localStorage.getItem('logMarca'), 
-          modelo: localStorage.getItem('logModelo'),
+          marca: sessionStorage.getItem('logMarca'), 
+          modelo: sessionStorage.getItem('logModelo'),
           seguradoraId: this.state.campSeguradoraId,
           tipoTransporte: this.state.camptipo_veiculo,
           apolice: this.state.campApolice,
@@ -1168,14 +1168,14 @@ class listComponent extends React.Component  {
           cadeirinha_pequena: this.state.campCadeirinhaPequena, 
           cadeirinha_grande: this.state.campCadeirinhaGrande, 
           cadeira_rodas: this.state.campCadeiraRodas,
-          motoristaId: localStorage.getItem('logid'),         
+          motoristaId: sessionStorage.getItem('logid'),         
         }
        }
 
         console.log('state- '+ JSON.stringify(this.state.incluir, null, "    "));       
         console.log('veiculo motorista - '+ JSON.stringify(datapost, null, "    "));           
         
-              api.put(`/veiculo/update/${localStorage.getItem('logVeiculo')}`, datapost)
+              api.put(`/veiculo/update/${sessionStorage.getItem('logVeiculo')}`, datapost)
               .then(resp=>{
                 console.log('veiculo - '+ JSON.stringify(resp.data, null, "    "));           
                // console.log('response - '+response);
@@ -2274,7 +2274,7 @@ class listComponent extends React.Component  {
     });  
 
     console.log('logVeiculo - '+ data.id)
-    localStorage.setItem('logVeiculo', data.id);
+    sessionStorage.setItem('logVeiculo', data.id);
    
      this.loadSeguradoras();
      this.carrega_marca_banco();
@@ -2436,7 +2436,7 @@ class listComponent extends React.Component  {
    }  
 
   onIncluir() {
-    this.props.history.push(`/incluir_veiculos/`+localStorage.getItem('logid'));   
+    this.props.history.push(`/incluir_veiculos/`+sessionStorage.getItem('logid'));   
   }  
 
   onEditar(data) {

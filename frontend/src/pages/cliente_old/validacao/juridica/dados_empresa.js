@@ -8,8 +8,8 @@ import { cnpjMask } from '../../formatacao/cnpjmask';
 import api from '../../../services/api';
 import './empresarial.css';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+const userId = sessionStorage.getItem('logid');
 const { cnpj } = require('cpf-cnpj-validator');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -60,7 +60,7 @@ class empresarialComponent extends React.Component{
 
   componentDidMount(){  
     const { validate } = this.state
-    //console.log('logprogress - '+ localStorage.getItem('logprogress'));  
+    //console.log('logprogress - '+ sessionStorage.getItem('logprogress'));  
     validate.cnpjState = ''
     validate.razao_socialState = ''
     validate.nome_fantasiaState = ''
@@ -70,7 +70,7 @@ class empresarialComponent extends React.Component{
       progresso: 25 
     });   
     //console.log('progresso -'+ this.state.progresso)
-    if (localStorage.getItem('logid') !== "") {
+    if (sessionStorage.getItem('logid') !== "") {
       this.busca_cliente()
     }
     
@@ -88,7 +88,7 @@ class empresarialComponent extends React.Component{
 
    busca_cliente(e) {
     const { validate } = this.state
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -406,16 +406,16 @@ sendUpdate(){
   }          
 
         console.log('Atualiza Empresa - '+JSON.stringify(datapost, null, "    ")); 
-        console.log('Atualiza Empresa id - '+localStorage.getItem('logid')); 
-        api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+        console.log('Atualiza Empresa id - '+sessionStorage.getItem('logid')); 
+        api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
            
-            localStorage.setItem('logprogress', 50);  
-            localStorage.setItem('lograzaosocial', this.state.campRazao_social);  
-           // localStorage.setItem('logcep', this.state.campCep);   
-            //localStorage.setItem('logid', userId);              
-            //localStorage.setItem('lognome', this.state.campId);              
+            sessionStorage.setItem('logprogress', 50);  
+            sessionStorage.setItem('lograzaosocial', this.state.campRazao_social);  
+           // sessionStorage.setItem('logcep', this.state.campCep);   
+            //sessionStorage.setItem('logid', userId);              
+            //sessionStorage.setItem('lognome', this.state.campId);              
             
             this.props.history.push('/empresa_endereco');            
   
@@ -481,7 +481,7 @@ loadcnpj(e) {
                 campCep: val.data.cep,                
               });              
 
-              localStorage.setItem('logcep', this.state.campCep);  
+              sessionStorage.setItem('logcep', this.state.campCep);  
               validate.razao_socialState = ''    
               if (this.state.campCnpj.length > 0) {
                 validate.cnpjState = 'has-success'      

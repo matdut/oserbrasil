@@ -44,7 +44,7 @@ class menu_clienteComponent extends React.Component  {
         campinclui_operadores: false,
         campvisualiza_eventos: false,             
         isOpen: false,
-        status: localStorage.getItem('logstatus'),
+        status: sessionStorage.getItem('logstatus'),
       }
       
     }    
@@ -52,9 +52,9 @@ class menu_clienteComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid'),      
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid'),      
     });
 
     /*
@@ -71,19 +71,19 @@ class menu_clienteComponent extends React.Component  {
 
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');   
-    localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('logstatus');  
-    localStorage.removeItem('lograzao_social');
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logoperadorId');      
-    localStorage.setItem('logperfil', null);
-    localStorage.setItem('logid', 0);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');   
+    sessionStorage.removeItem('logcepbanco');       
+    sessionStorage.removeItem('logstatus');  
+    sessionStorage.removeItem('lograzao_social');
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logoperadorId');      
+    sessionStorage.setItem('logperfil', null);
+    sessionStorage.setItem('logid', 0);
 
     this.props.history.push("/");
   }
@@ -125,7 +125,7 @@ class menu_clienteComponent extends React.Component  {
  return (
   <div>    
     <Navbar color="#dc3545" light expand="md">
- <NavbarBrand href="#">{localStorage.getItem('lograzao_social')}</NavbarBrand>
+ <NavbarBrand href="#">{sessionStorage.getItem('lograzao_social')}</NavbarBrand>
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.isOpen} navbar>
           <Nav className="ml-auto" navbar>            
@@ -153,10 +153,10 @@ class menu_clienteComponent extends React.Component  {
               <i class="fas fa-list"></i> ALTERAR
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem disabled={this.state.dados_pessoais} href={`/operadores/`+localStorage.getItem('logid')}>
+                <DropdownItem disabled={this.state.dados_pessoais} href={`/operadores/`+sessionStorage.getItem('logid')}>
                 <i class="far fa-user"></i> Dados Pessoais
                 </DropdownItem>      
-                <DropdownItem disabled={this.state.alterar_senha} href={`/senha_operador/`+localStorage.getItem('logid')}>
+                <DropdownItem disabled={this.state.alterar_senha} href={`/senha_operador/`+sessionStorage.getItem('logid')}>
                   <i class="fas fa-key"></i> Alterar Senha
                 </DropdownItem>          
                 <DropdownItem divider />                

@@ -7,9 +7,9 @@ import Menu_motorista from '../motorista/menu_motorista';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
-const login = localStorage.getItem('logemail');              
-const nome = localStorage.getItem('lognome');  
-const id = localStorage.getItem('logid');   
+const login = sessionStorage.getItem('logemail');              
+const nome = sessionStorage.getItem('lognome');  
+const id = sessionStorage.getItem('logid');   
 
 class Area_motorista extends React.Component  {
 

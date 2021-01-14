@@ -36,7 +36,7 @@ import TextField from '@material-ui/core/TextField';
 
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 
 class cliente_alterarComponent extends React.Component{  
 //const cliente_alterar = ({ files }) => (
@@ -126,16 +126,16 @@ class cliente_alterarComponent extends React.Component{
 
     this.carrega_status();
     
-    //console.log('incluir modal '+localStorage.getItem('logincluir'));
-    console.log('logeditid '+localStorage.getItem('logeditid'));
+    //console.log('incluir modal '+sessionStorage.getItem('logincluir'));
+    console.log('logeditid '+sessionStorage.getItem('logeditid'));
 
-    if (localStorage.getItem('logeditid') !== '') {      
-       localStorage.setItem('logid', localStorage.getItem('logeditid'));
+    if (sessionStorage.getItem('logeditid') !== '') {      
+       sessionStorage.setItem('logid', sessionStorage.getItem('logeditid'));
        console.log('buscar_cliente ');
        this.busca_cliente();
     }   
     
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -159,10 +159,10 @@ class cliente_alterarComponent extends React.Component{
 
   busca_cliente() {
     const { validate } = this.state
-   // console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));
-   // console.log('busca perfil state - '+localStorage.getItem('logperfil'));  
-    console.log(`/cliente/get/${localStorage.getItem('logid')}`);  
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+   // console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid'));
+   // console.log('busca perfil state - '+sessionStorage.getItem('logperfil'));  
+    console.log(`/cliente/get/${sessionStorage.getItem('logid')}`);  
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -649,18 +649,18 @@ sendSave(){
             api.post('/login/create',logindata)
 
           //console.log('logprogress - '+ this.state.progresso);          
-          localStorage.setItem('lognome', this.state.campNome);  
-          localStorage.setItem('logid', response.data.data.id);
+          sessionStorage.setItem('lognome', this.state.campNome);  
+          sessionStorage.setItem('logid', response.data.data.id);
          
-         if (localStorage.getItem('logperfil') == 1) {
-            localStorage.setItem('logperfil', 1);
-            this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
-         } else if (localStorage.getItem('logperfil') == 2) {
+         if (sessionStorage.getItem('logperfil') == 1) {
+            sessionStorage.setItem('logperfil', 1);
+            this.props.history.push(`/cliente_senha/`+sessionStorage.getItem('logid'));   
+         } else if (sessionStorage.getItem('logperfil') == 2) {
              this.props.history.push(`/area_cliente_individual`);
-         } else if (localStorage.getItem('logperfil') == 7) {  
+         } else if (sessionStorage.getItem('logperfil') == 7) {  
              this.props.history.push(`/area_cliente_empresarial`);                              
-         } else if (localStorage.getItem('logperfil') == 0) {
-             this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
+         } else if (sessionStorage.getItem('logperfil') == 0) {
+             this.props.history.push(`/cliente_senha/`+sessionStorage.getItem('logid'));   
          }             
   
           }
@@ -671,8 +671,8 @@ sendSave(){
           alert("Erro verificar log  ")
         })
     } else {   
-      console.log(`/cliente/update/${localStorage.getItem('logid')}`); 
-      api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+      console.log(`/cliente/update/${sessionStorage.getItem('logid')}`); 
+      api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {        
           
@@ -683,10 +683,10 @@ sendSave(){
           }
           
           //console.log('logindata 5- '+JSON.stringify(logindata, null, "    ")); 
-          //console.log(`/login/update/${localStorage.getItem('logid')}`); 
-          api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+          //console.log(`/login/update/${sessionStorage.getItem('logid')}`); 
+          api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)
           
-          localStorage.setItem('lognome', this.state.campNome);      
+          sessionStorage.setItem('lognome', this.state.campNome);      
            
           this.setState({ mensagem_salvo: "Dados salvos com sucesso" });
 
@@ -695,18 +695,18 @@ sendSave(){
           
           //this.handleCloseModal();   
 
-          //localStorage.setItem('logid', userId);
+          //sessionStorage.setItem('logid', userId);
        /*
-          if (localStorage.getItem('logperfil') == 1) {
-         //   localStorage.setItem('logperfil', 1);
+          if (sessionStorage.getItem('logperfil') == 1) {
+         //   sessionStorage.setItem('logperfil', 1);
             //this.handleCloseModal();            
             this.props.history.push('/lista_individual');   
-         } else if (localStorage.getItem('logperfil') == 2) {
+         } else if (sessionStorage.getItem('logperfil') == 2) {
              this.props.history.push(`/area_cliente_individual`);
-         } else if (localStorage.getItem('logperfil') == 7) {  
+         } else if (sessionStorage.getItem('logperfil') == 7) {  
              this.props.history.push(`/area_cliente_empresarial`);                              
-         } else if (localStorage.getItem('logperfil') == 0) {
-             this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
+         } else if (sessionStorage.getItem('logperfil') == 0) {
+             this.props.history.push(`/cliente_senha/`+sessionStorage.getItem('logid'));   
          }             
          */  
 
@@ -723,7 +723,7 @@ sendSave(){
 }  
 
 verificar_menu() {   
- // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+ // console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
 
   return(
     <div className="d-flex justify-content-around">
@@ -747,11 +747,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
    return( 
      <Menu_cliente_individual />     
    );
@@ -811,7 +811,7 @@ loadStatus(){
 
 validar_delete(email, id) {
      
-  api.get(`/eventos/listaeventocliente/${id}/${localStorage.getItem('logperfil')}`)
+  api.get(`/eventos/listaeventocliente/${id}/${sessionStorage.getItem('logperfil')}`)
   .then(response =>{
 
     const registros = response.data.data;
@@ -839,9 +839,9 @@ sendDelete(){
   const datapost = {
     statusId: 7
   }    
-  api.put(`/login/update/${localStorage.getItem('logid')}`, datapost)
+  api.put(`/login/update/${sessionStorage.getItem('logid')}`, datapost)
   
-  api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+  api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
   .then(response =>{
 
     if (response.data.success) {             

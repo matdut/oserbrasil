@@ -118,7 +118,7 @@ class Area_administrador extends React.Component  {
   }
   
   verifica_menu() {
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       return (            
            'Administrador'
        ); 

@@ -24,9 +24,9 @@ import AddIcon from '@material-ui/icons/Add';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
-const logid = localStorage.getItem('logid');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const logid = sessionStorage.getItem('logid');
 
 //const baseUrl = "http://34.210.56.22:3333";
 
@@ -46,7 +46,7 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
     this.loadOperadores();    
     this.carrega_status();  
@@ -82,7 +82,7 @@ class listComponent extends React.Component  {
 
   loadOperadores(){
    // const url = baseUrl+"/cliente/list"
-   api.get(`/emailOperador/list/`+localStorage.getItem('logid'))
+   api.get(`/emailOperador/list/`+sessionStorage.getItem('logid'))
     .then(res=>{
       if (res.data.success) {
 
@@ -108,7 +108,7 @@ class listComponent extends React.Component  {
             <Menu_cliente_empresarial />  
             <div className="titulo_admministrador">
               <div className="unnamed-character-style-4 descricao_admministrador">        
-                  <h5> {localStorage.getItem('lograzao_social')} </h5>                                           
+                  <h5> {sessionStorage.getItem('lograzao_social')} </h5>                                           
                    <h3><strong>Lista de Cadastros Incompletos</strong></h3>
               </div>      
             </div>
@@ -290,7 +290,7 @@ class listComponent extends React.Component  {
   onSenha(data) {
     
     //const senhaAleatoria = Math.random().toString(36).slice(-8);
-    //url: `http://localhost:3000/operadores/${localStorage.getItem('logid')}`,        
+    //url: `http://localhost:3000/operadores/${sessionStorage.getItem('logid')}`,        
     const params_email = {    
       email: data.email,                  
       url: `http://www.oser.app.br:21497/operadores_incluir/${data.id}/${data.email}`,        

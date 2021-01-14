@@ -8,7 +8,7 @@ import api from '../../services/api';
 import './motorista.css';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 class motoristaComponent extends React.Component{  
 
   constructor(props){
@@ -73,23 +73,23 @@ class motoristaComponent extends React.Component{
 
     this.setState({          
       inicio: 1,     
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
     
     if (userId !== 0) {                    
-      localStorage.setItem('logid', userId);
+      sessionStorage.setItem('logid', userId);
     } else {
-      localStorage.setItem('logperfil', 0);
+      sessionStorage.setItem('logperfil', 0);
     }    
 
-    if (localStorage.getItem('logperfil') == 3) {
+    if (sessionStorage.getItem('logperfil') == 3) {
       this.setState({      
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
       });   
     }
 
-    if (localStorage.getItem('logid') == 0) { 
+    if (sessionStorage.getItem('logid') == 0) { 
       this.setState({      
         campStatusId: 6,
         progresso: 0
@@ -101,12 +101,12 @@ class motoristaComponent extends React.Component{
     } 
         
     console.log('userID - '+userId)
-    console.log('logid - '+localStorage.getItem('logid'))
-    console.log('Perfil log - '+localStorage.getItem('logperfil'))
+    console.log('logid - '+sessionStorage.getItem('logid'))
+    console.log('Perfil log - '+sessionStorage.getItem('logperfil'))
     console.log('Status - '+this.state.campStatusId)
     console.log('LogPerfil const - '+this.state.perfillog)
     
-    if (localStorage.getItem('logperfil') !== 0) { 
+    if (sessionStorage.getItem('logperfil') !== 0) { 
       //console.log(' busca cliente ')                  
       // buscar representante       
       this.busca_motorista()      
@@ -116,7 +116,7 @@ class motoristaComponent extends React.Component{
 
   busca_motorista() {
     const { validate } = this.state   
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -477,7 +477,7 @@ validaDataNascimentoChange(e){
 verifica_botao(inicio) {
   const { validate } = this.state    
   
-  if (localStorage.getItem('logperfil') == 0) {
+  if (sessionStorage.getItem('logperfil') == 0) {
     if (inicio == 1) {
       return (
 
@@ -510,7 +510,7 @@ verifica_botao(inicio) {
         );   
         }         
     }
-  } else if (localStorage.getItem('logperfil') == 1) {
+  } else if (sessionStorage.getItem('logperfil') == 1) {
     if (inicio == 1) {
       return (
 
@@ -543,7 +543,7 @@ verifica_botao(inicio) {
         }         
 
       }    
-  }  else if (localStorage.getItem('logperfil') == 3) {
+  }  else if (sessionStorage.getItem('logperfil') == 3) {
     if (inicio == 1) {
       return (
 
@@ -599,25 +599,25 @@ sendSave(){
           
           if (response.data.success == true) {                        
             
-            localStorage.setItem('logid', response.data.data.id);
-            localStorage.setItem('lognome', response.data.data.nome);  
+            sessionStorage.setItem('logid', response.data.data.id);
+            sessionStorage.setItem('lognome', response.data.data.nome);  
          /* console.log('entrou ');           
           
-          localStorage.setItem('lognome', response.data.data[0].nome);  
+          sessionStorage.setItem('lognome', response.data.data[0].nome);  
           console.log('pegou nome');           
-          localStorage.setItem('logid', response.data.data[0].id);
+          sessionStorage.setItem('logid', response.data.data[0].id);
           console.log('pegou id');           
           
-          console.log('pegou sessao perfil - '+localStorage.getItem('logperfil'));           
-          console.log('pegou sessao id - '+localStorage.getItem('logid'));           */
-          console.log('pegou sessao perfil - '+localStorage.getItem('logperfil'));           
-          console.log('pegou sessao id - '+localStorage.getItem('logid'));          
-          if (localStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_motorista/`+localStorage.getItem('logid'));   
-          } else if (localStorage.getItem('logperfil') == 3) {
+          console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
+          console.log('pegou sessao id - '+sessionStorage.getItem('logid'));           */
+          console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
+          console.log('pegou sessao id - '+sessionStorage.getItem('logid'));          
+          if (sessionStorage.getItem('logperfil') == 1) {
+            this.props.history.push(`/endereco_motorista/`+sessionStorage.getItem('logid'));   
+          } else if (sessionStorage.getItem('logperfil') == 3) {
             this.props.history.push(`/area_motorista`);                   
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_motorista/`+localStorage.getItem('logid'));       
+          } else if (sessionStorage.getItem('logperfil') == 0) {
+            this.props.history.push(`/endereco_motorista/`+sessionStorage.getItem('logid'));       
           }          
   
           }
@@ -630,18 +630,18 @@ sendSave(){
         })
     } else {
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/motorista/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/motorista/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
-          localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);
-          if (localStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_motorista/`+localStorage.getItem('logid'));
-          } else if (localStorage.getItem('logperfil') == 3) {
+          sessionStorage.setItem('lognome', this.state.campNome);  
+          //sessionStorage.setItem('logid', userId);
+          if (sessionStorage.getItem('logperfil') == 1) {
+            this.props.history.push(`/endereco_motorista/`+sessionStorage.getItem('logid'));
+          } else if (sessionStorage.getItem('logperfil') == 3) {
             this.props.history.push(`/area_motorista`);                   
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_motorista/`+localStorage.getItem('logid'));       
+          } else if (sessionStorage.getItem('logperfil') == 0) {
+            this.props.history.push(`/endereco_motorista/`+sessionStorage.getItem('logid'));       
           }           
 
         }
@@ -658,7 +658,7 @@ sendSave(){
 
 verificar_menu() {      
 
-  if (localStorage.getItem('logperfil') == 0) {  
+  if (sessionStorage.getItem('logperfil') == 0) {  
    return(
     <div>
         <div className="d-flex justify-content-around">
@@ -684,7 +684,7 @@ verificar_menu() {
     </div>           
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
         <div className="d-flex justify-content-around">
@@ -710,7 +710,7 @@ verificar_menu() {
     </div>      
       );
 
-  } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA    
+  } else if (sessionStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA    
 
     return(
       <div className="d-flex justify-content-around">

@@ -34,8 +34,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 import 'sweetalert2/src/sweetalert2.scss';
 
-const login = localStorage.getItem('logemail');              
-const id = localStorage.getItem('logid');  
+const login = sessionStorage.getItem('logemail');              
+const id = sessionStorage.getItem('logid');  
 const buscadorcep = require('buscadorcep');
 const Email_cliente = require('../../pages/email');
 const useStyles = makeStyles((theme) => ({
@@ -83,7 +83,7 @@ class FaixaeditarComponent extends React.Component{
 
       componentDidMount(){  
         this.setState({
-          perfil: localStorage.getItem('logperfil'),
+          perfil: sessionStorage.getItem('logperfil'),
           campMatrizId: this.props.match.params.id   
         });        
         let faixaId = this.props.match.params.id;

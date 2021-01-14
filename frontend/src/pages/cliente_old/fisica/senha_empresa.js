@@ -24,8 +24,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -106,9 +106,9 @@ class empresarialComponent extends React.Component{
  
     let userId = this.props.match.params.id;      
 
-    localStorage.setItem('logid', userId); 
+    sessionStorage.setItem('logid', userId); 
     
-    //if (localStorage.getItem('logid') !== 0) { 
+    //if (sessionStorage.getItem('logid') !== 0) { 
       this.carrega_cliente()
     //} 
   }
@@ -122,7 +122,7 @@ class empresarialComponent extends React.Component{
 
   carrega_cliente() {
     const { validate } = this.state;
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -166,7 +166,7 @@ class empresarialComponent extends React.Component{
             })  
             this.verifica_botao(this.state.inicio)    
           }
-          localStorage.setItem('lograzao_social', this.state.campRazao_social);  
+          sessionStorage.setItem('lograzao_social', this.state.campRazao_social);  
 
         }  
       })        
@@ -631,29 +631,29 @@ sendUpdate(){
     senha: this.state.campSenha,                 
     statusId: this.state.campStatusId,  
   }             
-        console.log('log id - '+localStorage.getItem('logid')); 
+        console.log('log id - '+sessionStorage.getItem('logid')); 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
            
-            //this.props.history.push(`/cliente_endereco/`+localStorage.getItem('logid'));            
-            //localStorage.setItem('logprogress', this.state.progresso);        
+            //this.props.history.push(`/cliente_endereco/`+sessionStorage.getItem('logid'));            
+            //sessionStorage.setItem('logprogress', this.state.progresso);        
             
-            if (localStorage.getItem('logperfil') == 1) {
+            if (sessionStorage.getItem('logperfil') == 1) {
               if (this.state.campCnpj == null) {              
                 this.props.history.push(`/lista_individual`);       
               } else {                
                 this.props.history.push(`/lista_empresarial`);       
               }                       
-            } else if (localStorage.getItem('logperfil') == 2) {
+            } else if (sessionStorage.getItem('logperfil') == 2) {
               if (this.state.campCnpj == null) {              
                 this.props.history.push(`/area_cliente_individual`);       
               } else {                
                 this.props.history.push(`/area_cliente_empresarial`);       
               }           
-            } else if (localStorage.getItem('logperfil') == null) {              
-              localStorage.setItem('logperfil', 2);
+            } else if (sessionStorage.getItem('logperfil') == null) {              
+              sessionStorage.setItem('logperfil', 2);
               this.props.history.push('/area_cliente_individual');                
             }            
                        
@@ -726,7 +726,7 @@ verifica_botao(inicio) {
   const { validate } = this.state;
   //console.log(JSON.stringify(this.state, null, "    "));
   //console.log(JSON.stringify(inicio, null, "    "));
-  if (localStorage.getItem('logperfil') == null) {
+  if (sessionStorage.getItem('logperfil') == null) {
 
       if (inicio == 1) {
         return (
@@ -778,7 +778,7 @@ verifica_botao(inicio) {
               );   
             }    
       }
-    } else if (localStorage.getItem('logperfil') == 1) {
+    } else if (sessionStorage.getItem('logperfil') == 1) {
       if (inicio == 1) {
         return (
 
@@ -816,7 +816,7 @@ verifica_botao(inicio) {
             }    
        }      
 
-    } else if (localStorage.getItem('logperfil') == 2) {  
+    } else if (sessionStorage.getItem('logperfil') == 2) {  
     
       if (inicio == 1) {
         return (
@@ -901,13 +901,13 @@ handleMouseDownPassword = (event) => {
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == null) {
+  if (sessionStorage.getItem('logperfil') == null) {
    
    return(
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/cliente_endereco/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/cliente_endereco/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -928,12 +928,12 @@ verificar_menu() {
    </div>         
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                   <Link to={`/cliente_endereco/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                   <Link to={`/cliente_endereco/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                  </div>                  
                  <div>
                    <div className="titulo_representante">                
@@ -954,7 +954,7 @@ verificar_menu() {
      </div>    
       );
 
-  } else if (localStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL OU EMPRESARIAL             
+  } else if (sessionStorage.getItem('logperfil') == 2) { // CLIENTE INDIVIDUAL OU EMPRESARIAL             
 
     return(
       <div className="d-flex justify-content-around">

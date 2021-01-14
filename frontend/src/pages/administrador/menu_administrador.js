@@ -55,28 +55,28 @@ class menu_administradorComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
    // this.verifica_menu();
     
 
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');           
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');   
-    localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logeventoservico');
-    localStorage.setItem('logperfil', null);
-    localStorage.setItem('logid', 0);
-    localStorage.setItem('conectado', 1);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');           
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');   
+    sessionStorage.removeItem('logcepbanco');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logeventoservico');
+    sessionStorage.setItem('logperfil', null);
+    sessionStorage.setItem('logid', 0);
+    sessionStorage.setItem('conectado', 1);
     this.props.history.push("/");
   }
 

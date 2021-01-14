@@ -35,22 +35,22 @@ class menu_motoristaComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid')       
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid')       
     });
     //this.verifica_menu();
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');       
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logVeiculo')
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');       
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logVeiculo')
 
     this.props.history.push("/");
   }
@@ -73,7 +73,7 @@ class menu_motoristaComponent extends React.Component  {
         return ( 
           <li className="nav-item">
              <NavItem>  
-                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {localStorage.getItem('lognome').toUpperCase()} </strong></NavLink>                              
+                <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {sessionStorage.getItem('lognome').toUpperCase()} </strong></NavLink>                              
              </NavItem>  
           </li>   
          ); 
@@ -117,19 +117,19 @@ class menu_motoristaComponent extends React.Component  {
               <i class="fas fa-list"></i> ALTERAR
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={`/motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/motorista/`+sessionStorage.getItem('logid')}>
                 <i class="far fa-user"></i> Dados Pessoais
                 </DropdownItem>
-                <DropdownItem href={`/endereco_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/endereco_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-home"></i> Endereço
                 </DropdownItem>                
-                <DropdownItem href={`/documentos_motorista_alterar/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/documentos_motorista_alterar/`+sessionStorage.getItem('logid')}>
                 <i class="far fa-file-alt"></i> Meus Documentos
                 </DropdownItem>                                               
-                <DropdownItem href={`/foto_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/foto_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-car"></i> Minha Foto
                 </DropdownItem>                
-                <DropdownItem href={`/senha_motorista/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/senha_motorista/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-key"></i> Alterar Senha
                 </DropdownItem>
                 <DropdownItem divider />                
@@ -140,10 +140,10 @@ class menu_motoristaComponent extends React.Component  {
               <i class="fas fa-list"></i> VEÍCULOS
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href={`/incluir_veiculos/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/incluir_veiculos/`+sessionStorage.getItem('logid')}>
                 <i class="fas fa-money-bill-wave"></i> Incluir
                 </DropdownItem>                           
-                <DropdownItem href={`/lista_veiculos/`+localStorage.getItem('logid')}>
+                <DropdownItem href={`/lista_veiculos/`+sessionStorage.getItem('logid')}>
                 <i class="far fa-life-ring"></i> Listar
                 </DropdownItem>                
                 <DropdownItem divider />                

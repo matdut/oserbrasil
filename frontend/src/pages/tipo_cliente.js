@@ -96,21 +96,21 @@ const useStyles = makeStyles((theme) => ({
 export default function Tipo_cliente() {
   const classes = useStyles();
   
-  localStorage.removeItem('logemail');
-  localStorage.removeItem('lognome');       
-  localStorage.removeItem('logid');  
-  localStorage.removeItem('logperfil'); 
-  localStorage.removeItem('logcep');      
-  localStorage.removeItem('logclienteId');
-  localStorage.removeItem('logcpfrep');
-  localStorage.removeItem('logdocumento');
-  localStorage.removeItem('logemailId');
-  localStorage.removeItem('logeventoId');
-  localStorage.removeItem('logMarca');
-  localStorage.removeItem('logmatrizId');
-  localStorage.removeItem('logModelo');
-  localStorage.removeItem('logrepresentante');  
-  localStorage.setItem('logperfil', 0);
+  sessionStorage.removeItem('logemail');
+  sessionStorage.removeItem('lognome');       
+  sessionStorage.removeItem('logid');  
+  sessionStorage.removeItem('logperfil'); 
+  sessionStorage.removeItem('logcep');      
+  sessionStorage.removeItem('logclienteId');
+  sessionStorage.removeItem('logcpfrep');
+  sessionStorage.removeItem('logdocumento');
+  sessionStorage.removeItem('logemailId');
+  sessionStorage.removeItem('logeventoId');
+  sessionStorage.removeItem('logMarca');
+  sessionStorage.removeItem('logmatrizId');
+  sessionStorage.removeItem('logModelo');
+  sessionStorage.removeItem('logrepresentante');  
+  sessionStorage.setItem('logperfil', 0);
   
   return (
    <div>

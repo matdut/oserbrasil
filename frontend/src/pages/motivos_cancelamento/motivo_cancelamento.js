@@ -10,7 +10,7 @@ import Menu_administrador from '../administrador/menu_administrador';
 
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 
 class empresarialComponent extends React.Component{  
 
@@ -41,12 +41,12 @@ class empresarialComponent extends React.Component{
    
     let userId = this.props.match.params.id;    
     
-    localStorage.setItem('logid', userId);
+    sessionStorage.setItem('logid', userId);
    
-    if (localStorage.getItem('logid') == 0) { // esta vindo do create       
-      localStorage.setItem('logrepresentante', 0);
-      localStorage.setItem('logsenha', '');
-      localStorage.setItem('logcepbanco', '');
+    if (sessionStorage.getItem('logid') == 0) { // esta vindo do create       
+      sessionStorage.setItem('logrepresentante', 0);
+      sessionStorage.setItem('logsenha', '');
+      sessionStorage.setItem('logcepbanco', '');
       this.setState({              
         campStatusId: 6,
          progresso: 0      
@@ -116,9 +116,9 @@ class empresarialComponent extends React.Component{
 
 verifica_botao(inicio) {
   const { validate } = this.state    
-  console.log('perfil verifica_botao -'+localStorage.getItem('logperfil'))
+  console.log('perfil verifica_botao -'+sessionStorage.getItem('logperfil'))
   
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
     if (inicio == 1) {
       return (
 
@@ -177,10 +177,10 @@ sendSave(){
             this.setState({ validate })
             this.verifica_botao(this.state.inicio)
           //console.log('logprogress - '+ this.state.progresso);          
-          //localStorage.setItem('lognome', this.state.campNome);            
+          //sessionStorage.setItem('lognome', this.state.campNome);            
           
-          if (localStorage.getItem('logperfil') == 1) {
-             localStorage.setItem('logperfil', 1);
+          if (sessionStorage.getItem('logperfil') == 1) {
+             sessionStorage.setItem('logperfil', 1);
              this.props.history.push('/tipo_transporte');                
           } 
           
@@ -196,9 +196,9 @@ sendSave(){
 }  
 
 verificar_menu() {   
-  //console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+  //console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
 
-  if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">
@@ -228,7 +228,7 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );

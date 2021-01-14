@@ -30,7 +30,7 @@ import { Data } from '@react-google-maps/api';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 //const nodemailer = require('nodemailer');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 //var sendmail = require('../sendmail')({silent: true})
 
 class operadoresComponent extends React.Component{  
@@ -127,12 +127,12 @@ class operadoresComponent extends React.Component{
     console.log('userId - '+userId);
     console.log('email - '+email);
 
-    localStorage.setItem('logperfil', 0);
+    sessionStorage.setItem('logperfil', 0);
     
       if (email == "0") {
 
         console.log('Entrou aqui email == 0 ');
-        localStorage.setItem('logoperadorId', userId);  
+        sessionStorage.setItem('logoperadorId', userId);  
 
         this.busca_operador_cadastro();
         
@@ -140,8 +140,8 @@ class operadoresComponent extends React.Component{
       } else {  
 
         console.log('Entrou aqui email !== 0 ');
-        localStorage.setItem('logemailId', userId);
-        localStorage.setItem('logemail', email); 
+        sessionStorage.setItem('logemailId', userId);
+        sessionStorage.setItem('logemail', email); 
 
         /* verificar se operador já está cadastrado */
             api.get(`/operador/getEmail/${email}`)
@@ -176,7 +176,7 @@ class operadoresComponent extends React.Component{
               alert("Error de conexão busca_empresa "+error)
             })      
             
-             //if (localStorage.getItem('logoperadorId'))
+             //if (sessionStorage.getItem('logoperadorId'))
         }                        
   }  
 
@@ -222,8 +222,8 @@ class operadoresComponent extends React.Component{
        );  
   } 
   busca_empresa() {    
-    console.log('busca empresa ID '+localStorage.getItem('logid'));    
-    api.get(`/empresa/get/${localStorage.getItem('logid')}`)
+    console.log('busca empresa ID '+sessionStorage.getItem('logid'));    
+    api.get(`/empresa/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{       
         if (res.data.success) {
            
@@ -242,8 +242,8 @@ class operadoresComponent extends React.Component{
 
   busca_email() {
     const { validate } = this.state
-    console.log(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`);    
-    api.get(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`)
+    console.log(`/emailOperador/getEmpresa/${sessionStorage.getItem('logemailId')}/${sessionStorage.getItem('logemail')}`);    
+    api.get(`/emailOperador/getEmpresa/${sessionStorage.getItem('logemailId')}/${sessionStorage.getItem('logemail')}`)
     .then(res=>{       
         if (res.data.data.length > 0) {
            
@@ -257,11 +257,11 @@ class operadoresComponent extends React.Component{
           validate.emailState = 'has-success'
           this.setState({ validate })
           console.log('res.data.data[0].empresaId '+ res.data.data[0].empresaId);
-          localStorage.setItem('logid', res.data.data[0].empresaId);          
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);          
 
-          console.log('Empresa Id - '+localStorage.getItem('logid'));
-          if (localStorage.getItem('logperfil') == 8) {
-             localStorage.setItem('lograzao_social', this.state.campRazao_social)      
+          console.log('Empresa Id - '+sessionStorage.getItem('logid'));
+          if (sessionStorage.getItem('logperfil') == 8) {
+             sessionStorage.setItem('lograzao_social', this.state.campRazao_social)      
           }   
 
         //  this.setState({ validate })
@@ -274,9 +274,9 @@ class operadoresComponent extends React.Component{
   } 
   busca_operador() {
     const { validate } = this.state
-   // console.log('busca operador ID '+localStorage.getItem('logid'));
-  //  console.log('busca perfil operador state - '+localStorage.getItem('logperfil'));   
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+   // console.log('busca operador ID '+sessionStorage.getItem('logid'));
+  //  console.log('busca perfil operador state - '+sessionStorage.getItem('logperfil'));   
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -299,7 +299,7 @@ class operadoresComponent extends React.Component{
             validacao_telefone: true,
           })                        
          
-          localStorage.setItem('logid', res.data.data[0].empresaId);
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
             validate.cpfState = 'has-success'      
@@ -330,9 +330,9 @@ class operadoresComponent extends React.Component{
 
   busca_operador_cadastro() {
     const { validate } = this.state
-   // console.log('busca operador ID '+localStorage.getItem('logid'));
-    console.log('busca logoperadorId operador state - '+localStorage.getItem('logoperadorId'));   
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+   // console.log('busca operador ID '+sessionStorage.getItem('logid'));
+    console.log('busca logoperadorId operador state - '+sessionStorage.getItem('logoperadorId'));   
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -355,7 +355,7 @@ class operadoresComponent extends React.Component{
             validacao_telefone: true,
           })                        
          
-          localStorage.setItem('logid', res.data.data[0].empresaId);
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
             validate.cpfState = 'has-success'      
@@ -909,17 +909,17 @@ sendSave(){
 
             api.post('/login/create',logindata)                      
           
-          if (localStorage.getItem('logperfil') == 1) {
-             localStorage.setItem('logperfil', 1);
+          if (sessionStorage.getItem('logperfil') == 1) {
+             sessionStorage.setItem('logperfil', 1);
              this.props.history.push('/area_administrador');                 
-          } else if (localStorage.getItem('logperfil') == 7) {         
-            localStorage.setItem('logperfil', 8);
-            localStorage.setItem('logid', response.data.data.id); 
+          } else if (sessionStorage.getItem('logperfil') == 7) {         
+            sessionStorage.setItem('logperfil', 8);
+            sessionStorage.setItem('logid', response.data.data.id); 
             this.props.history.push(`/area_operador`);       
-          } else if (localStorage.getItem('logperfil') == 0) {
-            localStorage.setItem('lognome', this.state.campNome);  
-            localStorage.setItem('logid', response.data.data.id);  
-            localStorage.setItem('logperfil', 8);
+          } else if (sessionStorage.getItem('logperfil') == 0) {
+            sessionStorage.setItem('lognome', this.state.campNome);  
+            sessionStorage.setItem('logid', response.data.data.id);  
+            sessionStorage.setItem('logperfil', 8);
             this.props.history.push('/senha_operador_incluir/'+response.data.data.id);       
           }           
   
@@ -939,7 +939,7 @@ sendSave(){
        }  
 
       console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-      api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost_alterar)
+      api.put(`/operador/update/${sessionStorage.getItem('logoperadorId')}`, datapost_alterar)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -950,18 +950,18 @@ sendSave(){
           }
 
           console.log('logindata - '+JSON.stringify(logindata, null, "    ")); 
-          api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata)
+          api.put(`/login/update/${sessionStorage.getItem('logoperadorId')}`,logindata)
           
-        //  localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);
-          if (localStorage.getItem('logperfil') == 1) {
+        //  sessionStorage.setItem('lognome', this.state.campNome);  
+          //sessionStorage.setItem('logid', userId);
+          if (sessionStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (localStorage.getItem('logperfil') == 7) {
+          } else if (sessionStorage.getItem('logperfil') == 7) {
               this.props.history.push(`/area_cliente_empresarial`);                   
-          } else if (localStorage.getItem('logperfil') == 8) {
-              this.props.history.push(`/senha_operador_incluir/`+localStorage.getItem('logoperadorId'));                                  
-          } else if (localStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/senha_operador_incluir/`+localStorage.getItem('logoperadorId'));                                  
+          } else if (sessionStorage.getItem('logperfil') == 8) {
+              this.props.history.push(`/senha_operador_incluir/`+sessionStorage.getItem('logoperadorId'));                                  
+          } else if (sessionStorage.getItem('logperfil') == 0) {
+            this.props.history.push(`/senha_operador_incluir/`+sessionStorage.getItem('logoperadorId'));                                  
           }                
 
         }
@@ -1012,7 +1012,7 @@ verificaCpfonblur(e) {
  }
 
 verificar_menu() {   
- // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+ // console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
  return(
   <div>
       <div className="d-flex justify-content-around">
@@ -1054,8 +1054,8 @@ verificaNomeonfocus(e) {
 
 busca_email_convite() {
   const { validate } = this.state
-  //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
-  api.get(`/emailOperador/getEmail/${localStorage.getItem('logemail')}`)
+  //console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid'));    
+  api.get(`/emailOperador/getEmail/${sessionStorage.getItem('logemail')}`)
   .then(res=>{       
       if (res.data.data.length > 0) {
          

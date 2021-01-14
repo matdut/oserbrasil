@@ -68,43 +68,43 @@ class menu_clienteComponent extends React.Component  {
   componentDidMount(){
     
     this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      razao_social: localStorage.getItem('lograzao_social'), 
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      razao_social: sessionStorage.getItem('lograzao_social'), 
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
    // this.verifica_menu();
     
 
   }
   handleClick = () => {
-    localStorage.removeItem('logemail');
-    localStorage.removeItem('lognome');       
-    localStorage.removeItem('logcpf');
-    localStorage.removeItem('logservicoid');    
-    localStorage.removeItem('logid');  
-    localStorage.removeItem('logperfil');  
-    localStorage.removeItem('logprogress');
-    localStorage.removeItem('logcep');   
-    localStorage.removeItem('logcepbanco');       
-    localStorage.removeItem('logcnpj'); 
-    localStorage.removeItem('lograzao_social');  
-    localStorage.removeItem('lograzaosocial');  
-    localStorage.removeItem('logclienteId');
-    localStorage.removeItem('logcpfrep');
-    localStorage.removeItem('logdocumento');
-    localStorage.removeItem('logemailId');
-    localStorage.removeItem('logeventoId');
-    localStorage.removeItem('logMarca');
-    localStorage.removeItem('logmatrizId');
-    localStorage.removeItem('logModelo');
-    localStorage.removeItem('logrepresentante');
-    localStorage.removeItem('logeventoservico');    
-    localStorage.removeItem('logempresaid');      
-    localStorage.setItem('logperfil', 0);
-    localStorage.setItem('logperfil', null);
-    localStorage.setItem('conectado', 1);
-    localStorage.setItem('logid', 0);
+    sessionStorage.removeItem('logemail');
+    sessionStorage.removeItem('lognome');       
+    sessionStorage.removeItem('logcpf');
+    sessionStorage.removeItem('logservicoid');    
+    sessionStorage.removeItem('logid');  
+    sessionStorage.removeItem('logperfil');  
+    sessionStorage.removeItem('logprogress');
+    sessionStorage.removeItem('logcep');   
+    sessionStorage.removeItem('logcepbanco');       
+    sessionStorage.removeItem('logcnpj'); 
+    sessionStorage.removeItem('lograzao_social');  
+    sessionStorage.removeItem('lograzaosocial');  
+    sessionStorage.removeItem('logclienteId');
+    sessionStorage.removeItem('logcpfrep');
+    sessionStorage.removeItem('logdocumento');
+    sessionStorage.removeItem('logemailId');
+    sessionStorage.removeItem('logeventoId');
+    sessionStorage.removeItem('logMarca');
+    sessionStorage.removeItem('logmatrizId');
+    sessionStorage.removeItem('logModelo');
+    sessionStorage.removeItem('logrepresentante');
+    sessionStorage.removeItem('logeventoservico');    
+    sessionStorage.removeItem('logempresaid');      
+    sessionStorage.setItem('logperfil', 0);
+    sessionStorage.setItem('logperfil', null);
+    sessionStorage.setItem('conectado', 1);
+    sessionStorage.setItem('logid', 0);
 
     this.props.history.push("/");
   }
@@ -120,7 +120,7 @@ class menu_clienteComponent extends React.Component  {
     } else {
       return ( 
          <NavItem className="nav-item">            
-           <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {localStorage.getItem('lognome')} </strong></NavLink>                              
+           <NavLink href="#"><strong> <span className="glyphicon glyphicon-user"></span> BEM VINDO (A), {sessionStorage.getItem('lognome')} </strong></NavLink>                              
          </NavItem>   
        ); 
     }            
@@ -156,10 +156,10 @@ class menu_clienteComponent extends React.Component  {
           <ul id="menu-content" className="menu-content collapse out">
               <li>
                 <div className="avatar_titulo">
-                <div className="avatar"><Avatar alt={localStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                         
+                <div className="avatar"><Avatar alt={sessionStorage.getItem('lognome')} src="/broken-image.jpg" className="classe_orange" />                         
                 </div>
                   <div className="teste perfil">
-                  <a href={`/empresa_alterar/`+localStorage.getItem('logid')}>     
+                  <a href={`/empresa_alterar/`+sessionStorage.getItem('logid')}>     
                         Editar Perfil  
                     </a>  
                     <br/>
@@ -186,7 +186,7 @@ class menu_clienteComponent extends React.Component  {
               </li>   
               <li>
               <div className="itens_menu">
-                <a href={`/empresa_dados_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <a href={`/empresa_dados_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Dados da empresa" placement="top">
                 <i className="fas fa-fw fa-columns"></i>                  
                 </LightTooltip>              
@@ -204,7 +204,7 @@ class menu_clienteComponent extends React.Component  {
               </li>
               <li>
               <div className="itens_menu">
-                <a href={`/empresa_endereco/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <a href={`/empresa_endereco/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Endereço" placement="top">
                 <i className="fas fa-address-card"></i>
                 </LightTooltip>              
@@ -213,7 +213,7 @@ class menu_clienteComponent extends React.Component  {
               </li>
               <li>
               <div className="itens_menu">
-                <a href={`/empresa_senha_alterar/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <a href={`/empresa_senha_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Senha" placement="top">
                     <i className="fas fa-unlock-alt"></i>
                 </LightTooltip>              
@@ -222,7 +222,7 @@ class menu_clienteComponent extends React.Component  {
               </li>         
               <li>
               <div className="itens_menu">
-                <a href={`/operador_lista_empresa/`+localStorage.getItem('logid')} className="icon_centralizado_novo">
+                <a href={`/operador_lista_empresa/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                      <LightTooltip title="Operadores" placement="top">
                       <i className="fas fa-users-cog"></i>
                       </LightTooltip>              

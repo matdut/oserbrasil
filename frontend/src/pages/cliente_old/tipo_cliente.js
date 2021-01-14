@@ -91,11 +91,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Tipo_cliente() {
   const classes = useStyles();
   
-  localStorage.removeItem('logemail');
-  localStorage.removeItem('lognome');       
-  localStorage.removeItem('logid');  
-  localStorage.removeItem('logperfil'); 
-  localStorage.removeItem('logcep');      
+  sessionStorage.removeItem('logemail');
+  sessionStorage.removeItem('lognome');       
+  sessionStorage.removeItem('logid');  
+  sessionStorage.removeItem('logperfil'); 
+  sessionStorage.removeItem('logcep');      
     
   return (
    <div>

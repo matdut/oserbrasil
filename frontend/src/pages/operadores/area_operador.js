@@ -8,9 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import api from '../../services/api';
 import { valorMask } from '../formatacao/valormask';
 
-const login = localStorage.getItem('logemail');              
-const nome = localStorage.getItem('lognome');  
-const id = localStorage.getItem('logid');   
+const login = sessionStorage.getItem('logemail');              
+const nome = sessionStorage.getItem('lognome');  
+const id = sessionStorage.getItem('logid');   
 
 class Area_operador extends React.Component  {
   constructor(props){
@@ -29,9 +29,9 @@ class Area_operador extends React.Component  {
   componentDidMount(){
      //this.loadCliente()
      this.setState({
-      perfil: localStorage.getItem('logperfil'),    
-      nome: localStorage.getItem('lognome'),
-      id: localStorage.getItem('logid') 
+      perfil: sessionStorage.getItem('logperfil'),    
+      nome: sessionStorage.getItem('lognome'),
+      id: sessionStorage.getItem('logid') 
     });
      //this.loadCliente()
      this.loadlistEventos();
@@ -42,7 +42,7 @@ class Area_operador extends React.Component  {
   loadTotalServicosEvento(){
     // const url = baseUrl+"/cliente/list"   
     //debugger;
-    api.get(`/servicos/valorServicoTodosEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/valorServicoTodosEventos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data    
@@ -62,7 +62,7 @@ class Area_operador extends React.Component  {
    loadTotalViagensEventos(){
     // const url = baseUrl+"/cliente/list"   
     debugger;
-    api.get(`/servicos/totalViagensEventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/servicos/totalViagensEventos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {
          const data = res.data.data             
@@ -81,7 +81,7 @@ class Area_operador extends React.Component  {
   loadlistEventos(){
     // const url = baseUrl+"/cliente/list"   
     
-    api.get(`/eventos/totaleventos/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/eventos/totaleventos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data    
@@ -97,7 +97,7 @@ class Area_operador extends React.Component  {
   verifica_menu() {    
 
     return (      
-       <strong>{localStorage.getItem('lognome')}</strong>
+       <strong>{sessionStorage.getItem('lognome')}</strong>
      ); 
   
 }

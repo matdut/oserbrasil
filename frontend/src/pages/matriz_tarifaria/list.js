@@ -67,9 +67,9 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
-//const EventoId = localStorage.getItem('logidEvento');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+//const EventoId = sessionStorage.getItem('logidEvento');
 var dateFormat = require('dateformat');
 
 const customStyles = {
@@ -256,7 +256,7 @@ class listaMatrizComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil'),         
+      perfil: sessionStorage.getItem('logperfil'),         
     });     
        
     this.loadMatriz();
@@ -739,9 +739,9 @@ verificahora_final(e) {
       pedagio: 0.00
     }          
 
-          console.log('logmatrizId - '+ localStorage.getItem('logmatrizId'));
+          console.log('logmatrizId - '+ sessionStorage.getItem('logmatrizId'));
           console.log('dataPost '+JSON.stringify(datapost, null, "    ")); 
-          api.put('/matriz/update/'+localStorage.getItem('logmatrizId'), datapost)          
+          api.put('/matriz/update/'+sessionStorage.getItem('logmatrizId'), datapost)          
           .then(response=>{
             console.log('resultado '+JSON.stringify(response.data, null, "    ")); 
             
@@ -781,7 +781,7 @@ verificahora_final(e) {
     }          
 
        
-          api.put('/diaria/update/'+localStorage.getItem('logmatrizId'), datapost)          
+          api.put('/diaria/update/'+sessionStorage.getItem('logmatrizId'), datapost)          
           .then(response=>{
             
             if (response.data.success==true) {     
@@ -820,7 +820,7 @@ verificahora_final(e) {
       pedagio: 0.00
     }          
 
-          console.log('logmatrizId - '+ localStorage.getItem('logmatrizId'));
+          console.log('logmatrizId - '+ sessionStorage.getItem('logmatrizId'));
           console.log('dataPost '+JSON.stringify(datapost, null, "    ")); 
           api.post('/matriz/create', datapost)          
           .then(response=>{
@@ -1042,9 +1042,9 @@ verificahora_final(e) {
       pedagio: 0.00
     }          
 
-          console.log('logmatrizId - '+ localStorage.getItem('logmatrizId'));
+          console.log('logmatrizId - '+ sessionStorage.getItem('logmatrizId'));
           console.log('dataPost '+JSON.stringify(datapost, null, "    ")); 
-          api.put('/matrizEspecial/update/'+localStorage.getItem('logmatrizId'), datapost)          
+          api.put('/matrizEspecial/update/'+sessionStorage.getItem('logmatrizId'), datapost)          
           .then(response=>{
             console.log('resultado '+JSON.stringify(response.data, null, "    ")); 
             
@@ -1091,7 +1091,7 @@ verificahora_final(e) {
     }          
 
         
-          api.put('/diariaEspecial/update/'+localStorage.getItem('logmatrizId'), datapost)          
+          api.put('/diariaEspecial/update/'+sessionStorage.getItem('logmatrizId'), datapost)          
           .then(response=>{
             console.log('resultado '+JSON.stringify(response.data, null, "    ")); 
             
@@ -1182,7 +1182,7 @@ verificahora_final(e) {
       pedagio: 0.00
     }          
 
-          console.log('logmatrizId - '+ localStorage.getItem('logmatrizId'));
+          console.log('logmatrizId - '+ sessionStorage.getItem('logmatrizId'));
           console.log('dataPost '+JSON.stringify(datapost, null, "    ")); 
           api.post('/matrizEspecial/create', datapost)          
           .then(response=>{
@@ -1811,7 +1811,7 @@ botao_diaria_especial_E(inicio) {
   
   voltarlistaClick = () => {
   
-   // this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`); 
+   // this.props.history.push(`/listaeventocliente/${sessionStorage.getItem('logid')}`); 
   
   }
 
@@ -6324,7 +6324,7 @@ botao_diaria_especial_E(inicio) {
       mensagem_aguarde: '',
       inicio: 2
     });  
-    localStorage.setItem('logmatrizId', data.id);    
+    sessionStorage.setItem('logmatrizId', data.id);    
      
     this.loadTipoTransporte();
     this.carrega_matriz();
@@ -6348,7 +6348,7 @@ botao_diaria_especial_E(inicio) {
       mensagem_aguarde: '',
       inicio: 2
     });  
-    localStorage.setItem('logmatrizId', data.id);    
+    sessionStorage.setItem('logmatrizId', data.id);    
      
     this.loadTipoTransporte();
     this.carrega_diaria();
@@ -6451,7 +6451,7 @@ botao_diaria_especial_E(inicio) {
       mensagem_aguarde: '',
       inicio: 2
     });  
-   // localStorage.setItem('logmatrizId', data.id);    
+   // sessionStorage.setItem('logmatrizId', data.id);    
     this.limpar_campos();
     this.loadTipoTransporte();
    // this.carrega_matriz_especial();
@@ -6540,7 +6540,7 @@ botao_diaria_especial_E(inicio) {
       mensagem_aguarde: '',
       inicio: 2
     });  
-    localStorage.setItem('logmatrizId', data.id);    
+    sessionStorage.setItem('logmatrizId', data.id);    
      
     this.loadTipoTransporte();
     this.carrega_diaria_especial();
@@ -6564,7 +6564,7 @@ botao_diaria_especial_E(inicio) {
       mensagem_aguarde: '',
       inicio: 2
     });  
-    localStorage.setItem('logmatrizId', data.id);    
+    sessionStorage.setItem('logmatrizId', data.id);    
      
     this.loadTipoTransporte();
     this.carrega_matriz_especial();
@@ -6792,7 +6792,7 @@ botao_diaria_especial_E(inicio) {
   }
 
   carrega_diaria() { 
-    api.get('/diaria/get/'+localStorage.getItem('logmatrizId'))
+    api.get('/diaria/get/'+sessionStorage.getItem('logmatrizId'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
@@ -6829,7 +6829,7 @@ botao_diaria_especial_E(inicio) {
   }   
 
   carrega_matriz() { 
-    api.get('/matriz/get/'+localStorage.getItem('logmatrizId'))
+    api.get('/matriz/get/'+sessionStorage.getItem('logmatrizId'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
@@ -6866,7 +6866,7 @@ botao_diaria_especial_E(inicio) {
   }   
 
   carrega_matriz_especial() { 
-    api.get('/matrizEspecial/get/'+localStorage.getItem('logmatrizId'))
+    api.get('/matrizEspecial/get/'+sessionStorage.getItem('logmatrizId'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data
@@ -6910,7 +6910,7 @@ botao_diaria_especial_E(inicio) {
   }   
 
   carrega_diaria_especial() { 
-    api.get('/diariaEspecial/get/'+localStorage.getItem('logmatrizId'))
+    api.get('/diariaEspecial/get/'+sessionStorage.getItem('logmatrizId'))
     .then(res=>{
       if (res.data.success == true) {
         const data = res.data.data

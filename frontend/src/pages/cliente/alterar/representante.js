@@ -26,7 +26,7 @@ import { Data } from '@react-google-maps/api';
 
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
-const andamento_cadastro = localStorage.getItem('logprogress'); 
+const andamento_cadastro = sessionStorage.getItem('logprogress'); 
 
 class cliente_alterarComponent extends React.Component{  
 
@@ -112,17 +112,17 @@ class cliente_alterarComponent extends React.Component{
     moment.locale('pt-br');
     let userId = this.props.match.params.id;    
     
-    localStorage.setItem('logid', userId);
-   // const perfillog = localStorage.getItem('logperfil');
-    const logid = localStorage.getItem('logid');
+    sessionStorage.setItem('logid', userId);
+   // const perfillog = sessionStorage.getItem('logperfil');
+    const logid = sessionStorage.getItem('logid');
 
-    if (localStorage.getItem('logperfil') == null) {
-      localStorage.setItem('logperfil', 0);
+    if (sessionStorage.getItem('logperfil') == null) {
+      sessionStorage.setItem('logperfil', 0);
     }
-    if (localStorage.getItem('logid') == 0) { // esta vindo do create      
-      localStorage.setItem('logrepresentante', 0);
-      localStorage.setItem('logsenha', '');
-      localStorage.setItem('logcepbanco', '');
+    if (sessionStorage.getItem('logid') == 0) { // esta vindo do create      
+      sessionStorage.setItem('logrepresentante', 0);
+      sessionStorage.setItem('logsenha', '');
+      sessionStorage.setItem('logcepbanco', '');
       this.setState({              
         campStatusId: 6,
          progresso: 0      
@@ -133,7 +133,7 @@ class cliente_alterarComponent extends React.Component{
       });    
    } 
 
-    if (localStorage.getItem('logperfil') == 2) {
+    if (sessionStorage.getItem('logperfil') == 2) {
       this.setState({      
         camp_cpf_disabled: true,
       //  camp_nome_disabled: true,
@@ -163,9 +163,9 @@ class cliente_alterarComponent extends React.Component{
 
   busca_cliente() {
     const { validate } = this.state
-   // console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));
-   // console.log('busca perfil state - '+localStorage.getItem('logperfil'));  
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+   // console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid'));
+   // console.log('busca perfil state - '+sessionStorage.getItem('logperfil'));  
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -758,7 +758,7 @@ sendSave(){
  }      
 
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+      api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {        
           
@@ -768,20 +768,20 @@ sendSave(){
             statusId: this.state.campStatusId
           }
 
-          api.put(`/login/update/${localStorage.getItem('logid')}`,logindata)
+          api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)
           
-          localStorage.setItem('lognome', this.state.campNome);  
-          //localStorage.setItem('logid', userId);
+          sessionStorage.setItem('lognome', this.state.campNome);  
+          //sessionStorage.setItem('logid', userId);
        
-          if (localStorage.getItem('logperfil') == 1) {
-            localStorage.setItem('logperfil', 1);
+          if (sessionStorage.getItem('logperfil') == 1) {
+            sessionStorage.setItem('logperfil', 1);
             this.props.history.push(`/area_administrador/`);   
-         } else if (localStorage.getItem('logperfil') == 2) {
+         } else if (sessionStorage.getItem('logperfil') == 2) {
              this.props.history.push(`/area_cliente_individual`);
-         } else if (localStorage.getItem('logperfil') == 7) {  
+         } else if (sessionStorage.getItem('logperfil') == 7) {  
              this.props.history.push(`/area_cliente_empresarial`);                              
-         } else if (localStorage.getItem('logperfil') == 0) {
-             this.props.history.push(`/cliente_senha/`+localStorage.getItem('logid'));   
+         } else if (sessionStorage.getItem('logperfil') == 0) {
+             this.props.history.push(`/cliente_senha/`+sessionStorage.getItem('logid'));   
          }             
            
 
@@ -798,7 +798,7 @@ sendSave(){
 }  
 
 verificar_menu() {   
- // console.log('perfil verificar_menu -'+localStorage.getItem('logperfil'))
+ // console.log('perfil verificar_menu -'+sessionStorage.getItem('logperfil'))
 
   return(
     <div className="barra_incluir">
@@ -827,11 +827,11 @@ verificar_menu() {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
    return( 
      <Menu_cliente_individual />     
    );
@@ -846,7 +846,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }

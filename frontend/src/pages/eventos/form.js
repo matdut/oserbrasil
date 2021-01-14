@@ -38,8 +38,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 import 'sweetalert2/src/sweetalert2.scss';
 
-const login = localStorage.getItem('logemail');              
-const id = localStorage.getItem('logid');  
+const login = sessionStorage.getItem('logemail');              
+const id = sessionStorage.getItem('logid');  
 const buscadorcep = require('buscadorcep');
 const Email_cliente = require('../../pages/email');
 var dateFormat = require('dateformat');
@@ -106,9 +106,9 @@ class eventoComponent extends React.Component{
 
       componentDidMount(){  
         this.setState({
-          perfil: localStorage.getItem('logperfil'),    
-          campcliente_nome: localStorage.getItem('lognome'),
-          cliente_logado: localStorage.getItem('logid')      
+          perfil: sessionStorage.getItem('logperfil'),    
+          campcliente_nome: sessionStorage.getItem('lognome'),
+          cliente_logado: sessionStorage.getItem('logid')      
         });        
 
         let userId = this.props.match.params.id;        
@@ -250,7 +250,7 @@ class eventoComponent extends React.Component{
 
       voltarlistaClick = () => {
   
-        this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`); 
+        this.props.history.push(`/listaeventocliente/${sessionStorage.getItem('logid')}`); 
       
       }
 
@@ -434,10 +434,10 @@ class eventoComponent extends React.Component{
           )                
          
           //Email_cliente          
-          //localStorage.setItem('lognome', response.data.data.nome);
-          localStorage.setItem('logidEvento', response.data.data.id);
+          //sessionStorage.setItem('lognome', response.data.data.nome);
+          sessionStorage.setItem('logidEvento', response.data.data.id);
       
-         this.props.history.push(`/listaeventocliente/${localStorage.getItem('logid')}`);         
+         this.props.history.push(`/listaeventocliente/${sessionStorage.getItem('logid')}`);         
         }
         else {
           Swal.fire(

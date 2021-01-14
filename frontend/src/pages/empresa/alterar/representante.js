@@ -31,8 +31,8 @@ import '../empresarial.css';
 var dateFormat = require('dateformat');
 const { cpf } = require('cpf-cnpj-validator');
 
-//const userId = localStorage.getItem('logid');
-const andamento_cadastro = localStorage.getItem('logprogress');   
+//const userId = sessionStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');   
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
 class empresarialComponent extends React.Component{  
@@ -114,27 +114,27 @@ class empresarialComponent extends React.Component{
   }
 
   componentDidMount(){ 
-   // localStorage.clear();
+   // sessionStorage.clear();
    moment.locale('pt-br');
    let userId = this.props.match.params.id;        
 
-   localStorage.setItem('logid', userId); //logid da empresa 
+   sessionStorage.setItem('logid', userId); //logid da empresa 
 
-   if (localStorage.getItem('logperfil') == null) {
-     localStorage.setItem('logperfil', 0);
+   if (sessionStorage.getItem('logperfil') == null) {
+     sessionStorage.setItem('logperfil', 0);
    }
 
-   if (localStorage.getItem('logid') == 0) { // esta vindo do create 
-      //localStorage.setItem('logperfil', 0);
-     // localStorage.setItem('logrepresentante', 0);
-      localStorage.setItem('logsenha', '');
-      localStorage.setItem('logcepbanco', '');
+   if (sessionStorage.getItem('logid') == 0) { // esta vindo do create 
+      //sessionStorage.setItem('logperfil', 0);
+     // sessionStorage.setItem('logrepresentante', 0);
+      sessionStorage.setItem('logsenha', '');
+      sessionStorage.setItem('logcepbanco', '');
       this.setState({              
          incluir: true 
       });    
    } 
 
-   if (localStorage.getItem('logrepresentante') !== 0) {
+   if (sessionStorage.getItem('logrepresentante') !== 0) {
     this.setState({      
       camp_cpf_disabled: true,
     //  camp_nome_disabled: true,
@@ -143,7 +143,7 @@ class empresarialComponent extends React.Component{
     this.busca_cliente()
    }
     
-   if (localStorage.getItem('logperfil') == 0 && localStorage.getItem('logid') == 0) {
+   if (sessionStorage.getItem('logperfil') == 0 && sessionStorage.getItem('logid') == 0) {
     this.setState({      
       progresso: 0, 
       campStatusId: 6
@@ -164,7 +164,7 @@ class empresarialComponent extends React.Component{
 
   busca_cliente() {
     const { validate } = this.state  
-    api.get(`/empresa/get/${localStorage.getItem('logid')}`)
+    api.get(`/empresa/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -190,8 +190,8 @@ class empresarialComponent extends React.Component{
             validacao_telefone: true,
           })  
      
-          localStorage.setItem('logrepresentante', this.state.logrepresentante)
-          localStorage.setItem('lograzao_social', res.data.data[0].razao_social)
+          sessionStorage.setItem('logrepresentante', this.state.logrepresentante)
+          sessionStorage.setItem('lograzao_social', res.data.data[0].razao_social)
           this.setState({                  
             progresso: 25
           });   
@@ -760,7 +760,7 @@ sendSave(){
   }    
 
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/cliente/update/${localStorage.getItem('logrepresentante')}`, datapost)
+      api.put(`/cliente/update/${sessionStorage.getItem('logrepresentante')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -770,9 +770,9 @@ sendSave(){
             statusId: this.state.campStatusId
           }
 
-          api.put(`/login/update/${localStorage.getItem('logrepresentante')}`,logindata)
+          api.put(`/login/update/${sessionStorage.getItem('logrepresentante')}`,logindata)
          
-          if (localStorage.getItem('logperfil') == 1) {
+          if (sessionStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador/`);             
           } else {               
              this.props.history.push(`/area_cliente_empresarial`);                              
@@ -819,11 +819,11 @@ verificar_menu(perfil) {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
    return( 
      <Menu_cliente_empresarial />     
    );
@@ -837,7 +837,7 @@ verifica_titulo() {
      ); 
   } else {
     return (      
-      localStorage.getItem('lognome')
+      sessionStorage.getItem('lognome')
      ); 
   }            
 }

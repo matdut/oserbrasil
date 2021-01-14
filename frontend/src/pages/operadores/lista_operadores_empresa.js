@@ -65,9 +65,9 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 //import { Alert } from 'reactstrap';
 var dateFormat = require('dateformat');
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
-const logid = localStorage.getItem('logid');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const logid = sessionStorage.getItem('logid');
 const { cpf } = require('cpf-cnpj-validator');
 //const theme = useTheme();
 
@@ -257,15 +257,15 @@ class listComponent extends React.Component  {
   componentDidMount(){
 
     let userId = this.props.match.params.id;     
-    localStorage.setItem('logid', userId);
+    sessionStorage.setItem('logid', userId);
 
     console.log('logid - '+userId);
 
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -393,9 +393,9 @@ sendEnvioEmail(){
 
       const operadordata = {  
         email: this.state.campEmail,    
-        empresaId: localStorage.getItem('logid'),     
+        empresaId: sessionStorage.getItem('logid'),     
         statusId: 8,
-        perfilId: localStorage.getItem('logperfil'),
+        perfilId: sessionStorage.getItem('logperfil'),
         gerenciar_eventos: this.state.campgerencia_eventos, 
         monitorar_eventos: this.state.campMonitorar_eventos,   
         representante_legal: this.state.camprepresentante_legal,              
@@ -479,11 +479,11 @@ sendEnvioEmail(){
       mensagem_aguarde: '',
     });  
 
-    localStorage.setItem('logoperadorId', data.id);     
+    sessionStorage.setItem('logoperadorId', data.id);     
     console.log('buscar_operador ');
     this.busca_operador();   
 
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -501,7 +501,7 @@ sendEnvioEmail(){
       showModal: false,  
       campStatusId: 0,  
     });
-    localStorage.setItem('logeditid', '');
+    sessionStorage.setItem('logeditid', '');
     
     this.setState({ 
       mensagem_aguarde: ''
@@ -537,7 +537,7 @@ sendEnvioEmail(){
 
   loadConvites(){
     // const url = baseUrl+"/cliente/list"
-    api.get(`/emailOperador/list/`+localStorage.getItem('logid'))
+    api.get(`/emailOperador/list/`+sessionStorage.getItem('logid'))
      .then(res=>{
        if (res.data.success) {
  
@@ -605,8 +605,8 @@ sendEnvioEmail(){
    }
    busca_email() {
     const { validate } = this.state
-    //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
-    api.get(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`)
+    //console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid'));    
+    api.get(`/emailOperador/getEmpresa/${sessionStorage.getItem('logemailId')}/${sessionStorage.getItem('logemail')}`)
     .then(res=>{       
         if (res.data.data.length > 0) {
            
@@ -619,15 +619,15 @@ sendEnvioEmail(){
    
           validate.emailState = 'has-success'
           this.setState({ validate })
-          localStorage.setItem('logid', res.data.data[0].empresaId);
-          if (localStorage.getItem('logperfil') == 8) {
-             localStorage.setItem('lograzao_social', this.state.campRazao_social)      
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);
+          if (sessionStorage.getItem('logperfil') == 8) {
+             sessionStorage.setItem('lograzao_social', this.state.campRazao_social)      
           }   
 
         //  this.setState({ validate })
         } else {
-          console.log('busca operador ID '+localStorage.getItem('logemailId'));
-          localStorage.setItem('logoperadorId', localStorage.getItem('logemailId'));  
+          console.log('busca operador ID '+sessionStorage.getItem('logemailId'));
+          sessionStorage.setItem('logoperadorId', sessionStorage.getItem('logemailId'));  
           this.busca_operador();
         }
       })        
@@ -639,9 +639,9 @@ sendEnvioEmail(){
 
   busca_operador() {
     const { validate } = this.state
-   // console.log('busca operador ID '+localStorage.getItem('logid'));
-  //  console.log('busca perfil operador state - '+localStorage.getItem('logperfil'));   
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+   // console.log('busca operador ID '+sessionStorage.getItem('logid'));
+  //  console.log('busca perfil operador state - '+sessionStorage.getItem('logperfil'));   
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -668,7 +668,7 @@ sendEnvioEmail(){
           });            
           console.log('Buscar operador - '+JSON.stringify(this.state, null, "    ")); 
 
-          api.get(`/permissao/listaacesso/8/${localStorage.getItem('logoperadorId')}`)
+          api.get(`/permissao/listaacesso/8/${sessionStorage.getItem('logoperadorId')}`)
           .then(resacesso=>{
               console.log(' acesso - '+JSON.stringify(resacesso.data, null, "    ")); 
              
@@ -700,7 +700,7 @@ sendEnvioEmail(){
             }   
           
          
-          localStorage.setItem('logid', res.data.data[0].empresaId);
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
             validate.cpfState = 'has-success'      
@@ -1213,7 +1213,7 @@ carrega_status(){
 
   loadOperadores(){
    // const url = baseUrl+"/cliente/list"
-   api.get(`/operador/listaempresa/`+localStorage.getItem('logid'))
+   api.get(`/operador/listaempresa/`+sessionStorage.getItem('logid'))
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data       
@@ -1253,21 +1253,21 @@ carrega_status(){
         }  
  
        console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-       api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost_alterar)
+       api.put(`/operador/update/${sessionStorage.getItem('logoperadorId')}`, datapost_alterar)
        .then(response=>{
          if (response.data.success==true) {                 
            
           if (this.state.campgerencia_eventos == false) {
-            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/3`)
+            api.delete(`/permissao/deletaFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/3`)
            } else {
          
-            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/3`)
+            api.get(`/permissao/getFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/3`)
             .then(verificarPermissao=>{
 
              if (verificarPermissao.data.data.length == 0) {  
                 const permissao_acesso = {
                   perfilId: 8,
-                  logid: localStorage.getItem('logoperadorId'),
+                  logid: sessionStorage.getItem('logoperadorId'),
                   funcionalidadeId: 3
                 }  
 
@@ -1281,16 +1281,16 @@ carrega_status(){
            }
 
            if (this.state.campMonitorar_eventos == false) {
-            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/4`)
+            api.delete(`/permissao/deletaFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/4`)
            } else {
             
-            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/4`)
+            api.get(`/permissao/getFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/4`)
             .then(verificarPermissao=>{
 
               if (verificarPermissao.data.data.length == 0) {  
                 const permissao_acesso = {
                   perfilId: 8,
-                  logid: localStorage.getItem('logoperadorId'),
+                  logid: sessionStorage.getItem('logoperadorId'),
                   funcionalidadeId: 4
                 }  
 
@@ -1303,15 +1303,15 @@ carrega_status(){
             })         
            }
            if (this.state.camprepresentante_legal == false) {
-            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/5`)
+            api.delete(`/permissao/deletaFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/5`)
            } else {
-            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/5`)
+            api.get(`/permissao/getFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/5`)
             .then(verificarPermissao=>{
 
               if (verificarPermissao.data.data.length == 0) {  
                 const permissao_acesso = {
                   perfilId: 8,
-                  logid: localStorage.getItem('logoperadorId'),
+                  logid: sessionStorage.getItem('logoperadorId'),
                   funcionalidadeId: 5
                 }  
 
@@ -1330,7 +1330,7 @@ carrega_status(){
              statusId: this.state.campStatusId
            }
  
-           api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata);
+           api.put(`/login/update/${sessionStorage.getItem('logoperadorId')}`,logindata);
  
            this.setState({ 
             mensagem_usuario: 'Operador alterado com sucesso!',       
@@ -1341,7 +1341,7 @@ carrega_status(){
 
            
           // this.handleCloseModalEdit(); 
-         //  localStorage.setItem('lognome', this.state.campNome);             
+         //  sessionStorage.setItem('lognome', this.state.campNome);             
  
          }           
        }).catch(error=>{
@@ -1364,7 +1364,7 @@ carrega_status(){
             <Menu_cliente_empresarial />  
             <div className="titulo_lista">
               <div className="unnamed-character-style-4 descricao_admministrador">          
-              <h5> {localStorage.getItem('lograzao_social')} </h5>                                         
+              <h5> {sessionStorage.getItem('lograzao_social')} </h5>                                         
                   <div className="titulo_bemvindo"> Operador 1 </div>                     
               </div>      
             </div>
@@ -2289,7 +2289,7 @@ carrega_status(){
    
   }
   onIncluir() {
-    this.props.history.push(`/incluir_operador/`+localStorage.getItem('logid'));   
+    this.props.history.push(`/incluir_operador/`+sessionStorage.getItem('logid'));   
   }
 
   loadFillData(){

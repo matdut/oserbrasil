@@ -67,7 +67,7 @@ class Alterar_senha extends React.Component  {
     if (e.target.value.length !== 0) {
             
 
-      api.get(`/login/getmotorista/${localStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
+      api.get(`/login/getmotorista/${sessionStorage.getItem('logemail')}/${this.state.campSenhaAnterior}`) 
           .then(res=>{
             const data = res.data.data
               

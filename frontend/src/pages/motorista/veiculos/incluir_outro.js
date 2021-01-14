@@ -18,9 +18,9 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import CheckIcon from '@material-ui/icons/Check';
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-//const cep_empresa = localStorage.getItem('logcep');     
-//const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+//const cep_empresa = sessionStorage.getItem('logcep');     
+//const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 //import { Area_direita, Area_esquerda, Titulo_logo, Logo, Titulo_representante, Preview } from "./style_empresarial";
@@ -111,17 +111,17 @@ class empresarialComponent extends React.Component{
     let userId = this.props.match.params.id;
 
     if (userId !== 0) {
-      localStorage.setItem('logid', userId);         
+      sessionStorage.setItem('logid', userId);         
     } 
 
-    if (localStorage.getItem('logperfil') == 3) {
+    if (sessionStorage.getItem('logperfil') == 3) {
       this.setState({ 
         incluir: true
       })
     }      
     this.carrega_motorista() 
     this.setState({          
-      perfillog: localStorage.getItem('logperfil')
+      perfillog: sessionStorage.getItem('logperfil')
     });  
 
     this.setState({      
@@ -257,7 +257,7 @@ class empresarialComponent extends React.Component{
 
    carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motorista/get/${localStorage.getItem('logid')}`)
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
       if (res.data.success == true) {          
 
@@ -617,7 +617,7 @@ verifica_botao(inicio) {
    //console.log(JSON.stringify(this.state, null, "    "));
    // console.log(JSON.stringify(inicio, null, "    "));
    console.log(JSON.stringify(this.state, null, "    ")); 
-   if (localStorage.getItem('logperfil') == 0) {
+   if (sessionStorage.getItem('logperfil') == 0) {
         if (inicio == 1) {
           return (
       
@@ -651,7 +651,7 @@ verifica_botao(inicio) {
             );
           }     
         }
-      } else  if (localStorage.getItem('logperfil') == 1) {    
+      } else  if (sessionStorage.getItem('logperfil') == 1) {    
         if (inicio == 1) {
           return (
       
@@ -685,7 +685,7 @@ verifica_botao(inicio) {
             );
           }     
         }
-      } else  if (localStorage.getItem('logperfil') == 3) {    
+      } else  if (sessionStorage.getItem('logperfil') == 3) {    
         if (inicio == 1) {
           return (
       
@@ -758,7 +758,7 @@ verifica_botao(inicio) {
       this.state.listaMarcas.map((data)=>{          
          if (data.id == id) {
             console.log('buscaMarca - '+data.name);     
-            localStorage.setItem('logMarca', data.name)
+            sessionStorage.setItem('logMarca', data.name)
            // marca_saida = data.name                   
          }
 
@@ -776,7 +776,7 @@ verifica_botao(inicio) {
     this.state.listaModelos.map((data)=>{          
        if (data.id == id) {
          console.log('buscaModelo - '+data.name); 
-         localStorage.setItem('logModelo', data.name)
+         sessionStorage.setItem('logModelo', data.name)
          //modelo_saida = data.name                       
        }
      }) 
@@ -795,15 +795,15 @@ sendUpdate(){
   const datapost = {
     marcaId: this.state.campCarroId, 
     modeloId: this.state.campModeloId,
-    marca: localStorage.getItem('logMarca'), 
-    modelo: localStorage.getItem('logModelo'),
+    marca: sessionStorage.getItem('logMarca'), 
+    modelo: sessionStorage.getItem('logModelo'),
     seguradoraId: this.state.campSeguradoraId,
     apolice: this.state.campApolice,
     placa: this.state.campPlaca,
     ano: this.state.campAno,
     anodut: this.state.campAnodut,
     cor: this.state.campCor,    
-    motoristaId: localStorage.getItem('logid')
+    motoristaId: sessionStorage.getItem('logid')
   }         
   
       if (this.state.incluir == true) {        
@@ -814,12 +814,12 @@ sendUpdate(){
           if (response.data.success==true) {                        
           
           //   console.log('VEICULO SUCESSO ');
-              localStorage.setItem('logVeiculo', response.data.data.id)
+              sessionStorage.setItem('logVeiculo', response.data.data.id)
 
-              if (localStorage.getItem('logperfil') == 1) {
-                this.props.history.push(`/documentos_motorista/`+localStorage.getItem('logid')); 
-              } else if (localStorage.getItem('logperfil') == 3) {
-                this.props.history.push(`/incluir_documentos/`+localStorage.getItem('logid'));                                
+              if (sessionStorage.getItem('logperfil') == 1) {
+                this.props.history.push(`/documentos_motorista/`+sessionStorage.getItem('logid')); 
+              } else if (sessionStorage.getItem('logperfil') == 3) {
+                this.props.history.push(`/incluir_documentos/`+sessionStorage.getItem('logid'));                                
               }      
           }
           else {
@@ -831,16 +831,16 @@ sendUpdate(){
       } else {      
 
         console.log(JSON.stringify(datapost, null, "    "));        
-        api.put(`/veiculo/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/veiculo/update/${sessionStorage.getItem('logid')}`, datapost)
           .then(response=>{
             if (response.data.success==true) {                        
             
-                if (localStorage.getItem('logperfil') == 1) {
-                  this.props.history.push(`/documentos_motorista/`+localStorage.getItem('logid')); 
-                } else if (localStorage.getItem('logperfil') == 3) {
+                if (sessionStorage.getItem('logperfil') == 1) {
+                  this.props.history.push(`/documentos_motorista/`+sessionStorage.getItem('logid')); 
+                } else if (sessionStorage.getItem('logperfil') == 3) {
                   this.props.history.push(`/area_motorista`);                
-                } else if (localStorage.getItem('logperfil') == 0) {                 
-                  this.props.history.push(`/documentos_motorista/`+localStorage.getItem('logid'));                  
+                } else if (sessionStorage.getItem('logperfil') == 0) {                 
+                  this.props.history.push(`/documentos_motorista/`+sessionStorage.getItem('logid'));                  
                 }      
             }
             else {
@@ -854,13 +854,13 @@ sendUpdate(){
 
 verificar_menu() {   
 
-  if (localStorage.getItem('logperfil') == 0) {
+  if (sessionStorage.getItem('logperfil') == 0) {
    
    return(
     <div>
      <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/endereco_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/endereco_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -881,12 +881,12 @@ verificar_menu() {
    </div>         
    );
 
-  } else if (localStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
+  } else if (sessionStorage.getItem('logperfil') == 1) {  //ADMINISTRADOR
     return(
       <div>
       <div className="d-flex justify-content-around">
                 <div className="botao_navegacao">
-                  <Link to={`/endereco_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                  <Link to={`/endereco_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                 </div>                  
                 <div>
                   <div className="titulo_representante">                
@@ -907,13 +907,13 @@ verificar_menu() {
     </div>    
       );
 
-  } else if (localStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
+  } else if (sessionStorage.getItem('logperfil') == 3) { // CLIENTE MOTORISTA
 
     return(
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/endereco_motorista/`+localStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/endereco_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                

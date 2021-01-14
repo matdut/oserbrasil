@@ -36,8 +36,8 @@ import Menu_administrador from '../administrador/menu_administrador';
 import Menu_cliente_individual from '../cliente/menu_cliente_individual';
 import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu_operador from '../operadores/menu_operador';
-const perfil = localStorage.getItem('logperfil');
-const nome = localStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const nome = sessionStorage.getItem('lognome');  
 
 const customStyles = {
   overlay: {    
@@ -98,10 +98,10 @@ class CartaoCreditoComponent extends React.Component  {
   
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -124,7 +124,7 @@ class CartaoCreditoComponent extends React.Component  {
 
   loadCartaoCliente(){ 
    
-    api.get(`/cartao/list_cartao_cliente/${localStorage.getItem('logid')}/${localStorage.getItem('logperfil')}`)
+    api.get(`/cartao/list_cartao_cliente/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
     .then(res=>{
       if (res.data.success) {
         const data = res.data.data
@@ -197,8 +197,8 @@ class CartaoCreditoComponent extends React.Component  {
       nome: this.state.name,              
       data_vencimento: moment(this.state.expiry, "MM YY"),
       codigo_seguranca: this.state.cvc,      
-      logid: localStorage.getItem('logid'), 
-      perfilId: localStorage.getItem('logperfil'), 
+      logid: sessionStorage.getItem('logid'), 
+      perfilId: sessionStorage.getItem('logperfil'), 
       statusId: 1, 
     }               
     
@@ -259,19 +259,19 @@ class CartaoCreditoComponent extends React.Component  {
 
 verificar_menu_lateral() {
 
-  if (localStorage.getItem('logperfil') == 1) {
+  if (sessionStorage.getItem('logperfil') == 1) {
    return( 
      <Menu_administrador />     
    );
-  } else if (localStorage.getItem('logperfil') == 2) {
+  } else if (sessionStorage.getItem('logperfil') == 2) {
     return( 
       <Menu_cliente_individual />     
     );    
-  } else if (localStorage.getItem('logperfil') == 7) {
+  } else if (sessionStorage.getItem('logperfil') == 7) {
     return( 
       <Menu_cliente_empresarial />     
     );   
-  } else if (localStorage.getItem('logperfil') == 8) {
+  } else if (sessionStorage.getItem('logperfil') == 8) {
    return( 
      <Menu_operador />     
    );

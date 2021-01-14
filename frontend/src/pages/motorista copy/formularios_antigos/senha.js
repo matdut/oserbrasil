@@ -23,8 +23,8 @@ const umnumeroRegex = new RegExp("(?=.*[0-9])");
 const umncaracterespecialRegex = new RegExp("(?=.*?[#?!@$%^&*-])");
 //const controleRegex = new RegExp("(?=.{8,})(?=.*?[A-Z])(?=.*\d)[A-Za-z\d](?=.*?[#?!@$%^&*-])");
 
-const andamento_cadastro = localStorage.getItem('logprogress');     
-const userId = localStorage.getItem('logid');
+const andamento_cadastro = sessionStorage.getItem('logprogress');     
+const userId = sessionStorage.getItem('logid');
 const buscadorcep = require('buscadorcep');
 
 
@@ -112,7 +112,7 @@ class empresarialComponent extends React.Component{
   }
 
   carrega_cliente() {
-    api.get(`/cliente/get/${localStorage.getItem('logid')}`)
+    api.get(`/cliente/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -122,7 +122,7 @@ class empresarialComponent extends React.Component{
             campNome: res.data.data[0].nome,            
             inicio: 1       
           })         
-          localStorage.setItem('lograzao_social', this.state.campRazao_social);  
+          sessionStorage.setItem('lograzao_social', this.state.campRazao_social);  
 
         }  
       })        
@@ -555,11 +555,11 @@ sendUpdate(){
   }          
 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/cliente/update/${localStorage.getItem('logid')}`, datapost)
+        api.put(`/cliente/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
            
-            localStorage.setItem('logprogress', this.state.progresso);  
+            sessionStorage.setItem('logprogress', this.state.progresso);  
             
              this.props.history.push('/area_cliente');            
   

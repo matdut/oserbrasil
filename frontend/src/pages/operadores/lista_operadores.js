@@ -69,9 +69,9 @@ const { cpf } = require('cpf-cnpj-validator');
 const { cnpj } = require('cpf-cnpj-validator');
 var dateFormat = require('dateformat');
 //import { Alert } from 'reactstrap';
-const nome = localStorage.getItem('lognome');  
-const perfil = localStorage.getItem('logperfil');
-const logid = localStorage.getItem('logid');
+const nome = sessionStorage.getItem('lognome');  
+const perfil = sessionStorage.getItem('logperfil');
+const logid = sessionStorage.getItem('logid');
 
 //const baseUrl = "http://34.210.56.22:3333";
 
@@ -282,10 +282,10 @@ class listComponent extends React.Component  {
 
   componentDidMount(){
     this.setState({
-      perfil: localStorage.getItem('logperfil')    
+      perfil: sessionStorage.getItem('logperfil')    
     });
 
-    if (localStorage.getItem('logperfil') == 0) {
+    if (sessionStorage.getItem('logperfil') == 0) {
       
       this.props.history.push(`/login`);       
 
@@ -371,7 +371,7 @@ class listComponent extends React.Component  {
                     encontrou_cnpj: true,      
                   });    
   
-                  localStorage.setItem('logcepbanco', this.state.campCep);  
+                  sessionStorage.setItem('logcepbanco', this.state.campCep);  
                   if (this.state.campCnpj !== "") {
                     validate.cnpjState = 'has-success'      
                   }
@@ -646,7 +646,7 @@ class listComponent extends React.Component  {
     const { validate } = this.state
    // console.log('verifica_base_cnpj cnpj - '+cnpjremoveMask(e.target.value))         
     //let userId = this.props.match.params.id;  
-    api.get(`/empresa/getEmpresaCnpj/${cnpjremoveMask(e.target.value)}/${localStorage.getItem('logcpfrep')}`)
+    api.get(`/empresa/getEmpresaCnpj/${cnpjremoveMask(e.target.value)}/${sessionStorage.getItem('logcpfrep')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -958,8 +958,8 @@ class listComponent extends React.Component  {
 
    busca_email() {
     const { validate } = this.state
-    //console.log('busca cliente metodo e ID '+localStorage.getItem('logid'));    
-    api.get(`/emailOperador/getEmpresa/${localStorage.getItem('logemailId')}/${localStorage.getItem('logemail')}`)
+    //console.log('busca cliente metodo e ID '+sessionStorage.getItem('logid'));    
+    api.get(`/emailOperador/getEmpresa/${sessionStorage.getItem('logemailId')}/${sessionStorage.getItem('logemail')}`)
     .then(res=>{       
         if (res.data.data.length > 0) {
            
@@ -972,15 +972,15 @@ class listComponent extends React.Component  {
    
           validate.emailState = 'has-success'
           this.setState({ validate })
-          localStorage.setItem('logid', res.data.data[0].empresaId);
-          if (localStorage.getItem('logperfil') == 8) {
-             localStorage.setItem('lograzao_social', this.state.campRazao_social)      
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);
+          if (sessionStorage.getItem('logperfil') == 8) {
+             sessionStorage.setItem('lograzao_social', this.state.campRazao_social)      
           }   
 
         //  this.setState({ validate })
         } else {
-          console.log('busca operador ID '+localStorage.getItem('logemailId'));
-          localStorage.setItem('logoperadorId', localStorage.getItem('logemailId'));  
+          console.log('busca operador ID '+sessionStorage.getItem('logemailId'));
+          sessionStorage.setItem('logoperadorId', sessionStorage.getItem('logemailId'));  
           this.busca_operador();
         }
       })        
@@ -1044,7 +1044,7 @@ class listComponent extends React.Component  {
       campMonitorar_eventos: false,
     });     
 
-    if (localStorage.getItem('logperfil') == 1) {
+    if (sessionStorage.getItem('logperfil') == 1) {
       this.setState({ 
         camp_cpf_disabled: true,
         camp_nome_disabled: true,
@@ -1055,21 +1055,21 @@ class listComponent extends React.Component  {
     }
 
     console.log('buscar_operador '+data.id);
-    localStorage.setItem('logoperadorId', data.id);    
+    sessionStorage.setItem('logoperadorId', data.id);    
     this.busca_operador();      
 
    // this.prepareSave();
   }  
   busca_operador() {
     const { validate } = this.state
-    console.log('busca operador ID '+localStorage.getItem('logoperadorId'));
-  //  console.log('busca perfil operador state - '+localStorage.getItem('logperfil'));   
-    api.get(`/operador/get/${localStorage.getItem('logoperadorId')}`)
+    console.log('busca operador ID '+sessionStorage.getItem('logoperadorId'));
+  //  console.log('busca perfil operador state - '+sessionStorage.getItem('logperfil'));   
+    api.get(`/operador/get/${sessionStorage.getItem('logoperadorId')}`)
     .then(res=>{
       //  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {     
           
-          api.get(`/permissao/listaacesso/8/${localStorage.getItem('logoperadorId')}`)
+          api.get(`/permissao/listaacesso/8/${sessionStorage.getItem('logoperadorId')}`)
           .then(resacesso=>{
               console.log(' acesso - '+JSON.stringify(resacesso.data, null, "    ")); 
              
@@ -1121,7 +1121,7 @@ class listComponent extends React.Component  {
           })                        
          
          // console.log('Buscar operador - '+JSON.stringify(this.state, null, "    ")); 
-          localStorage.setItem('logid', res.data.data[0].empresaId);
+          sessionStorage.setItem('logid', res.data.data[0].empresaId);
          // console.log('busca cliente cnpj - '+res.data.data[0].cliente.cnpj);   
           if (this.state.campCpf !== "") {
             validate.cpfState = 'has-success'      
@@ -1159,7 +1159,7 @@ class listComponent extends React.Component  {
       showModal: false,  
       campStatusId: 0,  
     });
-    localStorage.setItem('logeditid', '');
+    sessionStorage.setItem('logeditid', '');
     
     this.loadOperadores();
     this.loadConvites();
@@ -1711,24 +1711,24 @@ verifica_botao(inicio) {
         }  
  
       // console.log('Alterar - '+JSON.stringify(datapost_alterar, null, "    ")); 
-       console.log('logoperador - '+localStorage.getItem('logoperadorId'));
-       api.put(`/operador/update/${localStorage.getItem('logoperadorId')}`, datapost_alterar)
+       console.log('logoperador - '+sessionStorage.getItem('logoperadorId'));
+       api.put(`/operador/update/${sessionStorage.getItem('logoperadorId')}`, datapost_alterar)
        .then(response=>{
          console.log('response - '+JSON.stringify(response.data, null, "    ")); 
 
          if (response.data.success==true) {                          
 
            if (this.state.campgerencia_eventos == false) {
-            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/3`)
+            api.delete(`/permissao/deletaFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/3`)
            } else {
          
-            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/3`)
+            api.get(`/permissao/getFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/3`)
             .then(verificarPermissao=>{
 
              if (verificarPermissao.data.data.length == 0) {  
                 const permissao_acesso = {
                   perfilId: 8,
-                  logid: localStorage.getItem('logoperadorId'),
+                  logid: sessionStorage.getItem('logoperadorId'),
                   funcionalidadeId: 3
                 }  
 
@@ -1742,16 +1742,16 @@ verifica_botao(inicio) {
            }
 
            if (this.state.campMonitorar_eventos == false) {
-            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/4`)
+            api.delete(`/permissao/deletaFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/4`)
            } else {
             
-            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/4`)
+            api.get(`/permissao/getFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/4`)
             .then(verificarPermissao=>{
 
               if (verificarPermissao.data.data.length == 0) {  
                 const permissao_acesso = {
                   perfilId: 8,
-                  logid: localStorage.getItem('logoperadorId'),
+                  logid: sessionStorage.getItem('logoperadorId'),
                   funcionalidadeId: 4
                 }  
 
@@ -1764,15 +1764,15 @@ verifica_botao(inicio) {
             })         
            }
            if (this.state.camprepresentante_legal == false) {
-            api.delete(`/permissao/deletaFuncionalidade/${localStorage.getItem('logoperadorId')}/8/5`)
+            api.delete(`/permissao/deletaFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/5`)
            } else {
-            api.get(`/permissao/getFuncionalidade/${localStorage.getItem('logoperadorId')}/8/5`)
+            api.get(`/permissao/getFuncionalidade/${sessionStorage.getItem('logoperadorId')}/8/5`)
             .then(verificarPermissao=>{
 
               if (verificarPermissao.data.data.length == 0) {  
                 const permissao_acesso = {
                   perfilId: 8,
-                  logid: localStorage.getItem('logoperadorId'),
+                  logid: sessionStorage.getItem('logoperadorId'),
                   funcionalidadeId: 5
                 }  
 
@@ -1791,7 +1791,7 @@ verifica_botao(inicio) {
             statusId: this.state.campStatusId
           }     
 
-           api.put(`/login/update/${localStorage.getItem('logoperadorId')}`,logindata);          
+           api.put(`/login/update/${sessionStorage.getItem('logoperadorId')}`,logindata);          
            validate.cpfState = ''
            
            this.setState({   
@@ -2819,7 +2819,7 @@ opcao_tabChange = (event, newValue) => {
 
 
   onIncluir() {      
-    this.props.history.push(`/incluir_operador/`+localStorage.getItem('logid'));   
+    this.props.history.push(`/incluir_operador/`+sessionStorage.getItem('logid'));   
   }
  
   handleOpenModalInclusao () {
@@ -2917,7 +2917,7 @@ opcao_tabChange = (event, newValue) => {
     
     const params_email = {    
       email: data.email,                      
-      url: `http://www.oser.app.br:21497/operadores_incluir/${localStorage.getItem('logid')}/${data.email}`,        
+      url: `http://www.oser.app.br:21497/operadores_incluir/${sessionStorage.getItem('logid')}/${data.email}`,        
       texto: `Sr(a), Operador(a) \n Seu link de acesso ao sistema è `, 
     }
     
