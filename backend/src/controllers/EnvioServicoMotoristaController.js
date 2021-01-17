@@ -26,50 +26,18 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { servicoId, tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
-    hora_inicial, local_embarque, motorista_bilingue, 
-    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
-    km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
-    perfilId, tipoTransporte, embarque_latitude, embarque_longitude, 
-    valor_bilingue, valor_receptivo, motorista_alocado, statusId, 
-    distancia_value, tempo_value, servico_pai_id, motorista_id } = req.body;
+  const {  servicoId, tipoEventoId, data_servico, hora_inicial,   
+    local_embarque, motorista_id } = req.body;
   
   //console.log("ROle es ==>"+role)
   //create
   await EnvioServicoMotorista.create({ 
     servicoId: servicoId,
     tipoEventoId: tipoEventoId,
-    tipoTransporte: tipoTransporte,
-    nome_passageiro: nome_passageiro, 
-    telefone_passageiro: telefone_passageiro,
-    quantidade_passageiro: quantidade_passageiro, 
-    data_servico: data_servico,   
-    hora_inicial: hora_inicial,        
-    motorista_alocado: motorista_alocado, 
-    quantidade_diarias: quantidade_diarias,
-    local_embarque: local_embarque,    
-    embarque_latitude: embarque_latitude, 
-    embarque_longitude: embarque_longitude, 
-    valor_bilingue: valor_bilingue, 
-    valor_receptivo: valor_receptivo,   
-    motorista_bilingue: motorista_bilingue, 
-    motorista_receptivo: motorista_receptivo, 
-    motorista_id: motorista_id,
-    nome_motorista: nome_motorista,     
-    telefone_motorista: telefone_motorista, 
-    km_translado: km_translado, 
-    tempo_translado: tempo_translado, 
-    valor_estimado: valor_estimado,
-    valor_oser: valor_oser,
-    valor_motorista: valor_motorista, 
-    situacao: situacao, 
-    motivo_cancelamento: motivo_cancelamento,
-    eventoId: eventoId,    
-    distancia_value: distancia_value, 
-    tempo_value: tempo_value,
-    perfilId: perfilId,   
-    servico_pai_id: servico_pai_id,
-    statusId: statusId 
+    data_servico: data_servico,  
+    hora_inicial: hora_inicial,   
+    local_embarque: local_embarque,
+    motorista_id: motorista_id
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -99,51 +67,19 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { servicoId, tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
-    hora_inicial, local_embarque, motorista_bilingue, 
-    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
-    km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
-    perfilId, tipoTransporte, embarque_latitude, embarque_longitude, 
-    valor_bilingue, valor_receptivo, motorista_alocado, statusId, 
-    distancia_value, tempo_value, servico_pai_id, motorista_id } = req.body;
+  const {  servicoId, tipoEventoId, data_servico, hora_inicial,   
+    local_embarque, motorista_id } = req.body;
   //console.log('entrou aqui = '+id);
   // parameter post
   // update data
   
   await EnvioServicoMotorista.update({
-    servicoId: servicoId, 
+    servicoId: servicoId,
     tipoEventoId: tipoEventoId,
-    tipoTransporte: tipoTransporte,
-    nome_passageiro: nome_passageiro, 
-    telefone_passageiro: telefone_passageiro,
-    quantidade_passageiro: quantidade_passageiro, 
-    data_servico: data_servico,   
-    hora_inicial: hora_inicial,        
-    motorista_alocado: motorista_alocado, 
-    quantidade_diarias: quantidade_diarias,
-    local_embarque: local_embarque,    
-    embarque_latitude: embarque_latitude, 
-    embarque_longitude: embarque_longitude, 
-    valor_bilingue: valor_bilingue, 
-    valor_receptivo: valor_receptivo,   
-    motorista_bilingue: motorista_bilingue, 
-    motorista_receptivo: motorista_receptivo, 
-    motorista_id: motorista_id,
-    nome_motorista: nome_motorista,     
-    telefone_motorista: telefone_motorista, 
-    km_translado: km_translado, 
-    tempo_translado: tempo_translado, 
-    valor_estimado: valor_estimado,
-    valor_oser: valor_oser,
-    valor_motorista: valor_motorista, 
-    situacao: situacao, 
-    motivo_cancelamento: motivo_cancelamento,
-    eventoId: eventoId,    
-    distancia_value: distancia_value, 
-    tempo_value: tempo_value,
-    perfilId: perfilId,   
-    servico_pai_id: servico_pai_id,
-    statusId: statusId 
+    data_servico: data_servico,  
+    hora_inicial: hora_inicial,   
+    local_embarque: local_embarque,
+    motorista_id: motorista_id
   },{
     where: { id: id}
   })

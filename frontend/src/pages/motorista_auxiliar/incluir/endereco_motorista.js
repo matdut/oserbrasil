@@ -732,7 +732,7 @@ verifica_botao(inicio) {
       <div>
       <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/motorista_aux_incluir_convite/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_endereco_motorista">                

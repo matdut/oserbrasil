@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-
 var nametable = 'veiculo_motorista'; // nombre de la tabla
 var Motorista = require('./Motorista');
 var Seguradora = require('./Seguradora');
@@ -102,10 +101,11 @@ var Veiculo = sequelize.define(nametable,{
 
 });
 
+
 //User.belongsToMany(Project, { as: 'Tasks', through: 'worker_tasks', foreignKey: 'userId', otherKey: 'projectId'})
 Veiculo.belongsTo(Seguradora);
 //Veiculo.hasOne(Motorista, {as : 'motorista', foreignKey : 'id'});
-Veiculo.belongsTo(Motorista);
+//Veiculo.belongsTo(Motorista);
 //Veiculo.belongsTo(Motorista, {foreignKey : 'id'});
 
 module.exports = Veiculo

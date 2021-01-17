@@ -337,17 +337,11 @@ controllers.listaservicos = async (req,res) => {
   
   await Servicos.findAll({
     where: { 
-      eventoId: eventoid,  logid: id, perfilId: perfilId,
-   /*   servico_pai_id: {
-        [Op.In]: [null,0]             
-      } a*/
-    },  
+        eventoId: eventoid,  logid: id, perfilId: perfilId,
+      },  
    // group: 
-    order: [ 
-      ['createdAt', 'DESC'],
-      ['data_servico', 'ASC'],
-      
-    ]       
+    //order: '"data_servico" DESC'
+    order: [['data_servico', 'DESC'], ['hora_inicial', 'DESC']]
   })
   .then( function (data){
     return res.json({success:true, data: data});

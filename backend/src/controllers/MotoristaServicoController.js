@@ -133,20 +133,17 @@ controllers.getMotoristaServicoAtivos = async (req, res) => {
       { 
         model: Motorista,       
         required: true,
+      //  id: motoristaId
       },    
         { 
-          model: Servicos,            
-          
+          model: Servicos,       
+          required: true,
         }],
-    where: { statusId: 1, motoristaId: motoristaId}
+        where: { statusId: 1, motoristaId: motoristaId}
   
   })
   .then( function (data){
-    if (data.length > 0) {
-      return res.json({success:true, data:data});
-     } else {
-      return res.json({success:false, data:data});
-     }
+    return res.json({success:true, data:data});
   })
   .catch(error => {
     return res.json({success:false, message: error});

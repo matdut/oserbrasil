@@ -272,6 +272,7 @@ class listComponent extends React.Component  {
       listaStatus:[],
       listSeguradoras:[],      
       listaVeiculos:[],
+      listarCadAtivos:[],
       //loading: true,
       validate: {         
         carroState: '',          
@@ -1358,6 +1359,24 @@ cadeirarodasChange(e) {
        alert("Error server "+error)
      })
    }
+
+   loadAuxiliaresVinculados(){
+    // const url = baseUrl+"/motorista/list"
+    api.get(`/motoristaAuxiliar/listarAtivos/${sessionStorage.getItem('logid')}`)
+     .then(res=>{
+       if (res.data.success) {
+         const data = res.data.data
+         this.setState({
+           listarCadAtivos:data,
+           loading: false,
+          })
+       }
+     })
+     .catch(error=>{
+       alert("Error server "+error)
+     })
+   }
+ 
  
   handleClick = () => {
   
@@ -1647,6 +1666,7 @@ sendEnvioEmail(){
         statusId: 1,
         perfilId: 9
       }    
+      sessionStorage.setItem('empresaId',sessionStorage.getItem('logid'));
       debugger
       api.get(`/emailOperador/getemail/${this.state.campEmail}`)
       .then(res1=>{             
@@ -1662,8 +1682,8 @@ sendEnvioEmail(){
         
               const params_email = {    
                 email: email_envio,         
-             //  url: `http://localhost:3000/motorista_aux_incluir_convite/${res.data.data.email}`, 
-                url: `http://www.oser.app.br:21497/motorista_incluir_convite/${res.data.data.email}`,    
+                url: `http://www.oser.app.br:21497/motorista_aux_incluir_convite/${res.data.data.email}`, 
+              //  url: `http://www.oser.app.br:21497/motorista_incluir_convite/${res.data.data.email}`,    
               //  url: `http://www.oser.app.br:21497/motorista_aux_incluir_convite/${res.data.data.email}`,     
                 texto: `Sr(a), Motorista(a) \n Seu link de acesso ao sistema è `, 
               }      
@@ -1794,7 +1814,7 @@ opcao_tabChange = (event, newValue) => {
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },                               
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' }, },              
                             ]}
-                            data={this.state.listMotorista}   
+                            data={this.state.listarCadAtivos}   
                             localization={{
                               body: {
                                 emptyDataSourceMessage: 'Nenhum registro para exibir'

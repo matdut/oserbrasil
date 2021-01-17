@@ -1,37 +1,27 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-
-var Perfil = require('./Perfil');
+// import Role for FK roleId
+//var Role = require('./Role');
+// name table
 var Status = require('./Status');
-var Eventos = require('./Eventos');
 var Situacao = require('./Situacao');
-var Tipo_evento = require('./tipo_evento');
-var Cartao = require('./Cartao_credito');
-//var Motorista_servico = require('./Motorista_servico');
 
-var nametable = 'servicos';
+var nametable = 'historico_finalizados_servicos';
 
-var Servicos = sequelize.define(nametable,{
+var Historico_finalizados_servicos = sequelize.define(nametable,{
 
   id:{
     type:Sequelize.INTEGER,
     primaryKey:true,
-    autoIncrement:true
+  //  autoIncrement:true
   },  
   eventoId:{
-    type: Sequelize.INTEGER,    
-    refences: {
-      model: Eventos,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   tipoEventoId: {
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Tipo_evento,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },  
   nome_passageiro: {
     type:Sequelize.STRING(250),    
@@ -104,10 +94,6 @@ var Servicos = sequelize.define(nametable,{
   motorista_alocado: {
     type: Sequelize.BOOLEAN, 
     allowNull: true,
-  },  
-  motorista_id: {
-    type: Sequelize.INTEGER, 
-    allowNull: true,
   },
   nome_motorista: {
     type: Sequelize.STRING(160), 
@@ -157,56 +143,40 @@ var Servicos = sequelize.define(nametable,{
   servico_pai_id:  {  
     type: Sequelize.INTEGER
   },
-  estado_selecionado_mapa: {
-    type: Sequelize.STRING(3)
-  },
   statusId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Status,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   situacaoId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Situacao,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   motivo_cancelamento: {
     type: Sequelize.STRING(250), 
     allowNull: true,
   },
   cartaoId: {
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Cartao,
-      key: 'id'
-    } 
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
   logid: {
     type: Sequelize.INTEGER,
     allowNull: false,     
   },
-  perfilId:{
-    type: Sequelize.INTEGER,
-    // this is a refence to another model
-    refences: {
-      model: Perfil,
-      key: 'id'
-    } 
+  perfilId: {
+    type:Sequelize.INTEGER,    
+    allowNull: true,
   },
+  nome_responsavel: {  
+    type: Sequelize.STRING(250),
+    allowNull: false,     
+  },  
+  perfil_checkinId: {
+    type:Sequelize.INTEGER,    
+    allowNull: true,
+  },
+
 })
 
 
-Servicos.belongsTo(Situacao);
-Servicos.belongsTo(Status);
-Servicos.belongsTo(Eventos);
-Servicos.belongsTo(Tipo_evento);
-Servicos.belongsTo(Cartao);
-
-module.exports = Servicos
+module.exports = Historico_finalizados_servicos

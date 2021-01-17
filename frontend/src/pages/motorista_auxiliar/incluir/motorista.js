@@ -964,7 +964,7 @@ verifica_botao(inicio) {
 } 
 
 sendSave(){        
-  
+  debugger
   api.get(`/emailOperador/getemail/${this.state.campEmail}`)
   .then(respemail=>{    
   
@@ -1006,23 +1006,23 @@ sendSave(){
             sessionStorage.setItem('logid', response.data.data.id);
             sessionStorage.setItem('lognome', response.data.data.nome);  
       
-          console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
-          console.log('pegou sessao id - '+sessionStorage.getItem('logid'));          
-          if (sessionStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_aux_motorista_incluir/`+sessionStorage.getItem('logid'));   
-          } else if (sessionStorage.getItem('logperfil') == 9) {
-            this.props.history.push(`/area_motorista_auxiliar`);                   
-          } else if (sessionStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_aux_motorista_incluir/`+sessionStorage.getItem('logid'));       
-          }          
-  
+            console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
+            console.log('pegou sessao id - '+sessionStorage.getItem('logid'));          
+            if (sessionStorage.getItem('logperfil') == 1) {
+              this.props.history.push(`/endereco_aux_motorista_incluir/`+sessionStorage.getItem('logid'));   
+            } else if (sessionStorage.getItem('logperfil') == 9) {
+              this.props.history.push(`/area_motorista_auxiliar`);                   
+            } else if (sessionStorage.getItem('logperfil') == 0) {
+              this.props.history.push(`/endereco_aux_motorista_incluir/`+sessionStorage.getItem('logid'));       
+            }          
+    
           }
           else {
             console.log('criar - '+JSON.stringify(datapost, null, "    ")); 
              alert("Error na Criação verificar log")                 
           }
         }).catch(error=>{
-          alert("Erro verificar log  ")
+          alert("Erro motoristaAuxiliar/create ")
         })
     } else {
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 

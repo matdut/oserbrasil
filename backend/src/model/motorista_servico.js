@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
 var Servico = require('./servicos');
-var Motorista = require('./motorista');
+var Motorista = require('./Motorista');
 var Status = require('./Status');
 
 var nametable = 'motorista_servico';
@@ -42,8 +42,22 @@ var Motorista_servico = sequelize.define(nametable,{
   timestamps:false
 })
 
+//Motorista_servico.hasMany(Motorista, {foreignKey: 'motoristaId'})
+//Motorista.belongsTo(Motorista_servico, {foreignKey: 'id'})
+
+//Motorista_servico.hasMany(Servico, {foreignKey: 'servicoId'})
+//Servico.belongsTo(Motorista_servico, {foreignKey: 'id'})
+
+//Motorista_servico.hasMany(Motorista, {foreignKey: 'id'})
+//Motorista.belongsTo(Motorista_servico, {foreignKey: 'id'})
+
+//Motorista_servico.hasMany(Servico, {foreignKey: 'id'})
+//Servico.belongsTo(Motorista_servico, {foreignKey: 'id'})
+
+
+Motorista_servico.belongsTo(Motorista, { foreignKey: 'motoristaId' });
 Motorista_servico.belongsTo(Servico);
-Motorista_servico.belongsTo(Motorista);
+
 Motorista_servico.belongsTo(Status);
 
 module.exports = Motorista_servico

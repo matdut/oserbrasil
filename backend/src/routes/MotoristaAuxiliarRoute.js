@@ -9,6 +9,7 @@ const MotoristaAuxiliarController = require('../controllers/MotoristaAuxiliarCon
 router.get('/list',MotoristaAuxiliarController.list);
 router.get('/listExcluidos',MotoristaAuxiliarController.listExcluidos);
 router.get('/listarIncompletos',MotoristaAuxiliarController.listarIncompletos);
+router.get('/listarAtivos/:id',MotoristaAuxiliarController.listarAtivos);
 router.post('/create', MotoristaAuxiliarController.create);
 router.get('/get/:id', MotoristaAuxiliarController.get);
 router.get('/getMotVeiculo/:id', MotoristaAuxiliarController.getMotVeiculo);

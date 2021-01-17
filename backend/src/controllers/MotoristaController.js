@@ -307,8 +307,7 @@ controllers.get = async (req, res) => {
   const { id } = req.params;
   await Motorista.findAll({
     where: { 
-      id: id
-    // include: [{ model: Veiculo }],
+      id: id     
     },
    // include: [ Role ]
   })
@@ -346,13 +345,38 @@ controllers.getMotVeiculo = async (req, res) => {
   
 }
 
+controllers.getMotVeiculoTipo = async (req, res) => {
+  const { id, tipoTransporte } = req.params;
+  await Motorista.findAll({
+    include: [{ model: Veiculo, where: {motoristaId: id, tipoTransporte: tipoTransporte} }],  
+    where: { 
+      id: id  
+     }
+    //,
+    //include: [ Role ]
+  })
+  .then( function (data){
+    if (data.length > 0) {
+      return res.json({success:true, data:data, total: data.length});
+     } else {
+      return res.json({success:false, data:data});
+     }
+  })
+  .catch(error => {
+    return res.json({success:false, message: error});
+  })
+  
+}
+
+
+
 controllers.getSelecionaMotorista = async (req, res) => {
  const { estado_motorista, bilingue } = req.params;
  // const { bilingue } = req.params;
   
   await Motorista.findAll({
  //  include: [{ model: Status, where: {id: 1}  }],
-   include: [{ model: Estado, where: {nome: estado_motorista}  }],
+   include: [{ model: Estado, where: {nome: estado_motorista}  }],  
   // include: [{ model: Veiculo }],
     where: { 
       bilingue: bilingue, 

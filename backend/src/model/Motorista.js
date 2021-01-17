@@ -1,13 +1,10 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
-// import Role for FK roleId
-//var Role = require('./Role');
-// name table
 var Estado = require('./Estado');
 var Perfil = require('./Perfil');
 var Situacao = require('./Situacao');
 var Status = require('./Status');
-//var Veiculos = require('./veiculo_motorista');
+var Veiculos = require('./veiculo_motorista');
 
 var nametable = 'motorista';
 var Motorista = sequelize.define(nametable,{
@@ -165,6 +162,8 @@ statusId:{
 
 })
 
+Motorista.hasMany(Veiculos, {foreignKey: 'motoristaId'})
+Veiculos.belongsTo(Motorista, {foreignKey: 'motoristaId'})
 Motorista.belongsTo(Estado);
 Motorista.belongsTo(Perfil);
 Motorista.belongsTo(Situacao);

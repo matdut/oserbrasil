@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import Menu_motorista from '../motorista_auxiliar/menu_motorista_auxiliar';
+//import Menu_motorista from '../motorista_auxiliar/menu_motorista_auxiliar';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import menu_motorista_auxiliar from '../motorista_auxiliar/menu_motorista_auxiliar';
@@ -81,8 +81,14 @@ verifica_mensagem() {
     //const classes = useStyles();
     return (
       <div className="mensagem_motorista">     
-          Documentação em análise, favor aguardar.         
+         Documentação em análise, favor aguardar. Liberadas apenas as funções de alteração de dados cadastrais!!   
       </div>
+    );
+  } else {
+    return (
+      <Container maxWidth="sm">
+           <Typography component="div" style={{ backgroundColor: '#white', height: '12vh' }} />
+      </Container>
     );
   }
   

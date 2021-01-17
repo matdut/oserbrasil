@@ -416,6 +416,26 @@ controllers.listExcluidos = async (req,res) => {
   
  }
 
+ controllers.listarAtivos = async (req,res) => {
+  const { id } = req.params;
+
+  await Motorista_auxiliar.findAll({    
+    include: [{ model: Status  }],
+    where: { 
+     statusId: 1,
+     motorista_principal_id: id
+    }
+   })
+   .then( function (data){
+     return res.json({success:true, data:data});    
+   })
+   .catch(error => {
+     return res.json({success:false, message: error});
+   })
+  
+ }
+
+
 /*
 controllers.putdoc = async (req,res) => {
    

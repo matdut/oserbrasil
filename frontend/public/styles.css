@@ -1003,7 +1003,7 @@
     border: 2px solid #C9C9C9 !important; 
     background: #C9C9C9 0% 0% no-repeat padding-box !important;
     opacity: 1 !important;
-    margin-left: 150px !important;
+    margin-left: 80px !important;
     position: absolute !important;    
     bottom: 0px !important;  
   }
@@ -1017,7 +1017,7 @@
     border: 2px solid #FF840A !important;
     background: #FF840A 0% 0% no-repeat padding-box !important;
     opacity: 1 !important;
-    margin-left: 150px !important;
+    margin-left: 80px !important;
     position: absolute !important;    
     bottom: 0px !important;  
   }
@@ -1237,6 +1237,15 @@
 
   }
 
+  .titulo_moldura_modal_motivo_delecao {
+    font: normal normal Effra !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    letter-spacing: 0px !important;
+    width: 500px !important;
+
+  }
+
   .titulo_moldura_modal_delecao_2 {
     font: normal normal Effra !important;
     font-size: 12px !important;   
@@ -1344,6 +1353,28 @@
     margin-left: 335px !important;
     letter-spacing: 0px;
     color: #0F93D9 !important;
+  }
+
+  .layout_motorista_alocado {
+    font-family: Effra !important;
+    font-size: 12px !important;
+    letter-spacing: 0px;
+    margin-left: 20px !important;
+  }
+
+  .layout_label_motorista_alocado {
+    font-family: Effra !important;
+    font-size: 12px !important;
+    letter-spacing: 0px;
+    font-weight: bold !important; 
+  }
+
+  .moldura_alocado {
+    display: inline-block !important;
+    margin: 0 2px !important; 
+    transform: scale(0.8) !important;
+    border: 1px;
+    color: #000000 !important;
   }
 
   .incluir_foto_cnh_alteracao_veiculo{
@@ -1742,8 +1773,8 @@
 
 /* AVATAR */
 .avatar_tamanho {  
-  width: 144px !important; 
-  height: 144px !important;
+  width: 104px !important; 
+  height: 104px !important;
   margin-left: 20px;
 }
 

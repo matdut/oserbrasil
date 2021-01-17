@@ -651,8 +651,11 @@ sendUpdate(){
 
             if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (sessionStorage.getItem('logperfil') == 3) {              
-              this.props.history.push(`/area_motorista`);  
+
+            } else if (sessionStorage.getItem('logperfil') == 3) {           
+              sessionStorage.setItem('statusid', 16);       
+              this.props.history.push(`/area_motorista`);
+
             }          
   
           }

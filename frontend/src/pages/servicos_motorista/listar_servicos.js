@@ -515,6 +515,7 @@ class listaservicosComponent extends React.Component  {
       listaFilhosAlteracao:[],
       listaMotoristasPreferencial:[],
       listaServicoAceito:[],
+      listaMotivos:[],
       erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
@@ -531,11 +532,14 @@ class listaservicosComponent extends React.Component  {
       issuer: "",
       focused: "",
       loading: true,
+      campmotivoId: '',
+      campDeletarId: 0,
+      deletar_servico: '',
     }
   }
 
   componentDidMount(){
-    this.interval = setInterval(() => this.tickservico(), 1000);
+    this.interval = setInterval(() => this.tickservicomotorista(), 1000);
     this.setState({
       perfil: sessionStorage.getItem('logperfil'),
       id: sessionStorage.getItem('logid'),
@@ -544,8 +548,8 @@ class listaservicosComponent extends React.Component  {
 
     sessionStorage.setItem('logeventoservico',this.props.match.params.id);    
 
-    this.loadlistServicosNovos();
-    this.loadlistServicosAtivos(); 
+     this.loadlistServicosNovos();
+     this.loadlistServicosAtivos(); 
   }
 
   loadlistServicosNovos(){    
@@ -558,10 +562,10 @@ class listaservicosComponent extends React.Component  {
            listservicoseventos:data,
            loading: false,
           })
-       }
+       } 
      })
      .catch(error=>{
-       alert("Error server loadlistServicosNovos "+error)
+       alert("Error server envioservicoMotorista "+error)
      })
    }
 
@@ -582,46 +586,107 @@ class listaservicosComponent extends React.Component  {
      })
    }
 
-   tickservico() {
-    this.loadlistServicosNovos();
-    this.loadlistServicosAtivos(); 
+
+   loadlistaMotivos(){    
+    api.get(`/mensagens_motorista/list`)
+     .then(res=>{
+       if (res.data.success == true) {       
+
+         const data = res.data.data    
+         this.setState({
+          listaMotivos:data,
+           loading: false,
+          })
+       }
+     })
+     .catch(error=>{
+       alert("Error server loadlistServicos "+error)
+     })
+   }
+
+
+   tickservicomotorista() {
+  //  if (this.state.value == 1) {
+      this.loadlistServicosNovos();
+    //} else {
+      this.loadlistServicosAtivos(); 
+   // } 
+   
   
    }
 
-   cancelar_servico(row) {
-    var servico_id = row.servicoId;
-    var motorista_cancelado = row.motorista_id;
+   loadFillTipoData() {
+    return this.state.listaMotivos.map((data)=>{          
+      return(
+         <MenuItem value={data.descricao}>{data.descricao}</MenuItem>      
+      )
+    })
+   }
+
+   async cancelar_servico(row) {
+     debugger
+   // var servico_id = servicoId;
+    //var motorista_cancelado = row.motorista_id;  
+    sessionStorage.setItem('motorista_cancelado', row.motoristaId);
   
-    //verificar 3 horas a mais ou a menos
-    api.delete(`/motorista_servico/delete/${servico_id}`);
-  
-    api.get(`/servicos/get/${servico_id}`)
-    .then(respservico=>{    
-  
-        if (respservico.data.success == true) { 
-          this.carrega_servico(respservico.data.data[0]);
-          
-          this.procurar_motorista_servico();
-          
-        }
-      });    
+    const respdelecao = await api.delete(`/motorista_servico/delete/${row.servico.id}`);
+
+      if (respdelecao.data.success == true) { 
+          this.loadlistServicosAtivos(); 
+
+          const motorista_alocado = {
+            motorista_alocado: false,  
+          } 
+
+          api.put(`/servicos/update/${row.servico.id}`, motorista_alocado);
+        
+        ///  const respservico = await api.get(`/servicos/get/${row.servico.id}`)
+        
+        
+            // if (respservico.data.success == true) { 
+            
+             this.loadlistServicosNovos();   
+            this.handleCloseModalMotivo();              
+                        
+            this.procurar_motorista_servico(row.servico,'CANCELAMENTO');
+              // this.refreshPage();
+            // }
+      }
    }
 
    async procurar_motorista_servico(servico, tipo_solicitacao) { 
     // tipo_solicitacao: inclusao, alteracao / reenvio 
     //bloquear_cartao com o valor total mais a porcentagem de acrescimo
     debugger;
+    var distribuir_servico_motorista = false;
     possui_motorista = false;     
+
+   // alert(`${tipo_solicitacao}`)
+    // alert('distribuir_servico - '+sessionStorage.getItem('distribuir_servico'));   
         
-    if (tipo_solicitacao == 'REENVIO') {    
+    if (tipo_solicitacao == 'REENVIO') { 
 
-      api.delete(`/envioservicoMotorista/delete/${servico.id}`);        
+      sessionStorage.setItem('logTipo', '');
+      sessionStorage.setItem('distribuir_servico', true);
+      api.delete(`/envioservicoMotorista/delete/${servico.id}`);   
+      distribuir_servico_motorista = true     
 
-    } else if (tipo_solicitacao == 'ALTERCAO') {  
-     // this.deletar_motorista_servico(servico_selecionado);
-     debugger
+    } else if (tipo_solicitacao == 'INCLUSAO') {  
+ 
+      sessionStorage.setItem('logServicoIncluido', '');
+      sessionStorage.setItem('logTipo', '');
+      sessionStorage.setItem('distribuir_servico', true);
+      distribuir_servico_motorista = true;      
+    
+    } else if (tipo_solicitacao == 'CANCELAMENTO') {   
+     // this.loadlistServicosAtivos(); 
+      sessionStorage.setItem('distribuir_servico', true);
+         
 
-     //verificar se os campos obrigatorios para a distribuicao foram alterados
+    } else if (tipo_solicitacao == 'ALTERACAO') {
+      sessionStorage.setItem('logServicoAlteracao', '');  
+      sessionStorage.setItem('logTipo', '');    
+      
       api.delete(`/envioservicoMotorista/delete/${servico.id}`);    
       
       //se algum motorista aceitou o servico 
@@ -629,202 +694,214 @@ class listaservicosComponent extends React.Component  {
       // os dados alterados, não será cobrado do Cliente o valor do serviço 
       //e o (s) Motorista (s) não será remunerado;
 
-      if (servico.motorista_alocado == true) {
+          if (servico.motorista_alocado == true) {
 
-        const data_hora_atual = new Date();
-        const data_servico_alteracao = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");  
+                const data_hora_atual = new Date();
+                const data_servico_alteracao = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");  
 
-        const data_moment_alt = moment(data_servico_alteracao, "DD/MM/YYYY");
-        const formatar_data = data_moment_alt.format("YYYY-MM-DD");    
-        const hora_ini_alt = servico.hora_inicial;
-        const dataatual_alt = new Date(`${formatar_data} ${hora_ini_alt}`);
-        
-        var data_seis_horas_menos = moment(
-          dataatual_alt, "D/M/YYYY h:m"
-        ).subtract(             
-         'hours', 6
-        );   
-        
-        var data_atual = moment(
-          data_hora_atual, "D/M/YYYY h:m"
-        );
+                const data_moment_alt = moment(data_servico_alteracao, "DD/MM/YYYY");
+                const formatar_data = data_moment_alt.format("YYYY-MM-DD");    
+                const hora_ini_alt = servico.hora_inicial;
+                const dataatual_alt = new Date(`${formatar_data} ${hora_ini_alt}`);
+                
+                var data_seis_horas_menos = moment(
+                  dataatual_alt, "D/M/YYYY h:m"
+                ).subtract(             
+                'hours', 6
+                );   
+                
+                var data_atual = moment(
+                  data_hora_atual, "D/M/YYYY h:m"
+                );
 
-        if (data_atual.getTime() >= data_seis_horas_menos.getTime() ) {
-             alert(' data_atual '+ data_atual);
-             alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+                if (data_atual.getTime() >= data_seis_horas_menos.getTime() ) {
+                    alert(' data_atual '+ data_atual);
+                    alert(' data_seis_horas_menos '+ data_seis_horas_menos);
 
-        } else if (data_atual.getTime() <= data_seis_horas_menos.getTime() ) {
-            //Se faltarem menos que 6 horas antes do inicio do serviço que teve os dados alterados
-          //, será cobrado do Cliente o valor do serviço bloqueado no cartão de crédito 
-          //e o Motorista será remunerado pelo valor que lhe couber; Usar a rotina 
+                } else if (data_atual.getTime() <= data_seis_horas_menos.getTime() ) {
+                    //Se faltarem menos que 6 horas antes do inicio do serviço que teve os dados alterados
+                  //, será cobrado do Cliente o valor do serviço bloqueado no cartão de crédito 
+                  //e o Motorista será remunerado pelo valor que lhe couber; Usar a rotina 
 
-          alert(' data_atual '+ data_atual);
-          alert(' data_seis_horas_menos '+ data_seis_horas_menos);
-        }
+                  alert(' data_atual '+ data_atual);
+                  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+                }
 
-      } 
-
-    }
-
-    const data_servico = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");
-  
-    const data_moment = moment(data_servico, "DD/MM/YYYY");
-    const formatar_data = data_moment.format("YYYY-MM-DD");    
-    const data_servico_date = new Date(formatar_data);
-    const data_servico_ini = servico.data_servico;                                   
- 
-    const hora_ini = servico.hora_inicial;
-    //hora_ini = hora_ini.substring(0,5); 
-  
-    const dataatual = new Date(`${formatar_data} ${hora_ini}`);
-
-     var data_tres_horas_mais = moment(
-       dataatual, "D/M/YYYY h:m"
-     ).add(             
-      'hours', 3
-     );    
-
-    var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
-
-    var data_tres_horas_menos = moment(
-      dataatual, "D/M/YYYY h:m"
-    ).subtract(             
-      'hours', 3
-    );   
-   
-     var hora_menor_tres = data_tres_horas_menos.format("HH:mm");   
-   
-   // const data_servico_date = new Date(formatar_data);
+          } 
     
-    // Não ter outro serviço no mesmo dia e horário.
-    //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
-   
-    //O serviço não ter sido aceito por outro motorista.
-    //Não ter ele mesmo cancelado esse serviço.
+    }          
 
-    //var retorno = false;
-    // se cartao ok 
-        var bilingue = '';
+    if (sessionStorage.getItem('distribuir_servico') == 'true') {
+        sessionStorage.setItem('distribuir_servico', false);
 
-        if (servico.motorista_bilingue == '') {
-          bilingue = bilingue_global
-        } else {
-          bilingue = servico.motorista_bilingue
-        }
+    //  alert('entrou na  distribuir_servico_motorista ');
 
-        if (bilingue == false) {
-          bilingue = 0
-        } else {
-          bilingue = 1
-        }
+        const data_servico = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");
+      
+        const data_moment = moment(data_servico, "DD/MM/YYYY");
+        const formatar_data = data_moment.format("YYYY-MM-DD");    
+        const data_servico_date = new Date(formatar_data);
+        const data_servico_ini = servico.data_servico;                                   
+    
+        const hora_ini = servico.hora_inicial;
+        //hora_ini = hora_ini.substring(0,5); 
+      
+        const dataatual = new Date(`${formatar_data} ${hora_ini}`);
+
+        var data_tres_horas_mais = moment(
+          dataatual, "D/M/YYYY h:m"
+        ).add(             
+          'hours', 3
+        );    
+
+        var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+
+        var data_tres_horas_menos = moment(
+          dataatual, "D/M/YYYY h:m"
+        ).subtract(             
+          'hours', 3
+        );   
+      
+        var hora_menor_tres = data_tres_horas_menos.format("HH:mm");   
+      
+      // const data_servico_date = new Date(formatar_data);
+        
+        // Não ter outro serviço no mesmo dia e horário.
+        //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+      
+        //O serviço não ter sido aceito por outro motorista.
+        //Não ter ele mesmo cancelado esse serviço.
+
+        //var retorno = false;
+        // se cartao ok 
+            var bilingue = '';
+
+            if (servico.motorista_bilingue == '') {
+              bilingue = bilingue_global
+            } else {
+              bilingue = servico.motorista_bilingue
+            }
+
+            if (bilingue == false) {
+              bilingue = 0
+            } else {
+              bilingue = 1
+            }
+
+        //    var qtd_motoristas = 0;    
+            var estado_motorista = '';        
+            if (servico.estado_selecionado_mapa == '') {
+              estado_motorista = estado_selecionado_mapa_global
+            } else {
+              estado_motorista = servico.estado_selecionado_mapa;
+            }
+            var tipoTransporte = '';
+            if (servico.camptipoId == '') {
+              tipoTransporte = tipoTransporte_global
+            } else {
+              tipoTransporte = servico.tipoTransporte;
+            }
+                  
+            var verifica_possui_servico = false;
+          
+            debugger;
+            //verificar motorista preferido //
+            if (estado_motorista == 'Rio') {
+              estado_motorista = 'RJ'   
+            }  
 
             
-        var estado_motorista = '';        
-        if (servico.estado_selecionado_mapa == '') {
-          estado_motorista = estado_selecionado_mapa_global
-        } else {
-          estado_motorista = servico.estado_selecionado_mapa;
-        }
-        var tipoTransporte = '';
-        if (servico.camptipoId == '') {
-          tipoTransporte = tipoTransporte_global
-        } else {
-          tipoTransporte = servico.tipoTransporte;
-        }
-               
-        var verifica_possui_servico = false;
-      
-        debugger;
-        //verificar motorista preferido //
-        if (estado_motorista == 'Rio') {
-          estado_motorista = 'RJ'   
-        }  
+          // alert(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`);
+          api.get(`/motorista/getSelecionaMotorista/${estado_motorista}/${bilingue}`)                    
+          .then(respMotorista=>{
 
-       // alert(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`);
-        api.get(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`)                    
-        .then(respMotorista=>{
+              debugger;
+              if (respMotorista.data.success == true) {  
 
-          debugger;
-          if (respMotorista.data.success == true) {  
+                  debugger      
+                  total_motorista = respMotorista.data.data.length;
+                  motorista_incluido = 0;
+                  var mot_sel = respMotorista.data.data;
+                  var motorista_cancelado = sessionStorage.getItem('motorista_cancelado');
 
-            debugger
-      
-            total_motorista = respMotorista.data.data.length;
-            motorista_incluido = 0;
-            var mot_sel = respMotorista.data.data;
+                  mot_sel.map((mot)=>{          
+                    var distribui_moto = mot.id;   
 
-             mot_sel.map((mot)=>{             
-             
-              //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
-              // verifica_possui_servico();
-              
-              api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
-              .then(respservico=>{   
-                  
-                  debugger                 
-                  if (respservico.data.success == true) {   
-                    const response_data = respservico.data.data[0];      
+                  if ( motorista_cancelado.toString() !== distribui_moto.toString()) {   
+                    sessionStorage.setItem('motorista_cancelado', '');
+                //    qtd_motoristas = qtd_motoristas + 1;
+                    //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                    // verifica_possui_servico();
+                    
+                    api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
+                    .then(respservico=>{   
                         
-                            const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
-                            const data_teste = moment(data_servico, "DD/MM/YYYY");
-                            const formatar_data = data_teste.format("YYYY-MM-DD");    
-                            const data_servico_banco = new Date(formatar_data);
-                            var hora_banco = servico.hora_inicial.substring(0,5);                   
+                        debugger                 
+                        if (respservico.data.success == true) {   
+                          const response_data = respservico.data.data[0];      
+                              
+                                  const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                  const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                  const formatar_data = data_teste.format("YYYY-MM-DD");    
+                                  const data_servico_banco = new Date(formatar_data);
+                                  var hora_banco = servico.hora_inicial.substring(0,5);                   
 
-                            if (data_servico_banco.getTime() == data_servico_date.getTime() &&
-                                hora_banco <= hora_maior_tres &&
-                                hora_banco >= hora_menor_tres) {
+                                  if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                      hora_banco <= hora_maior_tres &&
+                                      hora_banco >= hora_menor_tres) {
 
-                                    debugger;
-                                    verifica_possui_servico = true;
-                                    motorista_incluido = motorista_incluido + 1;
-                                //    this.finalizando_processo_busca();
+                                          debugger;
+                                          verifica_possui_servico = true;
+                                          motorista_incluido = motorista_incluido + 1;
+                                      //    this.finalizando_processo_busca();
 
-                            } else {
-                                debugger
-                            //   motorista_incluido = motorista_incluido + 1;
-                            this.verifica_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                  } else {
+                                      debugger
+                                  //   motorista_incluido = motorista_incluido + 1;
+                                      this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
 
-                            }                                             
-                  } else {
-                     debugger
-                  //  motorista_incluido = motorista_incluido + 1;
-                    this.verifica_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                  }                                             
+                        } else {
 
-                  }     
+                            debugger
+                          //  motorista_incluido = motorista_incluido + 1;
+                            this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+
+                        }     
 
 
-                }).catch(error=>{
-                  alert("Error motorista_servico getMotoristaServico  -"+error)
-                });    
+                      }).catch(error=>{
+                        alert("Error motorista_servico getMotoristaServico  -"+error)
+                       });    
+                    }
+                  })        
+                
+              
+              // alert('Reenvio para os motoristas realizado com sucesso');
+      
+              } else {
+                alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
+                sessionStorage.setItem('logServicoIncluido', ''); 
+                /*   this.setState({                              
+                  mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
+                })*/
+              }  
 
-            })
-
-           // alert('Reenvio para os motoristas realizado com sucesso');
-  
-          } else {
-            alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
-            sessionStorage.setItem('logServicoIncluido', ''); 
-            /*   this.setState({                              
-               mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
-            })*/
-          }  
-
-        }).catch(error=>{
-            alert("Error motorista getMotoristaServico -"+error)
-        });   
-
+            }).catch(error=>{
+                alert("Error motorista getSelecionaMotorista -"+error)
+            });   
+          }
      
   } 
   
-  async verifica_motorista_selecionados(motorista_id, tipoTransporte, servico){
+  async verifica_veiculo_motorista_selecionados(motorista_id, tipoTransporte, servico){
     debugger
     motorista_incluido = motorista_incluido + 1;
 
     debugger;  
     //verificar se o motorista tem o veiculo selecionado 
     //console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
-    const respveiculo = await api.get(`/veiculo/getVeiculoSelecionado/${motorista_id}/${tipoTransporte}`)                    
+    const respveiculo = await api.get(`/motorista/getMotVeiculoTipo/${motorista_id}/${tipoTransporte}`)                    
    // .then(respveiculo=>{   
 
       debugger;   
@@ -832,62 +909,23 @@ class listaservicosComponent extends React.Component  {
         
         const datapost_motorista = {
           servicoId: servico.id,
-          tipoEventoId: servico.tipoEventoId, 
-          eventoId: servico.eventoId, 
-          tipoTransporte: servico.tipoTransporte,
-          nome_passageiro: servico.nome_passageiro, 
-          telefone_passageiro: servico.telefone_passageiro,
-          quantidade_passageiro: servico.quantidade_passageiro,  
-          data_servico: servico.data_servico,
-          quantidade_diarias: servico.quantidade_diarias, 
-          hora_inicial: servico.hora_inicial,  
-          hora_final: servico.hora_final,  
-          local_embarque: servico.local_embarque, 
-          local_desembarque: servico.local_desembarque, 
-          embarque_latitude: servico.embarque_latitude, 
-          embarque_longitude: servico.embarque_longitude, 
-          desembarque_latitude: servico.desembarque_latitude, 
-          desembarque_longitude: servico.desembarque_longitude, 
-          distancia_value: servico.distancia_value, 
-          tempo_value: servico.tempo_value,
-          km_translado: servico.km_translado, 
-          tempo_translado: servico.tempo_translado,
-          companhia_aerea: servico.companhia_aerea,
-          numero_voo: servico.numero_voo, 
-          motorista_bilingue: servico.motorista_bilingue, 
-          valor_bilingue: servico.valor_bilingue,
-          valor_receptivo: servico.valor_receptivo,
-          motorista_receptivo: servico.motorista_receptivo,         
-          nome_motorista: servico.nome_motorista, 
-          telefone_motorista: servico.telefone_motorista, 
-          motorista_id: motorista_id,        
-          logid: servico.logid,
-          perfilId: 3,               
+          tipoEventoId: servico.tipoEventoId,          
+          data_servico: servico.data_servico,        
+          hora_inicial: servico.hora_inicial,           
+          local_embarque: servico.local_embarque,          
+          motorista_id: motorista_id   
         }  
-        api.post('/envioservicoMotorista/create',datapost_motorista);   
-
-        sessionStorage.setItem('logServicoIncluido', ''); 
-        sessionStorage.setItem('logServicoalteracao', ''); 
-        sessionStorage.setItem('logTipo', '');
-
-       // alert('Reenvio para os motoristas realizado com sucesso');
-
-        //
-    /*    debugger;   
-        api.post('/motorista_selecionados/create',datapost_motorista);
-        possui_motorista = true;   
-    //    this.setState({ motorista_incluido: this.state.motorista_incluido + 1 });      
-        sessionStorage.setItem('logServicoIncluido', ''); 
-        this.finalizando_processo_busca(servico);
-     */
+        api.post('/envioservicoMotorista/create',datapost_motorista);            
                   
-      }  
+      } 
 
- // }).catch(error=>{
- //   alert("Error getVeiculoSelecionado"+error)
- // });
+    
+      ///  sessionStorage.set('mensagem_motorista_alocado', 'Por favor aguarde. Procurando Motorista para atender seu serviço!');
+
+   
 
   }
+
    async aceitou_servico(row) {
       //alert("aceitou o serviço "+row.servicoId);
      debugger
@@ -933,7 +971,7 @@ class listaservicosComponent extends React.Component  {
         motoristaId: motorista_id,              
         servicoId: servico_id,
         statusId: 1,
-        motoristumId: motorista_id,
+      //  motoristumId: motorista_id,
       }    
   
       debugger;
@@ -1042,6 +1080,13 @@ componentWillUnmount() {
 
  }
 
+ handleMotivoCancalementoChange = (event, newValue) => {
+  this.setState({     
+    campmotivoId: event.target.value, 
+   });   
+  
+};
+
   render()
   {   
     return ( 
@@ -1084,11 +1129,12 @@ componentWillUnmount() {
                           { title: '', field: '', width: '10px', minWidth: '10px', maxWidth: '10px'}, 
                           { title: 'Origem', field: 'local_embarque', width: '290px', minWidth: '290px', maxWidth: '290px' },
            
-                          { title: '', field: 'motorista_bilingue', width: '60px', minWidth: '60px', maxWidth: '60px', 
-                          cellStyle:{ fontSize: 10, width: 50}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px', width: 50 }}>Bilingue</div> : "" },   
-                          { title: '', field: 'motorista_receptivo', width: '60px', minWidth: '60px', maxWidth: '60px',  
-                          cellStyle:{ fontSize: 10, width: 50}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px', width: 50}}>Receptivo</div> : "" },  
-                          { title: '', field: '', width: '400px', minWidth: '400px', maxWidth: '400px'},
+                          { title: '', field: 'motorista_bilingue', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                          cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Bilingue</div> : "" },   
+                          { title: '', field: '', width: '2px', minWidth: '2px', maxWidth: '2px'},
+                          { title: '', field: 'motorista_receptivo', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center",  
+                          cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },  
+                          { title: '', field: '', width: '320px', minWidth: '320px', maxWidth: '320px'},
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                             
                          },            
                         ]}
@@ -1137,13 +1183,9 @@ componentWillUnmount() {
                           maxBodyHeight: '60vh',
                           minBodyHeight: '60vh',      
                           padding: 'dense',   
-                          overflowY: 'scroll',     
-                          //overflowY: 'scroll',
-                          //overflowX: 'hidden',
-                          //WebkitOverflowScrolling: 'hidden',
-                         // tableLayout: 'fixed',
+                          overflowY: 'scroll',    
                           exportButton: { pdf: true },          
-                          actionsColumnIndex: 8,
+                          actionsColumnIndex: 11,
                          // pageSize: 9,
                          // pageSizeOptions: [0],                 
                         }}
@@ -1152,8 +1194,7 @@ componentWillUnmount() {
                             icon: 'save',
                             tooltip: 'Aceitar Serviço',
                             onClick: (event, rowData) => this.aceitou_servico(rowData)
-                          }
-                        
+                          }                   
                         ]}
                         components={{
                           Action: props => (
@@ -1191,10 +1232,10 @@ componentWillUnmount() {
                           { title: 'Origem', field: 'servico.local_embarque', width: '230px', minWidth: '230px', maxWidth: '230px', render: rowData => rowData.servico.local_embarque.substring(0,33)  },
                           { title: 'Destino', field: 'servico.local_desembarque', width: '250px', minWidth: '250px', maxWidth: '250px', render: rowData => rowData.servico.local_desembarque.substring(0,36) },
                                                                               
-                          { title: '', field: 'servico.motorista_bilingue', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
+                          { title: '', field: 'servico.motorista_bilingue', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                           cellStyle:{ fontSize: 10}, render: rowData => rowData.servico.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
-                       
-                          { title: '', field: 'servico.motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
+                          { title: '', field: '', width: '2px', minWidth: '2px', maxWidth: '2px'},  
+                          { title: '', field: 'servico.motorista_receptivo', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                           cellStyle:{ fontSize: 10}, render: rowData => rowData.servico.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
                       
                           { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                 
@@ -1249,7 +1290,7 @@ componentWillUnmount() {
                           //WebkitOverflowScrolling: 'hidden',
                          // tableLayout: 'fixed',
                           exportButton: { pdf: true },          
-                          actionsColumnIndex: 11,
+                          actionsColumnIndex: 12,
                          // pageSize: 9,
                          // pageSizeOptions: [0],                     
                         }}
@@ -1257,7 +1298,7 @@ componentWillUnmount() {
                           {
                             icon: 'save',
                             tooltip: 'Cancelar Serviço',
-                            onClick: (event, rowData) => this.cancelar_servico(rowData)
+                            onClick: (event, rowData) => this.handleOpenModalMotivo(rowData) //this.cancelar_servico(rowData)
                           }
                     
                         ]}
@@ -1279,7 +1320,88 @@ componentWillUnmount() {
                        
             </div>    
         </TabPanel>               
-      </TabContext>        
+      </TabContext> 
+
+      <ReactModal 
+        isOpen={this.state.showMensagemDelete}
+        style={ConfirmacaodelStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div> 
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalDelete()} className="botao_close_modal_deletar">
+              <CloseOutlinedIcon />
+            </IconButton></div>       
+            <center><img src="/exclamation.png" /> </center>
+            <div className="container_alterado">
+              
+             <div className="moldura_modal_delecao">
+               <div className="titulo_moldura_modal_delecao">Deseja cancelar o atendimento desse serviço? </div>
+               <div className="titulo_moldura_modal_delecao_2">Ao confirmar a exclusão o registro será apagado.  </div>
+             </div>     
+                              <div className="retorno">{this.state.retorno}</div>
+            <Box 
+               className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
+              <div className="d-flex justify-content-center">
+              <label> Cancelar </label>
+              </div>     
+            </Box>      
+            <Box 
+               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.handleOpenModalMotivo()}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir </label>
+              </div>     
+            </Box>      
+
+            </div>
+         </ReactModal>       
+     <ReactModal 
+        isOpen={this.state.showMensagemMotivo}
+        style={ConfirmacaodelStyles}
+        contentLabel="Inline Styles Modal Example"                                  
+        ><div> 
+            <IconButton aria-label="editar" onClick={()=>this.handleCloseModalMotivo()} className="botao_close_modal_deletar">
+              <CloseOutlinedIcon />
+            </IconButton></div>       
+            <center><img src="/exclamation.png" /> </center>
+            <div className="container_alterado">
+              
+             <div className="moldura_modal_delecao">
+           <div className="titulo_moldura_modal_motivo_delecao"> Por favor, informe o motivo do cancelamento desse serviço? </div>
+       
+
+             <FormControl className="select_modal_tipo" variant="outlined">
+                        <InputLabel className="label_select_modal_tipo" id="demo-simple-select-outlined-label">Tipo Transporte</InputLabel>
+                        <Select
+                          className="text_select_modal_tipo"                          
+                          labelId="demo-simple-select-outlined-label"
+                          id="demo-simple-select-outlined"
+                          value={this.state.campmotivoId}                
+                          onChange={ this.handleMotivoCancalementoChange }                             
+                           
+                          label="Motivo Cancelamento"
+                          labelWidth={240}
+                        >
+                          {this.loadFillTipoData()}                    
+                        </Select>
+                      </FormControl>    
+                      </div>              
+                              <div className="retorno">{this.state.retorno}</div>
+            <Box 
+               className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalMotivo()}>
+              <div className="d-flex justify-content-center">
+              <label> Cancelar </label>
+              </div>     
+            </Box>      
+            <Box 
+               className="botoes_delete_excluir_modal" p={2} onClick={()=>this.cancelar_servico(this.state.deletar_servico)}>
+              <div className="d-flex justify-content-center">
+              <label> Excluir </label>
+              </div>     
+            </Box>      
+
+            </div>
+         </ReactModal>      
+
+
       
     </div> 
    </div>
@@ -1287,6 +1409,43 @@ componentWillUnmount() {
     );
   }
 
+  handleOpenModalDelete(data) { 
+
+    this.setState({ 
+      showMensagemDelete: true,
+      deletar_servico: data,
+      campDeletarId: data.id,      
+    });           
+  }
+  
+  handleCloseModalDelete() {
+    this.setState({ 
+      showMensagemDelete: false
+    });    
+
+    this.loadlistServicosNovos();
+    this.loadlistServicosAtivos();      
+  }
+
+  handleOpenModalMotivo(data) { 
+
+    this.setState({ 
+      showMensagemMotivo: true,
+      deletar_servico: data,      
+    });      
+    
+    this.loadlistaMotivos();
+    
+  }
+  
+  handleCloseModalMotivo() {
+    this.setState({ 
+      showMensagemMotivo: false
+    });    
+
+    //this.handleCloseModalDelete();
+     
+  }
   
 }
 

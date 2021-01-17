@@ -627,6 +627,7 @@ sendUpdate(){
  
   const datapost = {  
     statusId: 1,  
+   // motorista_principal_id: sessionStorage.getItem('empresaId'),  
   }       
 
   if (sessionStorage.getItem('logperfil') == 0) {
@@ -651,9 +652,11 @@ sendUpdate(){
 
             if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (sessionStorage.getItem('logperfil') == 9) {              
+            } else if (sessionStorage.getItem('logperfil') == 9) {         
+              sessionStorage.setItem('statusid', 16);          
               this.props.history.push(`/area_motorista_auxiliar`);  
             }          
+            
   
           }
           else {

@@ -208,7 +208,8 @@ class loginComponent extends React.Component  {
                         sessionStorage.setItem('logid',  resmotorista.data.data[0].id);  
                         sessionStorage.setItem('logperfil', res.data.data[0].perfilId);  
                         sessionStorage.setItem('statusid', res.data.data[0].statusId);    
-                        sessionStorage.setItem('conectado', 0);      
+                        sessionStorage.setItem('conectado', 0);    
+                          
                         //const history = useHistory();                 
                         
                         this.setState({ 
