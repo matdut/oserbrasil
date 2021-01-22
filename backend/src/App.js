@@ -4,10 +4,12 @@ const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require("path");
+const helmet = require('helmet');
 //const dotenv = require('dotenv').config();
 
 // setting port
 app.set('port',21541);
+app.use(helmet());
 
 //Middlewares
 //app.use(cors());

@@ -292,13 +292,14 @@ class listaeventosComponent extends React.Component  {
           }
         })
         .catch(error=>{
-          alert("Error server valor_total_viagens"+error)
+          console.log('valor_total_viagens'+error);        
         })
 
       }
     })
     .catch(error=>{
-      alert("Error server valor_total_servicos "+error)
+      console.log('valor_total_servicos'+error);        
+    
     })
   
   
@@ -323,7 +324,8 @@ class listaeventosComponent extends React.Component  {
       }
     })
     .catch ( error => {
-      alert("Error loadservicoseventos ")
+      console.log('loadservicoseventos'+error);    
+ 
     })    
   } 
 
@@ -339,7 +341,8 @@ class listaeventosComponent extends React.Component  {
       }
     })
     .catch ( error => {
-      alert("Error loadeventodelete ")
+      console.log('loadeventodelete'+error);    
+     
     })    
   } 
 
@@ -355,7 +358,8 @@ class listaeventosComponent extends React.Component  {
        }
      })
      .catch ( error => {
-       alert("Error loadeventosexcluidos "+error)
+      console.log('loadeventosexcluidos'+error);    
+     
      })    
    } 
 
@@ -378,7 +382,8 @@ class listaeventosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server valor_total_servicos "+error)
+      console.log('valor_total_servicos'+error);  
+     
      })
    }  
 
@@ -395,7 +400,8 @@ class listaeventosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server valor_total_viagens"+error)
+      console.log('valor_total_viagens'+error);  
+   
      })
    }  
 
@@ -439,7 +445,8 @@ class listaeventosComponent extends React.Component  {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadOperadores'+error);  
+   
     })
   }   
 
@@ -453,7 +460,8 @@ class listaeventosComponent extends React.Component  {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadTodosOperadores'+error);  
+    
     })
   }   
 
@@ -481,7 +489,8 @@ class listaeventosComponent extends React.Component  {
       }
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadlistEventos'+error);  
+ 
     })
   }
 
@@ -496,7 +505,8 @@ class listaeventosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server "+error)
+      console.log('loadlistEventosADM'+error);  
+ 
      })
    }
   
@@ -602,7 +612,8 @@ class listaeventosComponent extends React.Component  {
               } 
             })        
             .catch(error=>{
-              alert("Erro de emailOperador "+error)
+              console.log('emailOperador'+error) 
+              
             })           
         }        
       })        
@@ -693,7 +704,8 @@ class listaeventosComponent extends React.Component  {
             }       
           })        
           .catch(error=>{
-            alert("Erro de conexão "+error)
+            console.log('Erro de conexão'+error) 
+          
           })        
 
         } else {      
@@ -719,7 +731,7 @@ class listaeventosComponent extends React.Component  {
       
       })        
       .catch(error=>{
-        alert("Erro de conexão "+error)
+        console.log('Erro de conexão'+error) 
       })      
     
     }
@@ -773,7 +785,8 @@ class listaeventosComponent extends React.Component  {
                    }
                  }  
                }).catch(error=>{
-                 alert("Erro verificar log  "+ error)
+                 console.log(error) 
+                // alert("Erro verificar log  "+ error)
                })  
 
                this.setState({                
@@ -827,7 +840,8 @@ class listaeventosComponent extends React.Component  {
            alert("Error na Criação verificar log")              
          }
        }).catch(error=>{
-         alert("Error 34 ")
+         console.log(error) 
+     
        })
  
      }      

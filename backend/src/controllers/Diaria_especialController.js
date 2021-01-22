@@ -50,26 +50,9 @@ controllers.list = async (req,res) => {
 
 controllers.create = async (req,res) => {  
 
-  // DATA parametros desde post
-  const { tipoTransporte , faixa_inicial, faixa_final, data_final, data_inicial, hora_inicial, hora_final, valor_km, valor_tempo, bandeira, receptivo,
-    bilingue, pedagio} = req.body;
-  //console.log("ROle es ==>"+role)
+
   //create
-  await Diaria_especial.create({   
-    tipoTransporte : tipoTransporte ,
-    faixa_inicial: faixa_inicial,
-    faixa_final: faixa_final,
-    data_inicial: data_inicial, 
-    data_final: data_final, 
-    hora_inicial: hora_inicial, 
-    hora_final: hora_final,
-    valor_km: valor_km,
-    valor_tempo: valor_tempo,
-    bandeira: bandeira,
-    receptivo: receptivo,
-    bilingue: bilingue,
-    pedagio: pedagio
-  })
+  await Diaria_especial.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data, message:"Matriz_tarifaria criado com sucesso"});
   })
@@ -81,30 +64,9 @@ controllers.create = async (req,res) => {
 
 controllers.update = async (req, res) => {
   // parameter id get  
-  const { id } = req.params;
-
-  // parameter post
-  const { tipoTransporte , faixa_inicial, faixa_final, data_inicial, data_final, hora_inicial, hora_final, valor_km, valor_tempo, bandeira, receptivo,
-    bilingue, pedagio} = req.body;
-  // update data
+  const { id } = req.params;  
   
-  await Diaria_especial.update({
-    tipoTransporte: tipoTransporte,
-    faixa_inicial: faixa_inicial,
-    faixa_final: faixa_final,
-    data_inicial: data_inicial, 
-    data_final: data_final, 
-    hora_inicial: hora_inicial, 
-    hora_final: hora_final,
-    valor_km: valor_km,
-    valor_tempo: valor_tempo,
-    bandeira: bandeira,
-    receptivo: receptivo,
-    bilingue: bilingue,
-    pedagio: pedagio  
-    },{
-    where: { id: id}
-  })
+  await Diaria_especial.update(req.body)
   .then( function (data){
     return res.json({success:true, data: data, message:"Matriz_tarifaria atualizado com sucesso"});
   })

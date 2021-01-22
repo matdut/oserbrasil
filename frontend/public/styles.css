@@ -1239,7 +1239,7 @@
 
   .titulo_moldura_modal_motivo_delecao {
     font: normal normal Effra !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
     font-weight: bold !important;
     letter-spacing: 0px !important;
     width: 500px !important;
@@ -1256,6 +1256,12 @@
   .tamanho_botao {
     height: 55px !important;
     width: 270px !important;
+  }
+
+  .mensagem_informacao_tarifas {
+    font: normal normal Effra !important;
+    font-size: 10px !important;
+    color: white !important;
   }
 
   .MuiSwitch-colorPrimary.Mui-checked {
@@ -1370,10 +1376,11 @@
   }
 
   .moldura_alocado {
-    display: inline-block !important;
-    margin: 0 2px !important; 
-    transform: scale(0.8) !important;
-    border: 1px;
+    font-family: Effra !important;
+    font-weight: bold !important; 
+    font-size: 12px !important;
+    margin-top: 0px !important;
+    margin-left: 12px !important;   
     color: #000000 !important;
   }
 

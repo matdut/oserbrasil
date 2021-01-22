@@ -49,7 +49,11 @@ var Historico_finalizados_eventos = sequelize.define(nametable,{
   statusId:{
     type:Sequelize.INTEGER,    
     allowNull: true,
-  }
+  },  
+  perfil_finalizadoId: {
+    type:Sequelize.INTEGER,    
+    allowNull: true,
+  },
 })
 
 

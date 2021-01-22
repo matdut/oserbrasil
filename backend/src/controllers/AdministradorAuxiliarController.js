@@ -61,20 +61,10 @@ controllers.listExcluidos = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { nome, email, senha, celular, cpf, data_nascimento, statusId, perfilId } = req.body;
+  //const { nome, email, senha, celular, cpf, data_nascimento, statusId, perfilId } = req.body;
   //console.log("ROle es ==>"+role)
   //create
-  await AdministradorAuxiliar.create({ 
-    nome: nome, 
-    email: email, 
-    senha: senha, 
-    celular: celular,
-    cpf: cpf,
-    data_nascimento: data_nascimento, 
-    situacaoId: statusId,
-    perfilId: perfilId, 
-    statusId: statusId, 
-  })
+  await AdministradorAuxiliar.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data});
   })

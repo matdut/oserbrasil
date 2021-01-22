@@ -39,43 +39,8 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  console.log('entrou aqui = '+id); 
-
-  // parameter post
-  const { nome, email, senha, endereco, numero, complemento, telefone1,
-    telefone2, celular, cidade, bairro, estadoId, cep, tipo_cliente, inscricao_municipal, statusId,
-    cpf, data_nascimento, contato, cnpj, inscricao_estadual, razao_social, nome_fantasia, situacaoId, perfilId} = req.body;
-  // update data
-  
-  console.log('data_nascimento = '+data_nascimento);
-  
-  await Cliente.update({
-            nome: nome,              
-            email: email,
-            senha: senha,
-            endereco: endereco,
-            numero: numero,
-            complemento: complemento,
-            telefone1: telefone1,
-            telefone2: telefone2,
-            celular: celular,
-            cidade: cidade,
-            bairro: bairro,
-            estadoId: estadoId,
-            cep: cep,
-            tipo_cliente: tipo_cliente,
-            cpf: cpf,
-            data_nascimento: data_nascimento,
-            contato: contato,
-            cnpj: cnpj,
-            razao_social: razao_social,
-            inscricao_estadual: inscricao_estadual,
-            inscricao_municipal: inscricao_municipal,
-            nome_fantasia: nome_fantasia,
-            perfilId: perfilId,
-            statusId: statusId,
-            situacaoId: situacaoId 
-  },{
+   
+  await Cliente.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -151,11 +116,7 @@ controllers.getClienteCpf = async (req, res) => {
       })
       .then( function (data){      
         return res.json({success:true, data:data});
-        /* if (data.length > 0) {
-          return res.json({success:true, data:data});
-         } else {
-          return res.json({success:false, data:data});
-         }  */       
+         
       })
       .catch(error => {
         return res.json({success:false, message: error});
@@ -165,8 +126,6 @@ controllers.getClienteCpf = async (req, res) => {
     controllers.findclientestatus = async (req, res) => { 
     
       const {fcliente, perfil, status } = req.params;              
-      //console.log('cliente - '+ fcliente +'  status '+status+ '  perfilId  '+perfil);
-      //const fstatus = req.params.fstatus;            
   
       await Cliente.findAll({
           include: [{ model: Status  }],
@@ -221,50 +180,14 @@ controllers.getClienteCpf = async (req, res) => {
           })
           .then( function (data){      
             return res.json({success:true, data:data});
-            /* if (data.length > 0) {
-              return res.json({success:true, data:data});
-             } else {
-              return res.json({success:false, data:data});
-             }  */       
+        
           })
           .catch(error => {
             return res.json({success:false, message: error});
           })
         
         }  
- /*   
-    controllers.findcliente = async (req, res) => { 
-    
-      const {fcliente, perfil, status } = req.params;            
-
-    console.log('cliente - '+ fcliente +'  status '+status+ '  perfilId  '+perfil);
-    //const fstatus = req.params.fstatus;            
-
-    await Cliente.findAll({
-        include: [{ model: Status  }],
-        where: 
-        {  
-          nome: {
-             [Op.like]: `%${fcliente}%`             
-          },
-          perfilId: perfil,
-          statusId: status
-      }
-      })
-      .then( function (data){      
-        return res.json({success:true, data:data});
-        /* if (data.length > 0) {
-          return res.json({success:true, data:data});
-         } else {
-          return res.json({success:false, data:data});
-         }         
-      })
-      .catch(error => {
-        return res.json({success:false, message: error});
-      })
-    
-    }    
-*/
+ 
   controllers.getClienteCnpj = async (req, res) => {
  
     //const cpf = req.params.email;  
@@ -410,39 +333,9 @@ controllers.listarEmpresarial = async (req,res) => {
 controllers.create = async (req,res) => {
 
   // DATA parametros desde post
-  const {nome,              
-    email, senha, endereco, numero, complemento, telefone1,
-    telefone2, celular, cidade, bairro, estadoId, cep, tipo_cliente, inscricao_municipal, statusId,
-    cpf,  data_nascimento, contato, cnpj, inscricao_estadual, razao_social, nome_fantasia, situacaoId, perfilId } = req.body;
-  //console.log("ROle es ==>"+role)
+ 
   //create  
-  await Cliente.create({
-    nome: nome,              
-    email: email,
-    senha: senha,
-    endereco: endereco,
-    numero: numero,
-    complemento: complemento,
-    telefone1: telefone1,
-    telefone2: telefone2,
-    celular: celular,
-    cidade: cidade,
-    bairro: bairro,
-    estadoId: estadoId,
-    cep: cep,
-    tipo_cliente: tipo_cliente,
-    cpf: cpf,
-    data_nascimento: data_nascimento,
-    contato: contato,
-    cnpj: cnpj,
-    razao_social: razao_social,
-    inscricao_estadual: inscricao_estadual,
-    inscricao_municipal: inscricao_municipal,
-    nome_fantasia: nome_fantasia,
-    perfilId: perfilId,
-    statusId: statusId,
-    situacaoId: situacaoId 
-  })
+  await Cliente.create(req.body)
   .then( function (data){      
     
        return res.json({success:true, data:data});

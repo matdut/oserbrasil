@@ -171,7 +171,7 @@ var Historico_finalizados_servicos = sequelize.define(nametable,{
     type: Sequelize.STRING(250),
     allowNull: false,     
   },  
-  perfil_checkinId: {
+  perfil_finalizadoId: {
     type:Sequelize.INTEGER,    
     allowNull: true,
   },

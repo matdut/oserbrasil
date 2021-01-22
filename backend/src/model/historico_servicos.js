@@ -171,10 +171,11 @@ var Historico_servicos = sequelize.define(nametable,{
     type: Sequelize.STRING(250),
     allowNull: false,     
   },
-  perfil_exclusaoId: {
-    type:Sequelize.INTEGER,    
+  valor_pedagio: {
+    type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,
-  },
+  }
+  
 })
 
 

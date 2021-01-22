@@ -59,18 +59,13 @@ controllers.deletePaieFilhos  = async (req,res) => {
     return res.json({success:false, message: error});
     //return error;
   })
-   //res.json({success:true, deleted:del, message:"Deleted successful"});
 
 }
 
 controllers.deleteevento = async (req,res) => {
   
-  // parameter post  
   const { eventoid } = req.params;  
- // console.log( JSON.stringify(req.params, null, "    ") ); 
-
-  //console.log('delete id  - '+id);
-  // delete sequelize
+ 
   await Servicos.destroy({
     where: { eventoId: eventoid }
   }).then( function (data){
@@ -81,7 +76,6 @@ controllers.deleteevento = async (req,res) => {
     return res.json({success:false, message: error});
     //return error;
   })
-   //res.json({success:true, deleted:del, message:"Deleted successful"});
 
 }
 
@@ -101,7 +95,7 @@ controllers.get = async (req, res) => {
 }
 controllers.getEvento = async (req, res) => {
   const { eventoid } = req.params;
-  console.log('eventoid - '+ eventoid);
+ 
   await Servicos.findAll({    
     where: { eventoId: eventoid} 
   })
@@ -120,11 +114,11 @@ controllers.getEvento = async (req, res) => {
 
 controllers.getServicoMotorista = async (req, res) => {
   const { servicoId } = req.params;
-  //console.log('eventoid - '+ eventoid);
+
   await Servicos.findAll({  
     include: [{
      model: Motorista,
-      where: { id: '45' }
+    //  where: { id: '45' }
      }],    
     where: { 
       id: servicoId
@@ -161,21 +155,7 @@ controllers.getEventoPai = async (req, res) => {
   })
   
 }
-/* 
-Se (Data do Serviço for > ou = Data Inicial e Data do Serviço for < ou = Data Final) E
-(Hora do Serviço for > ou = Hora Inicial e Hora do Serviço for < ou = Hora Final)
 
-datainicial  >= dataservico and datafinal <= dataservico  
- 
-    1987-05-01      1990-05-01
-
-
-          1988-05-01
-
-          select * from `tarifa_especials` 
-where '1987-05-01' >= data_inicial and '1987-05-01' <= data_final   
-
-*/
 controllers.getbusca = async (req, res) => {
   const { data_servico, hora_inicial, hora_final } = req.params;
 
@@ -203,34 +183,7 @@ controllers.getbusca = async (req, res) => {
   })
   
 }
-/*controllers.getbusca = async (req, res) => {
-  const { data_servico } = req.params;
 
- // console.log('data_servico - '+ data_servico);
-  await TarifaEspecial.findAll({    
-    where: {  
-      [Op.and]: 
-      [{ 
-        data_inicial: {
-          [Op.gte]: [data_servico],         
-        }
-      },
-       { 
-        data_final: {
-          [Op.lte]: [data_servico],                 
-        }
-      }],        
-    },         
-  }) 
-  .then( function(data){
-    return res.json({success:true, data:data});
-  })
-  .catch(error => {
-     return res.json({success:false});
-  })
-  
-}
-*/
 controllers.listporevento = async (req,res) => {
   const { id } = req.params;
   
@@ -338,10 +291,15 @@ controllers.listaservicos = async (req,res) => {
   await Servicos.findAll({
     where: { 
         eventoId: eventoid,  logid: id, perfilId: perfilId,
-      },  
-   // group: 
-    //order: '"data_servico" DESC'
-    order: [['data_servico', 'DESC'], ['hora_inicial', 'DESC']]
+      },    
+      order: [
+      //  ['updated_at', 'desc'],      
+        ['data_servico', 'asc'],
+        ['hora_inicial', 'asc'],
+      // X
+       
+      ],
+   // attributes: ['id', 'logo_version', 'logo_content_type', 'name', 'updated_at']  
   })
   .then( function (data){
     return res.json({success:true, data: data});
@@ -354,13 +312,13 @@ controllers.listaservicos = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
+/*  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
     hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
     motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
     km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
     logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, desembarque_latitude, desembarque_longitude,
     valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, 
-    distancia_value, tempo_value, servico_pai_id, motorista_id, estado_selecionado_mapa } = req.body;
+    distancia_value, tempo_value, servico_pai_id, motorista_id, estado_selecionado_mapa, valor_pedagio } = req.body; */
   //console.log("ROle es ==>"+role)
 
   //console.log(req.body);      
@@ -368,7 +326,8 @@ controllers.create = async (req,res) => {
   //console.log('criando os filhos - '+JSON.stringify(req.body, null, "    ")); 
 
   //create
-  await Servicos.create({       
+  await Servicos.create( req.body )
+ /* await Servicos.create({       
     tipoEventoId: tipoEventoId,
     tipoTransporte: tipoTransporte,
     nome_passageiro: nome_passageiro, 
@@ -409,8 +368,9 @@ controllers.create = async (req,res) => {
     cartaoId: cartaoId,
     servico_pai_id: servico_pai_id,
     statusId: statusId,
+    valor_pedagio: valor_pedagio,
     estado_selecionado_mapa: estado_selecionado_mapa 
-  })
+  })*/
   .then( function (data){
     return res.json({success:true, data: data});
   })
@@ -421,66 +381,10 @@ controllers.create = async (req,res) => {
 }
 
 controllers.update = async (req, res) => {
-  // parameter id get  
-  
-  const { tipoEventoId, eventoId, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
-    hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
-    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias, 
-    km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
-    motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_longitude, 
-    desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId,
-    valor_bilingue, valor_receptivo, distancia_value, tempo_value, servico_pai_id,
-    motorista_id, estado_selecionado_mapa} = req.body;
-
-  console.log('entrou aqui = '+data_servico);
-
-  // parameter post
+ 
     const { id } = req.params;
-  // update data
-  
-  await Servicos.update({
-    tipoEventoId: tipoEventoId,
-    tipoTransporte: tipoTransporte,
-    nome_passageiro: nome_passageiro, 
-    telefone_passageiro: telefone_passageiro,
-    quantidade_passageiro: quantidade_passageiro, 
-    quantidade_diarias: quantidade_diarias,
-    data_servico: data_servico,  
-    hora_inicial: hora_inicial,
-    hora_final: hora_final,    
-    valor_bilingue: valor_bilingue, 
-    valor_receptivo: valor_receptivo,
-    motorista_alocado: motorista_alocado, 
-    companhia_aerea: companhia_aerea,
-    numero_voo: numero_voo, 
-    local_embarque: local_embarque, 
-    local_desembarque: local_desembarque, 
-    embarque_latitude: embarque_latitude, 
-    embarque_longitude: embarque_longitude, 
-    desembarque_latitude: desembarque_latitude, 
-    desembarque_longitude: desembarque_longitude, 
-    motorista_bilingue: motorista_bilingue, 
-    motorista_receptivo: motorista_receptivo, 
-    motorista_id: motorista_id,
-    nome_motorista: nome_motorista,     
-    telefone_motorista: telefone_motorista, 
-    km_translado: km_translado, 
-    tempo_translado: tempo_translado, 
-    valor_estimado: valor_estimado,    
-    valor_oser: valor_oser,
-    valor_motorista: valor_motorista, 
-    situacao: situacao, 
-    motivo_cancelamento: motivo_cancelamento,
-    eventoId: eventoId,
-    logid: logid,
-    perfilId: perfilId,    
-    cartaoId: cartaoId,
-    distancia_value: distancia_value, 
-    tempo_value: tempo_value,
-    servico_pai_id: servico_pai_id,
-    statusId: statusId,
-    estado_selecionado_mapa: estado_selecionado_mapa
-  },{
+
+  await Servicos.update( req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -507,39 +411,8 @@ controllers.update_filhos = async (req, res) => {
   //console.log('entrou aqui = '+id);  
   
   // update data  
-  await Servicos.update({     
-    nome_passageiro: nome_passageiro,    
-    telefone_passageiro: telefone_passageiro,
-    quantidade_passageiro: quantidade_passageiro, 
-    quantidade_diarias: quantidade_diarias,
-    data_servico: data_servico,  
-    hora_inicial: hora_inicial,
-    hora_final: hora_final,  
-    valor_bilingue: valor_bilingue, 
-    valor_receptivo: valor_receptivo,
-    motorista_alocado: motorista_alocado, 
-    companhia_aerea: companhia_aerea,
-    numero_voo: numero_voo, 
-    local_embarque: local_embarque, 
-    local_desembarque: local_desembarque, 
-    embarque_latitude: embarque_latitude, 
-    embarque_longitude: embarque_longitude, 
-    desembarque_latitude: desembarque_latitude, 
-    desembarque_longitude: desembarque_longitude, 
-    motorista_bilingue: motorista_bilingue, 
-    motorista_receptivo: motorista_receptivo, 
-    motorista_id: motorista_id,
-    nome_motorista: nome_motorista,     
-    telefone_motorista: telefone_motorista, 
-    km_translado: km_translado, 
-    tempo_translado: tempo_translado, 
-    valor_estimado: valor_estimado,    
-    valor_oser: valor_oser,
-    valor_motorista: valor_motorista, 
-    situacao: situacao, 
-    motivo_cancelamento: motivo_cancelamento,
-    cartaoId: cartaoId,
-  },{
+  await Servicos.update(
+    req.body,{
     where: { servico_pai_id: id }
   })
   .then( function (data){

@@ -39,12 +39,10 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { descricao } = req.body;
+  
   //console.log("ROle es ==>"+role)
   //create
-  await Mensagens_motorista.create({   
-    descricao: descricao
-  })
+  await Mensagens_motorista.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data});
   })
@@ -61,12 +59,10 @@ controllers.update = async (req, res) => {
   //console.log('entrou aqui = '+id);
 
   // parameter post
-  const { descricao } = req.body;
+  
   // update data
   
-  await Mensagens_motorista.update({
-    descricao: descricao
-  },{
+  await Mensagens_motorista.update(req.body,{
     where: { id: id}
   })
   .then( function (data){

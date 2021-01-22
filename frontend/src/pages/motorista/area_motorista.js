@@ -43,21 +43,39 @@ class Area_motorista extends React.Component  {
   }
 
   componentDidMount(){
+    this.interval = setInterval(() => this.tickarea_motorista(), 3000);
+
     this.setState({
       perfil: sessionStorage.getItem('logperfil'),    
       nome: sessionStorage.getItem('lognome'),
-      id: sessionStorage.getItem('logid'), 
-      statusid: sessionStorage.getItem('statusid') 
+      id: sessionStorage.getItem('logid')    
     });
      //this.loadCliente()
     // this.loadlistEventos();
     //this.loadTotalServicosEvento();
      this.loadlistServicosConvite();
      this.loadlistServicosAtivos();
+     this.load_motorista();
   }
  
+  tickarea_motorista() {
+    this.loadlistServicosConvite();
+    this.loadlistServicosAtivos();    
+  }
+
+  load_motorista() {
+    const { validate } = this.state   
+    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
+    .then(res=>{
+
+      this.setState({       
+        statusid: sessionStorage.setItem('statusid', res.data.data[0].statusId)
+      });
+
+    });
+  }
   loadlistServicosConvite(){    
-    api.get(`/envioservicoMotorista/totalEnvioServicoMotorista/${sessionStorage.getItem('logid')}`)
+    api.get(`/envioservicoMotorista/totalServicosenviados/${sessionStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success == true) {       
 
@@ -69,7 +87,8 @@ class Area_motorista extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server loadlistServicos "+error)
+       console.log('loadlistServicosConvite'+error) 
+    
      })
    }
    loadlistServicosAtivos(){
@@ -87,7 +106,7 @@ class Area_motorista extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server 1 "+error)
+      console.log('loadlistServicosAtivos'+error) 
      })
    }
 
@@ -174,7 +193,7 @@ verifica_mensagem() {
                       </div>
                       <div className="area_servico_motorista"> 
                          Novos
-                        <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
+                        <div className="area_evento_valor">{this.state.campEnvioConvite}</div>
                       </div>
                       <div className="area_servico_motorista"> 
                          Finalizados

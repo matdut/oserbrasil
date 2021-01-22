@@ -100,10 +100,13 @@ import { formatCreditCardNumber, formatCVC, formatExpirationDate, formatFormData
 import { cyan } from '@material-ui/core/colors';
 import { isThisHour } from 'date-fns';
 import { Card } from '@material-ui/core';
+import Alert4 from '@material-ui/lab/Alert';
 
 var campdistancia_global = '';
 var camptempovalue_global = '';
 var camptempo_global = '';
+var valor_total_global = '0.00';
+var contador_busca_rota = 0;
 var incluiu_servico = false;
 //var procurar_motoristas_global = false;
 
@@ -195,6 +198,9 @@ var bilingue_global = false;
 var chave_aleatoria_motorista_global = Math.random().toString(36).slice(-8);
 var camplocalembarque_old = '';
 var camplocaldesembarque_old = '';
+var enviados = 0;
+var estado_rota = '';
+var pedagio_rota = '';
 
 const containerStyle = {
   position: 'relative',  
@@ -451,7 +457,7 @@ class listaservicosComponent extends React.Component  {
       campCompanhia_aerea: '',
       campNumero_voo: '',
       campvalor: '0,00',     
-      camppedagio: '',     
+      camppedagio: '0.00',     
       campvalor_estimado: '',
       totalviagens: 0,
       ultima_data_filho: '',
@@ -631,7 +637,9 @@ class listaservicosComponent extends React.Component  {
   //let eventoId = this.props.match.params.id;    
   // console.log('eventoId'+ eventoId);
 
-  this.interval = setInterval(() => this.tickservico(), 2000);
+   this.interval = setInterval(() => this.tickservico(), 1000);
+
+  // this.interval2 = setInterval2(() => this.tickReenvio(), 3000);
   //debugger;
     this.setState({
       perfil: sessionStorage.getItem('logperfil'),
@@ -668,6 +676,7 @@ class listaservicosComponent extends React.Component  {
     this.valor_total_viagens();
     this.loadlistServicosExcluidos();   
     this.atualiza_evento(); 
+   // this.reenvio_todos_servicos_motoristas();
   }
 
  
@@ -723,7 +732,8 @@ class listaservicosComponent extends React.Component  {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadMotoristasPreferencial'+error) 
+    
     })
   }   
 
@@ -756,18 +766,18 @@ class listaservicosComponent extends React.Component  {
           }
         })
         .catch(error=>{
-          alert("Error server valor_total_viagens"+error)
+          console.log('valor_total_viagens'+error) 
+      
         })
 
       }
     })
     .catch(error=>{
-      alert("Error server valor_total_servicos "+error)
-    })
-  
+      console.log('valor_total_servicos'+error) 
+     
+    })  
   
   }
- 
 
  /* teste() {
     const num = 6.647; 
@@ -777,10 +787,17 @@ class listaservicosComponent extends React.Component  {
     console.log(numeroFormatado);
   } 
 */ 
+ tickReenvio() {
+  //  this.reenvio_todos_servicos_motoristas();
+ }
+
  tickservico() {
   //this.loadServicos();    
   this.loadlistServicos();
   this.atualiza_evento();
+  //this.atualiza_servico_automatico();
+ /// this.reenvio_todos_servicos_motoristas();
+  
   //this.loadTarifaespecial();
   //this.loadTarifa();
   //this.valor_total_servicos();
@@ -788,9 +805,91 @@ class listaservicosComponent extends React.Component  {
  }
 
  componentWillUnmount() {
-  clearInterval(this.interval);   
-
+     clearInterval(this.interval);    
  }
+
+ limpar_modal(index) {
+
+  this.setState({   
+    tabIndex: index,
+    campNome: '',
+    camptipoId: '',
+    campTelefone1: '',
+    campqtdpassageiro: '',
+    campdata_servico: '',
+    camphora_inicial: '',
+    camplocalembarque: '',
+    camplocaldesembarque: '',
+    camphora_final: '',
+    camphora_inicial: '',
+    campbilingue: '',
+    campCompanhia_aerea: '',
+    campNumero_voo: '',
+    campcartaoid: '',
+    campdistancia: '0',
+    camptempo: '0',
+    campvalor: '0.00',
+    camppedagio: '0.00',
+    validacao_tipo: false, 
+    validacao_cartao: false,
+    validacao_nome_motorista: false,
+    validacao_telefone_motorista: false,
+    validacao_data_evento: false,      
+    validacao_nome: false,     
+    validacao_data_servico: false,
+    validacao_qtdpassageiro: false,
+    validacao_hora_inicial: false,
+    validacao_hora_final: false,
+    validacao_telefone1: false,
+    validacao_localembarque: false,
+    validacao_localdesembarque: false,
+    validacao_companhia_aerea: false,
+    validacao_qtd_diarias: false,
+    validacao_numero_voo: false,
+ })
+ 
+}
+
+limpar_campos_modal() {
+
+  this.setState({     
+    campNome: '',
+    camptipoId: '',
+    campTelefone1: '',
+    campqtdpassageiro: '',
+    campdata_servico: '',
+    camphora_inicial: '',
+    camplocalembarque: '',
+    camplocaldesembarque: '',
+    camphora_final: '',
+    camphora_inicial: '',
+    campbilingue: '',
+    campCompanhia_aerea: '',
+    campNumero_voo: '',
+    campcartaoid: '',
+    campdistancia: '0',
+    camptempo: '0',
+    campvalor: '0.00',
+    camppedagio: '0.00',
+    validacao_tipo: false, 
+    validacao_cartao: false,
+    validacao_nome_motorista: false,
+    validacao_telefone_motorista: false,
+    validacao_data_evento: false,      
+    validacao_nome: false,     
+    validacao_data_servico: false,
+    validacao_qtdpassageiro: false,
+    validacao_hora_inicial: false,
+    validacao_hora_final: false,
+    validacao_telefone1: false,
+    validacao_localembarque: false,
+    validacao_localdesembarque: false,
+    validacao_companhia_aerea: false,
+    validacao_qtd_diarias: false,
+    validacao_numero_voo: false,
+ })
+ 
+}
 
   valor_total_servicos(){
     let data_formatada = '0.00'
@@ -812,7 +911,8 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server valor_total_servicos "+error)
+      console.log('valor_total_servicos'+error) 
+      
      })
    }  
 
@@ -829,7 +929,8 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server valor_total_viagens"+error)
+      console.log('valor_total_viagens'+error) 
+      
      })
    }  
 
@@ -849,8 +950,27 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server loadlistServicos "+error)
+      console.log('loadlistServicos'+error) 
+     
      })
+   }
+
+   async atualiza_servico_automatico(){
+
+      this.state.listservicoseventos.map((servico)=> {
+        api.get(`/servicos/get/${servico.id}`)
+        .then(res=>{       
+        
+          if (servico. motorista_alocado !== res.data.data[0].motorista_alocado) {
+            const datapost_alterar = {    
+              motorista_alocado: res.data.data[0].motorista_alocado
+            }  
+
+            api.put(`/servicos/update/${servico.id}`,datapost_alterar);  
+          }
+        })  
+      })
+
    }
 
    loadlistServicosExcluidos(){
@@ -867,7 +987,8 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server loadlistServicosExcluidos "+error)
+      console.log('loadlistServicosExcluidos'+error) 
+     
      })
    }
    
@@ -893,9 +1014,9 @@ class listaservicosComponent extends React.Component  {
    }
   
    carregar_motorista_servico(data) {
-     var motorista_id = data
-     console.log('motorista_id - '+motorista_id);
-     if (motorista_id !== undefined) { 
+    // var motorista_id = data
+   //  console.log('motorista_id - '+motorista_id);
+  //   if (motorista_id !== undefined) { 
 
     api.get(`/motorista_servico/getServico/${data.id}`)
     .then(res=>{
@@ -920,11 +1041,7 @@ class listaservicosComponent extends React.Component  {
           });    
       } 
     });    
-    } else {
-      this.setState({                           
-        mensagem_motorista_alocado: 'Nenhum motorista alocado a esse serviço!'          
-      });
-    }
+   
     
    }
 
@@ -1007,7 +1124,8 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server "+error)
+      console.log('carrega_servico_visualizacao'+error) 
+      
      })
    }
 
@@ -1089,7 +1207,8 @@ class listaservicosComponent extends React.Component  {
        }
      })
      .catch(error=>{
-       alert("Error server "+error)
+        console.log('carrega_servico'+error) 
+        
      })
    }
 
@@ -1138,17 +1257,17 @@ class listaservicosComponent extends React.Component  {
    handleEmbarqueChange = camplocalembarque => {     
     
     geocodeByPlaceId(camplocalembarque.value.place_id)
-    .then((results)=>{     
-      
+    .then((results)=>{        
+  
       debugger
       this.setState({     
-        estado_selecionado_mapa: results[0].address_components[2].short_name,
+     //   estado_selecionado_mapa: estado,
         camplocalembarque: camplocalembarque.label,
         embarque_latitude: results[0].geometry.location.lat().toString(),
         embarque_longitude: results[0].geometry.location.lng().toString(),  
         inicio: 1,  
       });  
-
+      contador_busca_rota = 1;
       if (camplocalembarque_old !== this.state.camplocalembarque) {
         this.setState({ 
             obter_rota_nova: true,         
@@ -1158,15 +1277,7 @@ class listaservicosComponent extends React.Component  {
         this.setState({ 
           obter_rota_nova: false,         
         })
-      }
-
-      console.log(' obter_rota_nova '+JSON.stringify(this.state.obter_rota_nova, null, "    "));
-      console.log(' camplocalembarque_old '+JSON.stringify(camplocalembarque_old, null, "    "));
-      console.log(' this.state.camplocalembarque '+JSON.stringify(this.state.camplocalembarque, null, "    "));
-
-      console.log(' estado_selecionado_mapa '+JSON.stringify(results[0], null, "    ")); 
-
-      console.log(' resultado geocodeByPlaceId '+JSON.stringify(this.state, null, "    ")); 
+      }   
 
     })
     .catch(error => console.error(error));
@@ -1174,10 +1285,11 @@ class listaservicosComponent extends React.Component  {
   };
 
   handlelocalDesembarqueChange = camplocaldesembarque => {
-  
+    
     geocodeByPlaceId(camplocaldesembarque.value.place_id)
     .then((results)=>{
       //console.log(' resultado '+JSON.stringify(results[0], null, "    ")); 
+      debugger
       this.setState({
     
         camplocaldesembarque: camplocaldesembarque.label, 
@@ -1185,8 +1297,9 @@ class listaservicosComponent extends React.Component  {
         desembarque_longitude: results[0].geometry.location.lng().toString(),                
         inicio: 1,
       });  
-debugger
-      if (camplocalembarque_old !== this.state.camplocaldesembarque) {
+
+      contador_busca_rota = 1;
+      if (camplocalembarque_old !== this.state.camplocalembarque) {
         this.setState({ 
             obter_rota_nova: true,         
         })
@@ -1197,11 +1310,7 @@ debugger
         })
       }
 
-      console.log(' obter_rota_nova '+JSON.stringify(this.state.obter_rota_nova, null, "    "));
-      console.log(' camplocaldesembarque_old '+JSON.stringify(camplocaldesembarque_old, null, "    "));
-      console.log(' this.state.camplocaldesembarque '+JSON.stringify(this.state.camplocaldesembarque, null, "    "));
-
-   //   console.log(' resultado '+JSON.stringify(this.state, null, "    ")); 
+  
     })
     .catch(error => console.error(error));    
  
@@ -1418,71 +1527,6 @@ validaDataServicoChange(e) {
          }
         }
     }    
-/*
-         if (date_validar.length!=10||barra1!="/"||barra2!="/"||isNaN(dia)||isNaN(mes)||isNaN(ano)||dia>31||mes>12) {
-          this.setState({ 
-            erro_data_servico: true,   
-            validacao_data_servico: false,      
-            mensagem_data_servico: 'Data do serviço é inválido.' 
-           })  
-         } else if ((mes==4||mes==6||mes==9||mes==11) && dia==31) {
-          this.setState({ 
-            erro_data_servico: true,   
-            validacao_data_servico: false,      
-            mensagem_data_servico: 'Data do serviço é inválido.' 
-           })  
-         } else if (mes==2 && (dia>29||(dia==29 && ano%4!=0))) {
-          this.setState({ 
-            erro_data_servico: true,   
-            validacao_data_servico: false,      
-            mensagem_data_servico: 'Data do serviço é inválido.' 
-           })  
-         } else if (ano < 1900) {
-          this.setState({ 
-            erro_data_servico: true,   
-            validacao_data_servico: false,      
-            mensagem_data_servico: 'Data do serviço é inválido.' 
-           })  
-         } else {
-          this.setState({ 
-            erro_data_servico: false,   
-            validacao_data_servico: true,      
-            mensagem_data_servico: '',
-          });   
-         }
-*/
-      
-        /* valida data do serviço */        
-      
-      /*  let ardt = new Array;
-        const ExpReg=new RegExp("(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}");
-        ardt=date_validar.split("/");
-        
-        if ( date_validar.search(ExpReg)==-1){
-          this.setState({ erro_data: true }) 
-        }
-        else if (((ardt[1]==4)||(ardt[1]==6)||(ardt[1]==9)||(ardt[1]==11))&&(ardt[0]>30))
-          this.setState({ erro_data: true }) 
-        else if ( ardt[1]==2) {
-          if ((ardt[0]>28)&&((ardt[2]%4)!=0))
-          this.setState({ erro_data: true }) 
-          if ((ardt[0]>29)&&((ardt[2]%4)==0))
-          this.setState({ erro_data: true }) 
-        }
-        if (this.state.erro_data == true) {
-          this.setState({ 
-            erro_data_servico: true,   
-            validacao_data_servico: false,      
-            mensagem_data_servico: 'Data do serviço é inválido.' 
-           })     
-        } else {
-          this.setState({ 
-            erro_data_servico: false,   
-            validacao_data_servico: true,      
-            mensagem_data_servico: '',
-          });     
-        }
-         */
       
 }
 
@@ -1581,7 +1625,13 @@ data_servicochange(e) {
     mudou_data_servico: true,
   })
 
-  sessionStorage.setItem('distribuir_servico', true);
+  sessionStorage.setItem('distribuir_servico', 1);
+
+  console.log('camplocalembarque -'+this.state.camplocalembarque);
+  console.log('camplocaldesembarque -'+this.state.camplocaldesembarque);
+  console.log('campdistancia_global -'+campdistancia_global);
+  console.log('campdata_servico -'+this.state.campdata_servico);
+  
 
   if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
    // Promise.all([
@@ -1594,8 +1644,14 @@ hora_inicialchange(e) {
     camphora_inicial: e.target.value,
     mudou_hora_inicial: true 
   });
-  sessionStorage.setItem('distribuir_servico', true);
+  sessionStorage.setItem('distribuir_servico', 1);
   hora_inicial = e.target.value;
+
+  console.log('camplocalembarque -'+this.state.camplocalembarque);
+  console.log('camplocaldesembarque -'+this.state.camplocaldesembarque);
+  console.log('campdistancia_global -'+campdistancia_global);
+  console.log('campdata_servico -'+this.state.campdata_servico);  
+  console.log('camphora_inicial -'+this.state.camphora_inicial);
   
     if (e.target.value.length > 4) {   
       
@@ -1880,7 +1936,7 @@ verifica_menu() {
 
   async verifica_veiculo_motorista_selecionados(motorista_id, tipoTransporte, servico){
     debugger
-    motorista_incluido = motorista_incluido + 1;
+    enviados = enviados + 1;
 
     debugger;  
     //verificar se o motorista tem o veiculo selecionado 
@@ -1956,15 +2012,20 @@ verifica_menu() {
     if (tipo_solicitacao == 'REENVIO') { 
 
       sessionStorage.setItem('logTipo', '');
-      sessionStorage.setItem('distribuir_servico', true);
+      sessionStorage.setItem('distribuir_servico', 1);
       api.delete(`/envioservicoMotorista/delete/${servico.id}`);   
       distribuir_servico_motorista = true     
+      
+    } else if (tipo_solicitacao == 'SUBSTITUICAO') {  
+
+      sessionStorage.setItem('distribuir_servico', 1);
+      //api.delete(`/envioservicoMotorista/delete/${servico.id}`);    
     
     } else if (tipo_solicitacao == 'INCLUSAO') {  
  
       sessionStorage.setItem('logServicoIncluido', '');
       sessionStorage.setItem('logTipo', '');
-      sessionStorage.setItem('distribuir_servico', true);
+      sessionStorage.setItem('distribuir_servico', 1);
       distribuir_servico_motorista = true;   
 
     } else if (tipo_solicitacao == 'ALTERACAO') {
@@ -1981,6 +2042,7 @@ verifica_menu() {
           if (servico.motorista_alocado == true) {
 
                 const data_hora_atual = new Date();
+               // alert(' data_hora_atual '+data_hora_atual);
                 const data_servico_alteracao = dateFormat(servico.data_servico, "UTC:dd/mm/yyyy");  
 
                 const data_moment_alt = moment(data_servico_alteracao, "DD/MM/YYYY");
@@ -1998,25 +2060,56 @@ verifica_menu() {
                   data_hora_atual, "D/M/YYYY h:m"
                 );
 
-                if (data_atual.getTime() >= data_seis_horas_menos.getTime() ) {
-                    alert(' data_atual '+ data_atual);
-                    alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+               // alert(' data_hora_atual 2 '+data_atual.getTime());
+                var hora_banco_alteracao = servico.hora_inicial.substring(0,5);   
+                if (data_hora_atual.getTime() == dataatual_alt.getTime() &&  
+                    hora_banco_alteracao >= data_seis_horas_menos) {
+                   // alert(' data_atual '+ data_atual);
+                  //  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+                 
+                  // deixa passar 
 
-                } else if (data_atual.getTime() <= data_seis_horas_menos.getTime() ) {
+
+                } else if (data_hora_atual.getTime() == dataatual_alt.getTime() 
+                      && hora_banco_alteracao <= data_seis_horas_menos) {
                     //Se faltarem menos que 6 horas antes do inicio do serviço que teve os dados alterados
                   //, será cobrado do Cliente o valor do serviço bloqueado no cartão de crédito 
                   //e o Motorista será remunerado pelo valor que lhe couber; Usar a rotina 
 
-                  alert(' data_atual '+ data_atual);
-                  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
-                }
+                 /// alert(' data_atual '+ data_atual);
+                //  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
 
+                //vai pagar o motorista 
+
+
+                } 
+
+                api.delete(`/motorista_servico/delete/${servico.id}`)
+                .then(respdelecao=>{
+      
+                if (respdelecao.data.success == true) { 
+                 
+                    const motorista_alocado = {
+                      motorista_alocado: false,  
+                    } 
+      
+                    api.put(`/servicos/update/${servico.id}`, motorista_alocado);  
+                }
+              })
           } 
     
     }          
 
-    if (sessionStorage.getItem('distribuir_servico') == 'true') {
-        sessionStorage.setItem('distribuir_servico', false);
+    var distribuir = '';
+    if (sessionStorage.getItem('distribuir_servico') == 0) {
+      distribuir = 'não'
+    } else if (sessionStorage.getItem('distribuir_servico')  == 1) {
+      distribuir = 'sim'
+    }
+
+  //alert( 'distribuir para os motoristas '+ distribuir);
+    if (sessionStorage.getItem('distribuir_servico') == 1) {
+        sessionStorage.setItem('distribuir_servico', 0);
 
     //  alert('entrou na  distribuir_servico_motorista ');
 
@@ -2079,6 +2172,8 @@ verifica_menu() {
             } else {
               estado_motorista = servico.estado_selecionado_mapa;
             }
+
+          
             var tipoTransporte = '';
             if (servico.camptipoId == '') {
               tipoTransporte = tipoTransporte_global
@@ -2090,76 +2185,137 @@ verifica_menu() {
           
             debugger;
             //verificar motorista preferido //
+            /*
             if (estado_motorista == 'Rio') {
               estado_motorista = 'RJ'   
-            }  
+            }  */
 
-            
-          // alert(`/motorista/getMotoristaServico/${estado_motorista}/${bilingue}`);
-          api.get(`/motorista/getSelecionaMotorista/${estado_motorista}/${bilingue}`)                    
+       // alert(`/motorista/getSelecionaMotorista/${estado_motorista}/${bilingue}`);  
+         api.get(`/motorista/getSelTodosMotorista/${estado_motorista}`)                    
           .then(respMotorista=>{
 
               debugger;
               if (respMotorista.data.success == true) {  
 
-                debugger      
-                total_motorista = respMotorista.data.data.length;
-                motorista_incluido = 0;
-                var mot_sel = respMotorista.data.data;
 
-                mot_sel.map((mot)=>{             
-              //    qtd_motoristas = qtd_motoristas + 1;
-                  //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
-                  // verifica_possui_servico();
-                  
-                  api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
-                  .then(respservico=>{   
-                      
-                      debugger                 
-                      if (respservico.data.success == true) {   
-                        const response_data = respservico.data.data[0];      
+                  debugger      
+                  total_motorista = respMotorista.data.data.length;
+                  motorista_incluido = 0;
+                  var mot_sel = respMotorista.data.data;
+               
+                  var motorista_substituido = sessionStorage.getItem('motorista_substituido');
+                  if (motorista_substituido !== null) {
+                    motorista_substituido = motorista_substituido.toString();
+                  }
+                
+                  mot_sel.map((mot)=>{      
+                    var distribui_moto = mot.id;   
+
+                  if (bilingue == 0) {  // se bilingue for igual a zero mando serviço para todos os motoristas
+
+                      if ( distribui_moto.toString() !== motorista_substituido) {   
+                        sessionStorage.setItem('motorista_substituido', '');
+                    //    qtd_motoristas = qtd_motoristas + 1;
+                        //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                        // verifica_possui_servico();
+                        
+                    //   alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
+                        api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
+                        .then(respservico=>{   
                             
-                                const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
-                                const data_teste = moment(data_servico, "DD/MM/YYYY");
-                                const formatar_data = data_teste.format("YYYY-MM-DD");    
-                                const data_servico_banco = new Date(formatar_data);
-                                var hora_banco = servico.hora_inicial.substring(0,5);                   
+                            debugger                 
+                            if (respservico.data.success == true) {   
+                              const response_data = respservico.data.data[0];      
+                                  
+                                      const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                      const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                      const formatar_data = data_teste.format("YYYY-MM-DD");    
+                                      const data_servico_banco = new Date(formatar_data);
+                                      var hora_banco = response_data.servico.hora_inicial.substring(0,5);                   
 
-                                if (data_servico_banco.getTime() == data_servico_date.getTime() &&
-                                    hora_banco <= hora_maior_tres &&
-                                    hora_banco >= hora_menor_tres) {
+                                      if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                          hora_banco <= hora_maior_tres &&
+                                          hora_banco >= hora_menor_tres) {
 
-                                        debugger;
-                                        verifica_possui_servico = true;
-                                        motorista_incluido = motorista_incluido + 1;
-                                    //    this.finalizando_processo_busca();
+                                              debugger;
+                                              verifica_possui_servico = true;
+                                              motorista_incluido = motorista_incluido + 1;
+                                          //    this.finalizando_processo_busca();
 
-                                } else {
-                                    debugger
-                                //   motorista_incluido = motorista_incluido + 1;
-                                    this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                      } else {
+                                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                      }                                                           
+                            } else {
 
-                                }                                             
-                      } else {
+                                debugger
+                              //  motorista_incluido = motorista_incluido + 1;
+                                this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
 
-                          debugger
-                        //  motorista_incluido = motorista_incluido + 1;
-                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
-
-                      }     
+                            }     
 
 
-                    }).catch(error=>{
-                      alert("Error motorista_servico getMotoristaServico  -"+error)
-                    });    
+                          }).catch(error=>{
+                            console.log(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)
+                        //   alert("Error motorista_servico getMotoristaServico  -"+error)
+                          });    
+                        }
+                    } else {
+                         
+                       if (bilingue == 1) {
 
-                })
-              
-              
+                              if(bilingue == mot.bilingue) {
+
+                                if ( distribui_moto.toString() !== motorista_substituido) {   
+                                  sessionStorage.setItem('motorista_substituido', '');
+                              //    qtd_motoristas = qtd_motoristas + 1;
+                                  //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                                  // verifica_possui_servico();
+                                  
+                              //   alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
+                                  api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
+                                  .then(respservico=>{   
+                                      
+                                      debugger                 
+                                      if (respservico.data.success == true) {   
+                                        const response_data = respservico.data.data[0];      
+                                            
+                                                const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                                const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                                const formatar_data = data_teste.format("YYYY-MM-DD");    
+                                                const data_servico_banco = new Date(formatar_data);
+                                                var hora_banco = response_data.servico.hora_inicial.substring(0,5);                   
+          
+                                                if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                                    hora_banco <= hora_maior_tres &&
+                                                    hora_banco >= hora_menor_tres) {
+          
+                                                        debugger;
+                                                        verifica_possui_servico = true;
+                                                        motorista_incluido = motorista_incluido + 1;
+                                                    //    this.finalizando_processo_busca();
+          
+                                                } else {
+                                                    this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                                }                                                           
+                                      } else {
+          
+                                          debugger
+                                        //  motorista_incluido = motorista_incluido + 1;
+                                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+          
+                                      }     
+                                    })
+                                 }
+                                }
+                          }
+                    }    
+                  })        
+                
+              //  alert('enviados - '+enviados);
               // alert('Reenvio para os motoristas realizado com sucesso');
       
               } else {
-                alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
+               // alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
                 sessionStorage.setItem('logServicoIncluido', ''); 
                 /*   this.setState({                              
                   mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
@@ -2167,7 +2323,8 @@ verifica_menu() {
               }  
 
             }).catch(error=>{
-                alert("Error motorista getSelecionaMotorista -"+error)
+                console.log(` getSelecionaMotorista - ${estado_motorista} - ${bilingue}` )
+               // alert("Error motorista getSelecionaMotorista -"+error)
             });   
           }
      
@@ -2575,20 +2732,21 @@ debugger
 
 
   } 
+
   controle_botao() {
     debugger
-    if (this.state.mensagem_motorista_alocado !== '') {
+    if (this.state.campmotoristaalocado !== true) {
       return (
        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_motorista"  p={2} onClick={()=>''}>
             <div className="d-flex justify-content-center">
-              <label> Substituir Motorista </label>
+              <label> Substituir Motorista </label>           
             </div>     
        </Box>  
       )
     
     } else {
       return (
-        <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_motorista"  p={2} onClick={()=>this.sendSaveCartao()}>
+        <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_motorista"  p={2} onClick={()=>this.substituir_motorista()}>
         <div className="d-flex justify-content-center">
         <label> Substituir Motorista </label>
         </div>     
@@ -2752,13 +2910,13 @@ debugger
       });
 
       debugger;
-          // this.calculo_bilingue();
+          // this.calculo_bilingue();pedagio_rota
           // this.calculo_receptivo();   
         
         // busca_motorista();
       
    //    const retorno1 = this.procurar_motorista_servico();
-
+            
    
     //   if (retorno == true) { 
 
@@ -2768,6 +2926,7 @@ debugger
                   tipoTransporte: this.state.camptipoId,
                   nome_passageiro: this.state.campNome, 
                   estado_selecionado_mapa: this.state.estado_selecionado_mapa,
+                  valor_pedagio: this.state.camppedagio, 
                   telefone_passageiro: this.state.campTelefone1,
                   quantidade_passageiro: this.state.campqtdpassageiro,  
                   data_servico: moment(this.state.campdata_servico, "DD MM YYYY"),
@@ -2804,7 +2963,7 @@ debugger
                   perfilId: sessionStorage.getItem('logperfil'),               
                 }           
             
-                // console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
+                 console.log('criar serviço - '+JSON.stringify(datapost_incluir, null, "    ")); 
                 api.post('/servicos/create',datapost_incluir)
                 .then(respevento=>{             
 
@@ -3273,7 +3432,7 @@ verifica_rota_embarque(inicio) {
           || this.state.validacao_qtdpassageiro == true
           || this.state.validacao_Telefone1 == true
      */
-      if (this.state.camplocalembarque !== "" || this.state.camplocaldesembarque !== "") { 
+      if (this.state.camplocalembarque !== "" ) { 
         //this.state.validacao_hora_inicial == true  && this.state.validacao_hora_final == true  ) { 
         return (
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendAtualizarembarque()}>
@@ -3317,7 +3476,7 @@ verifica_rota_desembarque(inicio) {
           || this.state.validacao_qtdpassageiro == true
           || this.state.validacao_Telefone1 == true
      */
-      if (this.state.camplocalembarque !== "" || this.state.camplocaldesembarque !== "") { 
+      if (this.state.camplocaldesembarque !== "") { 
         //this.state.validacao_hora_inicial == true  && this.state.validacao_hora_final == true  ) { 
         return (
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_habilitados_modal"  p={2} onClick={()=>this.sendAtualizardesembarque()}>
@@ -3489,53 +3648,113 @@ delay() {
 
   }  
 
-  
-  obtendo_distancia_rota_nova = () => { 
-    debugger 
+  async verificar_pedagio() {
 
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' 
-    && this.state.obter_rota_nova == true) {    
-
-      var origem = this.state.camplocalembarque;
-      var destino = this.state.camplocaldesembarque;   
-      this.setState({                
-       obter_rota_nova: false,
-      });
-   
-      function CalculaDistancia(origem, destino) {
-        return new Promise(function(resolve, reject) {
-          var service = new window.google.maps.DistanceMatrixService();
-          debugger
-          service.getDistanceMatrix({
-            origins: [origem],
-            destinations: [destino],
-            travelMode: window.google.maps.TravelMode.DRIVING
-          }, 
-          function(response, status) {
-            if (status == window.google.maps.DistanceMatrixStatus.OK) {
-                resolve(response);               
-            } else {
-                reject(status);
-            }
-          }); 
-        });
-      }
-                                                
-      CalculaDistancia(origem, destino)
-        .then(function(response) {
-         
-          debugger
-          if (response.rows[0].elements[0].status !== "NOT_FOUND" && response.rows[0].elements[0].status !== "ZERO_RESULTS") {
-              campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
-              camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
-              camptempo_global = response.rows[0].elements[0].duration.text 
-              
-          }
-         }, function(status) {
-           console.log('Não foi possível realizar a operação! Status: ' + status);
-      });
+    debugger
     
-    }
+    var embarque_latitude = this.state.embarque_latitude;
+    var embarque_longitude = this.state.embarque_longitude;  
+    var desembarque_latitude = this.state.desembarque_latitude;
+    var desembarque_longitude = this.state.desembarque_longitude;  
+     
+    var link_api = `http://rotasbrasil.com.br/apiRotas/coordenadas/?pontos=${embarque_longitude},${embarque_latitude};${desembarque_longitude},${desembarque_latitude}&veiculo=auto&eixo=2&paradas=false&ufs=true&token=b5e9319df42310fd6a175948b4c7e575`;
+       
+     
+    const val = await api.get(link_api)
+    
+    ///alert('Estado selecionado - '+val.rotas.ufs[0]);
+     
+       this.setState({                
+         camppedagio: val.data.rotas[0].valorPedagio,
+         estado_selecionado_mapa: val.data.rotas[0].ufs[0]
+      }); 
+
+    
+  }
+
+  
+obtendo_distancia_rota_nova = () => {
+    debugger 
+    //alert(`embarque lat e longetude ${embarque_latitude} - ${embarque_longitude} `);
+   //     
+    /*if (campdistancia_global == null) {
+        this.setState({ 
+          obter_rota_nova: true,         
+        })
+      }
+*/
+      if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' 
+      && contador_busca_rota == 1) {      //   
+
+        contador_busca_rota = 0;
+
+        this.setState({ 
+          obter_rota_nova: false,         
+        })
+      
+
+        if (this.state.camplocalembarque !== camplocalembarque_old 
+          || this.state.camplocaldesembarque !== camplocaldesembarque_old) {  
+        //chamar o link rotabrasil pegar o estado e o valor do pedagio 
+
+         // alert(`camplocalembarque ${this.state.camplocalembarque} - ${camplocalembarque_old} `);
+         // alert(`obter_rota_nova ${this.state.obter_rota_nova}`);
+         // alert(`embarque lat e longetude ${embarque_longitude} ${embarque_latitude} `);
+         // alert(`desembarque lat e longetude ${ desembarque_longitude } ${desembarque_latitude} `); 
+            
+         this.verificar_pedagio();       
+   
+         // alert('pedagio sendo usado');
+        /*  this.setState({     
+             camppedagio: '0.00',           
+             estado_selecionado_mapa: 'RJ'
+          }); */
+            
+
+             var origem = this.state.camplocalembarque;
+             var destino = this.state.camplocaldesembarque;   
+             this.setState({                
+                obter_rota_nova: false,
+             });
+         
+             async function CalculaDistancia(origem, destino) {
+               return new Promise(function(resolve, reject) {
+                 var service = new window.google.maps.DistanceMatrixService();
+                 debugger
+                 service.getDistanceMatrix({
+                   origins: [origem],
+                   destinations: [destino],
+                   travelMode: window.google.maps.TravelMode.DRIVING
+                 }, 
+                 function(response, status) {
+                   if (status == window.google.maps.DistanceMatrixStatus.OK) {
+                       resolve(response);               
+                   } else {
+                       reject(status);
+                   }
+                 }); 
+               });
+             }
+                                                       
+             CalculaDistancia(origem, destino)
+               .then(function(response) {
+               
+                 debugger
+                 if (response.rows[0].elements[0].status !== "NOT_FOUND" && response.rows[0].elements[0].status !== "ZERO_RESULTS") {
+                     campdistancia_global = (response.rows[0].elements[0].distance.value / 1000).toFixed(0)
+                     camptempovalue_global = (response.rows[0].elements[0].duration.value / 60).toFixed(0)
+                     camptempo_global = response.rows[0].elements[0].duration.text                     
+                 }
+                 
+                
+               }, function(status) {
+                 console.log('Não foi possível realizar a operação! Status: ' + status);
+             });      
+          
+        }
+      
+      }
+   // } 
   }
 
   
@@ -3737,20 +3956,35 @@ delay() {
 
  }
 
- selecione_tipo_servico(index) {
-    
-  this.setState({ 
-      tabIndex: this.state.tabIndex
-  });
 
-  if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '' ) {
-    Promise.all([
-      this.calcular_trajeto()
-    ])     
-  }
+ atualizar_valores() {
+  
+  return (  
+  <table className="margin_total_servicos">
+  <tr className="titulo_total_servicos"><td className="tamanho_coluna">Distância Total</td>
+    <td className="tamanho_coluna_tempo">Tempo Total</td>
+    <td className="tamanho_coluna">Valor Total</td></tr>                
+  <tr className="resultado_total_servicos">
+                      <td>{this.state.campdistancia} km</td>
+   <td>{ this.state.camptempo}</td>
+    <td>R$ {this.state.campvalor}</td>
+    </tr>               
+</table>)
+ }
+
+selecione_tipo_servico(index) {
+    
+  
+  this.limpar_modal(index);
+
 }
 
+selecione_tipo_servico_alteracao(index) {
+    
+  
+  //this.limpar_modal(index);
 
+}
     
   verifica_horario(){
     const d = new Date();
@@ -3794,11 +4028,13 @@ delay() {
 
     campseltipoveiculo = event.target.value;
 
-    sessionStorage.setItem('distribuir_servico', true);
+    sessionStorage.setItem('distribuir_servico', 1);
 
   //  setAge(event.target.value);
 
     debugger
+
+   
     
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
       Promise.all([
@@ -3811,15 +4047,19 @@ delay() {
   opcao_tabChange = (event, newValue) => {   
     this.setState({        
         value: newValue 
-    });    
+    });  
+   // this.limpar_campos();  
   };
 
   teste_mensagem() {
 
     if (this.state.mensagem_servico !== "") {
       return (
-        <Alert severity="error">{this.state.mensagem_servico}</Alert>
-             
+        <div className="mensagem_informacao_tarifas">
+        <Alert4 variant="filled" severity="warning">          
+           {this.state.mensagem_servico}
+       </Alert4>    
+       </div>     
       );   
     }
   }
@@ -3909,7 +4149,42 @@ delay() {
     return await api.get(`/servicos/get/${sessionStorage.getItem('logServicoIncluido')}`);
   }
   
+  async substituir_motorista() {
 
+   // alert(this.state.servico_motorista);
+    
+    debugger
+    api.get(`/motorista_servico/getServico/${this.state.servico_motorista}`)
+    .then(res=>{
+      if (res.data.success == true) {
+
+          var servico_motorista = res.data.data[0];
+
+          api.delete(`/motorista_servico/delete/${servico_motorista.servico.id}`)
+          .then(respdelecao=>{
+
+          if (respdelecao.data.success == true) { 
+           
+              const motorista_alocado = {
+                motorista_alocado: false,  
+              } 
+
+              api.put(`/servicos/update/${servico_motorista.servico.id}`, motorista_alocado);       
+
+              sessionStorage.setItem('motorista_substituido',  servico_motorista.motoristum.id);
+          
+              this.procurar_motorista_servico(servico_motorista.servico,'SUBSTITUICAO');
+
+              this.handleCloseModalMotorista();
+            
+
+          }    
+        })
+      }  
+    })
+
+  } 
+  
   reenvio_motoristas(row){
     debugger;
      reenvio_motorista = true;
@@ -3930,6 +4205,21 @@ delay() {
           
   }
 
+  reenvio_todos_servicos_motoristas(){
+    debugger
+    api.get(`/servicos/listaservicosevento/${sessionStorage.getItem('logeventoservico')}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
+    .then(res=>{
+      if (res.data.success == true) { 
+        res.data.data.map((servicos)=>{         
+          if (servicos.motorista_alocado == 0) {
+              // estado_selecionado_mapa_global = servicos.estado_selecionado_mapa
+               this.procurar_motorista_servico(servicos, 'REENVIO' );     
+          } 
+        })  
+      } 
+    })     
+          
+  }
   render()
   {
     //const [value1, setValue1] = useState(null);
@@ -4492,7 +4782,7 @@ delay() {
                <div className="titulo_moldura_modal_delecao">Deseja mesmo excluir este Serviço? </div>
                <div className="titulo_moldura_modal_delecao_2">Ao confirmar a exclusão o registro será apagado.  </div>
              </div>     
-                              <div className="retorno">{this.state.retorno}</div>
+             <div className="retorno">{this.state.retorno}</div>
             <Box 
                className="botoes_delete_cancelar_modal" p={2} onClick={()=>this.handleCloseModalDelete()}>
               <div className="d-flex justify-content-center">
@@ -4622,6 +4912,7 @@ delay() {
                             
              </div>      
              <div> 
+               <br/>
              
                  <div className="d-flex justify-content moldura_alocado">      
                       {this.verifica_mensagem_alocado()}
@@ -4665,7 +4956,7 @@ delay() {
               <TabContext value={this.state.tabIndex} className="tabs_padrao">
               <div>                  
                 <AppBar position="static" color="transparent" >
-                  <TabList onChange={(e, index) => this.selecione_tipo_servico(index)}  
+                  <TabList onChange={(e, index) => this.selecione_tipo_servico_alteracao(index)}  
                            aria-label="simple tabs example">
                     <Tab label="Translado" disabled={this.state.translado} value="2" className="tabs_titulo_lista"/>          
                     <Tab label="Diária" disabled={this.state.diaria} value="1" className="tabs_titulo_lista_2"/>          
@@ -5326,18 +5617,11 @@ delay() {
                       <FormHelperText>
                           {this.state.mensagem_aguarde}
                       </FormHelperText>       
-                    </div>   
-                    <div className="botao_servico_fixo">
-                          <table className="margin_total_servicos">
-                              <tr className="titulo_total_servicos"><td className="tamanho_coluna">Distância Total</td>
-                                <td className="tamanho_coluna_tempo">Tempo Total</td>
-                                <td className="tamanho_coluna">Valor Total</td></tr>                
-                              <tr className="resultado_total_servicos">
-                                                  <td>{this.state.campdistancia} km</td>
-                               <td>{ this.state.camptempo}</td>
-                                <td>R$ { valorMask(this.state.campvalor)}</td>
-                                </tr>               
-                          </table>
+                    </div>  
+                    
+                      <div className="botao_servico_fixo">
+                         {this.atualizar_valores()} 
+                         
                       {this.verifica_botao(this.state.inicio)}         
                         </div>        
                     </div>                    
@@ -6202,7 +6486,8 @@ delay() {
               <div>                
   
                   <AppBar position="static" color="transparent" >
-                    <TabList onChange={(e, index) => this.setState({ tabIndex: index })} aria-label="simple tabs example">
+                    <TabList onChange={(e, index) => this.selecione_tipo_servico(index)} 
+                    aria-label="simple tabs example">
                       <Tab label="Translado" value="2" className="tabs_titulo_lista"/>          
                       <Tab label="Diária" value="1" className="tabs_titulo_lista_2"/>          
                     </TabList>
@@ -6856,16 +7141,7 @@ delay() {
            <div className="container-fluid">
                    <div>
                     <div className="botao_servico_fixo">
-                          <table className="margin_total_servicos">
-                              <tr className="titulo_total_camptemposervicos"><td className="tamanho_coluna">Distância Total</td>
-                                <td className="tamanho_coluna_tempo">Tempo Total</td>
-                                <td className="tamanho_coluna">Valor Total</td></tr>                
-                              <tr className="resultado_total_servicos">
-                                                  <td>{this.state.campdistancia} km</td>
-                                <td>{ this.state.camptempo}</td>
-                                <td>R$ { valorMask(this.state.campvalor)}</td>
-                                </tr>               
-                          </table>
+                        {this.atualizar_valores()} 
                       {this.verifica_botao(this.state.inicio)}         
                         </div>        
                     </div>                    
@@ -7120,6 +7396,17 @@ delay() {
                 onClose={this.envia_mensagemClose}                
                 >
             <Alert2 onClose={this.envia_mensagemClose} severity="success">
+                  {this.state.mensagem_usuario}
+            </Alert2>
+        </Snackbar>    
+
+         <Snackbar                   
+                anchorOrigin= {{ horizontal: 'center', vertical: 'top' }}           
+                open={this.state.mensagem_diversas_sistema}                
+                autoHideDuration={2000}               
+                onClose={this.envia_mensagemDiversasClose}                
+                >
+            <Alert2 onClose={this.envia_mensagemDiversasClose} severity="success">
                   {this.state.mensagem_usuario}
             </Alert2>
         </Snackbar>     
@@ -7396,7 +7683,9 @@ delay() {
     this.setState({ 
       showMensagemDelete: true,
       campDeletarId: data.id,
+      campmotoristaalocado: data.motorista_alocado,
       campdata_servico: data.data_servico,
+      camphora_inicial: data.hora_inicial,
       nome_passageiro: data.nome_passageiro,
       camptipoevento: data.tipoEventoId, 
       verificaPai: data.servico_pai_id,
@@ -7468,10 +7757,12 @@ delay() {
       showMostraMotorista: true,   
       campMotorista: '',        
       camp_foto_url: '',
+      servico_motorista: data.id,
       campmotoristaalocado: data.motorista_alocado,
       campCor: '',
       campModelo: '',   
       campPlaca: '',   
+      camp_foto_url: '',
     //  mensagem_motorista_alocado: ''
     });     
 
@@ -7542,6 +7833,7 @@ delay() {
   calculo_bilingue(e) {
     /*  Y = X * % bilíngue   */
   //  debugger;
+   debugger; 
    let valor_total_calculado = '';
    let valor_bilingue = '';
    let valor_total = valorDoublemask(this.state.campvalor);
@@ -7552,7 +7844,7 @@ delay() {
    } 
 */
 debugger;
-   if (valor_total !== "" && this.state.valor_bilingue !== "") {  
+if (valor_total !== "" && this.state.valor_bilingue !== "") {  
       if (e.target.checked == true) {
        
         debugger;
@@ -7566,7 +7858,10 @@ debugger;
         this.setState({
           resultado_bilingue: resultado_c,  
           campvalor: resultado_d.toFixed(2),
-          })
+          campvalor_estimado: resultado_d.toFixed(2)
+        })
+
+        valor_total_global = resultado_d.toFixed(2)
       } 
       
       else {
@@ -7578,8 +7873,9 @@ debugger;
         this.setState({          
           campvalor: resultado_d.toFixed(2),
           resultado_bilingue: '',  
+          campvalor_estimado: resultado_d.toFixed(2)
         }) 
-
+        valor_total_global = resultado_d.toFixed(2)
       }        
   }
 
@@ -7606,8 +7902,10 @@ debugger;
 
         this.setState({
           resultado_receptivo: valor_receptivo,  
-          campvalor: resultado_d.toFixed(2)
+          campvalor: resultado_d.toFixed(2),
+          campvalor_estimado: resultado_d.toFixed(2)
           })
+          valor_total_global = resultado_d.toFixed(2)
         } else {
 
           valor_total_calculado = parseFloat(this.state.campvalor);      
@@ -7615,8 +7913,10 @@ debugger;
           const resultado_d = (valor_total_calculado - parseFloat(this.state.resultado_receptivo));
           this.setState({
             campvalor: resultado_d.toFixed(2),
-            resultado_receptivo: '',              
+            resultado_receptivo: '',    
+            campvalor_estimado: resultado_d.toFixed(2)          
           })
+          valor_total_global = resultado_d.toFixed(2)
         }  
       }
 
@@ -7689,15 +7989,17 @@ debugger;
     return h + "h "+ min + "min " ; 
   }   
 
-  verifica_tarifa(contagem_tarifa, campdistancia_inicio){
+  async verifica_tarifa(contagem_tarifa, campdistancia_inicio){
     let entrou = false;
-    debugger;
+    debugger;    
+
  /* senao encontrar o registro na tarifa especial ele procura na tarifa  */
  if (possui_tarifa_especial_nova == false) { 
-    let contagem = 0
+    let contagem = 0  
   
     this.state.listTarifas.map((data)=>{
-  // console.log(JSON.stringify(data, null, "    "));         
+  // console.log(JSON.stringify(data, null, "    "));   
+
     let valor_total_alterado = 0;
     let valor_total = 0; 
     let valor_total_2 = 0; 
@@ -7706,7 +8008,12 @@ debugger;
     let valor_bandeirada = 0;
     let distanciapai = 0;        
     contagem = contagem + 1;
+    //let camp_pedagio_rota = pedagio_rota; 
     debugger;
+  //console.log( 'DISTANCIA - '+campdistancia_inicio   );
+   if (campdistancia_inicio < 1) {
+     campdistancia_inicio = 1
+   }
     let camptempovalue = camptempovalue_global;
     if (camptempovalue === 0) {
       camptempovalue = this.state.camptempovalue         
@@ -7732,10 +8039,10 @@ debugger;
                 distanciapai = parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio);
                 console.log(' distanciapai - '+distanciapai);
 
-                valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km).toFixed(1)
+                valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km)
                 console.log(' valor_distancia_1 - '+valor_distancia_1);
 
-                valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo).toFixed(1); 
+                valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo); 
                 console.log(' valor_tempo_1 - '+valor_tempo_1);
 
                 valor_bandeirada = parseInt(this.state.campqtddiarias) * parseFloat(data.bandeira);
@@ -7743,17 +8050,31 @@ debugger;
 
 
               } else {
+                
+                debugger
+              ///  alert('campdistancia_global '+ campdistancia_inicio);
+              //  alert('camptempovalue_global '+ camptempovalue_global);
+              //  alert('camptempo_global '+ camptempo_global);
               
                 distanciapai = parseInt(campdistancia_inicio);
 
-                valor_distancia_1 = (campdistancia_inicio * data.valor_km).toFixed(1);
+                valor_distancia_1 = (campdistancia_inicio * data.valor_km);
+
+              //  alert(' QTD Km * valor Km '+valor_distancia_1);
               
-                valor_tempo_1 = (camptempovalue * data.valor_tempo).toFixed(1); 
+                valor_tempo_1 = (camptempovalue * data.valor_tempo); //.toFixed(1); 
+
+              //  alert('tempo do Serviço * valor tempo '+valor_tempo_1);
 
                 valor_bandeirada = parseFloat(data.bandeira);
-              }    
 
-              valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada)); 
+            //    alert('valor Bandeirada '+valor_bandeirada);
+
+
+             //   alert('valor camppedagio '+this.state.camppedagio);
+              }    
+   
+              valor_total = (parseFloat(valor_distancia_1) + parseFloat(valor_tempo_1) + parseFloat(valor_bandeirada) + parseFloat(this.state.camppedagio)); 
               
               var valor_acrescimo = ((1,50 / 100) * valor_total).toFixed(2)
               valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
@@ -7761,19 +8082,21 @@ debugger;
 
               possui_tarifa_nova = true;
             
-              this.setState((state) => {
-                state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))
-                state.possui_tarifa = true
-                state.campvalor = valorMask(valor_total.toFixed(2))
-                state.campvalor_estimado = valorMask(valor_total.toFixed(2))
-                state.valor_bilingue = data.bilingue
-                state.valor_receptivo = data.receptivo
-                state.campdistancia = distanciapai                     
-                state.camptempovalue = camptempovalue // this.state.camptempopaivalue
-                state.processo = 1
-                state.mensagem_error = false
-                state.mensagem_servico = ''
-              //  state.camptempo= this.formatar_valor(valor_tempo_1)
+              valor_total_global = valorMask(valor_total.toFixed(2));
+
+              this.setState({
+                valor_bloquear_cartao: valorMask(valor_total_2.toFixed(2)),
+                possui_tarifa: true,
+                campvalor: valorMask(valor_total.toFixed(2)),
+                campvalor_estimado: valorMask(valor_total.toFixed(2)),
+                valor_bilingue: data.bilingue,
+                valor_receptivo: data.receptivo,
+                campdistancia: distanciapai,                     
+                camptempovalue: camptempovalue, // this.state.camptempopaivalue
+                processo: 1,
+                mensagem_error: false,
+                mensagem_servico: '',
+              //  state.= this.formatar_valor(valor_tempo_1)
               })  
               //console.log(' formula - '+JSON.stringify((this.state.campdistancia * data.valor_km) + (this.state.camptempovalue * data.valor_tempo) + data.bandeira, null, "    ")); 
           } else if (contagem == contagem_tarifa && possui_tarifa_nova == false && entrou == false)  {
@@ -7842,15 +8165,15 @@ debugger;
                 this.calcula_hora();
 
                 debugger;
-                camptempovalue = camptempovalue_global;                 
+               // camptempovalue = camptempovalue;                 
 
                 distanciapai = parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio);
                 console.log(' distanciapai - '+distanciapai);
 
-                valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km).toFixed(1)
+                valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km)
                 console.log(' valor_distancia_1 - '+valor_distancia_1);
 
-                valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo).toFixed(1); 
+                valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo); 
                 console.log(' valor_tempo_1 - '+valor_tempo_1);
 
                 valor_bandeirada = parseInt(this.state.campqtddiarias) * parseFloat(data.bandeira);
@@ -7861,9 +8184,9 @@ debugger;
               
                 distanciapai = parseInt(campdistancia_inicio);
 
-                valor_distancia_1 = (campdistancia_inicio * data.valor_km).toFixed(1);
+                valor_distancia_1 = (campdistancia_inicio * data.valor_km);
               
-                valor_tempo_1 = (camptempovalue * data.valor_tempo).toFixed(1); 
+                valor_tempo_1 = (camptempovalue * data.valor_tempo); 
 
                 valor_bandeirada = parseFloat(data.bandeira);
               }    
@@ -7874,6 +8197,10 @@ debugger;
               valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
               entrou = true;   
             
+           //   alert('valor total - '+ valorMask(valor_total.toFixed(2)));
+              valor_total_global = valorMask(valor_total.toFixed(2));
+
+
               possui_tarifa_nova = true;
               this.setState((state) => {
                 state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))
@@ -7963,9 +8290,9 @@ debugger;
 
                         distanciapai = parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio);
                           
-                        valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km).toFixed(1)
+                        valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km)
 
-                        valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo).toFixed(1); 
+                        valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo); 
 
                         valor_bandeirada = parseInt(this.state.campqtddiarias) * parseFloat(data.bandeira);
 
@@ -7976,9 +8303,9 @@ debugger;
                        
                        distanciapai = parseInt(campdistancia_inicio);
 
-                       valor_distancia_1 = (campdistancia_inicio * data.valor_km).toFixed(1);
+                       valor_distancia_1 = (campdistancia_inicio * data.valor_km);
                      
-                       valor_tempo_1 = (camptempovalue * data.valor_tempo).toFixed(1); 
+                       valor_tempo_1 = (camptempovalue * data.valor_tempo); 
 
                        valor_bandeirada = parseFloat(data.bandeira);
                      }    
@@ -7989,6 +8316,8 @@ debugger;
                      valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
                       possui_tarifa_especial_nova = true;
 
+                      valor_total_global = valorMask(valor_total.toFixed(2));
+
                      this.setState((state) => {      
                       state.valor_bloquear_cartao = valorMask(valor_total_2.toFixed(2))  
                       state.possui_tarifa_especial = true
@@ -7998,7 +8327,7 @@ debugger;
                       state.valor_bilingue = data.bilingue
                       state.valor_receptivo = data.receptivo
                       state.campdistancia = distanciapai 
-                      state.camptempovalue = this.formatar_valor(camptempovalue) //this.state.camptempopaivalue
+                    //  state.camptempovalue = this.formatar_valor(camptempovalue) //this.state.camptempopaivalue
                    //   state.camptempo= this.formatar_valor(valor_tempo_1)
                       state.mensagem_error = false
                       state.mensagem_servico = ''
@@ -8080,9 +8409,9 @@ debugger;
 
                         distanciapai = parseInt(this.state.campqtddiarias) * parseInt(campdistancia_inicio);
                           
-                        valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km).toFixed(1)
+                        valor_distancia_1 = parseInt(this.state.campqtddiarias) * (campdistancia_inicio * data.valor_km)
 
-                        valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo).toFixed(1); 
+                        valor_tempo_1 = parseInt(this.state.campqtddiarias) * (camptempovalue * data.valor_tempo); 
 
                         valor_bandeirada = parseInt(this.state.campqtddiarias) * parseFloat(data.bandeira);
 
@@ -8093,9 +8422,9 @@ debugger;
                        
                        distanciapai = parseInt(campdistancia_inicio);
 
-                       valor_distancia_1 = (campdistancia_inicio * data.valor_km).toFixed(1);
+                       valor_distancia_1 = (campdistancia_inicio * data.valor_km);
                      
-                       valor_tempo_1 = (camptempovalue * data.valor_tempo).toFixed(1); 
+                       valor_tempo_1 = (camptempovalue * data.valor_tempo); 
 
                        valor_bandeirada = parseFloat(data.bandeira);
                      }    
@@ -8104,6 +8433,8 @@ debugger;
           
                      var valor_acrescimo = ((1,50 / 100) * valor_total).toFixed(2)
                      valor_total_2 = parseFloat(valor_acrescimo) + parseFloat(valor_total);
+
+                      valor_total_global = valorMask(valor_total.toFixed(2));
 
                      possui_tarifa_especial_nova = true;
                      this.setState((state) => {    
@@ -8151,6 +8482,8 @@ debugger;
     let contagem_diariaEspecial=0;
     let campdistancia_inicio = 0;   
     campseltipoveiculo = this.state.camptipoId;
+    this.loadDiarias();
+    this.loadDiariaespecial();
 
     possui_tarifa_especial_nova = false;
     possui_tarifa_nova = false;
@@ -8182,7 +8515,7 @@ debugger;
 
     let contagem_tarifa=0;
     let contagem_tarifaEspecial=0;
-    let campdistancia_inicio = 0;   
+    let campdistancia_inicio = 0;         
 
     campdistancia_inicio = campdistancia_global;
     possui_tarifa_nova = false;
@@ -8209,13 +8542,12 @@ debugger;
 
   async calcular_trajeto() {   
 
- // console.log('entrou no calcular_trajeto')
+    this.setState({
+      mensagem_servico: '',
+      mensagem_error: false,    
+    });   
 
-  this.setState({
-    mensagem_servico: '',
-    mensagem_error: false,    
-  });  
-  
+     valor_total_global = '0.00';   
 
     if (this.state.tabIndex == 1) {
 
@@ -8228,59 +8560,6 @@ debugger;
    
   }
   
-  /*
-  distanceCallback = (response) => {
-  console.log("Hello");
-    //console.log(response);  
-   debugger;
-    if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' ) {
-      if (response !== null && response.rows[0].elements[0].distance !== this.state.distance) {
-          const origin = response.originAddresses[0];
-          const destination = response.destinationAddresses[0];
-        if (response.rows[0].elements[0].status === "ZERO_RESULTS") {
-          
-          this.setState({ 
-            mensagem_error_mapa: `É melhor entrar em um avião. Não há estradas entre `+ origin +` e `+ destination
-          });
-                
-        } else if (response.rows[0].elements[0].status === "OK") {         
-            
-        //  console.log('this.state.tabIndex '+this.state.tabIndex);
-     //   debugger;
-           if (this.state.tabIndex == 2) {
-            this.setState({     
-               controle: 1,
-               campdistancia: (response.rows[0].elements[0].distance.value / 1000).toFixed(0), 
-               camptempovalue: (response.rows[0].elements[0].duration.value / 60).toFixed(0),
-               camptempo: this.formatar_valor(response.rows[0].elements[0].duration.text)            
-              });
-            } else if (this.state.tabIndex == 1) {
-              this.setState({      
-                controle: 1,
-             //   campdistancia: 0, 
-             //   camptempovalue: 0,
-                camptempo: ''           
-              });
-            }       
-            
-            if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
-                 console.log('calcular_trajeto - '+JSON.stringify(this.state, null, "    ")); 
-           
-                this.calcular_trajeto();
-            }            
-        
-        } else  {
-            this.setState({ 
-              mensagem_error_mapa: 'Erro encontrado'
-            });
-        } 
-          } else {
-            console.log("response: ", response);
-          }
-     }
-  //  }
-  };
-  */
 
   mostrar_mapa_desembarque() {
 
@@ -8433,8 +8712,10 @@ debugger;
       nome_motorista_visualizacao: true,
       telefone_motorista_visualizacao: true,          
       data_servico_pai_old: data.data_servico,
+      camppedagio: data.valor_pedagio,
       incluir: false,    
     });     
+    
     reenvio_motorista = false;
     camplocalembarque_old = '';
     camplocaldesembarque_old  = '';
@@ -8442,7 +8723,9 @@ debugger;
     campdistancia_global = data.distancia_value;
     camptempo_global = data.tempo_translado;
     camptempovalue_global = data.tempo_value;
-    sessionStorage.setItem('distribuir_servico', false);
+    valor_total_global = data.valor_estimado;
+    sessionStorage.setItem('distribuir_servico', 0);
+    this.limpar_campos_modal();
     
     if (this.state.tabIndex == 1) {
       this.setState({ 
@@ -8458,8 +8741,8 @@ debugger;
   }
       
     debugger;
-
-   this.limpar_campos();   
+ //   this.limpar_modal();   
+  // this.limpar_campos();   
    this.loadTarifaespecial();
    this.loadTarifa();
    this.loadTipoTransporte();     
@@ -8478,6 +8761,7 @@ debugger;
       mensagem_aguarde: '',
     }); 
     
+    this.refreshPage();
     //this.valor_total_servicos();
     //this.valor_total_viagens();
     //this.loadlistServicos();
@@ -8530,13 +8814,20 @@ debugger;
       showModalEmbarque: true,      
       camplocalembarque: this.state.camplocalembarque,      
       controle: 0,
-      mudou_origem: true
+      mudou_origem: true,
+     // embarque_latitude: '',
+    //  embarque_longitude:'', 
     //  obter_rota_nova: false,
     //  mudar_estilo: customStyles_2,
     });   
-    camplocalembarque_old = this.state.camplocalembarque;
-    sessionStorage.setItem('distribuir_servico', true);
+    camplocalembarque_old = this.state.camplocalembarque;    
+    
+      campdistancia_global = null;
+    //  camptempovalue_global = null;
+    camptempo_global = '';
+    sessionStorage.setItem('distribuir_servico', 1);
      debugger
+ 
      
     
   }
@@ -8549,7 +8840,20 @@ debugger;
     }); 
     debugger;
 
-    
+   
+    if (this.state.camplocalembarque == this.state.camplocaldesembarque) {
+
+      this.setState({ 
+        camplocalembarque: '',
+        camplocaldesembarque: '',
+        mensagem_usuario: 'Local de Origem é igual ao Local de destino',  
+      });
+
+      valor_total_global = '0.00';   
+      this.envia_mensagemDiversasClick();
+
+    }
+
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
       Promise.all([
         this.calcular_trajeto()
@@ -8563,12 +8867,17 @@ debugger;
       showModalDesembarque: true,      
       camplocaldesembarque: this.state.camplocaldesembarque,      
       controle: 0,   
-      mudou_destino: true
+    //  embarque_latitude: '',
+     // embarque_longitude: '',
+      mudou_destino: true,
     //  obter_rota_nova: false,   
     //  mudar_estilo: customStyles_2,
     });       
-     
-    sessionStorage.setItem('distribuir_servico', true);
+    
+  
+    campdistancia_global = null;
+  //  camptempovalue_global = '';
+    sessionStorage.setItem('distribuir_servico', 1);
     camplocaldesembarque_old = this.state.camplocaldesembarque;
   }
   
@@ -8578,6 +8887,19 @@ debugger;
       validacao_localdesembarque: true,
     });  
   
+    if (this.state.camplocalembarque == this.state.camplocaldesembarque) {
+
+      this.setState({ 
+        camplocalembarque: '',
+        camplocaldesembarque: '',
+        mensagem_usuario: 'Local de Origem é igual ao Local de destino'      
+       }); 
+
+      valor_total_global = '0.00'     
+      this.envia_mensagemDiversasClick();
+
+    }
+
     debugger;
     if (this.state.camplocalembarque !== '' && this.state.camplocaldesembarque !== '' && campdistancia_global !== '') {
       Promise.all([
@@ -8628,40 +8950,91 @@ debugger;
 
   limpar_campos() {
     this.setState({       
+      perfil: perfil,
+      eventoId: '',     
+      erro_data: false,  
+      campservicoId: '',
+      campCpf: '',
+      mensagem: '',
+      color: 'light',
+      value: "1",
+      opcao: '',     
+      hora_formatada: '', 
+      inicio: 0,
+      tabIndex: "2",
+      processo: 1,
+      visualizar: '',
+      campselecaotipo: false,
+      incluir: false,
+      chave_aleatoria_motorista: '',
+      obter_rota_nova: false,
+      valor_bloquear_cartao: '0,00',
+      campMotoristaAlocado: false,
+      address: '',
+      campeventoId: '',
       campDeletarId: '',
       campNome: '',
+      campMotorista: '',
+      campCor: "",
+      campModelo: '',   
+      campPlaca: "",
       selectedPlace:'',
+      data_maior_filho: '',
       camptipoId: '',      
-      campcartaoid: '',
-      //campordem_servico: '',          
+      campordem_servico: '',
+      campnome_evento: '',
+      campdata_evento: '',       
       campdata_servico: '',
       campqtdpassageiro: '',
       camphora_inicial: '',
       camphora_final: '',
+      campMotoristaId: '',
+      quantidade_diarias: false,
       campTelefone1: '',
+      campservico_pai_id: '',
+      camptipoevento: '',
       camplocalembarque: '',
       camplocaldesembarque: '',
-      campMotoristaId: '',
       campqtddiarias: '',
+      campnomemotorista:  '',
+      camptelefonemotorista:  '',
+      campNomeresponsavel: '',
+      nome_motorista_visualizacao: false,
+      telefone_motorista_visualizacao: false,
       campbilingue: false,
       campreceptivo: false,
+      data_servico_pai_old: '',
       campdistancia: 0,
-      camptempo: 0,
+      verificaPai: '',
+      valor_estimado_filho: '',
+      distancia_filho: '',
+      tempo_filho: '',
+      quantidade_diarias: 0,
+      eventoid: 0,
+      quantidade_diarias: 0,
+      camptempo: 0,      
+      campcartaoid: '',
       campCompanhia_aerea: '',
       campNumero_voo: '',
-      campnomemotorista: '',
-      camptelefonemotorista: '',
-      campvalor: '0,00',
+      campvalor: '0,00',     
+      camppedagio: '',     
       campvalor_estimado: '',
+      totalviagens: 0,
+      ultima_data_filho: '',
+      valortotalviagens: '0,00',
       valor_oser: '',
+      loading: true,
+      servico_criado:[],
       valor_motorista: '',
       erro_nome: false,
+      estado_selecionado_mapa: '',
       erro_telefone: false,      
       erro_data_servico: false,
       erro_qtdpassageiro: false,
       erro_hora_inicial: false,
       erro_hora_final: false,
       erro_celular1: false,
+      erro_cartao: false,
       erro_localembarque: false,
       erro_localdesembarque: false,
       erro_data_evento: false,    
@@ -8669,8 +9042,14 @@ debugger;
       erro_numero_voo: false,
       erro_nome_motorista: false,
       erro_telefone_motorista: false,
-      erro_cartao: false,
+      erro_qtd_diarias: false,
+      novo_motorista_incluir: false,
+      max_data_filho: '',
+      mensagem_servico: '',
+      erro_inclusao: '',
       camptempovalue: '',  
+      estado_busca: '',
+      camptempopaivalue: '',  
       mensagem_data_evento: '',    
       mensagem_nome: '',
       mensagem_telefone: '',      
@@ -8683,44 +9062,86 @@ debugger;
       mensagem_localdesembarque: '',
       mensagem_data_nao_encontrada: '',
       mensagem_nao_possui_registro: '',
-      mensagem_nome_motorista: '',
-      mensagem_telefone_motorista: '',
-      mensagem_companhia_aerea: '',
-      mensagem_numero_voo: '',
+      mensagem_qtd_diarias: false,
       mensagem_cartao: '',
-      mensagem_servico: '',   
+      mensagem_companhia_aerea: false,
+      mensagem_numero_voo: false,
+      mensagem_nome_motorista: false,
+      mensagem_telefone_motorista: false,
+      mensagem_error: false,
+      possui_filho: false,
       valor_bilingue: '',
       valor_receptivo: '',
+      valor_total_filho: 0,      
+      km_total_filho: 0,
+      tempo_total_filho: 0,
       listTarifas:[],
       listTarifasEspeciais:[],
+      listDiarias:[],
+      listDiariaEspeciais:[],
+      listservicosfilho: [],
+      listamotoristaServic: [],
       origins: '',
       destinations:'',
+      origins: '',     
+      h: '',
+      min: '',
+      destinations:'',
+      showMostraMotorista: false,
+      validacao_tipo: false, 
       validacao_cartao: false,
+      validacao_nome_motorista: false,
+      validacao_telefone_motorista: false,
       validacao_data_evento: false,      
       validacao_nome: false,     
       validacao_data_servico: false,
       validacao_qtdpassageiro: false,
-      validacao_qtd_diarias: false,
       validacao_hora_inicial: false,
       validacao_hora_final: false,
       validacao_telefone1: false,
       validacao_localembarque: false,
       validacao_localdesembarque: false,
       validacao_companhia_aerea: false,
+      validacao_qtd_diarias: false,
       validacao_numero_voo: false,
-      validacao_nome_motorista: false,
-      validacao_telefone_motorista: false,
+      mensagem_error_mapa: '',
+      eventoId: '',
       controle: 0,
       resultado_bilingue: '',
+      mensagem_motorista_alocado: '',
       resultado_receptivo: '',
-      erro_tipo: false,
-      validacao_tipo: false, 
+      listServicos:[],
+      listTipoTransporte:[],
+      listTodosOperadores:[],
+      listservicoseventos:[],
+      listaFilhos:[],
+      listaservicosexcluidos:[],
+      listaCartao:[],
+      listTodosMotoristasAtivos:[],
+      listaFilhosAlteracao:[],
+      listaMotoristasPreferencial:[],
+      listaservicoalteracao:[],
+      erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
       desembarque_latitude: '',
       desembarque_longitude: '',
       possui_tarifa_especial: false,
       possui_tarifa: false,
+      data_alteracao_servico: '',
+      cvc: '',
+      expiry: '',
+      focus: '',
+      name: '',
+      number: '',        
+      issuer: "",
+      focused: "",
+      loading: true,
+      mudou_transporte: false,
+      mudou_data_servico: false,
+      mudou_hora_inicial: false,
+      mudou_origem: false,
+      mudou_destino: false  
     });  
   }
 
@@ -8732,6 +9153,7 @@ debugger;
       campeventoId: sessionStorage.getItem('logeventoservico'),
       incluir: true,      
       quantidade_diarias: false,
+      camppedagio: '0.00',
       possui_tarifa_especial: false,     
       campMotoristaId:'',
       mensagem_aguarde: '',
@@ -8747,12 +9169,15 @@ debugger;
     camplocalembarque_old = '';
     camplocaldesembarque_old  = '';
     reenvio_motorista = false;
-    this.limpar_campos();     
+    this.limpar_campos_modal();
+    //this.limpar_campos();     
+    //this.limpar_modal(2);
     this.loadCartaoCliente();
     this.loadTarifaespecial();
     this.loadTarifa();
     this.loadTipoTransporte();
     this.loadMotoristasPreferencial();
+
   //  this.limpar_campos();     
     
   }
@@ -8837,6 +9262,29 @@ debugger;
     
     this.handleCloseModalInclusaoCartao();     
   };       
+
+
+  envia_mensagemDiversasClick = () => {
+    this.setState({ 
+      mensagem_diversas_sistema: true,
+      campvalor: '0.00',
+      campvalor_estimado: '0.00',
+      camptempo: '0'            
+    });
+  
+  }      
+
+  envia_mensagemDiversasClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ 
+      mensagem_diversas_sistema: false,
+       
+    });       
+    
+     
+  };    
   
   envia_mensagemExclusaoClick = () => {
     this.setState({ 
@@ -9103,6 +9551,7 @@ debugger;
       valor_estimado: servicos[0].valor_estimado,    
       valor_oser: servicos[0].valor_oser,
       valor_motorista: servicos[0].valor_motorista,  
+      valor_pedagio: servicos[0].valor_pedagio,
       logid: servicos[0].logid,
       servico_pai_id: servicos[0].servico_pai_id,
       perfilId: servicos[0].perfilId,               
@@ -9149,18 +9598,82 @@ debugger;
 sendDelete(userId, eventoId){
     // url de backend
    // console.log('deletar o id - '+userId);
+ debugger;
+   if (this.state.campmotoristaalocado == true) {
+
+    const data_hora_atual = new Date();
+   // alert(' data_hora_atual '+data_hora_atual);
+    const data_servico_alteracao = dateFormat(this.state.campdata_servico, "UTC:dd/mm/yyyy");  
+
+    const data_moment_alt = moment(data_servico_alteracao, "DD/MM/YYYY");
+    const formatar_data = data_moment_alt.format("YYYY-MM-DD");    
+    const hora_ini_alt = this.state.camphora_inicial;
+    const dataatual_alt = new Date(`${formatar_data} ${hora_ini_alt}`);
     
-    debugger;
-    api.get(`/servicos/get/${userId}`)
-    .then(res =>{
-      if (res.data.success == true) {
-      
-       const servicos = res.data.data;
-  debugger
-       this.criar_historico(servicos, userId);
-      } 
-       
-    });
+    var data_seis_horas_menos = moment(
+      dataatual_alt, "D/M/YYYY h:m"
+    ).subtract(             
+    'hours', 6
+    );   
+    
+    var data_atual = moment(
+      data_hora_atual, "D/M/YYYY h:m"
+    );
+
+   // alert(' data_hora_atual 2 '+data_atual.getTime());
+    var hora_banco_alteracao = this.state.camphora_inicial.substring(0,5);   
+    if (data_hora_atual.getTime() == dataatual_alt.getTime() &&  
+        hora_banco_alteracao >= data_seis_horas_menos) {
+       // alert(' data_atual '+ data_atual);
+      //  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+     
+      // deixa passar 
+
+
+    } else if (data_hora_atual.getTime() == dataatual_alt.getTime() 
+          && hora_banco_alteracao <= data_seis_horas_menos) {
+        //Se faltarem menos que 6 horas antes do inicio do serviço que teve os dados alterados
+      //, será cobrado do Cliente o valor do serviço bloqueado no cartão de crédito 
+      //e o Motorista será remunerado pelo valor que lhe couber; Usar a rotina 
+
+     /// alert(' data_atual '+ data_atual);
+    //  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
+
+    //vai pagar o motorista 
+
+
+    } 
+
+    api.delete(`/motorista_servico/delete/${this.state.campDeletarId}`)
+    .then(respdelecao=>{
+
+    if (respdelecao.data.success == true) { 
+     
+        const motorista_alocado = {
+          motorista_alocado: false,  
+        } 
+
+        api.put(`/servicos/update/${this.state.campDeletarId}`, motorista_alocado);  
+    
+    }
+  })
+} 
+
+api.delete(`/envioservicoMotorista/delete/${this.state.campDeletarId}`); 
+
+debugger;
+api.get(`/servicos/get/${userId}`)
+.then(res =>{
+  if (res.data.success == true) {
+  
+   const servicos = res.data.data;
+   debugger
+   this.criar_historico(servicos, userId);
+  } 
+   
+});
+    
+} 
 
    // debugger
    
@@ -9170,7 +9683,7 @@ sendDelete(userId, eventoId){
 
 
   
-}
+
 }
 
 

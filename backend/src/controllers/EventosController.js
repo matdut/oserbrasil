@@ -132,25 +132,12 @@ controllers.listaeventoADM = async (req,res) => {
 
 controllers.create = async (req,res) => {  
   // DATA parametros desde post
-  const {cpf, nome, cnpj, razao_social, logid, perfilId, ordem_servico, nome_evento, data_evento, 
-    viagens_total, valor_total } = req.body;
+ 
 
   //console.log(req.body);          
   //console.log("ROle es ==>"+role)
   //create
-  await Eventos.create({   
-    cpf: cpf, 
-    nome: nome, 
-    cnpj: cnpj, 
-    razao_social: razao_social,
-    logid: logid,
-    perfilId: perfilId,    
-    ordem_servico: ordem_servico, 
-    nome_evento: nome_evento, 
-    data_evento: data_evento,     
-    viagens_total: viagens_total,
-    valor_total: valor_total
-  })
+  await Eventos.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data});
   })
@@ -165,22 +152,9 @@ controllers.update = async (req, res) => {
   const { id } = req.params;  
 
   // parameter post
-  const { cpf, nome, cnpj, razao_social, logid, perfilId, ordem_servico, viagens_total, nome_evento, data_evento, valor_total } = req.body;
-  console.log("id es ==>"+id)
+ 
   // update data  
-  await Eventos.update({  
-    cpf: cpf, 
-    nome: nome, 
-    cnpj: cnpj, 
-    razao_social: razao_social,
-    logid: logid,
-    perfilId: perfilId,    
-    ordem_servico: ordem_servico, 
-    nome_evento: nome_evento, 
-    data_evento: data_evento,     
-    valor_total: valor_total,
-    viagens_total: viagens_total,   
-  },{
+  await Eventos.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -201,19 +175,10 @@ controllers.updateevento = async (req, res) => {
   const { id } = req.params;  
 
   // parameter post
-  const { logid, perfilId, ordem_servico, nome_evento, data_evento, viagens_total, valor_total } = req.body;
   
   // update data
   
-  await Eventos.update({  
-    logid: logid,
-    perfilId: perfilId,    
-    ordem_servico: ordem_servico, 
-    nome_evento: nome_evento, 
-    data_evento: data_evento,     
-    viagens_total: viagens_total,
-    valor_total: valor_total
-  },{
+  await Eventos.update(req.body,{
     where: { logid: id}
   })
   .then( function (data){

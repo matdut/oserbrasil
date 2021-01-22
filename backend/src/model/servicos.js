@@ -141,6 +141,10 @@ var Servicos = sequelize.define(nametable,{
     type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,
   },
+  valor_pedagio: {
+    type: Sequelize.DECIMAL(20,2) ,    
+    allowNull: true,
+  },
   valor_motorista: {
     type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,

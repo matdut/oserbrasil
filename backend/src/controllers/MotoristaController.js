@@ -45,11 +45,7 @@ controllers.uploadCNHFiles = async (req, res) => {
   const { foto_url,  name} = req.body;  
    
   
-  const id = req.params.id;     
-
-  //const url2 = req.protocol + '://' + req.get('host')  
- 
-  // path: /home/oser/apps_nodejs/backend/tmp/uploads/ 
+  const id = req.params.id;      
   
   await Motorista.update({
     foto_CNH_name: name,
@@ -108,38 +104,7 @@ controllers.uploadFotoFiles = async (req, res) => {
 
 }
 
-/*
-controllers.uploadCRVLFiles = async (req, res) => {
-  
-  console.log('req.file documentoCRVL/update - '+JSON.stringify(req.file, null, "    "));  
 
-  const { originalname: name, size, filename: key, location: url = ""} = req.file;
-  
-
-  const id = req.params.id;     
-
-  const url2 = req.protocol + '://' + req.get('host')  
-  console.log('entrou aqui = '+id);
-  // update data
-  
-  await Veiculo.update({   
-    foto_CRVL_name: name,
-    foto_CRVL_size: size,
-    foto_CRVL_key: key,
-    foto_CRVL_url: url2 + '/tmp/uploads/' + req.file.filename          
-
-    },{
-    where: { motoristaId: id}
-    })
-  .then( function (data){
-    return res.json({success:true, data: data});
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  })
-
-}
-*/
 controllers.getEmail = async (req, res) => {
  
   //const cpf = req.params.email;  
@@ -192,51 +157,7 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { nome, email, endereco, telefone1,
-    telefone2, senha, numero, complemento,  celular, cidade, apolice, seguradoraId,
-    bairro, estadoId, cep, cpf, data_nascimento, carro, modelo ,carroId, modeloId , placa, statusId,
-    ano, cor, bilingue, foto_blob, indicacao, situacaoId, perfilId, idioma1, idioma2, data_validade, numero_carteira} = req.body; 
-//console.log('id -'+JSON.stringify(id, null, "    "));  
-
-  //const { originalname: name, size, filename: key, location: url = ""} = req.file;
-
-  await Motorista.update({
-    nome: nome,              
-    email: email,
-    senha: senha,
-    endereco: endereco,
-    numero: numero,  
-    complemento: complemento,
-    telefone1: telefone1,
-    telefone2: telefone2,
-    celular: celular,
-    cidade: cidade,
-    bairro: bairro,
-    estadoId: estadoId,
-    cep: cep,           
-    cpf: cpf,
-    data_nascimento: data_nascimento,
-    ano: ano,
-    cor: cor,
-    bilingue: bilingue,
-    foto_blob: foto_blob,
-    indicacao: indicacao,                
-    placa: placa,
-    carro: carro,
-    modelo: modelo,
-    carroId: carroId,
-    modeloId: modeloId,
-    estadoId: estadoId, 
-    perfilId: perfilId,
-    situacaoId: situacaoId,
-    statusId: statusId,
-    apolice: apolice, 
-    seguradoraId: seguradoraId,
-    idioma1: idioma1,
-    idioma2: idioma2,
-    data_validade: data_validade, 
-    numero_carteira: numero_carteira,
-  },{
+  await Motorista.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -247,60 +168,7 @@ controllers.update = async (req, res) => {
   .catch(error => {
     return res.json({success:false, message: error});
   })
-
-  // parameter id get  
   
-
-  // parameter post
-  /*const { nome, email, endereco, telefone1,
-    telefone2, senha, numero, complemento,  celular, cidade, apolice, seguradoraId,
-    bairro, estadoId, cep, cpf, data_nascimento, carro, modelo ,placa,
-    ano, cor, bilingue, foto_blob, indicacao, situacaoId, perfilId, idioma1, idioma2} = req.body; */
-  
-    // update data  
-/*  await Motorista.update({
-    nome: nome,              
-    email: email,
-    senha: senha,
-    endereco: endereco,
-    numero: numero,  
-    complemento: complemento,
-    telefone1: telefone1,
-    telefone2: telefone2,
-    celular: celular,
-    cidade: cidade,
-    bairro: bairro,
-    estadoId: estadoId,
-    cep: cep,           
-    cpf: cpf,
-    data_nascimento: data_nascimento,
-    ano: ano,
-    cor: cor,
-    bilingue: bilingue,
-    foto_blob: foto_blob,
-    indicacao: indicacao,            
-    carro: carro,
-    placa: placa,
-    modelo: modelo,
-    estadoId: estadoId, 
-    perfilId: perfilId,
-    situacaoId: situacaoId,
-    apolice: apolice, 
-    seguradoraId: seguradoraId,
-    idioma1: idioma1,
-    idioma2: idioma2,
-  },{
-    where: { id: id}
-  })
-  .then( function (data){
-    return res.json({success:true, data: data});
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  }) */
-
-   //res.json({ success:true, data: data, message: "Updated successful"});  
-
 }
 
 controllers.get = async (req, res) => {
@@ -398,28 +266,33 @@ controllers.getSelecionaMotorista = async (req, res) => {
   
 }
 
-/*controllers.getMotVeiculo = async (req, res) => {
-  const { id } = req.params;
-  await Motorista.findAll({
-    include: [{ model: Veiculo }],
-    include: [{ model: Status  }],    
-    where: { id: id}
-    //,
-    //include: [ Role ]
-  })
-  .then( function (data){
-    if (data.length > 0) {
-      return res.json({success:true, data:data});
-     } else {
-      return res.json({success:false, data:data});
+controllers.getSelTodosMotorista = async (req, res) => {
+  const { estado_motorista} = req.params;
+  // const { bilingue } = req.params;
+   
+   await Motorista.findAll({
+  //  include: [{ model: Status, where: {id: 1}  }],
+    include: [{ model: Estado, where: {nome: estado_motorista}  }],  
+   // include: [{ model: Veiculo }],
+     where: { 
+       statusId: 1     
      }
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  })
-  
-}
-*/
+    
+   })
+   .then( function (data){
+     if (data.length > 0) {
+       return res.json({success:true, data:data, total: data.length});
+      } else {
+       return res.json({success:false, data:data});
+      }
+   })
+   .catch(error => {
+     return res.json({success:false, message: error});
+   })
+   
+ }
+
+
 controllers.list = async (req,res) => {
  await Motorista.findAll({
      include: [{ model: Status  }],
@@ -470,88 +343,14 @@ controllers.listExcluidos = async (req,res) => {
   
  }
 
-/*
-controllers.putdoc = async (req,res) => {
-   
-  //console.log('req.file - '+JSON.stringify(req.file, null, "    "));  
 
-  const { originalname: name, size, filename: key, location: url = ""} = req.file;
-  //const { originalname: name2, size2, filename: key2, location: url3 = ""} = req.file2;
-
-  console.log(req.file); 
-  
-  const id = req.params.id;     
-
-  const url2 = req.protocol + '://' + req.get('host')  
-  //console.log('entrou aqui = '+id);
-  // update data
-  
-  await Motorista.update({
-    foto_CNH_name: name,
-    foto_CNH_size: size,
-    foto_CNH_key: key,
-    foto_CNH_url: url2 + '/tmp/uploads/' + req.file.filename,  
-    },{
-    where: { id: id}
-    })
-  .then( function (data){
-    return res.json({success:true, data: data});
-  })
-  .catch(error => {
-    return res.json({success:false, message: error});
-  })
-
-};
-*/
 //controllers.create, async (req, res) => {
 controllers.create = async (req,res) => {  
 
-  // DATA parametros desde post
-  const { nome, email, endereco, telefone1, numero, 
-    telefone2, senha, complemento,  celular, cidade, apolice, seguradoraId,
-    bairro, estadoId, cep, cpf, data_nascimento, carro, modelo, carroId, modeloId, placa, statusId,
-    ano, cor, bilingue, indicacao, situacaoId, perfilId, foto_blob, idioma1, idioma2, data_validade, numero_carteira } = req.body;    
-
-
+  // DATA parametros desde post 
   //console.log("ROle es ==>"+role)
   //create
-  await Motorista.create({
-    nome: nome,              
-            email: email,
-            senha: senha,
-            endereco: endereco,
-            numero: numero,  
-            complemento: complemento,
-            telefone1: telefone1,
-            telefone2: telefone2,
-            celular: celular,
-            cidade: cidade,
-            bairro: bairro,
-            estadoId: estadoId,
-            cep: cep,           
-            cpf: cpf,
-            data_nascimento: data_nascimento,
-            ano: ano,
-            cor: cor,
-            bilingue: bilingue,
-            indicacao: indicacao,                        
-            carro: carro,
-            modelo: modelo,
-            carroid: carroId,
-            modeloId: modeloId,
-            placa: placa,
-            estadoId: estadoId, 
-            perfilId: perfilId,
-            situacaoId: situacaoId,
-            statusId: statusId,
-            apolice: apolice, 
-            seguradoraId: seguradoraId,
-            foto_blob: foto_blob,
-            idioma1: idioma1,
-            idioma2: idioma2,
-            data_validade: data_validade, 
-            numero_carteira: numero_carteira,
-  })
+  await Motorista.create(req.body)
   .then( function (data){
   
       return res.json({success:true, data:data});

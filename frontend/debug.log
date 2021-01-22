@@ -5,3 +5,8 @@
 [0114/080841.637:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
 [0115/082818.116:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
 [0116/082525.072:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
+[0117/080206.941:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
+[0117/080259.043:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: O comprimento do registro de informações especificado não coincide com o comprimento necessário à classe de informações especificada. (0xc0000004)
+[0117/080259.136:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\mateus dutra\AppData\Local\AVAST Software\Browser\User Data\Crashpad\attachments\16533e68-98de-4e83-a7d5-962a6d77cf4f: O sistema não pode encontrar o caminho especificado. (0x3)
+[0119/073710.585:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
+[0120/131217.930:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)

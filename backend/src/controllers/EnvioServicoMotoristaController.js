@@ -12,7 +12,8 @@ controllers.list = async (req,res) => {
   await EnvioServicoMotorista.findAll({
     where: { motorista_id: motoristaId },   
     order: [
-      ['data_servico', 'ASC']
+      ['data_servico', 'asc'],
+      ['hora_inicial', 'asc'],
     ]
   })
   .then( function (data){
@@ -178,13 +179,13 @@ controllers.delete_servico_motorista = async (req,res) => {
 
 }
 
-controllers.totalEnvioServicoMotorista = async (req, res) => {
+controllers.totalServicosenviados = async (req, res) => {
  
   const { motoristaId } = req.params;
  
    const salesCount = await EnvioServicoMotorista.count({ 
     where: { 
-      motoristaId: motoristaId
+      motorista_id: motoristaId
      } 
    });
  
