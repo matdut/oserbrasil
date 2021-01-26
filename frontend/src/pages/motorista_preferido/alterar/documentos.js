@@ -12,7 +12,7 @@ import Container from '@material-ui/core/Container';
 import api from '../../../services/api';
 import { dataMask } from '../../formatacao/datamask';
 import '../documentos.css';
-import Menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 //FOTO
@@ -108,7 +108,7 @@ class empresarialComponent extends React.Component{
   valida_motorista() {
     const { validate } = this.state;  
     sessionStorage.setItem('logPendencia', 0);
-    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
+    api.get(`/veiculoMotPref/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -123,7 +123,7 @@ class empresarialComponent extends React.Component{
             campAno: res.data.data[0].ano,
             campCor: res.data.data[0].cor,            
           })            
-          api.get(`/motoristaAuxiliar/get/${res.data.data[0].motoristaId}`)
+          api.get(`/motoristaPreferido/get/${res.data.data[0].motoristaId}`)
           .then(res=>{
             console.log(JSON.stringify(res.data, null, "    ")); 
             if (res.data.success) {
@@ -203,7 +203,7 @@ class empresarialComponent extends React.Component{
   carrega_motorista() {   
     
 
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         //console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success == true) {
@@ -235,13 +235,13 @@ class empresarialComponent extends React.Component{
         }
       })        
       .catch(error=>{
-        alert("Error de conexão  "+error)
+        alert("Error de conexão "+error)
       })            
 
   }
  
  carrega_doc_veiculo() { 
-  api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
+  api.get(`/veiculoMotPref/get/${sessionStorage.getItem('logVeiculo')}`)
   .then(res=>{        
     
     if (res.data.success == true) {
@@ -336,7 +336,7 @@ sendUpdate(){
         statusId: 16
       }
 
-      api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
+      api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -376,7 +376,7 @@ sendUpdate(){
   
  //    formData.append("file", this.state.uploadedCNH[0].file, this.state.uploadedCNH[0].name)                  
 
-      api.put(`/motorista/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
+      api.put(`/motoristaPreferido/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
       .then(response=>{
         
           //  console.log('Retorno update 1'+JSON.stringify(response.data, null, "    ")); 
@@ -418,7 +418,7 @@ sendUpdate(){
       //formData1.append("file", this.state.uploadedCRVL[0].file, this.state.uploadedCRVL[0].name) 
      // formData.append('id', sessionStorage.getItem('logid'));     
 
-      api.put(`/veiculo/documentoCRVL/update/${sessionStorage.getItem('logVeiculo')}/${sessionStorage.getItem('logid')}`, formData)
+      api.put(`/veiculoMotPref/documentoCRVL/update/${sessionStorage.getItem('logVeiculo')}/${sessionStorage.getItem('logid')}`, formData)
         .then(response=>{
          // console.log(JSON.stringify(response.data, null, "    ")); 
          //  console.log('Retorno update 2'+JSON.stringify(response.data, null, "    ")); 
@@ -442,33 +442,13 @@ sendUpdate(){
       }           
 
       if (sessionStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 9) {
-        this.props.history.push(`/area_motorista_auxiliar`);                   
+        this.props.history.push(`/foto_motorista_preferido/`+sessionStorage.getItem('logid'));
+      } else if (sessionStorage.getItem('logperfil') == 10) {
+        this.props.history.push(`/area_motorista_preferido`);                   
       } else if (sessionStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
+        this.props.history.push(`/foto_motorista_preferido/`+sessionStorage.getItem('logid'));
       }          
-    /*  
-    if (this.state.foto_incluida_1 == true && this.state.foto_incluida_2 == true) {
-
-      if (sessionStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 3) {
-        this.props.history.push(`/area_motorista`);                   
-      } else if (sessionStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      }          
-      
-    }  else {
-
-      if (sessionStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 3) {
-        this.props.history.push(`/area_motorista`);                   
-      } else if (sessionStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-       }       
-    }     */  
+   
 }  
 
 handleUploadCNH = files => {  
@@ -562,7 +542,7 @@ verificar_menu(){
     <div>
         <div className="d-flex justify-content-around">             
              <div className="botao_navegacao">
-               <Link to={`/veiculo_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+               <Link to={`/veiculo_motorista_preferido/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
              </div>                  
              <div>
                <div className="titulo_representante">                
@@ -589,9 +569,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-     <Menu_motorista_auxiliar />     
+     <Menu_motorista_preferido />     
    );
   }
 
@@ -639,6 +619,17 @@ verifica_horario(){
   }
 }
 
+verifica_mensagem() {
+  if (sessionStorage.getItem('statusid') == 16) {
+    //const classes = useStyles();
+    return (
+      <div className="mensagem_motorista">     
+         Documentação em análise, favor aguardar. Liberadas apenas as funções de alteração de dados cadastrais!!   
+      </div>
+    );
+  }  
+  
+}
 
 render(){  
   const { uploadedCNH } = this.state;
@@ -650,19 +641,15 @@ return (
  {this.verificar_menu_lateral()}
 <div> 
     <div>     
-    <div className="container-fluid titulo_lista margem_left">                   
-           <div className="unnamed-character-style-4 descricao_admministrador">                                
-           <div className="titulo_bemvindo"> Documentos </div>                              
-            </div>         
-            
-              <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '42vh', width: '42vh' }} />
-              </Container>
+    <div className="titulo_lista">
+              <div className="unnamed-character-style-4 descricao_admministrador">          
+              <div className="titulo_bemvindo">Documentos </div>         
+              </div>  
 
-              <br/>
-              <br/>
-              <br/>
-          </div> 
+                 {this.verifica_mensagem()}  
+
+           
+            </div> 
 
             <div class="d-flex flex-column espacamento_caixa_texto">          
               <div class="p-2">                  

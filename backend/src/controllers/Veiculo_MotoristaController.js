@@ -109,42 +109,11 @@ controllers.list = async (req,res) => {
 }
 
 controllers.create = async (req,res) => {  
-
-  // DATA parametros desde post
-  const { marcaId, marca, placa, modeloId, modelo, tipoTransporte, ano, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
-    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId, engate, cadeirinha_pequena, 
-    cadeirinha_grande, cadeira_rodas, foto_url } = req.body;
-  console.log("Foto url  ==>"+foto_url)
+ 
   //create
-  await Veiculo.create({   
-    marcaId: marcaId, 
-    marca: marca, 
-    placa: placa, 
-    modeloId: modeloId, 
-    modelo: modelo, 
-    tipoTransporte: tipoTransporte,
-    ano: ano, 
-    anodut: anodut, 
-    cor: cor, 
-    apolice: apolice, 
-    seguradoraId: seguradoraId,
-    foto_CRVL_name: foto_CRVL_name, 
-    foto_CRVL_size: foto_CRVL_size, 
-    foto_CRVL_key: foto_url,
-    foto_CRVL_mimetype: foto_CRVL_mimetype, 
-    foto_CRVL_url: foto_url, 
-    motoristaId: motoristaId,
-    engate: engate, 
-    cadeirinha_pequena: cadeirinha_pequena, 
-    cadeirinha_grande: cadeirinha_grande, 
-    cadeira_rodas: cadeira_rodas,
-  })
+  await Veiculo.create(req.body)
   .then( function (data){
-    if (data.length > 0) {
-      return res.json({success:true, data:data});
-     } else {
-      return res.json({success:false, data:data});
-     }
+    return res.json({success:true, data:data, total: data.length});   
   })
   .catch(error => {
     return res.json({success:false, message: error});
@@ -156,43 +125,13 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  // parameter post
-  const { marcaId, marca, placa, modeloId, modelo, ano, tipoTransporte, anodut, cor, foto_CRVL_name, foto_CRVL_size, foto_CRVL_key,
-    foto_CRVL_mimetype, foto_CRVL_url, motoristaId, apolice, seguradoraId, engate, cadeirinha_pequena, 
-    cadeirinha_grande, cadeira_rodas, foto_url } = req.body;
-  // update data
+ 
   
-  await Veiculo.update({
-    marcaId: marcaId, 
-    marca: marca, 
-    placa: placa, 
-    modeloId: modeloId, 
-    modelo: modelo, 
-    tipoTransporte: tipoTransporte,
-    ano: ano, 
-    anodut: anodut, 
-    cor: cor, 
-    foto_CRVL_name: foto_CRVL_name, 
-    foto_CRVL_size: foto_CRVL_size, 
-    foto_CRVL_key: foto_url,
-    foto_CRVL_mimetype: foto_CRVL_mimetype, 
-    foto_CRVL_url: foto_url, 
-    apolice: apolice, 
-    seguradoraId: seguradoraId,
-    motoristaId: motoristaId,
-    engate: engate, 
-    cadeirinha_pequena: cadeirinha_pequena, 
-    cadeirinha_grande: cadeirinha_grande, 
-    cadeira_rodas: cadeira_rodas,
-  },{
+  await Veiculo.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
-    if (data.length > 0) {
-      return res.json({success:true, data:data});
-     } else {
-      return res.json({success:false, data:data});
-     }
+    return res.json({success:true, data:data});  
   })
   .catch(error => {
     return res.json({success:false, message: error});

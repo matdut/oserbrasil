@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import Menu_motorista from '../motorista_auxiliar/menu_motorista_auxiliar';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import menu_motorista_auxiliar from '../motorista_auxiliar/menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../motorista_preferido/menu_motorista_preferido';
 import { valorMask } from '../formatacao/valormask';
+import api from '../../services/api';
 
 const login = sessionStorage.getItem('logemail');              
 const nome = sessionStorage.getItem('lognome');  
 const id = sessionStorage.getItem('logid');   
 
-class Area_motorista extends React.Component  {
+class Area_motorista_preferido extends React.Component  {
 
   constructor(props){
     super(props);
@@ -30,13 +30,72 @@ class Area_motorista extends React.Component  {
   }
 
   componentDidMount(){
+
+    this.interval = setInterval(() => this.tickarea_motorista(), 3000);
     this.setState({
       perfil: sessionStorage.getItem('logperfil'),    
       nome: sessionStorage.getItem('lognome'),
       id: sessionStorage.getItem('logid'), 
       statusid: sessionStorage.getItem('statusid') 
     });
+
+    this.loadlistServicosConvite();
+    this.loadlistServicosAtivos();
+    this.load_motorista();
   }
+
+  tickarea_motorista() {
+    this.loadlistServicosConvite();
+    this.loadlistServicosAtivos(); 
+  }
+
+  load_motorista() {
+    const { validate } = this.state   
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
+    .then(res=>{
+
+      this.setState({       
+        statusid: sessionStorage.setItem('statusid', res.data.data[0].statusId)
+      });
+
+    });
+  }
+  loadlistServicosConvite(){    
+    api.get(`/envioservicoMotorista/totalServicosenviados/${sessionStorage.getItem('logid')}`)
+     .then(res=>{
+       if (res.data.success == true) {       
+
+         const data = res.data.data    
+         this.setState({
+           campEnvioConvite:data,
+           loading: false,
+          })
+       }
+     })
+     .catch(error=>{
+       console.log('loadlistServicosConvite'+error) 
+    
+     })
+   }
+   
+   loadlistServicosAtivos(){
+    // const url = baseUrl+"/cliente/list"   
+    debugger;
+    api.get(`/motorista_servico/totalServicosMotorista/${sessionStorage.getItem('logid')}`)
+     .then(res=>{
+       if (res.data.success == true) {
+         const data = res.data.data             
+//         console.log('valor  -'+data.toFixed(2));
+
+         this.setState({
+          campTotal_viagens: data,
+         })
+       }
+     })
+     .catch(error=>{
+      console.log('loadlistServicosAtivos'+error) 
+     })
+   }
 
 verifica_menu() {    
 
@@ -84,6 +143,12 @@ verifica_mensagem() {
           Documentação em análise, favor aguardar.         
       </div>
     );
+  } else {
+    return (
+      <Container maxWidth="sm">
+           <Typography component="div" style={{ backgroundColor: '#white', height: '12vh' }} />
+      </Container>
+    );
   }
   
 }
@@ -94,7 +159,7 @@ verifica_mensagem() {
 
     return ( 
      <div> 
-         <menu_motorista_auxiliar />
+         <Menu_motorista_preferido />
          <div className="titulo_lista">        
            <div className="unnamed-character-style-4 descricao_admministrador">          
            <div className="titulo_bemvindo"> {this.verifica_menu()}, {this.verifica_horario()} ! </div>                                           
@@ -107,31 +172,27 @@ verifica_mensagem() {
                 <Typography component="div" style={{ backgroundColor: '#white', height: '5vh' }} />
               </Container>
               
-              <div className="titulo_area">SEUS NÚMEROS</div>
+              <div className="titulo_area">SERVIÇOS</div>
 
               <div class="p-2">               
                 <div class="d-flex justify-content-start titulo_area_descricao_empresarial">
-                      <div> 
-                          <img src='/icon-calendar-157837097.jpg' style={{ width: '40px', height: '40px' }}/>                           
-                      </div>                      
-                      <div className="area_evento_empresa"> 
-                        Eventos <br/>
-                        <div className="area_evento_valor"> {this.state.totalEventos}   </div>
-                      </div>
+                                        
                       <div className="area_evento_2_empresa"> 
                         <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
                       </div>
-                      <div className="area_evento"> 
-                      Serviços
+                      <div className="area_servico_motorista"> 
+                        Novos
+                        <div className="area_evento_valor">{this.state.campEnvioConvite}</div>
+                      </div>
+                      <div className="area_servico_motorista"> 
+                        Finalizados
+                        <div className="area_evento_valor">{0}</div>
+                      </div>
+                      <div className="area_servico_motorista"> 
+                        Ativos
                         <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
-                      </div>
-                      <div className="area_evento_3_empresa"> 
-                        <img src='/Group_1157.png' style={{ width: '40px', height: '40px' }}/>                
-                      </div>
-                      <div className="area_evento"> 
-                        Custos
-                          <div className="area_evento_valor">R$ {valorMask(this.state.campvalor_total)}</div>
                       </div>                     
+                                
                   </div>  
               </div>  
 
@@ -145,5 +206,5 @@ verifica_mensagem() {
   
 }
 
-export default Area_motorista;
+export default Area_motorista_preferido;
 ReactDOM.unmountComponentAtNode(document.getElementById('root'));

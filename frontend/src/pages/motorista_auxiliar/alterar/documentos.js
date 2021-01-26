@@ -332,7 +332,7 @@ sendUpdate(){
   
     const datapost = {  
         email: this.state.campEmail,  
-        perfilId: 3,
+        perfilId: 9,
         statusId: 16
       }
 
@@ -342,7 +342,7 @@ sendUpdate(){
           
           const logindata = {  
             email: this.state.campEmail,  
-            perfilId: 3,
+            perfilId: 9,
             statusId: 16
           }
 
@@ -376,7 +376,7 @@ sendUpdate(){
   
  //    formData.append("file", this.state.uploadedCNH[0].file, this.state.uploadedCNH[0].name)                  
 
-      api.put(`/motorista/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
+      api.put(`/motoristaAuxiliar/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
       .then(response=>{
         
           //  console.log('Retorno update 1'+JSON.stringify(response.data, null, "    ")); 

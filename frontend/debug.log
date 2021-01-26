@@ -10,3 +10,4 @@
 [0117/080259.136:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\mateus dutra\AppData\Local\AVAST Software\Browser\User Data\Crashpad\attachments\16533e68-98de-4e83-a7d5-962a6d77cf4f: O sistema não pode encontrar o caminho especificado. (0x3)
 [0119/073710.585:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
 [0120/131217.930:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
+[0122/213717.826:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)

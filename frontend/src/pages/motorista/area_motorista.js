@@ -170,49 +170,49 @@ verifica_mensagem() {
   render()
   {     
     return ( 
-     <div> 
-         <Menu_motorista />
-         <div className="titulo_lista">        
-           <div className="unnamed-character-style-4 descricao_admministrador">          
-           <div className="titulo_bemvindo"> {this.verifica_menu()}, {this.verifica_horario()} ! </div>                                           
-            </div>         
-           
-            {this.verifica_mensagem()}  
-
-            <Container maxWidth="sm">
-                <Typography component="div" style={{ backgroundColor: '#white', height: '5vh' }} />
-              </Container>
-              
-              <div className="titulo_area">SERVIÇOS</div>
-
-              <div class="p-2">               
-                <div class="d-flex justify-content-start titulo_area_descricao_empresarial">
-                                         
-                      <div className="area_evento_2_empresa"> 
-                        <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
-                      </div>
-                      <div className="area_servico_motorista"> 
-                         Novos
-                        <div className="area_evento_valor">{this.state.campEnvioConvite}</div>
-                      </div>
-                      <div className="area_servico_motorista"> 
-                         Finalizados
-                        <div className="area_evento_valor">{0}</div>
-                      </div>
-                      <div className="area_servico_motorista"> 
-                         Ativos
-                        <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
-                      </div>                     
-                                 
-                  </div>  
-              </div>  
-
-<br/>
-              
+      <div> 
+          <Menu_motorista />
+          <div className="titulo_lista">        
+            <div className="unnamed-character-style-4 descricao_admministrador">          
+            <div className="titulo_bemvindo"> {this.verifica_menu()}, {this.verifica_horario()} ! </div>                                           
+             </div>         
             
-          </div> 
-      </div>    
-    );
+             {this.verifica_mensagem()}  
+             <br/>
+             <br/>
+             <Container maxWidth="sm">
+                 <Typography component="div" style={{ backgroundColor: '#white', height: '5vh' }} />
+               </Container>
+               
+               <div className="titulo_area">SERVIÇOS</div>
+ 
+               <div class="p-2">               
+                 <div class="d-flex justify-content-start titulo_area_descricao_empresarial">
+                                         
+                       <div className="area_evento_2_empresa"> 
+                         <img src='/tour.png' style={{ width: '40px', height: '40px' }}/>                
+                       </div>
+                       <div className="area_servico_motorista"> 
+                         Novos
+                         <div className="area_evento_valor">{this.state.campEnvioConvite}</div>
+                       </div>
+                       <div className="area_servico_motorista"> 
+                         Finalizados
+                         <div className="area_evento_valor">{0}</div>
+                       </div>
+                       <div className="area_servico_motorista"> 
+                         Ativos
+                         <div className="area_evento_valor">{this.state.campTotal_viagens}</div>
+                       </div>                     
+                                 
+                   </div>  
+               </div>  
+ 
+         
+             
+           </div> 
+       </div>    
+     );
   }
 
   

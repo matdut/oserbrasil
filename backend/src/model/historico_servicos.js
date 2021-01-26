@@ -174,6 +174,10 @@ var Historico_servicos = sequelize.define(nametable,{
   valor_pedagio: {
     type: Sequelize.DECIMAL(20,2) ,    
     allowNull: true,
+  },
+  data_exclusao: {
+    type: Sequelize.DATE,
+    allowNull: false,     
   }
   
 })

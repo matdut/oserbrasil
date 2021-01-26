@@ -6,7 +6,7 @@ import { celularMask } from '../../formatacao/celularmask';
 import { cpfMask } from '../../formatacao/cpfmask';
 import api from '../../../services/api';
 import '../motorista.css';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 import FormGroup from '@material-ui/core/FormGroup';
@@ -153,7 +153,7 @@ class motoristaAlterarComponent extends React.Component{
       sessionStorage.setItem('logperfil', 0);
     }    
 
-    if (sessionStorage.getItem('logperfil') == 3) {
+    if (sessionStorage.getItem('logperfil') == 10) {
       this.setState({      
         camp_cpf_disabled: true,
        // camp_nome_disabled: true,
@@ -204,7 +204,7 @@ class motoristaAlterarComponent extends React.Component{
 
   busca_motorista() {
     const { validate } = this.state   
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -268,7 +268,7 @@ class motoristaAlterarComponent extends React.Component{
   }
   busca_cpf(e){
     const { validate } = this.state
-   api.get(`/motoristaAuxiliar/getMotoristaCpf/${e.target.value}`)
+   api.get(`/motoristaPreferido/getMotoristaCpf/${e.target.value}`)
    .then(res=>{
        console.log(JSON.stringify(res.data, null, "    ")); 
        if (res.data.success) {
@@ -903,7 +903,7 @@ sendSave(){
     data_validade: moment(this.state.campData_CNH, "DD MM YYYY"), 
     numero_carteira: this.state.campCNH,    
     bilingue: this.state.campMotorista_bilingue,   
-    perfilId: 9,
+    perfilId: 10,
     statusId: this.state.campStatusId,
     situacaoId: 1
   }            
@@ -911,7 +911,7 @@ sendSave(){
    console.log('datapost - '+JSON.stringify(datapost, null, "    ")); 
 
      console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
+      api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
@@ -927,8 +927,8 @@ sendSave(){
           //sessionStorage.setItem('logid', userId);
           if (sessionStorage.getItem('logperfil') == 1) {
             this.props.history.push(`/area_administrador`);
-          } else if (sessionStorage.getItem('logperfil') == 9) {
-            this.props.history.push(`/area_motorista_auxiliar`);                   
+          } else if (sessionStorage.getItem('logperfil') == 10) {
+            this.props.history.push(`/area_motorista_preferido`);                   
           }           
 
         }
@@ -1008,9 +1008,9 @@ verificaEmailonfocus(e){
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-     <menu_motorista_auxiliar />     
+     <Menu_motorista_preferido />     
    );
   }
 

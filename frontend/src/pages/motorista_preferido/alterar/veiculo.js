@@ -5,7 +5,7 @@ import Autocomplete1 from 'react-autocomplete';
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import Menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
@@ -304,7 +304,7 @@ class empresarialComponent extends React.Component{
 
    carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
       if (res.data.success == true) {          
 
@@ -322,7 +322,7 @@ class empresarialComponent extends React.Component{
 
    carrega_veiculo() {
     const { validate } = this.state;
-    api.get(`/veiculo/get/${sessionStorage.getItem('logVeiculo')}`)
+    api.get(`/veiculoMotPref/get/${sessionStorage.getItem('logVeiculo')}`)
     .then(res=>{
        // console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {          
@@ -924,7 +924,7 @@ sendUpdate(){
   
       if (this.state.incluir == true) {        
 
-        api.post("/veiculo/create", datapost)
+        api.post("/veiculoMotPref/create", datapost)
         .then(response=>{
          // console.log('response - '+response);
           if (response.data.success==true) {                        
@@ -933,11 +933,11 @@ sendUpdate(){
               sessionStorage.setItem('logVeiculo', response.data.data.id)
 
               if (sessionStorage.getItem('logperfil') == 1) {
-                this.props.history.push(`/documentos_motorista_alterar/`+sessionStorage.getItem('logid')); 
-              } else if (sessionStorage.getItem('logperfil') == 3) {
-                this.props.history.push(`/area_motorista`);                
+                this.props.history.push(`/documentos_motorista_preferido_lterar/`+sessionStorage.getItem('logid')); 
+              } else if (sessionStorage.getItem('logperfil') == 10) {
+                this.props.history.push(`/area_motorista_preferido`);                
               } else if (sessionStorage.getItem('logperfil') == 0) {                 
-                this.props.history.push(`/documentos_motorista_alterar/`+sessionStorage.getItem('logid'));                  
+                this.props.history.push(`/documentos_motorista_preferido_alterar/`+sessionStorage.getItem('logid'));                  
               }      
           }
           else {
@@ -950,16 +950,16 @@ sendUpdate(){
 
         debugger;
         console.log(JSON.stringify(datapost, null, "    "));        
-        api.put(`/veiculo/update/${sessionStorage.getItem('logid')}`, datapost)
+        api.put(`/veiculoMotPref/update/${sessionStorage.getItem('logid')}`, datapost)
           .then(response=>{
             if (response.data.success==true) {                        
             
                 if (sessionStorage.getItem('logperfil') == 1) {
-                  this.props.history.push(`/documentos_motorista/`+sessionStorage.getItem('logid')); 
-                } else if (sessionStorage.getItem('logperfil') == 3) {
-                  this.props.history.push(`/area_motorista`);                
+                  this.props.history.push(`/documentos_motorista_preferido/`+sessionStorage.getItem('logid')); 
+                } else if (sessionStorage.getItem('logperfil') == 10) {
+                  this.props.history.push(`/area_motorista_preferido`);                
                 } else if (sessionStorage.getItem('logperfil') == 0) {                 
-                  this.props.history.push(`/documentos_motorista/`+sessionStorage.getItem('logid'));                  
+                  this.props.history.push(`/documentos_motorista_preferido/`+sessionStorage.getItem('logid'));                  
                 }      
             }
             else {
@@ -977,7 +977,7 @@ verificar_menu() {
     <div>
      <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/endereco_motorista/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/endereco_motorista_preferido/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -1005,9 +1005,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-     <Menu_motorista_auxiliar />     
+     <Menu_motorista_preferido />     
    );
   }
 

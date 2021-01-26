@@ -5,7 +5,7 @@ import {Form, Progress, Input, FormFeedback, Select, Button, Alert } from 'react
 import {Link} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container'; 
@@ -124,7 +124,7 @@ class empresarialComponent extends React.Component{
             campAno: res.data.data[0].ano,
             campCor: res.data.data[0].cor,            
           })            
-          api.get(`/motoristaAuxiliar/get/${res.data.data[0].motoristaId}`)
+          api.get(`/motoristaPreferido/get/${res.data.data[0].motoristaId}`)
           .then(res=>{
             console.log(JSON.stringify(res.data, null, "    ")); 
             if (res.data.success) {
@@ -212,7 +212,7 @@ class empresarialComponent extends React.Component{
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {   
@@ -325,7 +325,7 @@ async sendUpdate(){
       perfilId: 3,
       statusId: 16
     }          
-      api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, data1)      
+      api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, data1)      
 
       api.put(`/login/update/${sessionStorage.getItem('logid')}`,data1)
    }
@@ -344,12 +344,12 @@ async sendUpdate(){
       }
      console.log(' base64 o arquivo 1 - '+JSON.stringify(formData, null, "    "));
     
-      api.put(`/motoristaAuxiliar/foto/update/${sessionStorage.getItem('logid')}`, formData)      
+      api.put(`/motoristaPreferido/foto/update/${sessionStorage.getItem('logid')}`, formData)      
   
               if (sessionStorage.getItem('logperfil') == 1) {
                 this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
-              } else if (sessionStorage.getItem('logperfil') == 3) {
-                this.props.history.push(`/area_motorista`);                   
+              } else if (sessionStorage.getItem('logperfil') == 10) {
+                this.props.history.push(`/area_motorista_preferido`);                   
               } else if (sessionStorage.getItem('logperfil') == 0) {
                 this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
               }         
@@ -381,8 +381,8 @@ async sendUpdate(){
    } else {
     if (sessionStorage.getItem('logperfil') == 1) {
       this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
-    } else if (sessionStorage.getItem('logperfil') == 3) {
-      this.props.history.push(`/area_motorista`);                   
+    } else if (sessionStorage.getItem('logperfil') == 10) {
+      this.props.history.push(`/area_motorista_preferido`);                   
     } else if (sessionStorage.getItem('logperfil') == 0) {
       this.props.history.push(`/senha_motorista/`+sessionStorage.getItem('logid'));                    
     }            
@@ -471,9 +471,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-     <menu_motorista_auxiliar />     
+     <Menu_motorista_preferido />     
    );
   }
 

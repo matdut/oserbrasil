@@ -8,9 +8,9 @@ var EnvioServicoMotorista = require('../model/Envio_servico_motorista');
 sequelize.sync()
 
 controllers.list = async (req,res) => {
-  const { motoristaId } = req.params;
+  const { motoristaId, motorista_perfil } = req.params;
   await EnvioServicoMotorista.findAll({
-    where: { motorista_id: motoristaId },   
+    where: { motorista_id: motoristaId, motorista_perfil: motorista_perfil },   
     order: [
       ['data_servico', 'asc'],
       ['hora_inicial', 'asc'],
@@ -25,21 +25,10 @@ controllers.list = async (req,res) => {
 }
 
 controllers.create = async (req,res) => {  
-
-  // DATA parametros desde post
-  const {  servicoId, tipoEventoId, data_servico, hora_inicial,   
-    local_embarque, motorista_id } = req.body;
   
   //console.log("ROle es ==>"+role)
   //create
-  await EnvioServicoMotorista.create({ 
-    servicoId: servicoId,
-    tipoEventoId: tipoEventoId,
-    data_servico: data_servico,  
-    hora_inicial: hora_inicial,   
-    local_embarque: local_embarque,
-    motorista_id: motorista_id
-  })
+  await EnvioServicoMotorista.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data});
   })
@@ -68,20 +57,10 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const {  servicoId, tipoEventoId, data_servico, hora_inicial,   
-    local_embarque, motorista_id } = req.body;
-  //console.log('entrou aqui = '+id);
-  // parameter post
+    // parameter post
   // update data
   
-  await EnvioServicoMotorista.update({
-    servicoId: servicoId,
-    tipoEventoId: tipoEventoId,
-    data_servico: data_servico,  
-    hora_inicial: hora_inicial,   
-    local_embarque: local_embarque,
-    motorista_id: motorista_id
-  },{
+  await EnvioServicoMotorista.update(req.body,{
     where: { id: id}
   })
   .then( function (data){

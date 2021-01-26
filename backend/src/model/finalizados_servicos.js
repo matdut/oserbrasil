@@ -6,14 +6,14 @@ var sequelize = require('./database');
 var Status = require('./Status');
 var Situacao = require('./Situacao');
 
-var nametable = 'historico_finalizados_servicos';
+var nametable = 'finalizados_servicos';
 
-var Historico_finalizados_servicos = sequelize.define(nametable,{
+var Finalizados_servicos = sequelize.define(nametable,{
 
   id:{
     type:Sequelize.INTEGER,
     primaryKey:true,
-  //  autoIncrement:true
+    autoIncrement:true
   },  
   eventoId:{
     type:Sequelize.INTEGER,    
@@ -171,12 +171,16 @@ var Historico_finalizados_servicos = sequelize.define(nametable,{
     type: Sequelize.STRING(250),
     allowNull: false,     
   },  
-  perfil_finalizadoId: {
+  perfil_motorista: {
     type:Sequelize.INTEGER,    
     allowNull: true,
-  },
+  },  
+  motorista_id: {
+    type: Sequelize.INTEGER, 
+    allowNull: true,
+  }
 
 })
 
 
-module.exports = Historico_finalizados_servicos
+module.exports = Finalizados_servicos

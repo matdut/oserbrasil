@@ -124,25 +124,11 @@ controllers.listaevento = async (req,res) => {
 
 controllers.create = async (req,res) => {  
   // DATA parametros desde post  
-  const { id, eventoId, logid, nome_responsavel, perfilId, ordem_servico, nome_evento, data_evento, viagens_total, valor_total } = req.body;
-
-  console.log('passou aqui create '+logid);
-
+  
   //console.log(req.body);          
   //console.log("ROle es ==>"+role)
   //create
-  await HistoricoEventos.create({   
-    id: id,
-    eventoId: eventoId,
-    nome_responsavel: nome_responsavel,
-    logid: logid,
-    perfilId: perfilId,    
-    ordem_servico: ordem_servico, 
-    nome_evento: nome_evento, 
-    data_evento: data_evento,     
-    viagens_total: viagens_total,
-    valor_total: valor_total
-  })
+  await HistoricoEventos.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data});
   })
@@ -156,21 +142,9 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;  
 
-  // parameter post
-  const { logid, nome_responsavel, perfilId, ordem_servico, nome_evento, data_evento, viagens_total, valor_total } = req.body;
+   // update data
   
-  // update data
-  
-  await HistoricoEventos.update({  
-    logid: logid,
-    perfilId: perfilId,    
-    nome_responsavel: nome_responsavel,
-    ordem_servico: ordem_servico, 
-    nome_evento: nome_evento, 
-    data_evento: data_evento,     
-    viagens_total: viagens_total,
-    valor_total: valor_total
-  },{
+  await HistoricoEventos.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -187,18 +161,8 @@ controllers.updateevento = async (req, res) => {
   const { id } = req.params;  
 
   // parameter post
-  const { logid, perfilId, ordem_servico, nome_evento, data_evento, valor_total } = req.body;
-  
-  // update data
-  
-  await HistoricoEventos.update({  
-    logid: logid,
-    perfilId: perfilId,    
-    ordem_servico: ordem_servico, 
-    nome_evento: nome_evento, 
-    data_evento: data_evento,     
-    valor_total: valor_total
-  },{
+   
+  await HistoricoEventos.update(req.body,{
     where: { logid: id}
   })
   .then( function (data){

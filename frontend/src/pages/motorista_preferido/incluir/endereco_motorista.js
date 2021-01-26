@@ -9,7 +9,7 @@ import { cepremoveMask } from '../../formatacao/cepremovemask';
 
 import api from '../../../services/api';
 import '../motorista.css';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import menu_motorista_preferido from '../menu_motorista_preferido';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -148,9 +148,9 @@ class empresarialComponent extends React.Component{
   busca_cep_banco(e) {   
     const { validate } = this.state
 
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
-        console.log('busca motorista Auxiliar - '+JSON.stringify(res.data, null, "    ")); 
+        console.log('busca motorista preferido - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
            
           this.setState({ 
@@ -732,7 +732,7 @@ verifica_botao(inicio) {
       <div>
       <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/motorista_preferido_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_endereco_motorista">                
@@ -769,26 +769,25 @@ sendUpdate(){
   debugger
 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
+        api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
-          if (response.data.success==true) {                        
-           
-              sessionStorage.setItem('logprogress', 75);  
-             // sessionStorage.setItem('logid', userId);
-             if (sessionStorage.getItem('logperfil') == 1) {
-                this.props.history.push(`/documentos_aux_motorista_incluir/`+sessionStorage.getItem('logid'));
-              } else if (sessionStorage.getItem('logperfil') == 9) {
-                this.props.history.push(`/area_motorista_auxiliar`);                
-              } else if (sessionStorage.getItem('logperfil') == 0) {                 
-                 this.props.history.push(`/documentos_aux_motorista_incluir/`+sessionStorage.getItem('logid'));                                                
-              }              
+          if (response.data.success==true) {               
+
+            sessionStorage.setItem('logprogress', 75);  
+            // sessionStorage.setItem('logid', userId);
+            if (sessionStorage.getItem('logperfil') == 1) {
+               this.props.history.push(`/veiculo_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));
+             } else if (sessionStorage.getItem('logperfil') == 10) {
+               this.props.history.push(`/area_motorista_preferido`);                
+             } else if (sessionStorage.getItem('logperfil') == 0) {                 
+                this.props.history.push(`/veiculo_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));                                                
+             }                  
   
           }
-          else {
-            alert("Error conexao ")              
-          }
+          
         }).catch(error=>{
-          alert("Erro verificar log  ")
+          console.log('motoristaPreferido/update '+error);
+      
         })
 }  
 

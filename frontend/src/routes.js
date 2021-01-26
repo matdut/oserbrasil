@@ -79,13 +79,22 @@ import Inicio from './pages/inicio';
 
  //import Area_motorista_preferido from './pages/motorista_preferido/area_motorista_preferido';
  import lista_motorista_preferido from './pages/motorista_preferido/list';
-
- //import Motorista_aux_cadastro_incluir from './pages/motorista_auxiliar/incluir/motorista';
- //import Motorista_aux_endereco_incluir from './pages/motorista_auxiliar/incluir/endereco_motorista'; 
- //import Motorista_aux_documento_incluir from './pages/motorista_auxiliar/incluir/documentos';
- //import Motorista_aux_foto_incluir from './pages/motorista_auxiliar/incluir/foto';
- //import Motorista_aux_senha_incluir from './pages/motorista_auxiliar/incluir/senha_motorista';
-
+ import Area_motorista_preferido from './pages/motorista_preferido/area_motorista_preferido';
+ import Motorista_preferido_cadastro_incluir from './pages/motorista_preferido/incluir/motorista';
+ import Motorista_preferido_endereco_incluir from './pages/motorista_preferido/incluir/endereco_motorista'; 
+ import Motorista_preferido_documento_incluir from './pages/motorista_preferido/incluir/documentos';
+ import Motorista_preferido_foto_incluir from './pages/motorista_preferido/incluir/foto';
+ import Motorista_preferido_senha_incluir from './pages/motorista_preferido/incluir/senha_motorista';
+ import Motorista_preferido_veiculo_incluir from './pages/motorista_preferido/incluir/veiculo';
+ 
+ import Motorista_preferido_alterar from './pages/motorista_preferido/alterar/motorista'; 
+ import Motorista_preferido_veiculo_alterar from './pages/motorista_preferido/alterar/veiculo';
+ import Motorista_preferido_senha_alterar from './pages/motorista_preferido/alterar/senha_motorista';
+ import Motorista_preferido_foto_alterar from './pages/motorista_preferido/alterar/foto';
+ import Motorista_preferido_endereco_alterar from './pages/motorista_preferido/alterar/endereco_motorista';
+ //import Motorista_preferido_documento_alterar from './pages/motorista_preferido/alterar/documentos';
+ 
+ import Motorista_preferido_documento_alterar from './pages/motorista_preferido/documentos_motorista'; 
 
  import Motorista_cadastro_incluir from './pages/motorista/incluir/motorista'; 
  import Motorista_veiculo_incluir from './pages/motorista/incluir/veiculo';
@@ -103,6 +112,9 @@ import Inicio from './pages/inicio';
 
  import Motorista_doc_alterar from './pages/motorista/documentos_motorista'; 
  import lista_Veiculos_motorista from './pages/motorista/veiculos/lista_veiculos_motorista';
+
+ import lista_Veiculos_motorista_preferido from './pages/motorista_preferido/veiculos/lista_veiculos_motorista';
+
  import incluir_Veiculos from './pages/motorista/veiculos/incluir_outro';
  import alterar_Veiculos from './pages/motorista/veiculos/alterar_outro';
  import incluir_documentos from './pages/motorista/veiculos/incluir_outro_doc';
@@ -223,6 +235,7 @@ export default function Routes() {
             <Route exact path="/area_cliente_empresarial" component={Area_cliente_empresarial} />
             <Route exact path="/area_motorista" component={Area_motorista} />
             <Route exact path="/area_motorista_auxiliar" component={Area_motorista_auxiliar} />
+            <Route exact path="/area_motorista_preferido" component={Area_motorista_preferido} />
             <Route exact path="/area_administrador" component={Area_administrador} />
          
             <Route exact path="/contato" component={Contato} />
@@ -278,6 +291,21 @@ export default function Routes() {
 
              <Route exact path="/motorista_lista_banco/list" component={ListBancoMotorista} />
 
+             <Route exact path="/Motorista_preferido_cadastro_incluir/:email" component={Motorista_preferido_cadastro_incluir} />
+             <Route exact path="/endereco_preferido_motorista_incluir/:id" component={Motorista_preferido_endereco_incluir} />
+             <Route exact path="/documentos_preferido_motorista_incluir/:id" component={Motorista_preferido_documento_incluir} />
+             <Route exact path="/foto_motorista_preferido_incluir/:id" component={Motorista_preferido_foto_incluir} />     
+             <Route exact path="/senha_motorista_preferido_incluir/:id" component={Motorista_preferido_senha_incluir} />     
+             <Route exact path="/veiculo_motorista_preferido_incluir/:id" component={Motorista_preferido_veiculo_incluir} />    
+             <Route exact path="/motorista_pref_lista_veiculos/:id" component={lista_Veiculos_motorista_preferido} />
+
+             <Route exact path="/motorista_preferido_alterar/:id" component={Motorista_preferido_alterar} />             
+             <Route exact path="/veiculo_motorista_preferido_alterar/:id" component={Motorista_preferido_veiculo_alterar} />      
+             <Route exact path="/senha_motorista_preferido_alterar/:id" component={Motorista_preferido_senha_alterar} />      
+             <Route exact path="/foto_motorista_preferido_alterar/:id" component={Motorista_preferido_foto_alterar} />                   
+             <Route exact path="/endereco_motorista_preferido_alterar/:id" component={Motorista_preferido_endereco_alterar} />   
+             <Route exact path="/documentos_motorista_preferido_alterar/:id" component={Motorista_preferido_documento_alterar} />
+
              <Route exact path="/motorista_aux_incluir_convite/:email" component={Motorista_aux_cadastro_incluir} />
              <Route exact path="/endereco_aux_motorista_incluir/:id" component={Motorista_aux_endereco_incluir} />
              <Route exact path="/documentos_aux_motorista_incluir/:id" component={Motorista_aux_documento_incluir} />
@@ -304,6 +332,7 @@ export default function Routes() {
              <Route exact path="/listar_tipo_veiculo" component={Listar_Tipo_veiculo} />  
 
              <Route exact path="/lista_motorista_preferido" component={lista_motorista_preferido} />   
+             
 
              <Route exact path="/lista_veiculos/:id" component={lista_Veiculos_motorista} />
              <Route exact path="/incluir_veiculos/:id" component={incluir_Veiculos} />                   

@@ -1472,7 +1472,7 @@ cadeirarodasChange(e) {
       data_validade: moment(this.state.campData_CNH, "DD MM YYYY"), 
       numero_carteira: this.state.campCNH,    
       bilingue: this.state.campMotorista_bilingue,   
-      perfilId: 3,
+      perfilId: 9,
       statusId: this.state.campStatusId,
       situacaoId: 1
     }             
@@ -1512,7 +1512,7 @@ cadeirarodasChange(e) {
 
                         const logindata = {  
                           email: this.state.campEmail,  
-                          perfilId: 3,
+                          perfilId: 9,
                           statusId: this.state.campStatusId
                         }
               
@@ -3187,7 +3187,7 @@ opcao_tabChange = (event, newValue) => {
    
     const datapost = {
       logid: data.id, 
-      perfilId: 3,
+      perfilId: 9,
       senha: senhaAleatoria
     }        
    //console.log('cliente id - '+data.id);

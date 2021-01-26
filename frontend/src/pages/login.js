@@ -247,6 +247,30 @@ class loginComponent extends React.Component  {
                     .catch(error=>{
                       alert("Error server "+error)
                     }) 
+                  } else if (res.data.data[0].perfilId == 10) { // motorista preferido
+                      
+                    api.get(`/motoristaPreferido/get/${res.data.data[0].logid}`)
+                    .then(resmotorista=>{   
+                  
+                    sessionStorage.setItem('logemail', resmotorista.data.data[0].email);            
+                    sessionStorage.setItem('lognome',  resmotorista.data.data[0].nome);
+                    sessionStorage.setItem('logid',  resmotorista.data.data[0].id);  
+                    sessionStorage.setItem('logperfil', res.data.data[0].perfilId);  
+                    sessionStorage.setItem('statusid', res.data.data[0].statusId);
+                    sessionStorage.setItem('conectado', 0);          
+                    //const history = useHistory();                 
+                    
+                    this.setState({ 
+                      color: '',
+                      mensagem: ''
+                    })
+
+                  this.props.history.push('/area_motorista_preferido');        
+
+                  })
+                  .catch(error=>{
+                    alert("Error server "+error)
+                  }) 
                     } else if (res.data.data[0].perfilId == 8) { 
                         api.get(`/operador/get/${res.data.data[0].logid}`)
                         .then(resoperador=>{   

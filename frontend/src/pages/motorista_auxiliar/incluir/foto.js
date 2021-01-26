@@ -82,7 +82,7 @@ class empresarialComponent extends React.Component{
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {

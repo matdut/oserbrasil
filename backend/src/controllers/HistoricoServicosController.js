@@ -159,61 +159,8 @@ controllers.listaservicos = async (req,res) => {
 
 controllers.create = async (req,res) => {  
 
-  // DATA parametros desde post
-  const { id, tipoEventoId, eventoId, nome_responsavel, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
-    hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
-    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
-    km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, motivo_cancelamento, 
-    logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, desembarque_latitude, desembarque_longitude,
-    valor_bilingue, valor_receptivo, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId, distancia_value, tempo_value, servico_pai_id } = req.body;
-  //console.log("ROle es ==>"+role)
-
-  //console.log(req.body);      
-
-  //create
-  await HistoricoServicos.create({       
-    id: id,
-    tipoEventoId: tipoEventoId,
-    tipoTransporte: tipoTransporte,
-    nome_responsavel: nome_responsavel,
-    nome_passageiro: nome_passageiro, 
-    telefone_passageiro: telefone_passageiro,
-    quantidade_passageiro: quantidade_passageiro, 
-    data_servico: data_servico,   
-    hora_inicial: hora_inicial,  
-    hora_final: hora_final,
-    companhia_aerea: companhia_aerea,
-    numero_voo: numero_voo,
-    motorista_alocado: motorista_alocado, 
-    quantidade_diarias: quantidade_diarias,
-    local_embarque: local_embarque, 
-    local_desembarque: local_desembarque, 
-    embarque_latitude: embarque_latitude, 
-    embarque_logitude: embarque_logitude, 
-    valor_bilingue: valor_bilingue, 
-    valor_receptivo: valor_receptivo,
-    desembarque_latitude: desembarque_latitude, 
-    desembarque_longitude: desembarque_longitude, 
-    motorista_bilingue: motorista_bilingue, 
-    motorista_receptivo: motorista_receptivo, 
-    nome_motorista: nome_motorista,     
-    telefone_motorista: telefone_motorista, 
-    km_translado: km_translado, 
-    tempo_translado: tempo_translado, 
-    valor_estimado: valor_estimado,
-    valor_oser: valor_oser,
-    valor_motorista: valor_motorista, 
-    situacao: situacao, 
-    motivo_cancelamento: motivo_cancelamento,
-    eventoId: eventoId,
-    logid: logid,
-    distancia_value: distancia_value, 
-    tempo_value: tempo_value,
-    perfilId: perfilId,    
-    cartaoId: cartaoId,
-    servico_pai_id: servico_pai_id,
-    statusId: statusId 
-  })
+   //create
+  await HistoricoServicos.create(req.body)
   .then( function (data){
     return res.json({success:true, data: data, message:"Translados criado com sucesso"});
   })
@@ -225,62 +172,12 @@ controllers.create = async (req,res) => {
 
 controllers.update = async (req, res) => {
   // parameter id get  
-  const { tipoEventoId, eventoId, nome_responsavel, nome_passageiro, telefone_passageiro, quantidade_passageiro, data_servico,
-    hora_inicial, hora_final, local_embarque, local_desembarque, motorista_bilingue, 
-    motorista_receptivo, nome_motorista, telefone_motorista, quantidade_diarias,
-    km_translado, tempo_translado, valor_estimado, valor_oser, valor_motorista, situacao, 
-    motivo_cancelamento, logid, perfilId, tipoTransporte, embarque_latitude, embarque_logitude, 
-    desembarque_latitude, desembarque_longitude, companhia_aerea, numero_voo, motorista_alocado, cartaoId, statusId,
-    valor_bilingue, valor_receptivo, distancia_value, tempo_value, servico_pai_id} = req.body;
-
-  console.log('entrou aqui = '+data_servico);
 
   // parameter post
     const { id } = req.params;
   // update data
   
-  await HistoricoServicos.update({
-    tipoEventoId: tipoEventoId,
-    tipoTransporte: tipoTransporte,
-    nome_passageiro: nome_passageiro, 
-    nome_responsavel: nome_responsavel,
-    telefone_passageiro: telefone_passageiro,
-    quantidade_passageiro: quantidade_passageiro, 
-    quantidade_diarias: quantidade_diarias,
-    data_servico: data_servico,  
-    hora_inicial: hora_inicial,
-    hora_final: hora_final,  
-    valor_bilingue: valor_bilingue, 
-    valor_receptivo: valor_receptivo,
-    motorista_alocado: motorista_alocado, 
-    companhia_aerea: companhia_aerea,
-    numero_voo: numero_voo, 
-    local_embarque: local_embarque, 
-    local_desembarque: local_desembarque, 
-    embarque_latitude: embarque_latitude, 
-    embarque_logitude: embarque_logitude, 
-    desembarque_latitude: desembarque_latitude, 
-    desembarque_longitude: desembarque_longitude, 
-    motorista_bilingue: motorista_bilingue, 
-    motorista_receptivo: motorista_receptivo, 
-    nome_motorista: nome_motorista,     
-    telefone_motorista: telefone_motorista, 
-    km_translado: km_translado, 
-    tempo_translado: tempo_translado, 
-    valor_estimado: valor_estimado,    
-    valor_oser: valor_oser,
-    valor_motorista: valor_motorista, 
-    situacao: situacao, 
-    motivo_cancelamento: motivo_cancelamento,
-    eventoId: eventoId,
-    logid: logid,
-    perfilId: perfilId,    
-    cartaoId: cartaoId,
-    distancia_value: distancia_value, 
-    tempo_value: tempo_value,
-    servico_pai_id: servico_pai_id,
-    statusId: statusId
-  },{
+  await HistoricoServicos.update(req.body,{
     where: { id: id}
   })
   .then( function (data){

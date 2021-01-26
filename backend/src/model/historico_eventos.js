@@ -49,6 +49,10 @@ var Historico_eventos = sequelize.define(nametable,{
   statusId:{
     type:Sequelize.INTEGER,    
     allowNull: true,
+  },
+  data_exclusao: {
+    type: Sequelize.DATE,
+    allowNull: false,     
   }
 })
 

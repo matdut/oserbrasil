@@ -14,7 +14,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import FilledInput from '@material-ui/core/FilledInput';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
@@ -173,7 +173,7 @@ class empresarialComponent extends React.Component{
   
   carrega_motorista() {
     const { validate } = this.state;
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         //console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -626,17 +626,17 @@ class empresarialComponent extends React.Component{
 sendUpdate(){        
  
   const datapost = {  
-    statusId: 1,  
+    statusId: 16,  
   }       
 
   if (sessionStorage.getItem('logperfil') == 0) {
-    sessionStorage.setItem('logperfil', 9);
+    sessionStorage.setItem('logperfil', 10);
   } 
   
   const logindata = {  
     perfilId: sessionStorage.getItem('logperfil'),
     senha: this.state.campSenha,     
-    statusId: 1
+    statusId: 16
   }  
 
   api.put(`/login/update/${sessionStorage.getItem('logid')}`,logindata)
@@ -644,15 +644,17 @@ sendUpdate(){
   console.log('logid - '+JSON.stringify(sessionStorage.getItem('logid'), null, "    ")); 
   console.log('logperfil - '+JSON.stringify(sessionStorage.getItem('logperfil'), null, "    ")); 
   
-        api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
+        api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, datapost)
         
         .then(response=>{
           if (response.data.success==true) {        
 
             if (sessionStorage.getItem('logperfil') == 1) {              
               this.props.history.push(`/listar`);
-            } else if (sessionStorage.getItem('logperfil') == 9) {              
-              this.props.history.push(`/area_motorista_auxiliar`);  
+            } else if (sessionStorage.getItem('logperfil') == 10) {     
+              sessionStorage.setItem('statusid', 16);       
+
+              this.props.history.push(`/area_motorista_preferido`);  
             }          
   
           }
@@ -816,7 +818,7 @@ verifica_botao(inicio) {
             }    
        }      
 
-    } else if (sessionStorage.getItem('logperfil') == 3) {  
+    } else if (sessionStorage.getItem('logperfil') == 10) {  
     
       if (inicio == 1) {
         return (
@@ -912,7 +914,7 @@ verificar_menu() {
     <div>
     <div className="d-flex justify-content-around">
              <div className="botao_navegacao">
-                 <Link to={`/foto_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/foto_motorista_preferido_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_seha_motorista">                
@@ -937,7 +939,7 @@ verificar_menu() {
     return(
       <div className="d-flex justify-content-around">
            <div className="botao_navegacao">
-                 <Link to={`/foto_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/foto_motorista_preferido_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_seha_motorista">                
@@ -953,7 +955,7 @@ verificar_menu() {
          </div>
       );
 
-  } else if (sessionStorage.getItem('logperfil') == 9) { // CLIENTE MOTORISTA AUXILIAR
+  } else if (sessionStorage.getItem('logperfil') == 10) { // CLIENTE MOTORISTA AUXILIAR
 
     return(
       <div className="d-flex justify-content-around">
@@ -984,9 +986,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-    <menu_motorista_auxiliar />     
+    <menu_motorista_preferido />     
    );
   }
 

@@ -6,7 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Menu_motorista from './menu_motorista';
+import Menu_motorista_preferido from './menu_motorista_preferido';
 import Menu_administrador from '../administrador/menu_administrador';
 import Resizer from 'react-image-file-resizer';
 import Typography from '@material-ui/core/Typography';
@@ -24,7 +24,7 @@ import FileList from "../FilelistDocumento";
 //import Upload from "../Upload";
 //import FileList from "../Filelist";
 import { Container, Content } from "../style";
-import menu_motorista_auxiliar from './menu_motorista_auxiliar';
+//import menu_motorista_auxiliar from './menu_motorista_auxiliar';
 
 const andamento_cadastro = sessionStorage.getItem('logprogress');     
 //const cep_empresa = sessionStorage.getItem('logcep');     
@@ -111,7 +111,7 @@ class empresarialComponent extends React.Component{
   carrega_motorista() {   
     
 
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         //console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success == true) {
@@ -155,9 +155,9 @@ class empresarialComponent extends React.Component{
      return( 
        <Menu_administrador />     
      );
-    } else if (sessionStorage.getItem('logperfil') == 9) {
+    } else if (sessionStorage.getItem('logperfil') == 10) {
      return( 
-       <menu_motorista_auxiliar />     
+       <Menu_motorista_preferido />     
      );
     }
   
@@ -230,7 +230,7 @@ verifica_botao(inicio) {
          }
 
          
-          api.put(`/motoristaAuxiliar/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
+          api.put(`/motoristaPreferido/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
           .then(response=>{
            // console.log(JSON.stringify(response.data, null, "    ")); 
 
@@ -249,32 +249,12 @@ verifica_botao(inicio) {
 
       if (sessionStorage.getItem('logperfil') == 1) {
         this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 9) {
-        this.props.history.push(`/area_motorista_auxiliar`);                   
+      } else if (sessionStorage.getItem('logperfil') == 10) {
+        this.props.history.push(`/area_motorista_preferido`);                   
       } else if (sessionStorage.getItem('logperfil') == 0) {
         this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
       }          
-    /*  
-    if (this.state.foto_incluida_1 == true && this.state.foto_incluida_2 == true) {
-
-      if (sessionStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 3) {
-        this.props.history.push(`/area_motorista`);                   
-      } else if (sessionStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      }          
-      
-    }  else {
-
-      if (sessionStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 3) {
-        this.props.history.push(`/area_motorista`);                   
-      } else if (sessionStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista/`+sessionStorage.getItem('logid'));
-       }       
-    }     */  
+   
 }  
 
 handleUploadCNH = files => {  

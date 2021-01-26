@@ -561,6 +561,7 @@ class listaservicosComponent extends React.Component  {
       listaFilhosAlteracao:[],
       listaMotoristasPreferencial:[],
       listaservicoalteracao:[],
+      listaServicoHistorico:[],
       erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
@@ -637,7 +638,7 @@ class listaservicosComponent extends React.Component  {
   //let eventoId = this.props.match.params.id;    
   // console.log('eventoId'+ eventoId);
 
-   this.interval = setInterval(() => this.tickservico(), 1000);
+  this.interval = setInterval(() => this.tickservico(), 1000);
 
   // this.interval2 = setInterval2(() => this.tickReenvio(), 3000);
   //debugger;
@@ -676,6 +677,7 @@ class listaservicosComponent extends React.Component  {
     this.valor_total_viagens();
     this.loadlistServicosExcluidos();   
     this.atualiza_evento(); 
+    this.loadlistServicosHistorico();
    // this.reenvio_todos_servicos_motoristas();
   }
 
@@ -742,7 +744,7 @@ class listaservicosComponent extends React.Component  {
   }
 
   atualiza_evento() {
-    debugger;
+  
     let totalservicos = 0;
     let totalviagens = 0;
     api.get(`/servicos/totalservicos/${sessionStorage.getItem('logeventoservico')}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
@@ -795,6 +797,7 @@ class listaservicosComponent extends React.Component  {
   //this.loadServicos();    
   this.loadlistServicos();
   this.atualiza_evento();
+  this.loadlistServicosHistorico();
   //this.atualiza_servico_automatico();
  /// this.reenvio_todos_servicos_motoristas();
   
@@ -890,6 +893,24 @@ limpar_campos_modal() {
  })
  
 }
+
+loadlistServicosHistorico(){    
+  api.get(`/finalizadosServicos/listaservicosEmpresarial/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
+   .then(res=>{
+     if (res.data.success == true) {       
+
+       const data = res.data.data    
+       this.setState({
+         listaServicoHistorico:data,
+         loading: false,
+        })
+     }
+   })
+   .catch(error=>{
+    console.log('loadlistServicos'+error) 
+  
+   })
+ }
 
   valor_total_servicos(){
     let data_formatada = '0.00'
@@ -1017,28 +1038,71 @@ limpar_campos_modal() {
     // var motorista_id = data
    //  console.log('motorista_id - '+motorista_id);
   //   if (motorista_id !== undefined) { 
+ 
 
+  debugger
     api.get(`/motorista_servico/getServico/${data.id}`)
     .then(res=>{
+
       if (res.data.success == true) {
-        
-        this.setState({             
-          campMotorista: res.data.data[0].motoristum.nome,        
-          camp_foto_url: res.data.data[0].motoristum.foto_url
-        });
-        debugger;
-        api.get(`/motorista/getMotVeiculoTipo/${res.data.data[0].motoristum.id}/${data.tipoTransporte}`)
-        .then(resveiculo=>{
-          if (resveiculo.data.success == true) {
 
-              this.setState({                           
-                campCor: resveiculo.data.data[0].veiculo_motorista[0].cor,
-                campModelo: resveiculo.data.data[0].veiculo_motorista[0].modelo,   
-                campPlaca: resveiculo.data.data[0].veiculo_motorista[0].placa               
+        if (res.data.data[0].motorista_perfil == 3) {
+
+          api.get(`/motorista/get/${res.data.data[0].motoristaId}`)
+          .then(resmotorista=>{
+            if (resmotorista.data.success == true) {
+          
+              this.setState({             
+                campMotorista: resmotorista.data.data[0].nome,        
+                camp_foto_url: resmotorista.data.data[0].foto_url
               });
-
             }
-          });    
+          }) 
+  
+          debugger;
+          api.get(`/motorista/getMotVeiculo/${res.data.data[0].motoristaId}`)
+          .then(resveiculo=>{
+            if (resveiculo.data.success == true) {
+  
+                this.setState({                           
+                  campCor: resveiculo.data.data[0].veiculo_motorista[0].cor,
+                  campModelo: resveiculo.data.data[0].veiculo_motorista[0].modelo,   
+                  campPlaca: resveiculo.data.data[0].veiculo_motorista[0].placa               
+                });
+  
+              }
+            });   
+
+        } else if (res.data.data[0].motorista_perfil == 10) {
+
+          api.get(`/motoristaPreferido/get/${res.data.data[0].motoristaId}`)
+          .then(resmotorista=>{
+            if (resmotorista.data.success == true) {
+          
+              this.setState({             
+                campMotorista: resmotorista.data.data[0].nome,        
+                camp_foto_url: resmotorista.data.data[0].foto_url
+              });
+            }
+          }) 
+  
+          debugger;
+          api.get(`/veiculoMotPref/getMotoristaVeiculos/${res.data.data[0].motoristaId}`)
+          .then(resveiculo=>{
+            if (resveiculo.data.success == true) {
+  
+                this.setState({                           
+                  campCor: resveiculo.data.data[0].cor,
+                  campModelo: resveiculo.data.data[0].modelo,   
+                  campPlaca: resveiculo.data.data[0].placa               
+                });
+  
+              }
+            });   
+
+        }
+
+        
       } 
     });    
    
@@ -1776,7 +1840,8 @@ loadEvento(){
        }      
      })
      .catch(error=>{
-       alert("Error server"+error)
+       console.log('loadEvento '+ error)
+     
      });
 }
   
@@ -1934,65 +1999,28 @@ verifica_menu() {
 
  // procurar_motorista_servico = async () => { 
 
-  async verifica_veiculo_motorista_selecionados(motorista_id, tipoTransporte, servico){
+  async enviar_convite_motorista_selecionados(motorista, perfil_motorista , servico){
     debugger
-    enviados = enviados + 1;
-
-    debugger;  
-    //verificar se o motorista tem o veiculo selecionado 
-    //console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
-    const respveiculo = await api.get(`/motorista/getMotVeiculoTipo/${motorista_id}/${tipoTransporte}`)                    
-   // .then(respveiculo=>{   
-
-      debugger;   
-      if (respveiculo.data.success == true) {     
-        
+       
         const datapost_motorista = {
           servicoId: servico.id,
           tipoEventoId: servico.tipoEventoId,          
           data_servico: servico.data_servico,        
           hora_inicial: servico.hora_inicial,           
           local_embarque: servico.local_embarque,          
-          motorista_id: motorista_id   
+          motorista_id: motorista.id,
+          motorista_perfil: motorista.perfilId,
+          servico_pai_id: servico.servico_pai_id,
+          perfilId: sessionStorage.getItem('logid'),
+          empresaId: sessionStorage.getItem('logperfil')
         }  
-        api.post('/envioservicoMotorista/create',datapost_motorista);            
-                  
-      } 
-
-    
-      ///  sessionStorage.set('mensagem_motorista_alocado', 'Por favor aguarde. Procurando Motorista para atender seu serviço!');
-
-   
-
-  }
-
-
-  async finalizando_processo_busca(servico) {
-
-    debugger;
-    if (reenvio_motorista == false) {
-       //verificar se e inclusao ou alteracao
-      this.envio_convite_motorista_selecionado(servico);
      
-  /*    if ( motorista_incluido == total_motorista ) {
-        if (possui_motorista == true) {
-          this.sendSaveInclusao();    
-            motorista_incluido = 0;
-        } else {
-          this.sendSaveInclusao();    
-        // alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
-        }
-      }   */
-    } else {   
-
-           this.envio_convite_motorista_selecionado(servico);
-
-     
-        
+        api.post('/envioservicoMotorista/create',datapost_motorista);                        
   
-    }  
-
   }
+
+
+  
   deletar_motorista_servico(servico) {
 
     api.delete(`/motorista_servico/delete/${servico}`);
@@ -2026,6 +2054,7 @@ verifica_menu() {
       sessionStorage.setItem('logServicoIncluido', '');
       sessionStorage.setItem('logTipo', '');
       sessionStorage.setItem('distribuir_servico', 1);
+
       distribuir_servico_motorista = true;   
 
     } else if (tipo_solicitacao == 'ALTERACAO') {
@@ -2062,7 +2091,7 @@ verifica_menu() {
 
                // alert(' data_hora_atual 2 '+data_atual.getTime());
                 var hora_banco_alteracao = servico.hora_inicial.substring(0,5);   
-                if (data_hora_atual.getTime() == dataatual_alt.getTime() &&  
+                if (data_atual.getTime() == data_moment_alt.getTime() &&  
                     hora_banco_alteracao >= data_seis_horas_menos) {
                    // alert(' data_atual '+ data_atual);
                   //  alert(' data_seis_horas_menos '+ data_seis_horas_menos);
@@ -2117,31 +2146,14 @@ verifica_menu() {
       
         const data_moment = moment(data_servico, "DD/MM/YYYY");
         const formatar_data = data_moment.format("YYYY-MM-DD");    
-        const data_servico_date = new Date(formatar_data);
-        const data_servico_ini = servico.data_servico;                                   
-    
         const hora_ini = servico.hora_inicial;
         //hora_ini = hora_ini.substring(0,5); 
       
-        const dataatual = new Date(`${formatar_data} ${hora_ini}`);
+        const data_servico_date = new Date(`${formatar_data} ${hora_ini}`);
 
-        var data_tres_horas_mais = moment(
-          dataatual, "D/M/YYYY h:m"
-        ).add(             
-          'hours', 3
-        );    
-
-        var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
-
-        var data_tres_horas_menos = moment(
-          dataatual, "D/M/YYYY h:m"
-        ).subtract(             
-          'hours', 3
-        );   
+        var hora_banco = servico.hora_inicial.substring(0,5);  
       
-        var hora_menor_tres = data_tres_horas_menos.format("HH:mm");   
-      
-      // const data_servico_date = new Date(formatar_data);
+        // const data_servico_date = new Date(formatar_data);
         
         // Não ter outro serviço no mesmo dia e horário.
         //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
@@ -2172,7 +2184,6 @@ verifica_menu() {
             } else {
               estado_motorista = servico.estado_selecionado_mapa;
             }
-
           
             var tipoTransporte = '';
             if (servico.camptipoId == '') {
@@ -2184,151 +2195,374 @@ verifica_menu() {
             var verifica_possui_servico = false;
           
             debugger;
-            //verificar motorista preferido //
-            /*
-            if (estado_motorista == 'Rio') {
-              estado_motorista = 'RJ'   
-            }  */
+  
+          //  var distribuir_outros_motoristas = false;
+            //verificar motoristas preferidos  
+            api.get(`/motoristaPreferido/getSelTodosMotorista/${estado_motorista}/${sessionStorage.getItem('logid') }`)                    
+            .then(respMotorista=>{
 
-       // alert(`/motorista/getSelecionaMotorista/${estado_motorista}/${bilingue}`);  
-         api.get(`/motorista/getSelTodosMotorista/${estado_motorista}`)                    
-          .then(respMotorista=>{
+             if (respMotorista.data.success == true) {  
 
-              debugger;
-              if (respMotorista.data.success == true) {  
+              total_motorista = respMotorista.data.data.length;
+              motorista_incluido = 0;            
+
+              var motorista_substituido = sessionStorage.getItem('motorista_substituido');
+              if (motorista_substituido !== null) {
+                motorista_substituido = motorista_substituido.toString();
+              }
+
+                var mot_sel = respMotorista.data.data;
+                mot_sel.map((mot)=>{      
+                var distribui_moto = mot.id;          
+
+                api.get(`/veiculoMotPref/getVeiculoSelecionado/${distribui_moto}/${tipoTransporte}`)     
+                .then(respveiculo=>{
+
+                  debugger;
+                  if (respveiculo.data.success == true) {  
+                    var veiculo_motorista = respveiculo.data.data[0].tipoTransporte;
+                                          
+
+                      if (bilingue == 0) {  // se bilingue for igual a zero mando serviço para todos os motoristas
+
+                          if ( distribui_moto.toString() !== motorista_substituido) {   
+                            sessionStorage.setItem('motorista_substituido', '');
+                           
+                        //    qtd_motoristas = qtd_motoristas + 1;
+                            //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                            // verifica_possui_servico();
+                            
+                        //   alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
+                            api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${veiculo_motorista}`)                  
+                            .then(respservico=>{   
+                                
+                                debugger                 
+                                if (respservico.data.success == true) {   
+                                  const response_data = respservico.data.data[0];      
+                                      
+                                          const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                          const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                          const formatar_data = data_teste.format("YYYY-MM-DD");   
+
+                                          const data_servico_banco = new Date(`${formatar_data} ${servico.hora_inicial}`);
+                                         
+                                          var data_tres_horas_mais = moment(
+                                            data_servico_banco, "D/M/YYYY h:m"
+                                          ).add(             
+                                            'hours', 3
+                                          );    
+                                  
+                                          var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+                                  
+                                          var data_tres_horas_menos = moment(
+                                            data_servico_banco, "D/M/YYYY h:m"
+                                          ).subtract(             
+                                            'hours', 3
+                                          );   
+                                        
+                                          var hora_menor_tres = data_tres_horas_menos.format("HH:mm");                                           
+                                                          
+
+                                          if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                              hora_banco <= hora_maior_tres &&
+                                              hora_banco >= hora_menor_tres) {
+
+                                                  debugger;
+                                                  verifica_possui_servico = true;
+                                                  this.distribuir_outros_motoristas(estado_motorista, bilingue, tipoTransporte, servico, data_servico_date, hora_maior_tres, hora_menor_tres, verifica_possui_servico);
+                                              //    this.finalizando_processo_busca();
+
+                                          } else {
+                                              this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+                                          }                                                           
+                                } else {
+
+                                    debugger
+                                  //  motorista_incluido = motorista_incluido + 1;
+                                    this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+
+                                }     
 
 
-                  debugger      
-                  total_motorista = respMotorista.data.data.length;
-                  motorista_incluido = 0;
-                  var mot_sel = respMotorista.data.data;
-               
-                  var motorista_substituido = sessionStorage.getItem('motorista_substituido');
-                  if (motorista_substituido !== null) {
-                    motorista_substituido = motorista_substituido.toString();
+                              }).catch(error=>{
+                                console.log(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)
+                            //   alert("Error motorista_servico getMotoristaServico  -"+error)
+                              });    
+                            }
+                      } else if (bilingue == 1 && bilingue == mot.bilingue) { //enviar somente para motoristas bilingue              
+                          
+                                    if ( distribui_moto.toString() !== motorista_substituido) {   
+                                      sessionStorage.setItem('motorista_substituido', '');
+                                     
+                                      // qtd_motoristas = qtd_motoristas + 1;
+                                      //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                                      // verifica_possui_servico();
+                                      
+                                      //   alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
+                                      api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
+                                      .then(respservico=>{   
+                                          
+                                          debugger                 
+                                          if (respservico.data.success == true) {   
+                                            const response_data = respservico.data.data[0];      
+                                                
+                                                    const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                                    const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                                    const formatar_data = data_teste.format("YYYY-MM-DD");    
+                                                    const data_servico_banco = new Date(`${formatar_data} ${servico.hora_inicial}`);
+                                                   
+                                                    var data_tres_horas_mais = moment(
+                                                      data_servico_banco, "D/M/YYYY h:m"
+                                                    ).add(             
+                                                      'hours', 3
+                                                    );    
+                                            
+                                                    var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+                                            
+                                                    var data_tres_horas_menos = moment(
+                                                      data_servico_banco, "D/M/YYYY h:m"
+                                                    ).subtract(             
+                                                      'hours', 3
+                                                    );   
+                                                  
+                                                    var hora_menor_tres = data_tres_horas_menos.format("HH:mm");                    
+
+                                                    if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                                        hora_banco <= hora_maior_tres &&
+                                                        hora_banco >= hora_menor_tres) {
+
+                                                            debugger;
+                                                            verifica_possui_servico = true;
+                                                            this.distribuir_outros_motoristas(estado_motorista, bilingue, tipoTransporte, servico, data_servico_date, hora_maior_tres, hora_menor_tres, verifica_possui_servico);
+                                                        //    this.finalizando_processo_busca();
+
+                                                    } else {
+                                                        this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+                                                    }                                                           
+                                          } else {
+
+                                              debugger
+                                            //  motorista_incluido = motorista_incluido + 1;
+                                              this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+
+                                          }     
+                                        })
+                                    }                            
+                                
+                      } else {
+                       // alert(' nao encontrou ')
+                        this.distribuir_outros_motoristas(estado_motorista, bilingue, tipoTransporte, servico, data_servico_date, hora_banco, verifica_possui_servico);
+                      }                
+
+                  } else {
+                    this.distribuir_outros_motoristas(estado_motorista, bilingue, tipoTransporte, servico, data_servico_date, hora_banco, verifica_possui_servico);
                   }
                 
-                  mot_sel.map((mot)=>{      
-                    var distribui_moto = mot.id;   
+                }).catch(error=>{
 
-                  if (bilingue == 0) {  // se bilingue for igual a zero mando serviço para todos os motoristas
+                  console.log(' erro '+error);
+               //   console.log(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)
+              //   alert("Error motorista_servico getMotoristaServico  -"+error)
+                });  
 
-                      if ( distribui_moto.toString() !== motorista_substituido) {   
-                        sessionStorage.setItem('motorista_substituido', '');
-                    //    qtd_motoristas = qtd_motoristas + 1;
-                        //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
-                        // verifica_possui_servico();
-                        
-                    //   alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
-                        api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
-                        .then(respservico=>{   
-                            
-                            debugger                 
-                            if (respservico.data.success == true) {   
-                              const response_data = respservico.data.data[0];      
-                                  
-                                      const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
-                                      const data_teste = moment(data_servico, "DD/MM/YYYY");
-                                      const formatar_data = data_teste.format("YYYY-MM-DD");    
-                                      const data_servico_banco = new Date(formatar_data);
-                                      var hora_banco = response_data.servico.hora_inicial.substring(0,5);                   
+              })    
 
-                                      if (data_servico_banco.getTime() == data_servico_date.getTime() &&
-                                          hora_banco <= hora_maior_tres &&
-                                          hora_banco >= hora_menor_tres) {
-
-                                              debugger;
-                                              verifica_possui_servico = true;
-                                              motorista_incluido = motorista_incluido + 1;
-                                          //    this.finalizando_processo_busca();
-
-                                      } else {
-                                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
-                                      }                                                           
-                            } else {
-
-                                debugger
-                              //  motorista_incluido = motorista_incluido + 1;
-                                this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
-
-                            }     
-
-
-                          }).catch(error=>{
-                            console.log(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)
-                        //   alert("Error motorista_servico getMotoristaServico  -"+error)
-                          });    
-                        }
-                    } else {
-                         
-                       if (bilingue == 1) {
-
-                              if(bilingue == mot.bilingue) {
-
-                                if ( distribui_moto.toString() !== motorista_substituido) {   
-                                  sessionStorage.setItem('motorista_substituido', '');
-                              //    qtd_motoristas = qtd_motoristas + 1;
-                                  //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
-                                  // verifica_possui_servico();
-                                  
-                              //   alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
-                                  api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
-                                  .then(respservico=>{   
-                                      
-                                      debugger                 
-                                      if (respservico.data.success == true) {   
-                                        const response_data = respservico.data.data[0];      
-                                            
-                                                const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
-                                                const data_teste = moment(data_servico, "DD/MM/YYYY");
-                                                const formatar_data = data_teste.format("YYYY-MM-DD");    
-                                                const data_servico_banco = new Date(formatar_data);
-                                                var hora_banco = response_data.servico.hora_inicial.substring(0,5);                   
-          
-                                                if (data_servico_banco.getTime() == data_servico_date.getTime() &&
-                                                    hora_banco <= hora_maior_tres &&
-                                                    hora_banco >= hora_menor_tres) {
-          
-                                                        debugger;
-                                                        verifica_possui_servico = true;
-                                                        motorista_incluido = motorista_incluido + 1;
-                                                    //    this.finalizando_processo_busca();
-          
-                                                } else {
-                                                    this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
-                                                }                                                           
-                                      } else {
-          
-                                          debugger
-                                        //  motorista_incluido = motorista_incluido + 1;
-                                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
-          
-                                      }     
-                                    })
-                                 }
-                                }
-                          }
-                    }    
-                  })        
-                
-              //  alert('enviados - '+enviados);
-              // alert('Reenvio para os motoristas realizado com sucesso');
-      
               } else {
-               // alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
-                sessionStorage.setItem('logServicoIncluido', ''); 
-                /*   this.setState({                              
-                  mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
-                })*/
-              }  
-
-            }).catch(error=>{
-                console.log(` getSelecionaMotorista - ${estado_motorista} - ${bilingue}` )
-               // alert("Error motorista getSelecionaMotorista -"+error)
-            });   
-          }
+                this.distribuir_outros_motoristas(estado_motorista, bilingue, tipoTransporte, servico, data_servico_date, hora_banco, verifica_possui_servico);
+              }
+              
+              });                   
+            
+                
+        }
      
   } 
+
+
+  distribuir_outros_motoristas(estado_motorista, bilingue, tipoTransporte, servico, data_servico_date, hora_banco, verifica_possui_servico) {
+                  
+  //  alert(' se nao possuir motorista preferido ')
+    // se nao possuir motorista preferido
+
+    api.get(`/motorista/getSelTodosMotorista/${estado_motorista}`)                    
+    .then(respMotorista=>{
+
+      total_motorista = respMotorista.data.data.length;
+      motorista_incluido = 0;
+      var mot_sel = respMotorista.data.data;              
+  
+      var motorista_substituido = sessionStorage.getItem('motorista_substituido');
+      if (motorista_substituido !== null) {
+        motorista_substituido = motorista_substituido.toString();
+      }
+    
+      mot_sel.map((mot)=>{      
+        var distribui_moto = mot.id; 
+
+        debugger;
+        if (respMotorista.data.success == true) {    
+
+          api.get(`/veiculo/getVeiculoSelecionado/${distribui_moto}/${tipoTransporte}`)     
+          .then(respveiculo=>{    
+            
+            if (respveiculo.data.success == true) {  
+              var veiculo_motorista = respveiculo.data.data[0].tipoTransporte;
+
+         //   alert('bilingue 0 '+bilingue)
+         
+            if (bilingue == 0) {  // se bilingue for igual a zero mando serviço para todos os motoristas
+        
+                if ( distribui_moto.toString() !== motorista_substituido) {   
+                  sessionStorage.setItem('motorista_substituido', '');
+              //    qtd_motoristas = qtd_motoristas + 1;
+                  //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                  // verifica_possui_servico();
+                  
+             //    alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
+                  api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${veiculo_motorista}`)                  
+                  .then(respservico=>{   
+                      
+                      debugger                 
+                      if (respservico.data.success == true) {   
+                        const response_data = respservico.data.data[0];      
+                        debugger
+                            
+                                const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                const formatar_data = data_teste.format("YYYY-MM-DD");    
+                                const data_servico_banco = new Date(`${formatar_data} ${servico.hora_inicial}`);
+                               
+                                var data_tres_horas_mais = moment(
+                                  data_servico_banco, "D/M/YYYY h:m"
+                                ).add(             
+                                  'hours', 3
+                                );    
+                        
+                                var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+                        
+                                var data_tres_horas_menos = moment(
+                                  data_servico_banco, "D/M/YYYY h:m"
+                                ).subtract(             
+                                  'hours', 3
+                                );   
+                              
+                                var hora_menor_tres = data_tres_horas_menos.format("HH:mm");                    
+        
+                                if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                    hora_banco <= hora_maior_tres &&
+                                    hora_banco >= hora_menor_tres) {
+        
+                                        debugger;
+                                        verifica_possui_servico = true;
+                                        motorista_incluido = motorista_incluido + 1;
+                                    //    this.finalizando_processo_busca();
+        
+                                } else {
+                                    this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+                                }                                                           
+                      } else {
+        
+                          debugger
+                        //  motorista_incluido = motorista_incluido + 1;
+                          this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+        
+                      }     
+        
+        
+                    }).catch(error=>{
+                      console.log(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)
+                  //   alert("Error motorista_servico getMotoristaServico  -"+error)
+                    });    
+                  }
+                } else if (bilingue == 1 && bilingue == mot.bilingue) { //enviar somente para motoristas bilingue              
+                
+                          if ( distribui_moto.toString() !== motorista_substituido) {   
+                            sessionStorage.setItem('motorista_substituido', '');
+                            // qtd_motoristas = qtd_motoristas + 1;
+                            //Não estar alocado em outro serviço 3 horas antes ou 3 horas depois da hora inicial do serviço atual.
+                            // verifica_possui_servico();
+                            
+                         //  alert(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`);  
+                            api.get(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)                  
+                            .then(respservico=>{   
+                                
+                                debugger                 
+                                if (respservico.data.success == true) {   
+                                  const response_data = respservico.data.data[0];      
+                                      
+                                          const data_servico = dateFormat(response_data.servico.data_servico, "UTC:dd/mm/yyyy");  
+                                          const data_teste = moment(data_servico, "DD/MM/YYYY");
+                                          const formatar_data = data_teste.format("YYYY-MM-DD");    
+                                          const data_servico_banco = new Date(`${formatar_data} ${servico.hora_inicial}`);
+                                         
+                                          var data_tres_horas_mais = moment(
+                                            data_servico_banco, "D/M/YYYY h:m"
+                                          ).add(             
+                                            'hours', 3
+                                          );    
+                                  
+                                          var hora_maior_tres = data_tres_horas_mais.format("HH:mm");
+                                  
+                                          var data_tres_horas_menos = moment(
+                                            data_servico_banco, "D/M/YYYY h:m"
+                                          ).subtract(             
+                                            'hours', 3
+                                          );   
+                                        
+                                          var hora_menor_tres = data_tres_horas_menos.format("HH:mm");                 
+        
+                                          if (data_servico_banco.getTime() == data_servico_date.getTime() &&
+                                              hora_banco <= hora_maior_tres &&
+                                              hora_banco >= hora_menor_tres) {
+        
+                                                  debugger;
+                                                  verifica_possui_servico = true;
+                                                  motorista_incluido = motorista_incluido + 1;
+                                              //    this.finalizando_processo_busca();
+        
+                                          } else {
+                                              this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+                                          }                                                           
+                                } else {
+        
+                                    debugger
+                                  //  motorista_incluido = motorista_incluido + 1;
+                                    this.enviar_convite_motorista_selecionados(mot, tipoTransporte, servico);
+        
+                                }     
+                              })
+                          }                            
+                       
+                      }                                                      
+        
+                    }
+          
+          }).catch(error=>{
+            console.log(' erro '+error);
+           // console.log(`/motorista_servico/getMotoristaServico/${mot.id}/${tipoTransporte}`)
+              //   alert("Error motorista_servico getMotoristaServico  -"+error)
+          });  
+          
+        //  alert('enviados - '+enviados);
+        // alert('Reenvio para os motoristas realizado com sucesso');
+
+        } else {
+        // alert("Não foi encontrado motorista disponível, para atender a esse serviço no momento ")
+          sessionStorage.setItem('logServicoIncluido', ''); 
+          /*   this.setState({                              
+            mensagem_servico: "Não foi encontrado motorista disponível, para atender a esse serviço no momento"
+          })*/
+        }  
+
+      })        
+
+      }).catch(error=>{
+          console.log(' erro '+error);
+       //   console.log(` getSelecionaMotorista - ${estado_motorista} - ${bilingue}` )
+        // alert("Error motorista getSelecionaMotorista -"+error)
+      }); 
+
+  }      
 
     //selecionar motorista ativos com o estado do local embarque / tipo veiculo / bilingue e receptivo
          //verificar se ja existe algum cancelamento deste motorista
@@ -2397,7 +2631,8 @@ verifica_menu() {
         }      
     
         }).catch(error=>{
-            alert("Erro sevico log  "+ error)
+           console.log('maior_data_filho '+ error)
+          
         })  
      } 
 
@@ -2412,7 +2647,7 @@ verifica_menu() {
       }      
   
       }).catch(error=>{
-          alert("Erro sevico log  "+ error)
+        console.log('maior_data_filho_teste '+ error)
       })  
    } 
 
@@ -2476,12 +2711,10 @@ verifica_menu() {
                             tempo_translado: this.state.tempo_total_filho,
                             cartaoId: this.state.campcartaoid,        
                             valor_estimado: valorDoublemask(valor_total_filhos),    
-                          //  valor_oser: (parseFloat('0.192') * valorDoublemask(valor_total_filhos)).toFixed(2),
-                          //  valor_motorista: (parseFloat('0.768') * valorDoublemask(valor_total_filhos)).toFixed(2),                     
-                            //motivo_cancelamento: this.state.campNome,
                             servico_pai_id: this.state.campservicoId,
                             logid: sessionStorage.getItem('logid'),
-                            perfilId: sessionStorage.getItem('logperfil'),               
+                            perfilId: sessionStorage.getItem('logperfil'),     
+                            valor_pedagio: this.state.camppedagio          
                         }                                
                       
                       console.log('criando os filhos  - '+JSON.stringify(datapost_filho, null, "    ")); 
@@ -2531,7 +2764,8 @@ verifica_menu() {
       valor_motorista: (parseFloat('0.768') * valorDoublemask(this.state.campvalor)).toFixed(2),                     
       //motivo_cancelamento: this.state.campNome,
       logid: sessionStorage.getItem('logid'),
-      perfilId: sessionStorage.getItem('logperfil'),               
+      perfilId: sessionStorage.getItem('logperfil'),    
+      valor_pedagio: this.state.camppedagio               
       } 
       
       debugger;
@@ -2604,7 +2838,8 @@ debugger
                                               //motivo_cancelamento: this.state.campNome,
                                               servico_pai_id: this.state.campservicoId,
                                               logid: sessionStorage.getItem('logid'),
-                                              perfilId: sessionStorage.getItem('logperfil'),               
+                                              perfilId: sessionStorage.getItem('logperfil'), 
+                                              valor_pedagio: this.state.camppedagio                  
                                           }                                
                                         
                                           try {
@@ -2649,10 +2884,11 @@ debugger
           motorista_id: this.state.campMotoristaId,   
           nome_motorista: this.state.campnomemotorista, 
           telefone_motorista: this.state.camptelefonemotorista, 
-          cartaoId: this.state.campcartaoid,                                                            
+          cartaoId: this.state.campcartaoid,  
+          valor_pedagio: this.state.camppedagio                                                              
         // valor_estimado: this.state.listservicosfilho[i].valor_estimado,    
       }       
-     debugger;
+  
 
       try {
         api.put(`/servicos/update_filhos/${this.state.campservicoId}`, datapost_filho_alteracao_1)
@@ -2726,7 +2962,7 @@ debugger
 
       }
     }).catch(error=>{
-      alert("Error 34 ")
+      console.log('senUpdate '+ error);
     })
  
 
@@ -2734,7 +2970,7 @@ debugger
   } 
 
   controle_botao() {
-    debugger
+   
     if (this.state.campmotoristaalocado !== true) {
       return (
        <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado_motorista"  p={2} onClick={()=>''}>
@@ -2849,7 +3085,7 @@ debugger
         }
 
       }).catch(error=>{
-        alert("Error server 2 "+error)
+        console.log('atualiza_filhos_data_servico '+ error);
       })        
     
       })  
@@ -3000,6 +3236,7 @@ debugger
                                     data_servico: moment(data_alteracao_servico, "DD MM YYYY"),
                                     quantidade_diarias: 1, 
                                     hora_inicial: this.state.camphora_inicial,  
+                                    valor_pedagio: this.state.camppedagio, 
                                     hora_final: this.state.camphora_final,  
                                     local_embarque: 'a combinar', 
                                     local_desembarque: 'a combinar', 
@@ -3041,9 +3278,11 @@ debugger
 
                               })                        
                               .catch(error=>{
-                                alert("Error server 2 "+error)
+                              
+                                console.log('sendSaveServico '+ error);
                               })     
                           }
+                          
 
 
                     }
@@ -3099,11 +3338,11 @@ debugger
                             } 
                             })                        
                             .catch(error=>{
-                              alert("Error server 2 "+error)
+                              console.log('sendSaveServico '+ error);
                             })                    
                     }              
                   }).catch(error=>{
-                   alert("Erro sevico log  "+ error)
+                  console.log('sendSaveServico '+ error);
                   })               
              
       //      } 
@@ -3137,6 +3376,7 @@ debugger
         quantidade_diarias: this.state.campqtddiarias, 
         hora_inicial: this.state.camphora_inicial,  
         hora_final: this.state.camphora_final,  
+        valor_pedagio: this.state.camppedagio, 
         local_embarque: this.state.camplocalembarque, 
         local_desembarque: this.state.camplocaldesembarque, 
         embarque_latitude: this.state.embarque_latitude, 
@@ -3205,6 +3445,7 @@ debugger
             local_desembarque: 'a combinar', 
             tempo_value: this.state.camptempovalue,
             tempo_translado: tempo_filho_value, 
+            valor_pedagio: this.state.camppedagio, 
             embarque_latitude: this.state.embarque_latitude, 
             embarque_longitude: this.state.embarque_longitude, 
             desembarque_latitude: this.state.desembarque_latitude, 
@@ -3276,6 +3517,7 @@ debugger
           data_servico: moment( this.state.campdata_servico, "DD MM YYYY"),
           telefone_passageiro: this.state.campTelefone1,
           quantidade_passageiro:this.state.campqtdpassageiro,   
+          valor_pedagio: this.state.camppedagio, 
           estado_selecionado_mapa: this.state.estado_selecionado_mapa,                           
           quantidade_diarias: this.state.campqtddiarias, 
           distancia_value: this.state.campdistancia, 
@@ -3342,7 +3584,7 @@ debugger
             quantidade_passageiro:this.state.campqtdpassageiro,                              
             quantidade_diarias: this.state.campqtddiarias, 
             hora_inicial: this.state.camphora_inicial,  
-            hora_final: this.state.camphora_final,  
+            hora_final: this.state.camphora_final,           
             distancia_value: this.state.campdistancia, 
             tempo_value: this.state.camptempovalue,
             km_translado: this.state.campdistancia, 
@@ -3702,13 +3944,14 @@ obtendo_distancia_rota_nova = () => {
          // alert(`embarque lat e longetude ${embarque_longitude} ${embarque_latitude} `);
          // alert(`desembarque lat e longetude ${ desembarque_longitude } ${desembarque_latitude} `); 
             
-         this.verificar_pedagio();       
+      this.verificar_pedagio();       
    
          // alert('pedagio sendo usado');
-        /*  this.setState({     
+     /*     this.setState({     
              camppedagio: '0.00',           
              estado_selecionado_mapa: 'RJ'
           }); */
+          
             
 
              var origem = this.state.camplocalembarque;
@@ -3717,7 +3960,7 @@ obtendo_distancia_rota_nova = () => {
                 obter_rota_nova: false,
              });
          
-             async function CalculaDistancia(origem, destino) {
+             function CalculaDistancia(origem, destino) {
                return new Promise(function(resolve, reject) {
                  var service = new window.google.maps.DistanceMatrixService();
                  debugger
@@ -3734,8 +3977,7 @@ obtendo_distancia_rota_nova = () => {
                    }
                  }); 
                });
-             }
-                                                       
+             }                                                       
              CalculaDistancia(origem, destino)
                .then(function(response) {
                
@@ -4148,10 +4390,66 @@ selecione_tipo_servico_alteracao(index) {
   async getServico_selecionado() {
     return await api.get(`/servicos/get/${sessionStorage.getItem('logServicoIncluido')}`);
   }
+
+  calcular_tempo_falta_servico(data) {
+  //  alert(` calcula tempo - ${data.data_servico} ${data.hora_inicial}`); 
+     const dateT = dateFormat(`${data.data_servico} ${data.hora_inicial}`, "dd/mm/yyyy HH:MM:ss")
+
+    // alert(' Data e hora servico - '+dateT);
+
+    const data_dezoito_horas_menos = moment(dateT, "DD/MM/YYYY HH:mm:ss").subtract(18, "hours");
+    //data_dezoito_horas_menos.subtract(18, "hours");  
+
+  // alert(` data_dezoito_horas_menos - ${data_dezoito_horas_menos}`); 
+    
+    return data_dezoito_horas_menos.format("DD/MM/YYYY HH:mm:ss");
+
+  }
   
+  controle_inf_bolas(data) {   
+    debugger
+      
+     if (data.motorista_alocado == true) {
+        return (
+          <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista(data)} /> 
+         )
+     } else if (data.motorista_alocado == false) {
+
+      const tempo_falte_servico = this.calcular_tempo_falta_servico(data);
+
+      //alert(` tempo_falte_servico - ${tempo_falte_servico}`); 
+
+      var data_hora_atual = moment(new Date(), "DD/MM/YYYY HH:MM:ss");
+
+      data_hora_atual = data_hora_atual.format("DD/MM/YYYY HH:mm:ss");
+     
+      //alert(` data_hora_atual - ${data_hora_atual}`); 
+ 
+      // alert(` periodo ${data_hora_atual} >= ${tempo_falte_servico} `);
+
+      if (data_hora_atual >= tempo_falte_servico ) {
+       
+        return (
+          <img src='/bolinha_vermelha.gif' style={{ width: '20px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista(data)} /> 
+         )       
+            
+      } else { 
+        return (
+          <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista(data)}  />  
+        )
+       
+      }  
+      
+    }
+       
+  
+  }
+
   async substituir_motorista() {
 
    // alert(this.state.servico_motorista);
+
+   if (this.state.camptipoEventoId == 2) {
     
     debugger
     api.get(`/motorista_servico/getServico/${this.state.servico_motorista}`)
@@ -4182,6 +4480,7 @@ selecione_tipo_servico_alteracao(index) {
         })
       }  
     })
+  }
 
   } 
   
@@ -4220,6 +4519,16 @@ selecione_tipo_servico_alteracao(index) {
     })     
           
   }
+
+  verifica_acao_reenvio(row) {
+ // alert('teste 1'+row.motorista_alocado)
+    if (row.motorista_alocado == true) {
+       return ( true )
+    } else if ( row.tipoEventoId == 1 && row.servico_pai_id !== 0) {
+      return ( true )
+    }
+  }
+
   render()
   {
     //const [value1, setValue1] = useState(null);
@@ -4289,6 +4598,7 @@ selecione_tipo_servico_alteracao(index) {
             <Tab label="Ativos" value="1" className="tabs_titulo_lista"/>          
             <Tab label="Finalizados" value="2" className="tabs_titulo_lista_2"/>          
             <Tab label="Excluídos" value="3" className="tabs_titulo_lista_2"/>          
+            <Tab label="Histórico" value="4" className="tabs_titulo_lista_2"/>   
           </TabList>
         </AppBar>
         
@@ -4301,17 +4611,18 @@ selecione_tipo_servico_alteracao(index) {
                             columns={[
                               { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
                               { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
-                              { title: '', field: 'tipoEventoId', width: '5px', minWidth: '5px', maxWidth: '5px', align:"center", 
-                            cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? rowData.tipoEventoId == 1 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : '' : ''},                 
+                              { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
+                              { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final == '00:00:00' ? '' : rowData.hora_final.substring(0,5) },  
+                              { title: '', field: 'tipoEventoId', width: '15px', minWidth: '15px', maxWidth: '15px',  
+                            cellStyle:{ fontSize: 10, Width: '15px'}, render: rowData => rowData.servico_pai_id == 0 ? rowData.tipoEventoId == 1 ? <div style={{fontSize: 10, width: 15}}>{rowData.quantidade_diarias}</div> : '' : ''},                 
                               { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
                               cellStyle:{ fontSize: 10, width: 50}, render: rowData => rowData.tipoEventoId == 1 ? 
                               <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px', width: 50 }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px', width: 50}}>Translado</div> },                              
                               { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px' },    
                               { title: 'Veículo', field: 'tipoTransporte', width: '150px', minWidth: '150px', maxWidth: '150px',  render: rowData => rowData.tipoTransporte.substring(0,30)  },
                               { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '180px', minWidth: '180px', maxWidth: '180px',  render: rowData => rowData.nome_passageiro.substring(0,30)  },
-                              { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
-                              { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
-                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final == '00:00:00' ? '' : rowData.hora_final.substring(0,5) },                                                                
+                                                                                            
                             /*  { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },      */                                                                            
                               { title: 'Distância', field: 'km_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },                                                                                  
                               { title: 'Tempo', field: 'tempo_translado', width: '80px', minWidth: '80px', maxWidth: '80px', align: 'right' },
@@ -4320,7 +4631,7 @@ selecione_tipo_servico_alteracao(index) {
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },   
                               { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
                               cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
-                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => rowData.motorista_alocado == true ?  <img src='/bola-verde.png' style={{ width: '20px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista(rowData)} />  : <img src='/bola-cinza.jpg' style={{ width: '30px', height: '20px' }} onClick={()=>this.handleOpenModalMotorista(rowData)}  /> },
+                              { title: 'Alocado', field: '', width: '50px', minWidth: '50px', maxWidth: '50px', align: 'center', render: rowData => this.controle_inf_bolas(rowData) },
                      
                               { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                              
                              },            
@@ -4354,7 +4665,7 @@ selecione_tipo_servico_alteracao(index) {
                                 actions: 'Ação',
                               },
                             }}    
-                            parentChildData={(row, rows) => rows.find(a => a.id === row.servico_pai_id) }
+                        //    parentChildData={(row, rows) => rows.find(a => a.id === row.servico_pai_id) }
                             
                           /*  detailPanel={[
                               {
@@ -4392,7 +4703,7 @@ selecione_tipo_servico_alteracao(index) {
                                 tooltip: 'Reenviar Serviços',
                                 onClick: (event, rowData) => rowData.motorista_alocado == false ? this.reenvio_motoristas(rowData) : '',
                                 //disabled: (rowData) => rowData.motorista_alocado === true ? true : false,
-                                disabled: rowData.motorista_alocado == true
+                                disabled: this.verifica_acao_reenvio(rowData)
                               }),
                              
                               {             
@@ -4607,7 +4918,7 @@ selecione_tipo_servico_alteracao(index) {
                               //WebkitOverflowScrolling: 'hidden',
                              // tableLayout: 'fixed',
                               exportButton: { pdf: true },          
-                              actionsColumnIndex: 16,
+                              actionsColumnIndex: 17,
                              // pageSize: 9,
                              // pageSizeOptions: [0],                     
                             }}           
@@ -4622,6 +4933,101 @@ selecione_tipo_servico_alteracao(index) {
                           />      
                 </div>    
         </TabPanel>      
+        <TabPanel value="4" className="tirar_espaco">
+           <div>
+                        <MaterialTable          
+                            title=""
+                            columns={[
+                              { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
+                              { title: 'Dt Exclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                              { title: 'Dt Inclusão', field: 'createdAt', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.createdAt, "UTC:dd/mm/yyyy") },
+                               { title: 'Responsável exclusão', field: 'nome_responsavel', width: '153px', minWidth: '153px', maxWidth: '153px', render: rowData => rowData.nome_responsavel !== null ? rowData.nome_responsavel.substr(0,22): ''  },
+                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                            cellStyle:{ fontSize: 10}, render: rowData => rowData.servico_pai_id == 0 ? <div style={{fontSize: 10}}>{rowData.quantidade_diarias}</div> : ''}, 
+                
+                              { title: '', field: 'tipoEventoId', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.tipoEventoId == 1 ? 
+                              <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
+                              { title: '', field: '', width: '5px', minWidth: '5px', maxWidth: '5px', align: 'center' },   
+                              { title: 'Nome do Passageiro', field: 'nome_passageiro', width: '170px', minWidth: '170px', maxWidth: '170px', render: rowData => rowData.nome_passageiro.substr(0,22) },
+                              { title: 'Dt Serviço', field: 'data_servico', width: '90px', minWidth: '90px', maxWidth: '90px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
+                              { title: 'Hr ini', field: 'hora_inicial', width: '60px', minWidth: '60px', maxWidth: '60px',  render: rowData => rowData.hora_inicial.substring(0,5) },       
+                              { title: 'Hr Fim', field: 'hora_final', width: '70px', minWidth: '70px', maxWidth: '70px',  render: rowData => rowData.hora_final == '00:00:00' ? '' : rowData.hora_final.substring(0,5) },                                                                  
+                              { title: 'Passageiros', field: 'quantidade_passageiro', width: '60px', minWidth: '60px', maxWidth: '60px', align: 'center' },                                                                                  
+                              { title: 'Distância', field: 'km_translado', width: '70px', minWidth: '70px', maxWidth: '70px', align: 'right' },                                                                                  
+                              { title: 'Tempo', field: 'tempo_translado', width: '70px', minWidth: '70px', maxWidth: '70px', align: 'right' },
+                              { title: 'Valor Total', field: 'valor_estimado', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'right', render: rowData => valorMask(rowData.valor_estimado) },   
+                             
+                              { title: '', field: 'motorista_bilingue', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
+                           
+                              { title: '', field: 'motorista_receptivo', width: '45px', minWidth: '45px', maxWidth: '45px', align:"center", 
+                              cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
+                           
+                              { title: '', field: '',  lookup: { 1: 'sadas', 2: 'asdas' },                                 
+                             },                 
+                            ]}
+                            data={this.state.listaServicoHistorico}   
+                            localization={{
+                              body: {
+                                emptyDataSourceMessage: 'Nenhum registro para exibir',
+                                addTooltip: 'Adicionar Valores Tarifários',
+                                deleteTooltip: 'Deletar',
+                                editTooltip: 'Editar',
+                                editRow: {
+                                   deleteText: 'Deseja realmente deletar esta linha ?',
+                                   cancelTooltip: 'Cancelar',
+                                   saveTooltip: 'Salvar',
+                                }
+                              },
+                              toolbar: {
+                                searchTooltip: 'Pesquisar',
+                                searchPlaceholder: 'Buscar Serviço',        
+                              },
+                              pagination: {
+                                labelRowsSelect: 'linhas',
+                                labelDisplayedRows: '{count} de {from}-{to}',
+                                firstTooltip: 'Primeira página',
+                                previousTooltip: 'Página anterior',
+                                nextTooltip: 'Próxima página',
+                                lastTooltip: 'Última página'
+                              },
+                              header: {
+                                actions: 'Ação',
+                              },
+                            }}   
+
+                           // parentChildData={(row, rows) => rows.find(a => a.id === row.servico_pai_id) }   
+                            
+                            options={{                             
+                              rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                              searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
+                              //paginationPosition: 'bottom',  
+                              searchFieldAlignment: 'left', 
+                              exportAllData: true,
+                              exportFileName: 'Rel_servicos_ativos',
+                              search: true,     
+                              searchFieldVariant: 'outlined', 
+                              toolbarButtonAlignment: 'right',           
+                              paging: false,          
+                              maxBodyHeight: '50vh',
+                              minBodyHeight: '50vh',      
+                              padding: 'dense',   
+                              overflowY: 'scroll',     
+                              //overflowY: 'scroll',
+                              //overflowX: 'hidden',
+                              //WebkitOverflowScrolling: 'hidden',
+                             // tableLayout: 'fixed',
+                              exportButton: { pdf: true },          
+                              actionsColumnIndex: 16,
+                             // pageSize: 9,
+                             // pageSizeOptions: [0],                     
+                            }}           
+                                           
+                            
+                          />      
+                </div>    
+        </TabPanel>  
       </TabContext>        
       
    </div> 
@@ -7759,6 +8165,7 @@ selecione_tipo_servico_alteracao(index) {
       camp_foto_url: '',
       servico_motorista: data.id,
       campmotoristaalocado: data.motorista_alocado,
+      camptipoEventoId: data.tipoEventoId,
       campCor: '',
       campModelo: '',   
       campPlaca: '',   
@@ -7797,7 +8204,8 @@ selecione_tipo_servico_alteracao(index) {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadTarifa '+ error);
+    
     })
   }   
 
@@ -7812,7 +8220,7 @@ selecione_tipo_servico_alteracao(index) {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadDiarias '+ error);
     })
   }   
 
@@ -7826,7 +8234,7 @@ selecione_tipo_servico_alteracao(index) {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadDiariaespecial '+ error);
     })
   }  
 
@@ -8014,6 +8422,10 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
    if (campdistancia_inicio < 1) {
      campdistancia_inicio = 1
    }
+    if (camptempovalue_global < 1) {
+      camptempovalue_global = 1
+    }
+
     let camptempovalue = camptempovalue_global;
     if (camptempovalue === 0) {
       camptempovalue = this.state.camptempovalue         
@@ -8640,7 +9052,7 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
       }
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadCartaoCliente '+ error);
     })
   
    }   
@@ -8784,7 +9196,7 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
       }     
     })
     .catch(error=>{
-      alert("Error server "+error)
+      console.log('loadTipoTransporte '+ error);
     })
 
   }   
@@ -9405,7 +9817,8 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
       }
      })
      .catch ( error => {
-       alert("Error servicos/getEventoPai/ "+error)
+      console.log('atualiza_pai_delecao '+ error);
+     
      })   
   }
 
@@ -9438,7 +9851,7 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
          }    
        })
        .catch ( error => {
-         alert("Error servicos/deletePaieFilhos/ "+error)
+        console.log('deletar_servicos '+ error);
        })
 
       } else {
@@ -9471,7 +9884,7 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
              }    
            })
            .catch ( error => {
-             alert("Error servicos/deletePaieFilhos/"+error)
+            console.log('deletar_servicos '+ error);
            })
           
          }   
@@ -9500,7 +9913,7 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
     }    
    })
    .catch ( error => {
-     alert("Error servicos/delete/ "+error)
+    console.log('error '+ error);
    })
 
    }  
@@ -9554,7 +9967,8 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
       valor_pedagio: servicos[0].valor_pedagio,
       logid: servicos[0].logid,
       servico_pai_id: servicos[0].servico_pai_id,
-      perfilId: servicos[0].perfilId,               
+      perfilId: servicos[0].perfilId,   
+      data_exclusao: moment(new Date(), "DD MM YYYY"),             
     }  
     debugger;
 
@@ -9586,7 +10000,7 @@ if (valor_total !== "" && this.state.valor_bilingue !== "") {
           });
                
         }).catch ( error => {
-          alert("Error servicos/get ")
+          console.log('criar_historico '+ error);
         });
 
       }        
@@ -9644,22 +10058,104 @@ sendDelete(userId, eventoId){
 
     } 
 
-    api.delete(`/motorista_servico/delete/${this.state.campDeletarId}`)
-    .then(respdelecao=>{
+    if (this.state.camptipoevento == 2) {
 
-    if (respdelecao.data.success == true) { 
-     
-        const motorista_alocado = {
-          motorista_alocado: false,  
-        } 
+        api.delete(`/motorista_servico/delete/${this.state.campDeletarId}`)
+        .then(respdelecao=>{
 
-        api.put(`/servicos/update/${this.state.campDeletarId}`, motorista_alocado);  
-    
-    }
-  })
-} 
+          if (respdelecao.data.success == true) { 
+          
+              const motorista_alocado = {
+                motorista_alocado: false,  
+              } 
 
-api.delete(`/envioservicoMotorista/delete/${this.state.campDeletarId}`); 
+              api.put(`/servicos/update/${this.state.campDeletarId}`, motorista_alocado);  
+          
+          }
+        })
+    } else if (this.state.camptipoevento == 1) {
+
+       if (this.state.verificaPai == 0) {
+
+          api.delete(`/motorista_servico/delete/${this.state.campDeletarId}`)
+          .then(respdelecao=>{
+
+            if (respdelecao.data.success == true) { 
+            
+                const motorista_alocado = {
+                  motorista_alocado: false,  
+                } 
+
+                api.put(`/servicos/update/${this.state.campDeletarId}`, motorista_alocado);  
+            
+            }
+          })
+
+          api.get(`/servicos/busca_filho/${this.state.campDeletarId}/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
+          .then(response=>{
+                  
+          if (response.data.success==true) {  
+            
+                var filhos = response.data.data
+                api.delete(`/motorista_servico/delete/${filhos.id}`)
+                .then(respdelecao=>{
+
+                  if (respdelecao.data.success == true) { 
+                  
+                      const motorista_alocado = {
+                        motorista_alocado: false,  
+                      } 
+
+                      api.put(`/servicos/update/${filhos.id}`, motorista_alocado);  
+                  
+                  }
+                })
+
+          }
+
+          })
+
+      } else {
+
+        api.delete(`/motorista_servico/delete/${this.state.campDeletarId}`)
+        .then(respdelecao=>{
+
+          if (respdelecao.data.success == true) { 
+          
+              const motorista_alocado = {
+                motorista_alocado: false, 
+              
+              } 
+
+              api.put(`/servicos/update/${this.state.campDeletarId}`, motorista_alocado);  
+
+            //  quantidade_diarias: this.state.quantidade_diarias - 1
+
+            api.get(`/servicos/get/${this.state.campDeletarId}`)
+            .then(res =>{
+
+              if (res.data.success == true) {
+
+                const motorista_alterado = {
+                   quantidade_diarias: this.state.quantidade_diarias - 1
+                } 
+  
+                api.put(`/servicos/update/${this.state.campDeletarId}`, motorista_alterado);  
+  
+              }
+              
+            });   
+              
+          
+          }
+        })
+
+      }
+    }  
+ 
+}
+
+
 
 debugger;
 api.get(`/servicos/get/${userId}`)

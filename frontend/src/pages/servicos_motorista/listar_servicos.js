@@ -34,6 +34,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 //import Menu_cliente_individual from '../cliente/menu_cliente_individual';
 import Menu_motorista from '../motorista/menu_motorista';
+import Menu_motorista_preferido from '../motorista_preferido/menu_motorista_preferido';
 import Menu from '../../pages/cabecalho' ;
 import { celularMask } from '../formatacao/celularmask';
 import Menu_administrador from '../administrador/menu_administrador';
@@ -516,6 +517,7 @@ class listaservicosComponent extends React.Component  {
       listaMotoristasPreferencial:[],
       listaServicoAceito:[],
       listaMotivos:[],
+      listaServicoHistorico:[],
       erro_tipo: false,      
       embarque_latitude: '',
       embarque_longitude: '',
@@ -551,14 +553,15 @@ class listaservicosComponent extends React.Component  {
 
      this.loadlistServicosNovos();
      this.loadlistServicosAtivos(); 
+     this.loadlistServicosHistorico();
   }
 
   loadlistServicosNovos(){    
-    api.get(`/envioservicoMotorista/list/${sessionStorage.getItem('logid')}`)
+    api.get(`/envioservicoMotorista/list/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {       
 
-         const data = res.data.data    
+         const data = res.data.data   
          this.setState({
            listservicoseventos:data,
            loading: false,
@@ -566,19 +569,37 @@ class listaservicosComponent extends React.Component  {
        } 
      })
      .catch(error=>{
-      console.log('loadlistServicosNovos'+error) 
+       
+       console.log('loadlistServicosNovos'+error) 
        
      })
    }
 
    loadlistServicosAtivos(){    
-    api.get(`/motorista_servico/getMotoristaServicoAtivos/${sessionStorage.getItem('logid')}`)
+    api.get(`/motorista_servico/getMotoristaServicoAtivos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
      .then(res=>{
        if (res.data.success == true) {       
 
          const data = res.data.data    
          this.setState({
            listaServicoAceito:data,
+           loading: false,
+          })
+       }
+     })
+     .catch(error=>{
+      console.log('loadlistServicos'+error) 
+    
+     })
+   }
+   loadlistServicosHistorico(){    
+    api.get(`/finalizadosServicos/listaservicos/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)
+     .then(res=>{
+       if (res.data.success == true) {       
+
+         const data = res.data.data    
+         this.setState({
+           listaServicoHistorico:data,
            loading: false,
           })
        }
@@ -614,6 +635,7 @@ class listaservicosComponent extends React.Component  {
       this.loadlistServicosNovos();
     //} else {
       this.loadlistServicosAtivos(); 
+      this.loadlistServicosHistorico();
    // } 
    
   
@@ -629,44 +651,108 @@ class listaservicosComponent extends React.Component  {
 
    async cancelar_servico(row) {
      debugger
+   if (row.servico.tipoEventoId == 2) {
 
+    // alert(this.state.campmotivoId);
      if (this.state.campmotivoId !== 0) {
       // var servico_id = servicoId;
-        //var motorista_cancelado = row.motorista_id;  
-        sessionStorage.setItem('motorista_cancelado', row.motoristaId);
+
+     //  api.get(`/mensagens_motorista/get/${this.state.campmotivoId}`)
+      // .then(motivo_cancelamento=>{
+     
+     //   if (motivo_cancelamento.data.success == true) {         
+          //var motorista_cancelado = row.motorista_id;  
+          sessionStorage.setItem('motorista_cancelado', row.motoristaId);      
+
+          const datapost_cancelamento = {     
+            eventoId: row.servico.eventoId,
+            tipoEventoId: row.servico.tipoEventoId,      
+            tipoTransporte: row.servico.tipoTransporte,
+            nome_passageiro: row.servico.nome_passageiro, 
+            telefone_passageiro: row.servico.telefone_passageiro,
+            quantidade_passageiro: row.servico.quantidade_passageiro,  
+            data_servico: row.servico.data_servico,
+            quantidade_diarias: row.servico.quantidade_diarias, 
+            hora_inicial: row.servico.hora_inicial,  
+            hora_final: row.servico.hora_final,  
+            local_embarque: row.servico.local_embarque, 
+            local_desembarque: row.servico.local_desembarque, 
+            embarque_latitude: row.servico.embarque_latitude, 
+            embarque_longitude: row.servico.embarque_longitude, 
+            desembarque_latitude: row.servico.desembarque_latitude, 
+            desembarque_longitude: row.servico.desembarque_longitude, 
+            distancia_value: row.servico.distancia_value, 
+            tempo_value: row.servico.tempo_value,
+            valor_bilingue: row.servico.valor_bilingue,
+            valor_receptivo: row.servico.valor_receptivo,    
+            companhia_aerea: row.servico.companhia_aerea,
+            numero_voo: row.servico.numero_voo, 
+            motorista_bilingue: row.servico.motorista_bilingue, 
+            motorista_receptivo: row.servico.motorista_receptivo, 
+            motorista_id: row.motoristaId,   
+            perfil_motorista: row.motorista_perfil,
+            nome_responsavel: sessionStorage.getItem('lognome'), 
+            motivo_cancelamento: this.state.campmotivoId,
+            km_translado: row.servico.km_translado, 
+            tempo_translado: row.servico.tempo_translado,
+            cartaoId: row.servico.cartaoId,        
+            valor_estimado: row.servico.valor_estimado,    
+            valor_oser: row.servico.valor_oser,
+            valor_motorista: row.servico.valor_motorista,       
+            logid: row.servico.logid,
+            perfilId: row.servico.perfilId,    
+            valor_pedagio: row.servico.valor_pedagio              
+            } 
+
+          //salvar o registro no Finalizados 
+            console.log('finalizadosServicos - '+JSON.stringify(datapost_cancelamento, null, "    ")); 
+            api.post(`/finalizadosServicos/create`, datapost_cancelamento)
+            .then(res=>{
+              if (res.data.success == true) {       
       
-        const respdelecao = await api.delete(`/motorista_servico/delete/${row.servico.id}`);
+                api.delete(`/motorista_servico/delete/${row.servico.id}`);
 
-          if (respdelecao.data.success == true) { 
+               // if (respdelecao.data.success == true) { 
+                    
+                  //  this.loadlistServicosAtivos(); 
+      
+                    const motorista_alocado = {
+                      motorista_alocado: false,  
+                    } 
+      
+                    api.put(`/servicos/update/${row.servico.id}`, motorista_alocado);
+          
+                      
+                      this.loadlistServicosNovos();   
+                      this.handleCloseModalMotivo();              
+                                  
+                    
+                    this.procurar_motorista_servico(row.servico,'CANCELAMENTO');
+                        // this.refreshPage();
+                      // }
+            //    }
               
-               this.loadlistServicosAtivos(); 
+              }               
+              
+            })
+          // 
+          
+       // }        
+     
+    } else {
+      this.setState({                
+        mensagem_usuario: 'Favor selecionar o motivo do cancelamento'
+      });
 
-              const motorista_alocado = {
-                motorista_alocado: false,  
-              } 
+      this.envia_mensagemClick();  
+    }
+        
+   } else {
 
-              api.put(`/servicos/update/${row.servico.id}`, motorista_alocado);
-            
-            ///  const respservico = await api.get(`/servicos/get/${row.servico.id}`)
-            
-            
-                // if (respservico.data.success == true) { 
-                
-                this.loadlistServicosNovos();   
-                this.handleCloseModalMotivo();              
-                            
-                this.procurar_motorista_servico(row.servico,'CANCELAMENTO');
-                  // this.refreshPage();
-                // }
-          }
-      } else {
-        this.setState({                
-          mensagem_usuario: 'Favor selecionar o motivo do cancelamento'
-        });
+      // diaria 
 
-        this.envia_mensagemClick();  
-      }     
    }
+  }
 
    async procurar_motorista_servico(servico, tipo_solicitacao) { 
     // tipo_solicitacao: inclusao, alteracao / reenvio 
@@ -832,6 +918,17 @@ class listaservicosComponent extends React.Component  {
               debugger;
               if (respMotorista.data.success == true) {  
 
+                /*                 
+                  api.get(`/finalizadosServicos/listaservicosEmpresarial/${sessionStorage.getItem('logid')}/${sessionStorage.getItem('logperfil')}`)                    
+                  .then(respMotorista=>{
+        
+                 
+                    if (respMotorista.data.success == true) {  
+                      
+                    }
+                  })   
+                  
+                  */
 
                   debugger      
                   total_motorista = respMotorista.data.data.length;
@@ -878,13 +975,13 @@ class listaservicosComponent extends React.Component  {
                                           //    this.finalizando_processo_busca();
 
                                       } else {
-                                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                          this.verifica_veiculo_motorista_selecionados(mot, tipoTransporte, servico);
                                       }                                                           
                             } else {
 
                                 debugger
                               //  motorista_incluido = motorista_incluido + 1;
-                                this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                this.verifica_veiculo_motorista_selecionados(mot, tipoTransporte, servico);
 
                             }     
 
@@ -930,13 +1027,13 @@ class listaservicosComponent extends React.Component  {
                                                     //    this.finalizando_processo_busca();
           
                                                 } else {
-                                                    this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                                    this.verifica_veiculo_motorista_selecionados(mot, tipoTransporte, servico);
                                                 }                                                           
                                       } else {
           
                                           debugger
                                         //  motorista_incluido = motorista_incluido + 1;
-                                          this.verifica_veiculo_motorista_selecionados(mot.id, tipoTransporte, servico);
+                                          this.verifica_veiculo_motorista_selecionados(mot, tipoTransporte, servico);
           
                                       }     
                                     })
@@ -965,14 +1062,14 @@ class listaservicosComponent extends React.Component  {
      
   } 
   
-  async verifica_veiculo_motorista_selecionados(motorista_id, tipoTransporte, servico){
+  async verifica_veiculo_motorista_selecionados(motorista, tipoTransporte, servico){
     debugger
     motorista_incluido = motorista_incluido + 1;
 
     debugger;  
     //verificar se o motorista tem o veiculo selecionado 
     //console.log(`/veiculo/getVeiculoSelecionado/${motoristas.id}/${tipoTransporte}`);   
-    const respveiculo = await api.get(`/motorista/getMotVeiculoTipo/${motorista_id}/${tipoTransporte}`)                    
+    const respveiculo = await api.get(`/motorista/getMotVeiculoTipo/${motorista.id}/${tipoTransporte}`)                    
    // .then(respveiculo=>{   
 
       debugger;   
@@ -984,7 +1081,11 @@ class listaservicosComponent extends React.Component  {
           data_servico: servico.data_servico,        
           hora_inicial: servico.hora_inicial,           
           local_embarque: servico.local_embarque,          
-          motorista_id: motorista_id   
+          motorista_id: motorista.id,
+          motorista_perfil: motorista.perfilId,
+          servico_pai_id: servico.servico_pai_id,
+          perfilId: sessionStorage.getItem('logid'),
+          empresaId: sessionStorage.getItem('logperfil')
         }  
         api.post('/envioservicoMotorista/create',datapost_motorista);            
                   
@@ -1005,6 +1106,9 @@ class listaservicosComponent extends React.Component  {
       var data_servico_ini = row.data_servico;
       var hora_servico = row.hora_inicial;
       var tiposervico = row.tipoEventoId;
+      var perfilId = row.perfilId;
+      var motorista_perfil = row.motorista_perfil
+      var empresaId = row.empresaId
 
       hora_servico = hora_servico.substring(0,5);     
       
@@ -1031,7 +1135,7 @@ class listaservicosComponent extends React.Component  {
     
       var hora_menor_tres = data_tres_horas_menos.format("HH:mm");    
      
-   // if (tiposervico === 2) {
+     if (tiposervico === 2) {
 
           debugger;
           const motorista_alocado = {
@@ -1046,6 +1150,7 @@ class listaservicosComponent extends React.Component  {
             motoristaId: motorista_id,              
             servicoId: servico_id,
             statusId: 1,
+            motorista_perfil: motorista_perfil
           //  motoristumId: motorista_id,
           }    
       
@@ -1053,12 +1158,59 @@ class listaservicosComponent extends React.Component  {
         //  console.log(' motorista_servico - '+JSON.stringify(datapost, null, "    "))  
           api.post(`/motorista_servico/create`, datapost);
 
-  /*    } else if (tiposervico === 1) {
+     } else if (tiposervico === 1) {
 
-        /busca_filho/:eventoid/:id/:perfilId
+      debugger
+
+        const motorista_alocado = {
+          motorista_alocado: true,  
+        } 
+        api.put(`/servicos/update/${servico_id}`, motorista_alocado);
+    
+        //excluir os servicos enviados aos motoristas 
+        api.delete(`/envioservicoMotorista/delete_servico/${servico_id}`);
+    
+        const datapost = {
+          motoristaId: motorista_id,              
+          servicoId: servico_id,
+          statusId: 1,
+          motorista_perfil: motorista_perfil
+        //  motoristumId: motorista_id,
+        }    
+    
+        debugger;
+      //  console.log(' motorista_servico - '+JSON.stringify(datapost, null, "    "))  
+        api.post(`/motorista_servico/create`, datapost);
+
+
+       const respfilhos = await api.get(`/servicos/busca_filho/${servico_id}/${perfilId}/${empresaId}`)
+      
+       var sel_filhos = respfilhos.data.data;
+       sel_filhos.map((filhos)=>{   
+
+           debugger;
+            const motorista_alocado = {
+              motorista_alocado: true,  
+            } 
+            api.put(`/servicos/update/${filhos.id}`, motorista_alocado);
+        
+            //excluir os servicos enviados aos motoristas 
+            api.delete(`/envioservicoMotorista/delete_servico/${filhos.id}`);
+        
+            const datapost = {
+              motoristaId: motorista_id,              
+              servicoId: filhos.id,
+              statusId: 1,
+              motorista_perfil: motorista_perfil       
+            }    
+       
+          //  console.log(' motorista_servico - '+JSON.stringify(datapost, null, "    "))  
+            api.post(`/motorista_servico/create`, datapost);
+        })
+       
 
       }
-  */
+  
      //verificar se possui algum outro servico no intervalo de 3 horas a mais ou a menos 
      // se tiver excluir da tabela envioservicoMotorista
       const respservico = await api.get(`/envioservicoMotorista/getMotorista/${motorista_id}`)                  
@@ -1110,7 +1262,12 @@ class listaservicosComponent extends React.Component  {
             <Menu_motorista />                
          </div>   
        ); 
-  
+    } else if (this.state.perfil == 10) {
+        return ( 
+          <div>
+              <Menu_motorista_preferido />                
+           </div>   
+         ); 
     } else if (this.state.perfil == null){
         return (
           <Menu />
@@ -1189,7 +1346,8 @@ componentWillUnmount() {
     <AppBar position="static" color="transparent">
       <TabList onChange={this.opcao_tabChange} aria-label="simple tabs example">
         <Tab label="Novos" value="1" className="tabs_titulo_lista"/>          
-        <Tab label="Ativos" value="2" className="tabs_titulo_lista_2"/>                 
+        <Tab label="Ativos" value="2" className="tabs_titulo_lista_2"/>  
+        <Tab label="Histórico" value="3" className="tabs_titulo_lista_2"/>                   
       </TabList>
     </AppBar>
     
@@ -1357,7 +1515,7 @@ componentWillUnmount() {
                             actions: 'Ação',
                           },
                         }}    
-                        parentChildData={(row, rows) => rows.find(a => a.servico.id === row.servico.servico_pai_id) }    
+                     //   parentChildData={(row, rows) => rows.find(a => a.servico.id === row.servico.servico_pai_id) }    
                         options={{                             
                           rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
                           searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
@@ -1407,7 +1565,95 @@ componentWillUnmount() {
                       />                              
                        
             </div>    
-        </TabPanel>               
+        </TabPanel>         
+        <TabPanel value="3" className="tirar_espaco">
+       <div>
+                    <MaterialTable          
+                        title=""
+                        columns={[
+                          { title: '', field: '', width: '55px', minWidth: '55px', maxWidth: '55px' }, 
+                          { title: 'Dt Serviço', field: 'data_servico', width: '100px', minWidth: '100px', maxWidth: '100px', render: rowData => dateFormat(rowData.data_servico, "UTC:dd/mm/yyyy") },
+                          { title: 'Hr Serviço', field: 'hora_inicial', width: '110px', minWidth: '110px', maxWidth: '110px',  render: rowData => rowData.hora_inicial.substring(0,5) }, 
+                                         
+                          { title: '', field: 'tipoEventoId', width: '70px', minWidth: '70px', maxWidth: '70px',
+                          cellStyle:{ fontSize: 10, textAlign: "center"}, render: rowData => rowData.tipoEventoId == 1 ? 
+                          <div style={{fontSize: 10, backgroundColor: '#FF964F', color: '#FDFDFE', borderRadius: '50px' }}>Diária</div> : <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '50px' }}>Translado</div> },                              
+                          { title: '', field: '', width: '10px', minWidth: '10px', maxWidth: '10px'},  
+                          { title: 'Nome Passageiro', field: 'nome_passageiro', width: '160px', minWidth: '160px', maxWidth: '160px' },
+                          { title: 'Qtd Pass', field: 'quantidade_passageiro', width: '100px', minWidth: '100px', maxWidth: '100px', align: 'center' },     
+
+                          { title: 'Origem', field: 'local_embarque', width: '230px', minWidth: '230px', maxWidth: '230px', render: rowData => rowData.local_embarque.substring(0,33)  },
+                          { title: 'Destino', field: 'local_desembarque', width: '250px', minWidth: '250px', maxWidth: '250px', render: rowData => rowData.local_desembarque.substring(0,36) },
+                                                                              
+                          { title: '', field: 'motorista_bilingue', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                          cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_bilingue == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px' }}>Bilingue</div> : "" },                               
+                          { title: '', field: '', width: '2px', minWidth: '2px', maxWidth: '2px'},  
+                          { title: '', field: 'motorista_receptivo', width: '50px', minWidth: '50px', maxWidth: '50px', align:"center", 
+                          cellStyle:{ fontSize: 10}, render: rowData => rowData.motorista_receptivo == true ? <div style={{fontSize: 10, backgroundColor: '#DCDCDC', borderRadius: '30px'}}>Receptivo</div> : "" },                                                             
+                      
+                          { title: '', field: '', lookup: { 1: 'sadas', 2: 'asdas' },                                 
+                         },                 
+                        ]}
+                        data={this.state.listaServicoHistorico}   
+                        localization={{
+                          body: {
+                            emptyDataSourceMessage: 'Nenhum registro para exibir',
+                            addTooltip: 'Adicionar Valores Tarifários',
+                            deleteTooltip: 'Deletar',
+                            editTooltip: 'Editar',
+                            editRow: {
+                               deleteText: 'Deseja realmente deletar esta linha ?',
+                               cancelTooltip: 'Cancelar',
+                               saveTooltip: 'Salvar',
+                            }
+                          },
+                          toolbar: {
+                            searchTooltip: 'Pesquisar',
+                            searchPlaceholder: 'Buscar Serviço',        
+                          },
+                          pagination: {
+                            labelRowsSelect: 'linhas',
+                            labelDisplayedRows: '{count} de {from}-{to}',
+                            firstTooltip: 'Primeira página',
+                            previousTooltip: 'Página anterior',
+                            nextTooltip: 'Próxima página',
+                            lastTooltip: 'Última página'
+                          },
+                          header: {
+                            actions: 'Ação',
+                          },
+                        }}    
+                     //   parentChildData={(row, rows) => rows.find(a => a.servico.id === row.servico.servico_pai_id) }    
+                        options={{                             
+                          rowStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "12px" },
+                          searchFieldStyle: { backgroundColor: "#fff", fontFamily: "Effra", fontSize: "16px", width: "450px", left: "16px" , color: "#0F074E"  },
+                          //paginationPosition: 'bottom',  
+                          searchFieldAlignment: 'left', 
+                          exportAllData: true,
+                          exportFileName: 'Rel_servicos_ativos',
+                          search: true,     
+                          searchFieldVariant: 'outlined', 
+                          toolbarButtonAlignment: 'right',           
+                          paging: false,          
+                          maxBodyHeight: '60vh',
+                          minBodyHeight: '60vh',      
+                          padding: 'dense',   
+                          overflowY: 'scroll',     
+                          //overflowY: 'scroll',
+                          //overflowX: 'hidden',
+                          //WebkitOverflowScrolling: 'hidden',
+                         // tableLayout: 'fixed',
+                          exportButton: { pdf: true },          
+                          actionsColumnIndex: 12,
+                         // pageSize: 9,
+                         // pageSizeOptions: [0],                     
+                        }}                  
+                      
+                        
+                      />                              
+                       
+            </div>    
+        </TabPanel>        
       </TabContext> 
 
       <ReactModal 

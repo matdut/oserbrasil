@@ -9,17 +9,16 @@ import Paper from '@material-ui/core/Paper';
 
 import api from '../../../services/api';
 import '../documentos.css';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 import Resizer from 'react-image-file-resizer';
 
 //FOTO
 import filesize from "filesize";
-import Upload from "../../UploadDocumentos";
-//import Upload from "../../UploadDocumentosModal";
+import Upload from "../../UploadDocumentosModalInclusao";
 //import FileList from "../../FilelistDocInclusao";
-import FileList from "../../FilelistDocumento";
+import FileList from "../../FilelistDocumentoModalInclusao";
 import { Container, Content } from "../../style";
 
 const andamento_cadastro = sessionStorage.getItem('logprogress');     
@@ -48,6 +47,8 @@ class empresarialComponent extends React.Component{
       foto_incluida_2: false,
       incluir_foto_1: false,    
       incluir_foto_2: false,
+      camp_foto_CNH_url: '',
+      camp_foto_CRVL_url: '',
       mensagem_foto1: '',
       mensagem_foto2: '',
       foto1State: '',          
@@ -79,19 +80,19 @@ class empresarialComponent extends React.Component{
     
     if (sessionStorage.getItem('logVeiculo') > 0) {
       this.carrega_doc_veiculo();  
-  //  } else {
+    } else {
 
-   ///   this.load_veiculo();
+      this.load_veiculo();
     }
     
   }
 
   carrega_motorista() {   
     
-
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    debugger
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
-        console.log('busca motorista doc - '+JSON.stringify(res.data, null, "    ")); 
+      //  console.log('busca motorista doc - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success == true) {
            
           this.setState({             
@@ -115,7 +116,8 @@ class empresarialComponent extends React.Component{
           
           this.setState({                   
             uploadedCNH: uploadedCNH,            
-            foto1State: 'has-success'
+            foto1State: 'has-success',
+            camp_foto_CNH_url: uploadedCNH[0].preview,
           });           
 
         }
@@ -126,14 +128,94 @@ class empresarialComponent extends React.Component{
 
   }
 
+  load_veiculo() {   
+    debugger
+    const { validate } = this.state;
+    api.get(`/veiculoMotPref/getMotoristaVeiculos/${sessionStorage.getItem('logid')}`)
+    .then(res=>{
+       // console.log(JSON.stringify(res.data, null, "    ")); 
+        if (res.data.data.length > 0) {       
+
+          const uploadedCRVL = res.data.data.map(file => ({         
+            file: ({
+              path: file.foto_CRVL_name
+            }),  
+            id: file.id,
+            name: file.foto_CRVL_name,
+            readableSize: filesize(file.foto_CRVL_size),
+            progress: 0,
+            preview: file.foto_CRVL_url,
+            uploaded: false,
+            url: file.foto_CRVL_url,
+            error: false
+          }));        
+  
+          this.setState({                   
+            uploadedCRVL: uploadedCRVL,
+            foto2State: 'has-success',
+            camp_foto_CRVL_url: uploadedCRVL[0].preview,
+          });         
+         
+
+        } 
+      })        
+      .catch(error=>{
+        alert("Error de conexão carrega_veiculo "+error)
+      })   
+    }
  
+ carrega_doc_veiculo() { 
+  api.get(`/veiculoMotPref/get/${sessionStorage.getItem('logVeiculo')}`)
+  .then(res=>{        
+    console.log('busca veiculo doc - '+JSON.stringify(res.data, null, "    ")); 
+    if (res.data.success == true) {
+
+        const uploadedCRVL = res.data.data.map(file => ({         
+          file: ({
+            path: file.foto_CRVL_name
+          }),  
+          id: file.id,
+          name: file.foto_CRVL_name,
+          readableSize: filesize(file.foto_CRVL_size),
+          progress: 0,
+          preview: file.foto_CRVL_url,
+          uploaded: false,
+          url: file.foto_CRVL_url,
+          error: false
+        }));        
+
+        this.setState({                   
+          uploadedCRVL: uploadedCRVL,
+          foto2State: 'has-success'
+        });             
+
+    }  
+         
+    })        
+    .catch(error=>{
+      alert("Error de conexão  "+error)
+    })            
+   
+
+   // this.setState({ validate })     
+
+ } 
 
 verifica_botao(inicio) {
 
-  
+  if (inicio == 1) {
+    return (
+
+      <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
+              <div className="d-flex justify-content-center">
+              <label> Próximo </label>
+              </div>     
+        </Box>           
+    );   
+  } else {
       //console.log(JSON.stringify(this.state, null, "    "));
       //  console.log(JSON.stringify(' validacao campo ', null, "    "));
-      //  if (this.state.foto1State == 'has-success' && this.state.foto2State == 'has-success') {
+        if (this.state.foto1State == 'has-success' && this.state.foto2State == 'has-success') {
 
           return (
             <Box bgcolor="error.main" color="error.contrastText" className="botoes_habilitados" p={2} onClick={()=>this.sendUpdate()}>
@@ -141,9 +223,8 @@ verifica_botao(inicio) {
             <label> Próximo </label>
             </div>     
             </Box>           
-          );   
-
-     /* } else {
+          );         
+      } else {
         return (
 
           <Box bgcolor="text.disabled" color="background.paper" className="botoes_desabilitado"  p={2}>
@@ -152,8 +233,8 @@ verifica_botao(inicio) {
                   </div>     
             </Box>           
         );   
-      }    */     
- // }  
+      }         
+  }  
   }  
 
   /*
@@ -166,7 +247,6 @@ handleDelete = async id => {
     });
  };
 */
-
 onChange = async (file) => { 
   const image = await resizeFile(file);
   return image;
@@ -185,6 +265,7 @@ getBase64(file, success) {
 async sendUpdate(){        
   //console.log('sendupdate state - '+JSON.stringify(this.state, null, "    ")); 
 
+  debugger
    if (this.state.incluir_foto_1 == true) {
     //console.log('FOTO UPLOAD 1');   
     const file = this.state.uploadedCNH[0].file;   
@@ -198,7 +279,7 @@ async sendUpdate(){
       console.log(' CNH - '+JSON.stringify(formData, null, "    ")); 
  //    formData.append("file", this.state.uploadedCNH[0].file, this.state.uploadedCNH[0].name)                  
 
-      api.put(`/motoristaAuxiliar/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
+      api.put(`/motoristaPreferido/documentoCNH/update/${sessionStorage.getItem('logid')}`, formData)
       .then(response=>{
         
             console.log('Retorno update 1'+JSON.stringify(response.data, null, "    ")); 
@@ -219,14 +300,47 @@ async sendUpdate(){
     //this.getBase64(file, onload); 
       
     } 
-          
+
+    if (this.state.incluir_foto_2 == true) {
+      const file = this.state.uploadedCRVL[0].file;
+ 
+ 
+        const formData1 = {
+          foto_url: await this.onChange(file),
+          name: this.state.uploadedCRVL[0].name
+        }
+     //   console.log(' CRVL - '+JSON.stringify(formData1, null, "    "));   
+
+     //console.log(`/veiculo/documentoCRVL/update/${sessionStorage.getItem('logVeiculo')}`); 
+      api.put(`/veiculoMotPref/documentoCRVL/update/${sessionStorage.getItem('logVeiculo')}/${sessionStorage.getItem('logid')}`, formData1)
+        .then(response=>{
+         // console.log(JSON.stringify(response.data, null, "    ")); 
+         //  console.log('Retorno update 2'+JSON.stringify(response.data, null, "    ")); 
+          if (response.data.success==true) {                          
+             this.setState({                          
+              foto_incluida_2: true
+            });
+            
+          }
+          else {
+            alert("Error conexão ")              
+          }
+        }).catch(error=>{
+          alert("Error conxao crvl - "+error)
+        })  
+
+        //}
+
+        //this.getBase64(file, onload);    
+
+      }           
 
       if (sessionStorage.getItem('logperfil') == 1) {
-        this.props.history.push(`/foto_motorista_auxiliar_incluir/`+sessionStorage.getItem('logid'));
-      } else if (sessionStorage.getItem('logperfil') == 9) {
-        this.props.history.push(`/area_motorista_auxiliar`);                   
+        this.props.history.push(`/foto_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));
+      } else if (sessionStorage.getItem('logperfil') == 10) {
+        this.props.history.push(`/area_motorista_preferido`);                   
       } else if (sessionStorage.getItem('logperfil') == 0) {
-        this.props.history.push(`/foto_motorista_auxiliar_incluir/`+sessionStorage.getItem('logid'));
+        this.props.history.push(`/foto_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));
       }          
 
 }  
@@ -255,6 +369,7 @@ handleUploadCNH = files => {
         uploadedCNH: uploadedCNH,
         incluir_foto_1: true,
         foto1State: 'has-success',
+        camp_foto_CRVL_url_url: uploadedCNH[0].preview,
         mensagem_foto1: ''
       });              
 
@@ -271,7 +386,51 @@ handleUploadCNH = files => {
  // uploadedFiles.forEach(this.processUpload);
 }
 
+handleUploadCRVL = files => {  
+  // console.log(JSON.stringify(' files - '+files[0].size, null, "    "));   
+  //console.log(JSON.stringify(' uplodfiles - '+data, null, "    "));   
 
+  this.setState({    
+    uploadedCRVL: [],
+  });  
+  console.log(JSON.stringify(' uploadedCRVL - '+this.state.uploadedCRVL[0], null, "    "));   
+
+ // if (files[0].size <= 2047335) {
+    const uploadedCRVL = files.map(file => ({
+      file,
+      //id: uniqueId(),
+      name: file.name,
+      originalname: file.originalname,
+      readableSize: filesize(file.size),
+      preview: URL.createObjectURL(file),
+      progress: 0,
+      uploaded: false,
+      error: false,
+      url: file.url
+    }));  
+    
+    this.setState({    
+      uploadedCRVL: uploadedCRVL,
+      incluir_foto_2: true,
+      foto2State: 'has-success',
+      camp_foto_CRVL_url_url: uploadedCRVL[0].preview,
+      mensagem_foto2: ''
+    });
+
+   
+     
+    this.verifica_botao(2)
+
+  /*} else {
+    this.setState({    
+      foto2State: '',
+      incluir_foto_2: false,
+      mensagem_foto2: 'Foto muito grande, favor adicionar outra '
+    });
+    this.verifica_botao(2)
+  }  */
+ 
+}
 
 verificar_menu(){
   if (sessionStorage.getItem('logperfil') == 0) {  
@@ -279,7 +438,7 @@ verificar_menu(){
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista_preferido_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -305,7 +464,7 @@ verificar_menu(){
       <div>
           <div className="d-flex justify-content-around">             
                <div className="botao_navegacao">
-                 <Link to={`/veiculo_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/veiculo_motorista_preferido_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -324,7 +483,7 @@ verificar_menu(){
           </div>                     
      </div>    
     );
-  } else if (sessionStorage.getItem('logperfil') == 9) { 
+  } else if (sessionStorage.getItem('logperfil') == 10) { 
     return(
       <div>
           <div className="d-flex justify-content-around">             
@@ -352,9 +511,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-    <menu_motorista_auxiliar />   
+     <Menu_motorista_preferido />     
    );
   }
 
@@ -362,7 +521,8 @@ verificar_menu_lateral() {
 
 render(){  
   const { uploadedCNH } = this.state;
-    
+  const { uploadedCRVL } = this.state; 
+  
 return (
 <div>    
 <div> 
@@ -378,30 +538,31 @@ return (
        {this.verificar_menu()}   
           
           <div className="d-flex flex-column">              
-              <div class="p-2">                  
+              <div className="p-2">                  
               
-                 <Grid item xs>
-                    <Paper className="documento_motorista_cnh_2">
+              <Grid item xs>
+                    <Paper className="documento_motorista_cnh_inclusao">
                        <div>
                         <div className="titulocnh"><stronger>CNH </stronger></div>                      
                         <div className="descricaocnh">Carteira Nacional de Habilitação</div>                      
-                    
+                        <Container>   
                    
-                                <div class="d-flex justify-content-start">
+                                <div className="d-flex justify-content-start">
                                    <div>
-                                
+                                   <Content>
                                       {!!uploadedCNH.length && (
                                           <FileList files={uploadedCNH} />
                                        )}
-                              
+                                    </Content>   
                                    </div>
                                    <div>
-                          
+                                     <Content>
                                          <Upload onUpload={this.handleUploadCNH} />                                       
-                                                               
+                                    </Content>                                            
                                    </div>
-                                 </div>    
-                                                 
+                                 </div>   
+
+                           </Container>                                
                             <Box bgcolor="text.disabled" color="background.paper" className="mensagem_foto1"  p={2}>
                             <div className="d-flex justify-content-center">
                             <label> {this.state.mensagem_foto1} </label>
@@ -411,7 +572,36 @@ return (
                     </Paper>
                   </Grid>
                 </div>
-                                        
+                <div className="p-2">           
+                <Grid item xs>
+                    <Paper className="documento_motorista_cnh_inclusao">
+                      <div>                       
+                        <div className="titulocrvl"><stronger>CRLV</stronger></div>
+                        <div className="descricaocrvl">Certificado de Registro e Licenciamento do Veí­culo</div>
+                        <Container>   
+            
+                                <div className="d-flex justify-content-start">
+                                   <div>
+                                   <Content>
+                                      {!!uploadedCRVL.length && (
+                                          <FileList files={uploadedCRVL} />
+                                       )}
+                                    </Content>   
+                                   </div>
+                                   <div>
+                                     <Content>
+                                         <div>
+                                            {this.state.mensagem_foto2} </div>
+                                         <Upload onUpload={this.handleUploadCRVL} />                                       
+                                     </Content>                                            
+                                   </div>
+                                 </div>                
+                          </Container>                                            
+                        
+                        </div>     
+                    </Paper>
+                  </Grid>                   
+               </div>                           
             </div>       
             {this.verifica_botao(this.state.inicio)}                                       
     </div>                 

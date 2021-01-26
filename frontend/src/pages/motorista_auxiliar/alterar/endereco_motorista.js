@@ -893,7 +893,7 @@ sendUpdate(){
      if (sessionStorage.getItem('logPendencia') == 0) {
       const data1 = {
         email: this.state.campEmail,  
-        perfilId: 3,
+        perfilId: 9,
         statusId: 16
       }          
         api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, data1)      

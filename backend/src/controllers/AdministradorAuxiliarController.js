@@ -78,22 +78,12 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { nome, email, senha, celular, cpf, data_nascimento, statusId, perfilId } = req.body;
+  
   //console.log('entrou aqui = '+id);
   // parameter post
   // update data
   
-  await AdministradorAuxiliar.update({
-    nome: nome, 
-    email: email, 
-    senha: senha, 
-    celular: celular,
-    cpf: cpf,
-    data_nascimento: data_nascimento, 
-    situacaoId: statusId,
-    perfilId: perfilId, 
-    statusId: statusId, 
-  },{
+  await AdministradorAuxiliar.update(req.body,{
     where: { id: id}
   })
   .then( function (data){

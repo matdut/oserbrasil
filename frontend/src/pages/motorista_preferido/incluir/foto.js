@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 //FOTO
 import filesize from "filesize";
@@ -82,7 +82,7 @@ class empresarialComponent extends React.Component{
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motorista/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.data.length > 0) {
@@ -190,6 +190,7 @@ getBase64(file, success) {
 }
 async sendUpdate(){        
  
+  debugger;
   if (this.state.incluir_foto == true) {
     //const formData = new FormData();             
     
@@ -205,30 +206,20 @@ async sendUpdate(){
         name: this.state.uploadedFilesFoto[0].name
       }
 
-         api.put(`/motoristaAuxiliar/foto/update/${sessionStorage.getItem('logid')}`, formData)
+         api.put(`/motoristaPreferido/foto/update/${sessionStorage.getItem('logid')}`, formData)
     
             if (sessionStorage.getItem('logperfil') == 1) {
-              this.props.history.push(`/senha_motorista_aux_incluir/`+sessionStorage.getItem('logid'));                    
-            } else if (sessionStorage.getItem('logperfil') == 9) {
-              this.props.history.push(`/area_motorista_auxiliar`);                   
+              this.props.history.push(`/senha_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));                    
+            } else if (sessionStorage.getItem('logperfil') == 10) {
+              this.props.history.push(`/area_motorista_preferido`);                   
             } else if (sessionStorage.getItem('logperfil') == 0) {
-              this.props.history.push(`/senha_motorista_aux_incluir/`+sessionStorage.getItem('logid'));                    
+              this.props.history.push(`/senha_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));                    
             }              
         
         //  }
-          //this.onFotoChange();
-        //  this.getBase64(file, onload);
+         
 
-   } else {
-    if (sessionStorage.getItem('logperfil') == 1) {
-      this.props.history.push(`/senha_motorista_incluir/`+sessionStorage.getItem('logid'));                    
-    } else if (sessionStorage.getItem('logperfil') == 3) {
-      this.props.history.push(`/area_motorista`);                   
-    } else if (sessionStorage.getItem('logperfil') == 0) {
-      this.props.history.push(`/senha_motorista_incluir/`+sessionStorage.getItem('logid'));                    
-    }            
-    
-   }   
+   }
 }
 
 handleUpload = files => {  
@@ -281,7 +272,7 @@ verificar_menu(){
       <div>
       <div className="d-flex justify-content-around">
                <div className="botao_navegacao">
-                 <Link to={`/documentos_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
+                 <Link to={`/documentos_preferido_motorista_incluir/`+sessionStorage.getItem('logid')}> <i className="fa fa-chevron-left fa-2x espacamento_seta"  aria-hidden="true"></i> </Link>
                </div>                  
                <div>
                  <div className="titulo_representante">                
@@ -327,7 +318,7 @@ verificar_menu(){
           </div> 
      </div>     
     );
-  } else if (sessionStorage.getItem('logperfil') == 3) { 
+  } else if (sessionStorage.getItem('logperfil') == 10) { 
     return(
       <div>
       <div className="d-flex justify-content-around">
@@ -356,9 +347,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-    <menu_motorista_auxiliar />    
+    <menu_motorista_preferido />    
    );
   }
 

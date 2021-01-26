@@ -42,6 +42,25 @@ var Envio_servico_motorista = sequelize.define(nametable,{
   motorista_id: {
     type: Sequelize.INTEGER, 
     allowNull: true,
+  },
+  motorista_perfil: {
+    type: Sequelize.INTEGER, 
+    allowNull: true,
+  },
+  servico_pai_id:  {  
+    type: Sequelize.INTEGER
+  },
+  empresaId: {
+    type: Sequelize.INTEGER, 
+    allowNull: true,
+  },
+  perfilId:{
+    type: Sequelize.INTEGER,
+    // this is a refence to another model
+    refences: {
+      model: Perfil,
+      key: 'id'
+    } 
   }
 });
 

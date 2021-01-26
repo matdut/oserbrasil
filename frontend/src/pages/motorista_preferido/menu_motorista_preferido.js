@@ -53,7 +53,7 @@ class menu_motoristaComponent extends React.Component  {
       perfil: sessionStorage.getItem('logperfil'),    
       nome: sessionStorage.getItem('lognome'),
       id: sessionStorage.getItem('logid'),
-      statusId: sessionStorage.getItem('statusid'),                    
+      statusId: sessionStorage.getItem('statusid'),             
     });
     //this.verifica_menu();
 
@@ -64,7 +64,7 @@ class menu_motoristaComponent extends React.Component  {
     //console.log('ENTROU AQUI busca_cep_banco')
     const { validate } = this.state
 
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         if (res.data.data.length > 0) {
           this.setState({             
@@ -73,7 +73,7 @@ class menu_motoristaComponent extends React.Component  {
         }
       })        
       .catch(error=>{
-        alert("Error de conexão  "+error)
+      console.log('motoristaPreferido/get '+error)
       })   
   }
 
@@ -130,7 +130,72 @@ class menu_motoristaComponent extends React.Component  {
       this.state.isOpen = true;
     }    
   }
+  
+  autorizacao_auxiliar_motorista() {
+    const status = sessionStorage.getItem('statusid');
    
+    if ( Number(status) !== 16) {
+      return ( 
+        <a href={`/lista_motorista_auxiliar`} className="icon_centralizado_novo">
+        <LightTooltip title="Motorista Auxiliar" placement="top">
+            <i className="fas fa-users"></i>
+        </LightTooltip>              
+      </a>
+      );
+    } else {
+      return (
+        <a href='#' className="icon_centralizado_novo">
+           <LightTooltip title="Motorista Auxiliar" placement="top">
+              <i className="fas fa-users"></i>
+           </LightTooltip>                    
+        </a>
+       );
+    }
+  }
+  autorizacao_veiculo_motorista() {
+
+    const status = sessionStorage.getItem('statusid');
+    if ( Number(status) !== 16) {
+       return (
+        <a href={`/lista_veiculos/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
+        <LightTooltip title="Veículos" placement="top">
+        <i className="fas fa-car-alt"></i>
+        </LightTooltip>              
+        </a>
+       );
+    } else {
+      return (
+        <a href='#' className="icon_centralizado_novo">
+        <LightTooltip title="Veículos" placement="top">
+        <i className="fas fa-car-alt"></i>
+        </LightTooltip>              
+        </a>
+       );
+    }
+  }
+
+  autorizacao_servicos_motorista() {
+
+    const status = sessionStorage.getItem('statusid');
+    if ( Number(status) !== 16) {
+       return (
+        <a href={`/lista_servico_motorista/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
+        <LightTooltip title="Serviços" placement="top">
+        <i className="fas fa-user-cog"></i>
+        </LightTooltip>              
+        </a>
+       );
+    } else {
+      return (
+        <a href='#' className="icon_centralizado_novo">
+        <LightTooltip title="Serviços" placement="top">
+        <i className="fas fa-user-cog"></i>
+        </LightTooltip>              
+        </a>
+       );
+    }
+  }
+  
   
   render()
   {     
@@ -148,7 +213,7 @@ class menu_motoristaComponent extends React.Component  {
                 <div className="avatar_motorista"><Avatar alt={sessionStorage.getItem('lognome')} src={this.state.foto_perfil}/>                       
                 </div>
                   <div className="teste perfil">
-                    <a href={`/motorista_alterar/`+sessionStorage.getItem('logid')}>   
+                    <a href={`/Motorista_preferido_alterar/`+sessionStorage.getItem('logid')}>   
                         Editar Perfil  
                     </a>  
                     <br/>
@@ -157,16 +222,21 @@ class menu_motoristaComponent extends React.Component  {
               </li>
               <li>
               <div className="itens_menu">
-                 <a href="/area_motorista_auxiliar" className="icon_centralizado_novo">                    
+                 <a href="/area_motorista_preferido" className="icon_centralizado_novo">                    
                    <LightTooltip title="Inicio" placement="top">                
                       <i className="fas fa-home"></i>   
                    </LightTooltip>    
                 </a>
                 </div>
-              </li>     
+              </li>
+              <li>
+               <div className="itens_menu">
+                 {this.autorizacao_servicos_motorista()}               
+               </div>
+              </li>      
               <li>
               <div className="itens_menu">
-              <a href={`/endereco_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">                    
+              <a href={`/endereco_motorista_preferido_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">                    
                    <LightTooltip title="Endereço" placement="top">                
                    <i className="fas fa-address-card"></i>
                    </LightTooltip>    
@@ -175,7 +245,7 @@ class menu_motoristaComponent extends React.Component  {
               </li>   
               <li>
               <div className="itens_menu">
-               <a href={`/documentos_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
+               <a href={`/documentos_motorista_preferido_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Documentos" placement="top">
                 <i className="fas fa-folder-open"></i>                
                 </LightTooltip>              
@@ -184,7 +254,7 @@ class menu_motoristaComponent extends React.Component  {
               </li>
               <li>
               <div className="itens_menu">
-              <a href={`/foto_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
+              <a href={`/foto_motorista_preferido_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Minha Foto" placement="top">
                 <i className="fas fa-camera"></i>
                 </LightTooltip>              
@@ -193,18 +263,25 @@ class menu_motoristaComponent extends React.Component  {
               </li> 
               <li>
               <div className="itens_menu">
-              <a href={`/senha_motorista_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
+              <a href={`/senha_motorista_preferido_alterar/`+sessionStorage.getItem('logid')} className="icon_centralizado_novo">
                 <LightTooltip title="Senha" placement="top">
                 <i className="fas fa-unlock-alt"></i>
                 </LightTooltip>              
                 </a>
                 </div>
-              </li>              
-             
+              </li>               
               <li>
-              <div className="itens_menu">
+               <div className="itens_menu">
+                 {this.autorizacao_veiculo_motorista()}               
+               </div>
+              </li>               
+              <li  className="itens_menu"> 
+                  {this.autorizacao_auxiliar_motorista()}                 
+               </li> 
+              <li>
+              <div className="itens_menu">                
               <a onClick={this.handleClick} className="icon_centralizado_novo">
-                <LightTooltip title="Sair" placement="right">                  
+                <LightTooltip title="Sair" placement="center">                  
                    <i className="fas fa-sign-out-alt"></i>
                 </LightTooltip>    
               </a> 

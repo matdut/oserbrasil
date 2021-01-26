@@ -22,7 +22,7 @@ import CheckIcon from '@material-ui/icons/Check';
 
 import api from '../../../services/api';
 import '../motorista.css';
-import Menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../menu_motorista_preferido';
 
 
 const andamento_cadastro = sessionStorage.getItem('logprogress');     
@@ -162,7 +162,7 @@ class empresarialComponent extends React.Component{
   busca_cep_banco(e) {   
     const { validate } = this.state
 
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
         console.log('busca motorista - '+JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -517,7 +517,7 @@ valida_motorista() {
           campAno: res.data.data[0].ano,
           campCor: res.data.data[0].cor,            
         })            
-        api.get(`/motoristaAuxiliar/get/${res.data.data[0].motoristaId}`)
+        api.get(`/motoristaPreferido/get/${res.data.data[0].motoristaId}`)
         .then(res=>{
         //  console.log(JSON.stringify(res.data, null, "    ")); 
           if (res.data.success) {
@@ -896,13 +896,13 @@ sendUpdate(){
         perfilId: 3,
         statusId: 16
       }          
-        api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, data1)      
+        api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, data1)      
 
         api.put(`/login/update/${sessionStorage.getItem('logid')}`,data1)
      }
 
         console.log(JSON.stringify(datapost, null, "    ")); 
-        api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
+        api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
            
@@ -910,8 +910,8 @@ sendUpdate(){
              // sessionStorage.setItem('logid', userId);
              if (sessionStorage.getItem('logperfil') == 1) {
                 this.props.history.push(`/veiculo_motorista/`+sessionStorage.getItem('logid'));
-              } else if (sessionStorage.getItem('logperfil') == 9) {
-                this.props.history.push(`/area_motorista_auxiliar`);                
+              } else if (sessionStorage.getItem('logperfil') == 10) {
+                this.props.history.push(`/area_motorista_preferido`);                
               } else if (sessionStorage.getItem('logperfil') == 0) {                 
                  this.props.history.push(`/veiculo_motorista/`+sessionStorage.getItem('logid'));                                                
               }              
@@ -994,9 +994,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-     <Menu_motorista_auxiliar />     
+     <Menu_motorista_preferido />     
    );
   }
 

@@ -44,17 +44,12 @@ controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
 
-  const { motoristaId, servicoId, statusId} = req.body; 
+ // const { motoristaId, servicoId, statusId} = req.body; 
 //console.log('id -'+JSON.stringify(id, null, "    "));  
 
   //const { originalname: name, size, filename: key, location: url = ""} = req.file;
 
-  await Motorista_servico.update({
-    motoristaId: motoristaId,              
-    servicoId: servicoId,
-    statusId: statusId,
-    motoristumId: motoristaId,
-  },{
+  await Motorista_servico.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -73,10 +68,6 @@ controllers.get = async (req, res) => {
   const { id } = req.params;
   await Motorista_servico.findAll({
     include: [
-      { 
-        model: Motorista,       
-        required: true,
-      },    
         { 
           model: Servicos,       
           required: true,
@@ -101,10 +92,6 @@ controllers.getMotoristaServico = async (req, res) => {
   const { motoristaId, tipo } = req.params;
   await Motorista_servico.findAll({
     include: [
-      { 
-        model: Motorista,       
-        required: true,
-      },    
         { 
           model: Servicos,       
           where: {tipoTransporte: tipo} 
@@ -126,20 +113,25 @@ controllers.getMotoristaServico = async (req, res) => {
   
 }
 
+
+
 controllers.getMotoristaServicoAtivos = async (req, res) => {
-  const { motoristaId } = req.params;
+  const { motoristaId, motorista_perfil } = req.params;
   await Motorista_servico.findAll({
-    include: [
-      { 
-        model: Motorista,       
-        required: true,
-      //  id: motoristaId
-      },    
+    include: [     
         { 
           model: Servicos,       
-          required: true,
+          required: true
         }],
-        where: { statusId: 1, motoristaId: motoristaId}
+        where: { 
+          statusId: 1, 
+          motoristaId: motoristaId,
+          motorista_perfil: motorista_perfil
+        },
+        order: [
+          [ Servicos, 'data_servico', 'asc' ],
+          [ Servicos, 'hora_inicial', 'DESC' ]
+        ]
   
   })
   .then( function (data){
@@ -155,10 +147,6 @@ controllers.getServico = async (req, res) => {
   const { servicoId } = req.params;
   await Motorista_servico.findAll({
     include: [
-      { 
-        model: Motorista,       
-        required: true,
-      },    
         { 
           model: Servicos,       
           required: true,
@@ -211,16 +199,11 @@ controllers.list = async (req,res) => {
 controllers.create = async (req,res) => {  
 
   // DATA parametros desde post
-  const { motoristaId, servicoId, statusId} = req.body; 
+ // const { motoristaId, servicoId, statusId} = req.body; 
 
   //console.log("ROle es ==>"+role)
   //create
-  await Motorista_servico.create({
-    motoristaId: motoristaId,              
-    servicoId: servicoId,
-    statusId: statusId,
-    motoristumId: motoristaId,
-  })
+  await Motorista_servico.create(req.body)
   .then( function (data){
   
       return res.json({success:true, data:data});

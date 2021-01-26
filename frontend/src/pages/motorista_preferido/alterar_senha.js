@@ -54,7 +54,7 @@ class Alterar_senha_Motorista extends React.Component  {
     }
     console.log( JSON.stringify(datapost, null, "    ") );
     
-    api.put(`/motoristaAuxiliar/update/${userId}`, datapost)
+    api.put(`/motoristaPreferido/update/${userId}`, datapost)
     .then(response => {
       if (response.data.success) {
        //alert(response.data.message)

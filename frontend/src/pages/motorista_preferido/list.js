@@ -51,7 +51,7 @@ import { cepMask } from '../formatacao/cepmask';
 import Menu_cliente_individual from '../cliente/menu_cliente_individual';
 import Menu_cliente_empresarial from '../empresa/menu_cliente_empresarial';
 import Menu_motorista from '../motorista/menu_motorista';
-import Menu_motorista_auxiliar from '../motorista_auxiliar/menu_motorista_auxiliar';
+import Menu_motorista_preferido from '../motorista_preferido/menu_motorista_preferido';
 import Menu_operador from '../operadores/menu_operador';
 
 //library sweetalert
@@ -527,10 +527,11 @@ class listComponent extends React.Component  {
     }
     
     busca_email_ja_cadastrado(email) {
+      debugger
       const { validate } = this.state
       api.get(`/login/getEmail/${email}`)
       .then(res=>{          
-        console.log(' resultado cliente - '+JSON.stringify(res.data, null, "    "));        
+      //  console.log(' resultado cliente - '+JSON.stringify(res.data, null, "    "));        
         if (res.data.success) {
 
             validate.emailState = 'has-danger'
@@ -565,12 +566,12 @@ class listComponent extends React.Component  {
               } 
             })        
             .catch(error=>{
-              alert("Erro de conexão "+error)
+             console.log('Erro '+ error)
             })           
         }        
       })        
       .catch(error=>{
-        alert("Erro de conexão "+error)
+        console.log('Erro '+ error)
       })                   
     }
     
@@ -1186,8 +1187,8 @@ cadeirarodasChange(e) {
 
   busca_motorista() {
     const { validate } = this.state   
-    console.log(`/motoristaAuxiliar/get/${sessionStorage.getItem('logeditid')}`);
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logeditid')}`)
+    console.log(`/motoristaPreferido/get/${sessionStorage.getItem('logeditid')}`);
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logeditid')}`)
     .then(res=>{
         console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
@@ -1316,7 +1317,7 @@ cadeirarodasChange(e) {
 
   loadMotoristaAuxConvite(){
     // const url = baseUrl+"/motorista/list"
-    api.get(`/motorista_preferido/listMotoristaAux/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/listMotoristaAux/${sessionStorage.getItem('logid')}`)
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data
@@ -1330,7 +1331,7 @@ cadeirarodasChange(e) {
 
   loadMotoristaExcluidos(){
     // const url = baseUrl+"/motorista/list"
-    api.get('/motorista/listExcluidos')
+    api.get('/motoristaPreferido/listExcluidos')
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data
@@ -1344,7 +1345,7 @@ cadeirarodasChange(e) {
 
    loadMotoristaCadIncompletos(){
     // const url = baseUrl+"/motorista/list"
-    api.get('/motorista/listarIncompletos')
+    api.get('/motoristaPreferido/listarIncompletos')
      .then(res=>{
        if (res.data.success) {
          const data = res.data.data
@@ -1459,7 +1460,7 @@ cadeirarodasChange(e) {
     }             
      
        console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-        api.put(`/motorista/update/${sessionStorage.getItem('logeditid')}`, datapost)
+        api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logeditid')}`, datapost)
         .then(response=>{
           if (response.data.success==true) {                        
             
@@ -1645,7 +1646,7 @@ sendEnvioEmail(){
         email: this.state.campEmail,    
         empresaId: sessionStorage.getItem('logid'),     
         statusId: 1,
-        perfilId: 9
+        perfilId: 10
       }    
       debugger
       api.get(`/emailOperador/getemail/${this.state.campEmail}`)
@@ -1663,8 +1664,8 @@ sendEnvioEmail(){
               const params_email = {    
                 email: email_envio,         
              //  url: `http://localhost:3000/motorista_aux_incluir_convite/${res.data.data.email}`, 
-                url: `http://www.oser.app.br:21497/motorista_incluir_convite/${res.data.data.email}`,    
-              //  url: `http://www.oser.app.br:21497/motorista_aux_incluir_convite/${res.data.data.email}`,     
+                url: `http://www.oser.app.br:21497/Motorista_preferido_cadastro_incluir/${res.data.data.email}`,    
+               // url: `http://localhost:3000/Motorista_preferido_cadastro_incluir/${res.data.data.email}`,     
                 texto: `Sr(a), Motorista(a) \n Seu link de acesso ao sistema è `, 
               }      
             // console.log(' resultado - '+JSON.stringify(params_email, null, "    "));    
@@ -1729,9 +1730,9 @@ verificar_menu_lateral() {
    return( 
      <Menu_operador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
     return( 
-      <Menu_motorista_auxiliar />     
+      <Menu_motorista_preferido />     
     );
    }
 
@@ -2094,10 +2095,11 @@ opcao_tabChange = (event, newValue) => {
           </TabPanel>              
         </TabContext>          
         <div className="botao_lista_incluir">
-                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=> ''}>
+                        <Fab style={{ textTransform: 'capitalize',  outline: 'none'}} className="tamanho_botao" size="large" color="secondary" variant="extended" onClick={()=> this.handleOpenModalEnvio()}>
                             <AddIcon/> <div className="botao_incluir"> Adicionar Motorista Preferido  </div>
                         </Fab>
                       </div>  
+                                
         <ReactModal 
             isOpen={this.state.showModal}
             style={customStyles}

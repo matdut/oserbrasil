@@ -7,7 +7,7 @@ import { cpfMask } from '../../formatacao/cpfmask';
 import { dataMask } from '../../formatacao/datamask';
 import api from '../../../services/api';
 import '../motorista.css';
-import menu_motorista_auxiliar from '../menu_motorista_auxiliar';
+import menu_motorista_preferido from '../menu_motorista_preferido';
 import Menu_administrador from '../../administrador/menu_administrador';
 
 import FormGroup from '@material-ui/core/FormGroup';
@@ -171,7 +171,7 @@ debugger;
             sessionStorage.setItem('logperfil', 0);
           }    
 
-          if (sessionStorage.getItem('logperfil') == 3) {
+          if (sessionStorage.getItem('logperfil') == 10) {
             this.setState({      
               camp_cpf_disabled: true,
             // camp_nome_disabled: true,
@@ -258,9 +258,9 @@ debugger;
 
   busca_motorista() {
     const { validate } = this.state   
-    api.get(`/motoristaAuxiliar/get/${sessionStorage.getItem('logid')}`)
+    api.get(`/motoristaPreferido/get/${sessionStorage.getItem('logid')}`)
     .then(res=>{
-        console.log(JSON.stringify(res.data, null, "    ")); 
+      ///  console.log(JSON.stringify(res.data, null, "    ")); 
         if (res.data.success) {
            
           this.setState({ 
@@ -319,7 +319,7 @@ debugger;
   }
   busca_cpf(e){
     const { validate } = this.state
-   api.get(`/motoristaAuxiliar/getMotoristaCpf/${e.target.value}`)
+   api.get(`/motoristaPreferido/getMotoristaCpf/${e.target.value}`)
    .then(res=>{
        console.log(JSON.stringify(res.data, null, "    ")); 
        if (res.data.success) {
@@ -977,9 +977,9 @@ sendSave(){
     data_validade: moment(this.state.campData_CNH, "DD MM YYYY"), 
     numero_carteira: this.state.campCNH,    
     bilingue: this.state.campMotorista_bilingue,   
-    perfilId: 9,
+    perfilId: 10,
     statusId: this.state.campStatusId,
-    motorista_principal_id: respemail.data.data[0].empresaId,
+    empresaId: respemail.data.data[0].empresaId,
   }         
    
 
@@ -987,7 +987,7 @@ sendSave(){
 
      if (this.state.incluir) {       
       console.log('incluir - '+JSON.stringify(datapost, null, "    ")); 
-        api.post('/motoristaAuxiliar/create',datapost)
+        api.post('/motoristaPreferido/create',datapost)
         .then(response=>{
 
           api.delete(`/emailOperador/deleteEmail/${this.state.campEmail}`);   
@@ -996,7 +996,7 @@ sendSave(){
             
             const logindata = {  
               email: this.state.campEmail,  
-              perfilId: 9,
+              perfilId: 10,
               statusId: this.state.campStatusId,
               logid: response.data.data.id
             }
@@ -1009,11 +1009,11 @@ sendSave(){
           console.log('pegou sessao perfil - '+sessionStorage.getItem('logperfil'));           
           console.log('pegou sessao id - '+sessionStorage.getItem('logid'));          
           if (sessionStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_aux_motorista_incluir/`+sessionStorage.getItem('logid'));   
-          } else if (sessionStorage.getItem('logperfil') == 9) {
-            this.props.history.push(`/area_motorista_auxiliar`);                   
+            this.props.history.push(`/endereco_preferido_motorista_incluir/`+sessionStorage.getItem('logid'));   
+          } else if (sessionStorage.getItem('logperfil') == 10) {
+            this.props.history.push(`/area_motorista_preferido`);                   
           } else if (sessionStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_aux_motorista_incluir/`+sessionStorage.getItem('logid'));       
+            this.props.history.push(`/endereco_preferido_motorista_incluir/`+sessionStorage.getItem('logid'));       
           }          
   
           }
@@ -1026,13 +1026,13 @@ sendSave(){
         })
     } else {
       console.log('Alterar - '+JSON.stringify(datapost, null, "    ")); 
-      api.put(`/motoristaAuxiliar/update/${sessionStorage.getItem('logid')}`, datapost)
+      api.put(`/motoristaPreferido/update/${sessionStorage.getItem('logid')}`, datapost)
       .then(response=>{
         if (response.data.success==true) {                        
           
           const logindata = {  
             email: this.state.campEmail,  
-            perfilId: 9,
+            perfilId: 10,
             statusId: this.state.campStatusId
           }
 
@@ -1041,11 +1041,11 @@ sendSave(){
           sessionStorage.setItem('lognome', this.state.campNome);  
           //sessionStorage.setItem('logid', userId);
           if (sessionStorage.getItem('logperfil') == 1) {
-            this.props.history.push(`/endereco_motorista_incluir/`+sessionStorage.getItem('logid'));
+            this.props.history.push(`/endereco_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));
           } else if (sessionStorage.getItem('logperfil') == 9) {
-              this.props.history.push(`/area_motorista_auxiliar`);                
+              this.props.history.push(`/area_motorista_preferido`);                
           } else if (sessionStorage.getItem('logperfil') == 0) {
-            this.props.history.push(`/endereco_motorista_incluir/`+sessionStorage.getItem('logid'));       
+            this.props.history.push(`/endereco_motorista_preferido_incluir/`+sessionStorage.getItem('logid'));       
           }           
 
         }
@@ -1133,9 +1133,9 @@ verificaEmailonfocus(e){
    return( 
      <Menu_administrador />     
    );
-  } else if (sessionStorage.getItem('logperfil') == 9) {
+  } else if (sessionStorage.getItem('logperfil') == 10) {
    return( 
-     <menu_motorista_auxiliar />     
+     <menu_motorista_preferido/>     
    );
   }
 

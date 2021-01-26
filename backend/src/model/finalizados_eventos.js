@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 var sequelize = require('./database');
 
-var nametable = 'historico_finalizados_eventos';
+var nametable = 'finalizados_eventos';
 
-var Historico_finalizados_eventos = sequelize.define(nametable,{
+var Finalizados_eventos = sequelize.define(nametable,{
 
   id:{
     type:Sequelize.INTEGER,
@@ -50,11 +50,11 @@ var Historico_finalizados_eventos = sequelize.define(nametable,{
     type:Sequelize.INTEGER,    
     allowNull: true,
   },  
-  perfil_finalizadoId: {
+  perfil_finalizado: {
     type:Sequelize.INTEGER,    
     allowNull: true,
-  },
+  }
 })
 
 
-module.exports = Historico_finalizados_eventos
+module.exports = Finalizados_eventos

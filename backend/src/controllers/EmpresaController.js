@@ -34,36 +34,8 @@ controllers.delete = async (req,res) => {
 controllers.update = async (req, res) => {
   // parameter id get  
   const { id } = req.params;
-
-  console.log('entrou aqui = '+id);
-
-  // parameter post
-  const { inscricao_municipal, statusId,
-    contato, cnpj, inscricao_estadual, razao_social, nome_fantasia, situacaoId, clienteId,
-     endereco, numero, complemento, telefone1, telefone2, celular, cidade, bairro, estadoId, cep} = req.body;
-  // update data
-  
-  await Empresa.update({            
-            contato: contato,
-            cnpj: cnpj,
-            razao_social: razao_social,
-            inscricao_estadual: inscricao_estadual,
-            inscricao_municipal: inscricao_municipal,
-            nome_fantasia: nome_fantasia,
-            endereco: endereco,
-            numero: numero,
-            complemento: complemento,
-            telefone1: telefone1,
-            telefone2: telefone2,
-            celular: celular,
-            cidade: cidade,
-            bairro: bairro,
-            estadoId: estadoId,
-            cep: cep,            
-            statusId: statusId,
-            situacaoId: situacaoId,
-            clienteId: clienteId 
-  },{
+   
+  await Empresa.update(req.body,{
     where: { id: id}
   })
   .then( function (data){
@@ -340,30 +312,8 @@ controllers.getEmpresaCnpj = async (req, res) => {
 
 controllers.create = async (req,res) => {
 
-  // DATA parametros desde post
-  const {inscricao_municipal, statusId,
-    contato, cnpj, inscricao_estadual, razao_social, nome_fantasia, situacaoId,
-     endereco, numero, complemento, cep, celular, cidade, bairro, estadoId, clienteId } = req.body;
-  //console.log("ROle es ==>"+role)
-  //create
-  await Empresa.create({    
-    cnpj: cnpj,
-    razao_social: razao_social,
-    inscricao_estadual: inscricao_estadual,
-    inscricao_municipal: inscricao_municipal,
-    nome_fantasia: nome_fantasia,    
-    endereco: endereco,
-    numero: numero,
-    complemento: complemento,
-    celular: celular,
-    cidade: cidade,
-    bairro: bairro,
-    estadoId: estadoId,
-    cep: cep,            
-    statusId: statusId,
-    situacaoId: situacaoId, 
-    clienteId: clienteId
-  })
+   //create
+  await Empresa.create(req.body)
   .then( function (data){      
     
        return res.json({success:true, data:data});

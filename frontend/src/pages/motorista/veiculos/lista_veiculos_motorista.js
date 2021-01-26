@@ -1082,7 +1082,7 @@ class listComponent extends React.Component  {
                   this.envia_mensagemClick();   
                   
 
-               //   console.log(' CRLV - '+JSON.stringify(formData1, null, "    ")); 
+                  // console.log(' CRLV - '+JSON.stringify(formData1, null, "    ")); 
                   //    formData.append("file", this.state.uploadedCNH[0].file, this.state.uploadedCNH[0].name)                  
                  /*
                   api.put(`/veiculo/documentoCRVL/update/${resp.data.data.id}/${sessionStorage.getItem('logid')}`, formData1)
@@ -1095,11 +1095,8 @@ class listComponent extends React.Component  {
                   })   */
 
                 }
-                else {
-                  alert("Error conexão ")              
-                }
               }).catch(error=>{
-                alert("Erro verificar log  ")
+                console.log(' sendSave - Inclusão de Veiculo ');
               })                   
       }  
 
@@ -1195,7 +1192,7 @@ class listComponent extends React.Component  {
 
                 }
               }).catch(error=>{
-                alert("Erro verificar log  ")
+                console.log(' sendUpdate - Inclusão de Veiculo ');
               })                   
       }  
 
