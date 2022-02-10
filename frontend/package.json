@@ -40,7 +40,7 @@
     "mdbreact": "^4.27.0",
     "moment": "^2.29.1",
     "multiselect-react-dropdown": "^1.6.2",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "node-snackbar": "^0.1.16",
     "nodemailer": "^6.4.16",
     "payment": "^2.4.0",
